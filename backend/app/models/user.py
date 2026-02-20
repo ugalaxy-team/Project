@@ -20,7 +20,6 @@ class User(Base, PKMixin):
     full_name: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
-    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), nullable=False)
     cleated_at: Mapped[datetime] = mapped_column(datetime.now)
 
     roles: Mapped[List["Role"]] = relationship(
