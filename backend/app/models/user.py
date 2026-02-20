@@ -1,6 +1,6 @@
 from typing import List
 from datetime import datetime
-from sqlalchemy import ForeignKey, Table, Column
+from sqlalchemy import ForeignKey, Table, Column, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -20,9 +20,9 @@ class User(Base, PKMixin):
     full_name: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
-    cleated_at: Mapped[datetime] = mapped_column(datetime.now)
+    cleated_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    roles: Mapped[List["Role"]] = relationship(
+    roles: Mapped[list["Role"]] = relationship(
         secondary=user_roles, back_populates="users"
     )
 
