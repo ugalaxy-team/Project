@@ -16,18 +16,17 @@ class Tournament(Base, PKMixin):
     reg_start: Mapped[datetime]
     reg_end: Mapped[datetime]
     max_team: Mapped[int]
-    active_task_id: Mapped[int] = mapped_column(ForeignKey('tasks.id'))
-    active_task: Mapped['Task'] = relationship()
-    tasks: Mapped[list['Task']] = relationship(back_populates='tournament')
+    active_task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"))
     status_id: Mapped[int] = mapped_column(ForeignKey("tournament_status_options.id"))
     creator_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
+    teams: Mapped[list["Team"]] = relationship(back_populates="tournament")
+    active_task: Mapped["Task"] = relationship()
+    tasks: Mapped[list["Task"]] = relationship(back_populates="tournament")
     status: Mapped["TournamentStatusOption"] = relationship(
         back_populates="tournaments"
     )
-    creator: Mapped["User"] = relationship(
-        back_populates="created_tournaments"
-    )
+    creator: Mapped["User"] = relationship(back_populates="created_tournaments")
 
     def __repr__(self):
         return f"<Tournament(id={self.id}, title={self.title})>"

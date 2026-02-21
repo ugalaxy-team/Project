@@ -1,4 +1,3 @@
-from typing import List
 from datetime import datetime
 from sqlalchemy import ForeignKey, Table, Column, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -25,6 +24,9 @@ class User(Base, PKMixin):
     roles: Mapped[list["Role"]] = relationship(
         secondary=user_roles, back_populates="users"
     )
+    created_tournaments: Mapped[list["Tournament"]] = relationship(
+        back_populates="creator"
+    )
 
     def __repr__(self):
-        return f"<User(id={self.id}, email={self.email}, role={self.role})>"
+        return f"<User(id={self.id}, email={self.email}, role={self.roles})>"

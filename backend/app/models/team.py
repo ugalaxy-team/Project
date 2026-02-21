@@ -8,11 +8,14 @@ from .mixin import PKMixin
 class Team(Base, PKMixin):
     __tablename__ = "teams"
 
-    name: Mapped[str] = mapped_column(unique=True)
+    name: Mapped[str]
     team_email: Mapped[str]
     contact_info: Mapped[str]
-    tournament_id: Mapped[int]
+    tournament_id: Mapped[int] = mapped_column(ForeignKey("tournaments.id"))
     captain_id: Mapped[int] = mapped_column(ForeignKey("team_members.id"))
+
+    tournament: Mapped["Tournament"] = relationship(back_populates="teams")
+    members: Mapped[list["TeamMember"]] = relationship(back_populates="team")
 
     def __repr__(self):
         return f"<Team(id={self.id}, name='{self.name}')>"
