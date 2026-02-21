@@ -1,10 +1,16 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Table, Column
 
 from .base import Base
 from .mixin import PKMixin, OptionMixin
 from datetime import datetime
 
+task_requirements = Table(
+    'task_requirements',
+    Base.metadata,
+    Column("requirement_id", ForeignKey("task_requirement_options.name", ondelete="CASCADE"), primary_key=True),
+    Column("task_id", ForeignKey("tasks.id", ondelete="CASCADE"), primary_key=True),
+)
 
 class Task(Base, PKMixin):
     __tablename__ = "tasks"
@@ -17,6 +23,7 @@ class Task(Base, PKMixin):
     end_time: Mapped[datetime]
     status_id: Mapped[str] = mapped_column(ForeignKey('task_statuses.name'))
     status: Mapped['TaskStatusOption'] = relationship(back_populates='tasks')
+    requirements: Mapped[list['TaskRequirementOption']] = relationship(secondary=task_requirements)
 
 class TaskStatusOption(Base, OptionMixin):
     __tablename__ = 'task_statuses'
