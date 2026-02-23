@@ -16,10 +16,10 @@ user_roles = Table(
 class User(Base, PKMixin):
     __tablename__ = "users"
 
-    full_name: Mapped[str]
-    email: Mapped[str] = mapped_column(unique=True)
-    password: Mapped[str]
-    cleated_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    full_name: Mapped[str] = mapped_column(nullable=False)
+    email: Mapped[str] = mapped_column(nullable=False, unique=True)
+    password: Mapped[str] = mapped_column(nullable=False)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
     roles: Mapped[list["Role"]] = relationship(
         secondary=user_roles, back_populates="users"

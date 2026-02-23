@@ -15,7 +15,9 @@ class Team(Base, PKMixin):
     captain_id: Mapped[int] = mapped_column(ForeignKey("team_members.id"))
 
     tournament: Mapped["Tournament"] = relationship(back_populates="teams")
-    members: Mapped[list["TeamMember"]] = relationship(back_populates="team")
+    members: Mapped[list["TeamMember"]] = relationship(
+        back_populates="team", foreign_keys="TeamMember.team_id"
+    )
 
     def __repr__(self):
         return f"<Team(id={self.id}, name='{self.name}')>"
@@ -28,7 +30,9 @@ class TeamMember(Base, PKMixin):
     email: Mapped[str] = mapped_column(unique=True)
     telegram_username: Mapped[str] = mapped_column(unique=True)
     educational_institution: Mapped[str]
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
+    team_id: Mapped[int] = mapped_column(
+        ForeignKey("teams.id", use_alter=True, name="fk_teammember_team")
+    )
 
     team: Mapped["Team"] = relationship(
         back_populates="members", foreign_keys=[team_id]

@@ -22,8 +22,12 @@ class Task(Base, PKMixin):
 
     title: Mapped[str]
     description: Mapped[str]
-    tournament_id: Mapped[int] = mapped_column(ForeignKey("tournaments.id"))
-    tournament: Mapped["Tournament"] = relationship(back_populates="tasks")
+    tournament_id: Mapped[int] = mapped_column(
+        ForeignKey("tournaments.id", use_alter=True, name="fk_task_tournament")
+    )
+    tournament: Mapped["Tournament"] = relationship(
+        "Tournament", back_populates="tasks", foreign_keys="[Task.tournament_id]"
+    )
     start_time: Mapped[datetime]
     end_time: Mapped[datetime]
     status_id: Mapped[str] = mapped_column(ForeignKey("task_statuses.name"))
@@ -40,17 +44,22 @@ class TaskStatusOption(Base, OptionMixin):
 
 class TaskRequirementOption(Base, OptionMixin):
     __tablename__ = "task_requirement_options"
-    category_id: Mapped[str] = mapped_column(ForeignKey("task_statuses.name"))
-    category: Mapped["TaskRequirementCategory"] = relationship()
-
-
-class TaskRequirementCategory(Base, OptionMixin):
-    __tablename__ = "task_requirement_categories"
     category_id: Mapped[str] = mapped_column(
         ForeignKey("task_requirement_categories.name")
     )
     category: Mapped["TaskRequirementCategory"] = relationship(
-        back_populates="category"
+        back_populates="task_requirement_options"
+    )
+
+
+class TaskRequirementCategory(Base, OptionMixin):
+    __tablename__ = "task_requirement_categories"
+    main_id: Mapped[str] = mapped_column(ForeignKey("task_requirement_categories.name"))
+    sub_categories: Mapped[list["TaskRequirementCategory"]] = relationship(
+        back_populates="parent_category"
+    )
+    parent_category: Mapped["TaskRequirementCategory"] = relationship(
+        back_populates="sub_categories", remote_side="TaskRequirementCategory.name"
     )
     task_requirement_options: Mapped[list["TaskRequirementOption"]] = relationship(
         back_populates="category"

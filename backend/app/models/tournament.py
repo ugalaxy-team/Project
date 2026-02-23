@@ -21,8 +21,12 @@ class Tournament(Base, PKMixin):
     creator_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
     teams: Mapped[list["Team"]] = relationship(back_populates="tournament")
-    active_task: Mapped["Task"] = relationship()
-    tasks: Mapped[list["Task"]] = relationship(back_populates="tournament")
+    active_task: Mapped["Task"] = relationship(
+        "Task", foreign_keys="[Tournament.active_task_id]"
+    )
+    tasks: Mapped[list["Task"]] = relationship(
+        "Task", back_populates="tournament", foreign_keys="[Task.tournament_id]"
+    )
     status: Mapped["TournamentStatusOption"] = relationship(
         back_populates="tournaments"
     )
