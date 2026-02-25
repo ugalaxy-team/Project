@@ -13,3 +13,6 @@ class Role(Base, PKMixin):
     users: Mapped[list["User"]] = relationship(
         secondary=user_roles, back_populates="roles"
     )
+
+    def __repr__(self):
+        return f"<Role(role={self.name})>"

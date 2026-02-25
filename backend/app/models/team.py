@@ -26,7 +26,7 @@ class Team(Base, PKMixin):
 class TeamMember(Base, PKMixin):
     __tablename__ = "team_members"
 
-    full_name: Mapped[str]
+    full_name: Mapped[str] = mapped_column(nullable=False)
     email: Mapped[str] = mapped_column(unique=True)
     telegram_username: Mapped[str] = mapped_column(unique=True)
     educational_institution: Mapped[str]

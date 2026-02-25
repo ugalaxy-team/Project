@@ -26,7 +26,7 @@ class Task(Base, PKMixin):
         ForeignKey("tournaments.id", use_alter=True, name="fk_task_tournament")
     )
     tournament: Mapped["Tournament"] = relationship(
-        "Tournament", back_populates="tasks", foreign_keys="[Task.tournament_id]"
+        "Tournament", back_populates="tasks", foreign_keys="Task.tournament_id"
     )
     start_time: Mapped[datetime]
     end_time: Mapped[datetime]
