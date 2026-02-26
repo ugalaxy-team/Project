@@ -2,7 +2,15 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
-from app.models import User, Role
+from app.models import (
+    User,
+    Role,
+    TeamMember,
+    Team,
+    Task,
+    TaskRequirementCategory,
+    TaskRequirementOption,
+)
 
 
 async def test_create_user(user):
@@ -36,7 +44,7 @@ async def test_create_user_without_password(db_session):
     db_session.add(user)
 
     with pytest.raises(IntegrityError):
-        await db_session.commit()
+        await db_session.flush()
 
     await db_session.rollback()
 
@@ -53,7 +61,7 @@ async def test_role_name_unique_constraint(db_session, role):
     db_session.add(role_duplicate)
 
     with pytest.raises(IntegrityError):
-        await db_session.commit()
+        await db_session.flush()
 
     await db_session.rollback()
 
@@ -79,7 +87,136 @@ async def test_user_roles_relationship(db_session, user, role):
     assert "jury" in role_names
 
 
-async def test_create_team_member(db_session, team, team_member):
+async def test_create_team_member(team, team_member):
 
     assert team_member.id is not None
     assert team_member.team_id == team.id
+
+
+async def test_team_member_without_data(db_session):
+    member = TeamMember()
+
+    db_session.add(member)
+
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+
+    await db_session.rollback()
+
+
+async def test_team_member_duplicate_email(db_session, team, team_member):
+    duplicate = TeamMember(
+        full_name="Test Name",
+        email=team_member.email,
+        telegram_username="@test2",
+        educational_institution="Test School",
+        team_id=team.id,
+    )
+
+    db_session.add(duplicate)
+
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+
+    await db_session.rollback()
+
+
+async def test_create_team(team):
+
+    assert team.id is not None
+    assert team.name == "Test Team"
+    assert team.team_email == "test@example.com"
+    assert team.contact_info == "0680000000"
+
+
+async def test_team_without_data(db_session):
+    team = Team()
+
+    db_session.add(team)
+
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+
+    await db_session.rollback()
+
+
+async def test_team_duplicate_email(db_session, team, tournament):
+    duplicate_team = Team(
+        name="Test Name",
+        team_email=team.team_email,
+        contact_info="0680000001",
+        tournament_id=tournament.id,
+    )
+
+    db_session.add(duplicate_team)
+
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+
+    await db_session.rollback()
+
+
+async def test_set_team_captain(db_session, team, team_member):
+    team.captain_id = team_member.id
+    db_session.add(team)
+    await db_session.commit()
+
+    await db_session.refresh(team)
+    assert team.captain_id == team_member.id
+
+
+async def test_team_team_member_relationship(db_session, team, team_member):
+    stmt = select(Team).where(Team.id == team.id).options(selectinload(Team.members))
+    result = await db_session.execute(stmt)
+
+    db_team = result.unique().scalar_one()
+
+    assert len(db_team.members) == 1
+    assert db_team.members[0].id == team_member.id
+
+
+async def test_team_cascade_delete_members(db_session, team, team_member):
+    member_id = team_member.id
+
+    await db_session.delete(team)
+    await db_session.commit()
+
+    stmt = select(TeamMember).where(TeamMember.id == member_id)
+    result = await db_session.execute(stmt)
+
+    assert result.scalar_one_or_none() is None
+
+
+async def test_create_task(task, tournament):
+
+    assert task.id is not None
+    assert task.title == "Test Title"
+    assert task.tournament_id == tournament.id
+    assert task.status_id == "draft"
+
+
+async def test_task_requirements_relationship(db_session, task):
+
+    category = TaskRequirementCategory(
+        name="Test Category", display_name="Test Category", main_id="Test Category"
+    )
+    option = TaskRequirementOption(
+        name="Test Option", display_name="Test Option", category=category
+    )
+    db_session.add_all([category, option])
+    await db_session.flush()
+
+    await db_session.refresh(task, attribute_names=["requirements"])
+
+    task.requirements.append(option)
+    await db_session.commit()
+
+    stmt = (
+        select(Task).where(Task.id == task.id).options(selectinload(Task.requirements))
+    )
+
+    result = await db_session.execute(stmt)
+    db_task = result.unique().scalar_one()
+
+    assert len(db_task.requirements) == 1
+    assert db_task.requirements[0].name == "Test Option"

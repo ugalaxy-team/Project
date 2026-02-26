@@ -8,15 +8,19 @@ from .mixin import PKMixin
 class Team(Base, PKMixin):
     __tablename__ = "teams"
 
-    name: Mapped[str]
-    team_email: Mapped[str]
-    contact_info: Mapped[str]
+    name: Mapped[str] = mapped_column(nullable=False, unique=True)
+    team_email: Mapped[str] = mapped_column(nullable=False, unique=True)
+    contact_info: Mapped[str] = mapped_column(nullable=False, unique=True)
     tournament_id: Mapped[int] = mapped_column(ForeignKey("tournaments.id"))
-    captain_id: Mapped[int] = mapped_column(ForeignKey("team_members.id"))
+    captain_id: Mapped[int] = mapped_column(
+        ForeignKey("team_members.id", ondelete="CASCADE"), nullable=True
+    )
 
     tournament: Mapped["Tournament"] = relationship(back_populates="teams")
     members: Mapped[list["TeamMember"]] = relationship(
-        back_populates="team", foreign_keys="TeamMember.team_id"
+        back_populates="team",
+        foreign_keys="TeamMember.team_id",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self):
@@ -27,9 +31,9 @@ class TeamMember(Base, PKMixin):
     __tablename__ = "team_members"
 
     full_name: Mapped[str] = mapped_column(nullable=False)
-    email: Mapped[str] = mapped_column(unique=True)
-    telegram_username: Mapped[str] = mapped_column(unique=True)
-    educational_institution: Mapped[str]
+    email: Mapped[str] = mapped_column(nullable=False, unique=True)
+    telegram_username: Mapped[str] = mapped_column(nullable=False, unique=True)
+    educational_institution: Mapped[str] = mapped_column(nullable=False)
     team_id: Mapped[int] = mapped_column(
         ForeignKey("teams.id", use_alter=True, name="fk_teammember_team")
     )

@@ -107,7 +107,7 @@ async def task(db_session, tournament):
 @pytest.fixture
 async def team(db_session, user, tournament):
     team = Team(
-        name="TestTeam",
+        name="Test Team",
         team_email="test@example.com",
         contact_info="0680000000",
         tournament_id=tournament.id,
