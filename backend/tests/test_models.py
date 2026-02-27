@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime, timedelta
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
@@ -220,3 +221,59 @@ async def test_task_requirements_relationship(db_session, task):
 
     assert len(db_task.requirements) == 1
     assert db_task.requirements[0].name == "Test Option"
+
+
+async def test_task_without_data(db_session):
+    task = Task()
+
+    db_session.add(task)
+
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+
+    await db_session.rollback()
+
+
+async def test_task_invalid_time(db_session, tournament):
+    task = Task(
+        title="Test Task",
+        description="...",
+        tournament_id=tournament.id,
+        start_time=datetime.now(),
+        end_time=datetime.now() - timedelta(hours=1),
+        status_id="draft",
+    )
+    db_session.add(task)
+
+    await db_session.commit()
+    assert task.end_time < task.start_time
+
+
+async def test_task_category_hierarchy(db_session):
+    parent = TaskRequirementCategory(
+        name="Programming", display_name="Programming Languages"
+    )
+    db_session.add(parent)
+    await db_session.flush()
+
+    child = TaskRequirementCategory(
+        name="Python",
+        display_name="Python Language",
+        main_id="Programming",
+        parent_category=parent,
+    )
+    db_session.add(child)
+    await db_session.commit()
+
+    stmt = (
+        select(TaskRequirementCategory)
+        .where(TaskRequirementCategory.name == "Programming")
+        .options(selectinload(TaskRequirementCategory.sub_categories))
+    )
+
+    result = await db_session.execute(stmt)
+    db_parent = result.unique().scalar_one()
+
+    assert len(db_parent.sub_categories) == 1
+    assert db_parent.sub_categories[0].name == "Python"
+    assert db_parent.sub_categories[0].parent_category.name == "Programming"
