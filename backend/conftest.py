@@ -1,6 +1,9 @@
 import pytest
 from datetime import datetime, timedelta
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from app.main import app
+from fastapi.testclient import TestClient
+from app.dependencies import get_session
 
 from app.models import (
     Base,
@@ -34,8 +37,14 @@ async def setup_database():
 @pytest.fixture
 async def db_session():
     async with AsyncTestingSessionLocal() as session:
+        app.dependency_overrides[get_session] = lambda: session
         yield session
+        app.dependency_overrides.pop(get_session)
 
+@pytest.fixture(scope='session')
+async def client():
+    client = TestClient(app)
+    yield client
 
 @pytest.fixture
 async def user(db_session):
