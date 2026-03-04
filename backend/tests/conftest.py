@@ -29,7 +29,7 @@ async def setup_database():
         await conn.run_sync(Base.metadata.drop_all)
 
 
-@pytest.fixture
+@pytest.fixture(scope="function", autouse=True)
 async def db_session():
     async with AsyncTestingSessionLocal() as session:
         yield session
@@ -50,3 +50,15 @@ async def setup_factories(db_session):
     yield
     for f in factories:
         f._meta.sqlalchemy_session = None
+
+
+@pytest.fixture
+async def create(db_session):
+    async def _create(factory_class, **kwargs):
+        obj = factory_class.build(**kwargs)
+        db_session.add(obj)
+        await db_session.commit()
+        await db_session.refresh(obj)
+        return obj
+
+    return _create
