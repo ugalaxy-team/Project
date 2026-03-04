@@ -22,6 +22,9 @@ class Team(Base, PKMixin):
         foreign_keys="TeamMember.team_id",
         cascade="all, delete-orphan",
     )
+    captain: Mapped["TeamMember"] = relationship(
+        "TeamMember", foreign_keys="Team.captain_id", post_update=True
+    )
 
     def __repr__(self):
         return f"<Team(id={self.id}, name='{self.name}')>"
