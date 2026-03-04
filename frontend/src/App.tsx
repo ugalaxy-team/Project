@@ -4,8 +4,8 @@ import Home from "./pages/Home/Home.tsx"
 import TournamentsPage from "./pages/TournamentsPage/TournamentsPage.tsx";
 import TournamentPage from "./pages/TournamentPage/TournamentPage.tsx";
 import Profile from "./pages/Profile/Profile.tsx";
-import Login from "./pages/Login/Login.tsx";
-import Register from "./pages/Register/Register.tsx";
+import Auth from "./pages/Auth/Auth.tsx";
+import Page404 from "./pages/Page404/Page404.tsx";
 
 function App() {
   return(
@@ -15,8 +15,8 @@ function App() {
               <Route path="/tournaments" element={<TournamentsPage />} />
               <Route path="/tournament/:tournament_id" element={<TournamentPage />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="*" element={<Page404 />} />
           </Routes>
       </BrowserRouter>
   )
