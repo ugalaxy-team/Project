@@ -20,6 +20,8 @@ from .factories import (
     TournamentFactory,
     TeamFactory,
     TeamMemberFactory,
+    TaskStatusOptionFactory,
+    TaskFactory,
 )
 
 
@@ -177,15 +179,16 @@ async def test_team_cascade_delete_members(db_session, create):
     assert result.scalar_one_or_none() is None
 
 
-# async def test_create_task(task, tournament):
+async def test_create_task(create):
+    task = await create(TaskFactory)
 
-#     assert task.id is not None
-#     assert task.title == "Test Title"
-#     assert task.tournament_id == tournament.id
-#     assert task.status_id == "draft"
+    assert task.id is not None
+    assert task.title is not None
+    assert task.tournament_id is not None
+    assert task.status_id in ["draft", "active", "finished"]
 
 
-# async def test_task_requirements_relationship(db_session, task):
+# async def test_task_requirements_relationship(db_session, create):
 
 #     category = TaskRequirementCategory(
 #         name="Test Category", display_name="Test Category", main_id="Test Category"
@@ -212,30 +215,22 @@ async def test_team_cascade_delete_members(db_session, create):
 #     assert db_task.requirements[0].name == "Test Option"
 
 
-# async def test_task_without_data(db_session):
-#     task = Task()
-
-#     db_session.add(task)
-
-#     with pytest.raises(IntegrityError):
-#         await db_session.flush()
-
-#     await db_session.rollback()
+async def test_task_without_data(db_session):
+    task = Task()
+    db_session.add(task)
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+    await db_session.rollback()
 
 
-# async def test_task_invalid_time(db_session, tournament):
-#     task = Task(
-#         title="Test Task",
-#         description="...",
-#         tournament_id=tournament.id,
-#         start_time=datetime.now(),
-#         end_time=datetime.now() - timedelta(hours=1),
-#         status_id="draft",
-#     )
-#     db_session.add(task)
+async def test_task_invalid_time(db_session, create):
+    task = await create(
+        TaskFactory,
+        start_time=datetime.now(),
+        end_time=datetime.now() - timedelta(hours=1),
+    )
 
-#     await db_session.commit()
-#     assert task.end_time < task.start_time
+    assert task.end_time < task.start_time
 
 
 # async def test_task_category_hierarchy(db_session):

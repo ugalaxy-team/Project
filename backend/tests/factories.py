@@ -10,8 +10,9 @@ from app.models import (
     Tournament,
     TournamentStatusOption,
     Task,
-    TaskRequirementCategory,
+    TaskStatusOption,
     TaskRequirementOption,
+    TaskRequirementCategory,
 )
 
 
@@ -88,3 +89,23 @@ class TeamMemberFactory(BaseFactory):
     telegram_username = factory.Sequence(lambda n: f"@user_{n}")
     educational_institution = Faker("company")
     team = factory.SubFactory(TeamFactory)
+
+
+class TaskStatusOptionFactory(BaseFactory):
+    class Meta:
+        model = TaskStatusOption
+
+    name = factory.Iterator(["draft", "active", "finished"])
+    display_name = factory.LazyAttribute(lambda f: f.name.upper())
+
+
+class TaskFactory(BaseFactory):
+    class Meta:
+        model = Task
+
+    title = Faker("catch_phrase")
+    description = Faker("paragraph")
+    start_time = Faker("future_datetime")
+    end_time = Faker("future_datetime")
+    tournament = factory.SubFactory(TournamentFactory)
+    status = factory.SubFactory(TaskStatusOptionFactory)
