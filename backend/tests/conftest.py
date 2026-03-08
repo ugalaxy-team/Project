@@ -2,16 +2,7 @@ import pytest
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from app.models import Base
-from .factories import (
-    UserFactory,
-    RoleFactory,
-    TournamentStatusOptionFactory,
-    TournamentFactory,
-    TeamFactory,
-    TeamMemberFactory,
-    TaskStatusOptionFactory,
-    TaskFactory,
-)
+
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 
@@ -37,32 +28,12 @@ async def db_session():
         yield session
 
 
-@pytest.fixture(autouse=True)
-async def setup_factories(db_session):
-    factories = [
-        UserFactory,
-        RoleFactory,
-        TeamFactory,
-        TeamMemberFactory,
-        TournamentFactory,
-        TournamentStatusOptionFactory,
-        TaskStatusOptionFactory,
-        TaskFactory,
-    ]
-    for f in factories:
-        f._meta.sqlalchemy_session = db_session
-    yield
-    for f in factories:
-        f._meta.sqlalchemy_session = None
-
-
 @pytest.fixture
 async def create(db_session):
     async def _create(factory_class, **kwargs):
         obj = factory_class.build(**kwargs)
         db_session.add(obj)
-        await db_session.commit()
-        await db_session.refresh(obj)
+        await db_session.flush()
         return obj
 
     return _create

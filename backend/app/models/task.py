@@ -54,7 +54,9 @@ class TaskRequirementOption(Base, OptionMixin):
 
 class TaskRequirementCategory(Base, OptionMixin):
     __tablename__ = "task_requirement_categories"
-    main_id: Mapped[str] = mapped_column(ForeignKey("task_requirement_categories.name"), nullable=True)
+    main_id: Mapped[str] = mapped_column(
+        ForeignKey("task_requirement_categories.name"), nullable=True
+    )
     sub_categories: Mapped[list["TaskRequirementCategory"]] = relationship(
         back_populates="parent_category"
     )

@@ -109,3 +109,21 @@ class TaskFactory(BaseFactory):
     end_time = Faker("future_datetime")
     tournament = factory.SubFactory(TournamentFactory)
     status = factory.SubFactory(TaskStatusOptionFactory)
+
+
+class TaskRequirementCategoryFactory(BaseFactory):
+    class Meta:
+        model = TaskRequirementCategory
+
+    name = factory.Sequence(lambda n: f"category_{n}")
+    display_name = factory.LazyAttribute(lambda f: f.name.upper())
+
+
+class TaskRequirementOptionFactory(BaseFactory):
+    class Meta:
+        model = TaskRequirementOption
+
+    name = factory.Sequence(lambda n: f"category_{n}")
+    display_name = factory.LazyAttribute(lambda f: f.name.upper())
+
+    category = factory.SubFactory(TaskRequirementCategoryFactory)
