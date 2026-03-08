@@ -1,4 +1,5 @@
-import './App.css'
+//import './App.css'
+import "./reset.css"
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Home from "./pages/Home/Home.tsx"
 import TournamentsPage from "./pages/TournamentsPage/TournamentsPage.tsx";
