@@ -18,3 +18,7 @@ class UserModel(BaseModel):
     @classmethod
     def check_email(cls, value: str):
         return value.lower().strip()
+
+# Return notifications of current user only
+class CurrentUser(UserModel):
+    notifications: list[str]
