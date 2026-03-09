@@ -1,10 +1,15 @@
 from pydantic import BaseModel, Field, field_validator
 
 
-class NotificationModel(BaseModel):
+class NotificationBase(BaseModel):
     body: str = Field(..., description="Notification body")
+    user_id: int = Field(..., description="Notification receiver")
     user: str
 
+class NotificationPublic(NotificationBase):
+    pass
+
+class NotificationCreate(NotificationBase):
     @field_validator("body")
     @classmethod
     def check_body(cls, value: str):
