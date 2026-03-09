@@ -27,7 +27,7 @@ class User(Base, PKMixin):
     notifications: Mapped[list["Notification"]] = relationship(
         back_populates="user"
     )
-    requests: Mapped[list["RoleRequest"]] = relationship(
+    role_requests: Mapped[list["RoleRequest"]] = relationship(
         back_populates="user"
     )
     created_tournaments: Mapped[list["Tournament"]] = relationship(
