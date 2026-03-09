@@ -8,6 +8,8 @@ from app.models import (
     TeamMember,
     Team,
     Task,
+    Tournament,
+    TournamentStatusOption,
     TaskRequirementCategory,
     TaskRequirementOption,
 )
@@ -26,6 +28,7 @@ from .factories import (
 )
 
 
+# USER TESTS
 async def test_create_user(create):
     user = await create(UserFactory)
     assert user.id is not None
@@ -51,6 +54,7 @@ async def test_create_user_without_password(create):
         await create(UserFactory, password=None)
 
 
+# ROLE TESTS
 async def test_create_role(create):
     role = await create(RoleFactory, name="jury")
     assert role.id is not None
@@ -86,6 +90,7 @@ async def test_user_roles_relationship(db_session, create):
     assert "admin" in [r.name for r in db_user.roles]
 
 
+# TEAM/TEAM MEMBER TESTS
 async def test_create_team_member(create):
     member = await create(TeamMemberFactory)
 
@@ -178,6 +183,7 @@ async def test_team_cascade_delete_members(db_session, create):
     assert result.scalar_one_or_none() is None
 
 
+# TASK TESTS
 async def test_create_task(create):
     task = await create(TaskFactory)
 
@@ -237,3 +243,114 @@ async def test_task_category_hierarchy(db_session, create):
     assert len(db_parent.sub_categories) == 1
     assert db_parent.sub_categories[0].name == child.name
     assert db_parent.sub_categories[0].parent_category.name == parent.name
+
+
+# TOURNAMENT TESTS
+async def test_create_tournament(create):
+    tournament = await create(TournamentFactory)
+
+    assert tournament.title is not None
+    assert tournament.description is not None
+    assert tournament.max_team is not None
+
+
+async def test_tournament_without_data(db_session):
+    tournament = Tournament()
+    db_session.add(tournament)
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+
+    await db_session.rollback()
+
+
+async def test_tournament_invalid_time(create):
+    tournament = await create(
+        TournamentFactory,
+        reg_start=datetime.now() + timedelta(days=1),
+        reg_end=datetime.now() - timedelta(hours=1),
+    )
+
+    assert tournament.reg_end < tournament.reg_start
+
+
+async def test_tournament_without_creator(db_session, create):
+    with pytest.raises(IntegrityError):
+        await create(TournamentFactory, creator=None)
+
+    await db_session.rollback()
+
+
+async def test_tournament_creator_relationship(db_session, create):
+    tournament = await create(TournamentFactory)
+
+    stmt = (
+        select(Tournament)
+        .where(Tournament.id == tournament.id)
+        .options(selectinload(Tournament.creator))
+    )
+
+    result = await db_session.execute(stmt)
+    db_tournament = result.scalar_one()
+
+    assert db_tournament.creator is not None
+    assert db_tournament.creator.id == tournament.creator.id
+
+
+async def test_tournament_status_relationship(db_session, create):
+    tournament = await create(TournamentFactory)
+
+    stmt = (
+        select(Tournament)
+        .where(Tournament.id == tournament.id)
+        .options(selectinload(Tournament.status))
+    )
+
+    result = await db_session.execute(stmt)
+    db_tournament = result.scalar_one()
+
+    assert db_tournament.status is not None
+    assert db_tournament.status.name in [
+        "Registration Open",
+        "Ongoing",
+        "Finished",
+    ]
+
+
+async def test_tournament_tasks_relationship(db_session, create):
+    tournament = await create(TournamentFactory)
+
+    await create(TaskFactory, tournament=tournament)
+    await create(TaskFactory, tournament=tournament)
+
+    stmt = (
+        select(Tournament)
+        .where(Tournament.id == tournament.id)
+        .options(selectinload(Tournament.tasks))
+    )
+
+    result = await db_session.execute(stmt)
+    db_tournament = result.scalar_one()
+
+    assert len(db_tournament.tasks) == 2
+
+
+async def test_create_tournament_status_option(db_session, create):
+    tournament_status_option = await create(TournamentStatusOptionFactory)
+
+    stmt = select(TournamentStatusOption).where(
+        TournamentStatusOption.id == tournament_status_option.id
+    )
+
+    result = await db_session.execute(stmt)
+    db_tournament_status_option = result.scalar_one()
+
+    assert db_tournament_status_option.name == tournament_status_option.name
+
+
+async def test_tournament_status_option_unique_name(db_session, create):
+    await create(TournamentStatusOptionFactory, name="Ongoing")
+
+    with pytest.raises(IntegrityError):
+        await create(TournamentStatusOptionFactory, name="Ongoing")
+
+    await db_session.rollback()
