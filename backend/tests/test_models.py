@@ -11,7 +11,6 @@ from app.models import (
     Tournament,
     TournamentStatusOption,
     TaskRequirementCategory,
-    TaskRequirementOption,
     Submission,
     SubmissionUrl,
     SubmissionUrlOption,
@@ -143,10 +142,11 @@ async def test_team_without_data(db_session):
 
 
 async def test_team_duplicate_email(db_session, create):
-    await create(TeamFactory)
+    email = "duplicate@example.com"
+    await create(TeamFactory, team_email=email)
 
     with pytest.raises(IntegrityError):
-        await create(TeamFactory)
+        await create(TeamFactory, team_email=email)
 
     await db_session.rollback()
 
@@ -249,6 +249,25 @@ async def test_task_category_hierarchy(db_session, create):
     assert len(db_parent.sub_categories) == 1
     assert db_parent.sub_categories[0].name == child.name
     assert db_parent.sub_categories[0].parent_category.name == parent.name
+
+
+async def test_create_task_status_option(create):
+    status = await create(TaskStatusOptionFactory)
+
+    assert status.name in ["draft", "active", "finished"]
+    assert status.display_name == status.name.upper()
+
+
+async def test_task_status_relationship(db_session, create):
+    status = await create(TaskStatusOptionFactory)
+    task = await create(TaskFactory, status=status)
+
+    stmt = select(Task).where(Task.id == task.id).options(selectinload(Task.status))
+
+    result = await db_session.execute(stmt)
+    db_task = result.scalar_one()
+
+    assert db_task.status.name == status.name
 
 
 # TOURNAMENT TESTS
@@ -385,3 +404,44 @@ async def test_submission_urls_relationship(db_session, create):
     db_submission = result.scalar_one()
 
     assert len(db_submission.urls) == 2
+
+
+async def test_multiple_submissions(create):
+    submissions1 = await create(SubmissionFactory)
+    submissions2 = await create(SubmissionFactory)
+
+    assert submissions1.team_id is not None
+    assert submissions2.team_id is not None
+    assert submissions1.team_id != submissions2.team_id
+
+
+async def test_submission_urls_belong_to_submission(create):
+    submission = await create(SubmissionFactory)
+
+    url1 = await create(SubmissionUrlFactory, submission=submission)
+    url2 = await create(SubmissionUrlFactory, submission=submission)
+
+    assert url1.submission_id == submission.team_id
+    assert url2.submission_id == submission.team_id
+
+
+async def test_submission_url_has_submission(db_session, create):
+    url = await create(SubmissionUrlFactory)
+
+    stmt = (
+        select(SubmissionUrl)
+        .where(SubmissionUrl.submission_id == url.submission_id)
+        .options(selectinload(SubmissionUrl.submission))
+    )
+
+    result = await db_session.execute(stmt)
+    db_url = result.scalar_one()
+
+    assert db_url.submission is not None
+
+
+async def test_submission_url_option_values(create):
+    option = await create(SubmissionUrlOptionFactory)
+
+    assert option.name.startswith("url_option_")
+    assert option.display_name == option.name.upper()

@@ -31,7 +31,7 @@ class UserFactory(BaseFactory):
         model = User
 
     full_name = Faker("name")
-    email = "test@example.com"
+    email = factory.Sequence(lambda n: f"user{n}@example.com")
     password = "very_strong_password"
 
 
