@@ -24,6 +24,8 @@ class User(Base, PKMixin):
     roles: Mapped[list["Role"]] = relationship(
         secondary=user_roles, back_populates="users"
     )
+    # notifications: Mapped[list["Notification"]] = relationship(back_populates="user")
+    # role_requests: Mapped[list["RoleRequest"]] = relationship(back_populates="user")
     created_tournaments: Mapped[list["Tournament"]] = relationship(
         back_populates="creator"
     )

@@ -13,6 +13,9 @@ from app.models import (
     TaskStatusOption,
     TaskRequirementOption,
     TaskRequirementCategory,
+    Submission,
+    SubmissionUrl,
+    SubmissionUrlOption,
 )
 
 
@@ -127,3 +130,26 @@ class TaskRequirementOptionFactory(BaseFactory):
     display_name = factory.LazyAttribute(lambda f: f.name.upper())
 
     category = factory.SubFactory(TaskRequirementCategoryFactory)
+
+
+class SubmissionFactory(BaseFactory):
+    class Meta:
+        model = Submission
+
+    team = factory.SubFactory(TeamFactory)
+
+
+class SubmissionUrlOptionFactory(BaseFactory):
+    class Meta:
+        model = SubmissionUrlOption
+
+    name = factory.Sequence(lambda n: f"url_option_{n}")
+    display_name = factory.LazyAttribute(lambda f: f.name.upper())
+
+
+class SubmissionUrlFactory(BaseFactory):
+    class Meta:
+        model = SubmissionUrl
+
+    submission = factory.SubFactory(SubmissionFactory)
+    url = factory.SubFactory(SubmissionUrlOptionFactory)

@@ -12,6 +12,9 @@ from app.models import (
     TournamentStatusOption,
     TaskRequirementCategory,
     TaskRequirementOption,
+    Submission,
+    SubmissionUrl,
+    SubmissionUrlOption,
 )
 
 from .factories import (
@@ -25,6 +28,9 @@ from .factories import (
     TaskFactory,
     TaskRequirementCategoryFactory,
     TaskRequirementOptionFactory,
+    SubmissionFactory,
+    SubmissionUrlFactory,
+    SubmissionUrlOptionFactory,
 )
 
 
@@ -354,3 +360,28 @@ async def test_tournament_status_option_unique_name(db_session, create):
         await create(TournamentStatusOptionFactory, name="Ongoing")
 
     await db_session.rollback()
+
+
+# SUBMISSION TESTS
+async def test_create_submission(create):
+    submission = await create(SubmissionFactory)
+
+    assert submission.team_id is not None
+    assert submission.team is not None
+
+
+async def test_submission_urls_relationship(db_session, create):
+    submission = await create(SubmissionFactory)
+    await create(SubmissionUrlFactory, submission=submission)
+    await create(SubmissionUrlFactory, submission=submission)
+
+    stmt = (
+        select(Submission)
+        .where(Submission.team_id == submission.team_id)
+        .options(selectinload(Submission.urls))
+    )
+
+    result = await db_session.execute(stmt)
+    db_submission = result.scalar_one()
+
+    assert len(db_submission.urls) == 2

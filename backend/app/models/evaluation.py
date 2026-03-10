@@ -1,6 +1,8 @@
 from sqlalchemy import ForeignKey, Table, Column
 from sqlalchemy.orm import mapped_column, Mapped, relationship
+
 from .base import Base
+from .mixin import PKMixin
 
 evaluation_requirements = Table(
     "evaluation_requirements",
@@ -18,7 +20,7 @@ evaluation_requirements = Table(
 )
 
 
-class SubmissionEvaluation(Base):
+class SubmissionEvaluation(Base, PKMixin):
     __tablename__ = "evaluations"
     submission_id: Mapped[int] = mapped_column(
         ForeignKey("submissions.team_id"), primary_key=True
@@ -27,12 +29,12 @@ class SubmissionEvaluation(Base):
 
     submission: Mapped["Submission"] = relationship(back_populates="evaluations")
     jury: Mapped["User"] = relationship()
-    evaluations: Mapped[list["RequirementEvaluation"]] = relationship(
+    requirement_evaluations: Mapped[list["RequirementEvaluation"]] = relationship(
         back_populates="evaluation"
     )
 
 
-class RequirementEvaluation(Base):
+class RequirementEvaluation(Base, PKMixin):
     __tablename__ = "requirement_evaluations"
     evaluation_id: Mapped[int] = mapped_column(
         ForeignKey("evaluations.id"), primary_key=True
@@ -41,4 +43,6 @@ class RequirementEvaluation(Base):
         back_populates="requirement_evaluations"
     )
     score: Mapped[int]
-    requirement: Mapped["TaskRequirementOption"] = relationship()
+    requirement: Mapped[list["TaskRequirementOption"]] = relationship(
+        secondary=evaluation_requirements
+    )
