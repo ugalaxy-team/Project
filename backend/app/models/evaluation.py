@@ -25,10 +25,10 @@ class SubmissionEvaluation(Base):
     )
     jury_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
 
-    submission: Mapped["Submission"] = relationship(back_populates="evaluations")
-    jury: Mapped["User"] = relationship()
+    submission: Mapped["Submission"] = relationship(back_populates="evaluations", lazy="selectin")
+    jury: Mapped["User"] = relationship(lazy="selectin")
     evaluations: Mapped[list["RequirementEvaluation"]] = relationship(
-        back_populates="evaluation"
+        back_populates="evaluation", lazy="selectin"
     )
 
 
@@ -38,7 +38,7 @@ class RequirementEvaluation(Base):
         ForeignKey("evaluations.id"), primary_key=True
     )
     evaluation: Mapped["SubmissionEvaluation"] = relationship(
-        back_populates="requirement_evaluations"
+        back_populates="requirement_evaluations", lazy="selectin"
     )
     score: Mapped[int]
-    requirement: Mapped["TaskRequirementOption"] = relationship()
+    requirement: Mapped["TaskRequirementOption"] = relationship(lazy="selectin")

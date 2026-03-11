@@ -20,17 +20,17 @@ class Tournament(Base, PKMixin):
     status_id: Mapped[int] = mapped_column(ForeignKey("tournament_status_options.id"))
     creator_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
-    teams: Mapped[list["Team"]] = relationship(back_populates="tournament")
+    teams: Mapped[list["Team"]] = relationship(back_populates="tournament", lazy="selectin")
     active_task: Mapped["Task"] = relationship(
-        "Task", foreign_keys="Tournament.active_task_id"
+        "Task", foreign_keys="Tournament.active_task_id", lazy="selectin"
     )
     tasks: Mapped[list["Task"]] = relationship(
-        "Task", back_populates="tournament", foreign_keys="Task.tournament_id"
+        "Task", back_populates="tournament", foreign_keys="Task.tournament_id", lazy="selectin"
     )
     status: Mapped["TournamentStatusOption"] = relationship(
-        back_populates="tournaments"
+        back_populates="tournaments", lazy="selectin"
     )
-    creator: Mapped["User"] = relationship(back_populates="created_tournaments")
+    creator: Mapped["User"] = relationship(back_populates="created_tournaments", lazy="selectin")
 
     def __repr__(self):
         return f"<Tournament(id={self.id}, title={self.title})>"
@@ -41,4 +41,4 @@ class TournamentStatusOption(Base, PKMixin):
 
     name: Mapped[str] = mapped_column(unique=True)
 
-    tournaments: Mapped[List["Tournament"]] = relationship(back_populates="status")
+    tournaments: Mapped[List["Tournament"]] = relationship(back_populates="status", lazy="selectin")

@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 
 class NotificationBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     body: str = Field(..., description="Notification body")
     user_id: int = Field(..., description="Notification receiver")
 

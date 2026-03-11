@@ -14,10 +14,10 @@ class RoleRequest(Base, PKMixin):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
     role: Mapped["Role"] = relationship(
-        back_populates="requests"
+        back_populates="requests", lazy="selectin"
     )
     user: Mapped["User"] = relationship(
-        back_populates="role_requests"
+        back_populates="role_requests", lazy="selectin"
     )
 
     def __repr__(self):

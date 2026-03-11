@@ -1,6 +1,9 @@
-from pydantic import BaseModel, Field, EmailStr, field_validator
+from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict
+from .role import RolePublic
 
 class UserBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     full_name: str = Field(..., description="Username")
 
     @field_validator("full_name")
@@ -15,11 +18,11 @@ class UserUpdate(UserBase):
 
 class UserPublic(UserBase):
     email: EmailStr
+    roles: list[RolePublic]
 
 class UserModel(UserBase):
     email: EmailStr = Field(..., description="User email")
-    password: str = Field(..., min_length=6, description="User password")
-    role: list[str]
+    password: str = Field(..., description="User password")
 
     @field_validator("email")
     @classmethod
@@ -27,5 +30,5 @@ class UserModel(UserBase):
         return value.lower().strip()
 
 # Return notifications of current user only
-class CurrentUser(UserModel):
+class CurrentUser(UserPublic):
     notifications: list[str]
