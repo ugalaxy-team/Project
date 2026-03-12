@@ -2,7 +2,7 @@ from fastapi import FastAPI
 import app.routes.tournaments as tournaments
 import app.routes.users as users
 import app.routes.profile as profile
-import backend.app.routes.role_requests as role_requests
+import app.routes.role_requests as role_requests
 
 app = FastAPI()
 app.include_router(tournaments.router)
