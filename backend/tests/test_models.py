@@ -185,7 +185,7 @@ async def test_team_cascade_delete_members(db_session, team, team_member):
     stmt = select(TeamMember).where(TeamMember.id == member_id)
     result = await db_session.execute(stmt)
 
-    assert result.scalar_one_or_none() is None
+    assert result.scalar() is None
 
 
 async def test_create_task(task, tournament):

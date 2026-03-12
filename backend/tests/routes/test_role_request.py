@@ -1,7 +1,7 @@
 import pytest
 from app.main import app
 from app.dependencies import get_current_user
-from app.routes.role_request import get_admin_user
+from backend.app.routes.role_requests import get_admin_user
 from app.models import RoleRequest
 from sqlalchemy import select
 

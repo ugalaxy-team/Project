@@ -11,7 +11,7 @@ router = APIRouter(prefix='/role-requests', tags=['role requests'])
 async def get_role_request(request_id: int, session: SessionDep) -> RoleRequest:
     statement = select(RoleRequest).where(RoleRequest.id==request_id)
     result = await session.execute(statement)
-    request = result.scalar_one_or_none()
+    request = result.scalar()
     if not request:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Role request not found!')
 
@@ -19,7 +19,7 @@ async def get_role_request(request_id: int, session: SessionDep) -> RoleRequest:
 
 async def get_admin_user(current_user: CurrentUserDep, session: SessionDep) -> User:
     statement = select(User).where(User.id==current_user.id).filter(User.roles.contains(Role.name == 'admin'))
-    user = (await session.execute(statement)).scalar_one_or_none()
+    user = (await session.execute(statement)).scalar()
     if not user:
         raise HTTPException(status.HTTP_403_FORBIDDEN, detail='Permission denied!')
     return user
