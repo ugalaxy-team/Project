@@ -18,6 +18,8 @@ from app.models import (
     SubmissionUrlOption,
     SubmissionEvaluation,
     RequirementEvaluation,
+    Notification,
+    RoleRequest,
 )
 
 
@@ -171,3 +173,19 @@ class RequirementEvaluationFactory(BaseFactory):
 
     evaluation = factory.SubFactory(SubmissionEvaluationFactory)
     score = factory.Faker("pyint", min_value=0, max_value=100)
+
+
+class NotificationFactory(BaseFactory):
+    class Meta:
+        model = Notification
+
+    body = factory.Sequence(lambda n: f"notification_{n}")
+    user = factory.SubFactory(UserFactory)
+
+
+class RoleRequestFactory(BaseFactory):
+    class Meta:
+        model = RoleRequest
+
+    role = factory.SubFactory(RoleFactory)
+    user = factory.SubFactory(UserFactory)

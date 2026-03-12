@@ -1,5 +1,7 @@
 from .base import Base
 from .evaluation import SubmissionEvaluation, RequirementEvaluation
+from .notification import Notification
+from .role_request import RoleRequest
 from .role import Role
 from .submission import Submission, SubmissionUrl, SubmissionUrlOption
 from .task import Task, TaskRequirementCategory, TaskRequirementOption, TaskStatusOption

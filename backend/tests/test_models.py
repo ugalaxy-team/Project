@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 from app.models import (
     User,
+    Role,
     TeamMember,
     Team,
     Task,
@@ -16,6 +17,8 @@ from app.models import (
     SubmissionUrlOption,
     SubmissionEvaluation,
     RequirementEvaluation,
+    Notification,
+    RoleRequest,
 )
 
 from .factories import (
@@ -34,6 +37,8 @@ from .factories import (
     SubmissionUrlOptionFactory,
     SubmissionEvaluationFactory,
     RequirementEvaluationFactory,
+    NotificationFactory,
+    RoleRequestFactory,
 )
 
 
@@ -540,3 +545,100 @@ async def test_requirement_evaluation_option_relationship(db_session, create):
     db_req_eval = result.scalar_one()
 
     assert db_req_eval.requirement[0].name == option.name
+
+
+# NOTIFICATION TESTS
+async def test_create_notification(create):
+    notification = await create(NotificationFactory)
+
+    assert notification.body is not None
+    assert notification.user is not None
+
+
+async def test_create_notification_without_data(db_session):
+    notification = Notification()
+    db_session.add(notification)
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+    await db_session.rollback()
+
+
+async def test_user_notifications_relationship(db_session, create):
+    user = await create(UserFactory)
+    await create(NotificationFactory, user=user)
+    await create(NotificationFactory, user=user)
+
+    stmt = (
+        select(User).where(User.id == user.id).options(selectinload(User.notifications))
+    )
+    result = await db_session.execute(stmt)
+    db_user = result.scalar_one()
+
+    assert len(db_user.notifications) == 2
+
+
+async def test_notification_body_unique(db_session, create):
+    notification = await create(NotificationFactory)
+
+    with pytest.raises(IntegrityError):
+        await create(
+            NotificationFactory,
+            body=notification.body,
+        )
+
+
+async def test_notification_user_relationship(db_session, create):
+    notification = await create(NotificationFactory)
+
+    stmt = (
+        select(Notification)
+        .where(Notification.id == notification.id)
+        .options(selectinload(Notification.user))
+    )
+
+    result = await db_session.execute(stmt)
+    db_notification = result.scalar_one()
+
+    assert db_notification.user.id == notification.user.id
+
+
+# ROLE REQUEST TESTS
+async def test_create_role_request(create):
+    role_request = await create(RoleRequestFactory)
+
+    assert role_request.role is not None
+    assert role_request.user is not None
+
+
+async def test_create_role_request_without_data(db_session):
+    role_request = RoleRequest()
+    db_session.add(role_request)
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+    await db_session.rollback()
+
+
+async def test_user_role_requests_relationship(db_session, create):
+    user = await create(UserFactory)
+    await create(RoleRequestFactory, user=user)
+    await create(RoleRequestFactory, user=user)
+
+    stmt = (
+        select(User).where(User.id == user.id).options(selectinload(User.role_requests))
+    )
+    result = await db_session.execute(stmt)
+    db_user = result.scalar_one()
+
+    assert len(db_user.role_requests) == 2
+
+
+async def test_role_requests_relationship(db_session, create):
+    role = await create(RoleFactory)
+    await create(RoleRequestFactory, role=role)
+    await create(RoleRequestFactory, role=role)
+
+    stmt = select(Role).where(Role.id == role.id).options(selectinload(Role.requests))
+    result = await db_session.execute(stmt)
+    db_role = result.scalar_one()
+
+    assert len(db_role.requests) == 2

@@ -11,9 +11,11 @@ class Role(Base, PKMixin):
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
 
     users: Mapped[list["User"]] = relationship(
-        secondary=user_roles, back_populates="roles"
+        secondary=user_roles, back_populates="roles", lazy="selectin"
     )
-    # requests: Mapped[list["RoleRequest"]] = relationship(back_populates="role")
+    requests: Mapped[list["RoleRequest"]] = relationship(
+        back_populates="role", lazy="selectin"
+    )
 
     def __repr__(self):
         return f"<Role(role={self.name})>"
