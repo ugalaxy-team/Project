@@ -28,9 +28,11 @@ class SubmissionEvaluation(Base, PKMixin):
     )
     jury_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
-    submission: Mapped["Submission"] = relationship(back_populates="evaluations", lazy="selectin")
+    submission: Mapped["Submission"] = relationship(
+        back_populates="evaluations", lazy="selectin"
+    )
     jury: Mapped["User"] = relationship(lazy="selectin")
-    evaluations: Mapped[list["RequirementEvaluation"]] = relationship(
+    requirement_evaluations: Mapped[list["RequirementEvaluation"]] = relationship(
         back_populates="evaluation", lazy="selectin"
     )
 
