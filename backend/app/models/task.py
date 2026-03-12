@@ -26,20 +26,20 @@ class Task(Base, PKMixin):
         ForeignKey("tournaments.id", use_alter=True, name="fk_task_tournament")
     )
     tournament: Mapped["Tournament"] = relationship(
-        "Tournament", back_populates="tasks", foreign_keys="Task.tournament_id"
+        "Tournament", back_populates="tasks", foreign_keys="Task.tournament_id", lazy="selectin"
     )
     start_time: Mapped[datetime]
     end_time: Mapped[datetime]
     status_id: Mapped[str] = mapped_column(ForeignKey("task_statuses.name"))
-    status: Mapped["TaskStatusOption"] = relationship(back_populates="tasks")
+    status: Mapped["TaskStatusOption"] = relationship(back_populates="tasks", lazy="selectin")
     requirements: Mapped[list["TaskRequirementOption"]] = relationship(
-        secondary=task_requirements
+        secondary=task_requirements, lazy="selectin"
     )
 
 
 class TaskStatusOption(Base, OptionMixin):
     __tablename__ = "task_statuses"
-    tasks: Mapped[list["Task"]] = relationship(back_populates="status")
+    tasks: Mapped[list["Task"]] = relationship(back_populates="status", lazy="selectin")
 
 
 class TaskRequirementOption(Base, OptionMixin):
@@ -48,7 +48,7 @@ class TaskRequirementOption(Base, OptionMixin):
         ForeignKey("task_requirement_categories.name")
     )
     category: Mapped["TaskRequirementCategory"] = relationship(
-        back_populates="task_requirement_options"
+        back_populates="task_requirement_options", lazy="selectin"
     )
 
 
@@ -58,11 +58,11 @@ class TaskRequirementCategory(Base, OptionMixin):
         ForeignKey("task_requirement_categories.name"), nullable=True
     )
     sub_categories: Mapped[list["TaskRequirementCategory"]] = relationship(
-        back_populates="parent_category"
+        back_populates="parent_category", lazy="selectin"
     )
     parent_category: Mapped["TaskRequirementCategory"] = relationship(
-        back_populates="sub_categories", remote_side="TaskRequirementCategory.name"
+        back_populates="sub_categories", remote_side="TaskRequirementCategory.name", lazy="selectin"
     )
     task_requirement_options: Mapped[list["TaskRequirementOption"]] = relationship(
-        back_populates="category"
+        back_populates="category", lazy="selectin"
     )

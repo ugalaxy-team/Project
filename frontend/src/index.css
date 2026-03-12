@@ -1,68 +1,85 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@theme {
+    --font-inter: "Inter", sans-serif;
+    --font-quicksand: "Quicksand", sans-serif;
+    --color-primary: #6366f1;
+    --color-accent: #fbbf24;
+    --color-bg-body: #f8fafc;
+    --color-bg-card: #ffffff;
+    --color-dark-theme: #1e293b;
+    --color-pink-accent: #ec4899;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+    --animate-marquee: marquee 40s linear infinite;
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+    @keyframes marquee {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+@layer base {
+    body {
+        @apply font-inter bg-primary text-white overflow-x-hidden leading-[1.5];
+    }
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply font-quicksand font-extrabold;
+    }
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+@layer utilities {
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+@layer components {
+    .btn {
+        @apply inline-flex items-center justify-center px-9 py-4 rounded-full font-quicksand font-bold text-[18px] cursor-pointer no-underline border-none transition-all duration-200;
+    }
+    .btn-accent {
+        @apply bg-accent text-slate-900 hover:-translate-y-1 hover:scale-105 shadow-[0_10px_20px_rgba(251,191,36,0.4)];
+    }
+    .btn-primary {
+        @apply bg-primary text-white hover:-translate-y-1 hover:scale-105 shadow-[0_10px_20px_rgba(99,102,241,0.4)];
+    }
+    .btn-dark {
+        @apply bg-dark-theme text-white hover:-translate-y-1 hover:scale-105;
+    }
+    .btn-outline {
+        @apply bg-transparent text-white border-2 border-white/40 hover:bg-white/10;
+    }
+
+    .tournaments {
+        @apply bg-bg-body text-dark-theme relative py-[100px] pt-[160px];
+    }
+    .section-header {
+        @apply px-[5%] mb-[60px] flex justify-between items-end;
+    }
+    .section-header h2 {
+        @apply text-[64px] leading-[1] uppercase;
+    }
+    .slider-area {
+        @apply relative w-full overflow-hidden pb-5;
+    }
+    .cards-track {
+        @apply flex gap-8 px-[5%] py-5 w-max cursor-grab active:cursor-grabbing;
+    }
+    .custom-scrollbar {
+        @apply mx-[5%] mt-10 h-3 bg-slate-200 rounded-full relative;
+    }
+    .scroll-thumb {
+        @apply absolute top-0 left-0 h-full w-[150px] bg-primary rounded-full cursor-grab transition-colors active:cursor-grabbing active:bg-indigo-600;
+    }
 }

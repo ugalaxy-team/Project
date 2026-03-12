@@ -22,13 +22,19 @@ class User(Base, PKMixin):
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
     roles: Mapped[list["Role"]] = relationship(
-        secondary=user_roles, back_populates="users"
+        secondary=user_roles, back_populates="users", lazy="selectin"
+    )
+    notifications: Mapped[list["Notification"]] = relationship(
+        back_populates="user", lazy="selectin"
+    )
+    role_requests: Mapped[list["RoleRequest"]] = relationship(
+        back_populates="user", lazy="selectin"
     )
     notifications: Mapped[list["Notification"]] = relationship(back_populates="user")
     role_requests: Mapped[list["RoleRequest"]] = relationship(back_populates="user")
     created_tournaments: Mapped[list["Tournament"]] = relationship(
-        back_populates="creator"
+        back_populates="creator", lazy="selectin"
     )
 
     def __repr__(self):
-        return f"<User(id={self.id}, email={self.email}, role={self.roles})>"
+        return f"<User(id={self.id}, email={self.email})>"

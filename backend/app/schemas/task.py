@@ -1,9 +1,11 @@
 from datetime import datetime
 from typing_extensions import Self
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
 
 
 class TaskModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     title: str = Field(..., min_length=3, description="Short name of the task")
     description: str = Field(
         description="A detailed description of what needs to be done"

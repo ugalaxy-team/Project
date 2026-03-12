@@ -1,9 +1,11 @@
 from datetime import datetime
 from typing_extensions import Self
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
 
 
 class TournamentModels(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     title: str = Field(..., min_length=3)
     description: str
     start_date: datetime
@@ -34,4 +36,6 @@ class TournamentModels(BaseModel):
 
 
 class TournamentStatusOptionModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     name: str = Field(..., min_length=3)

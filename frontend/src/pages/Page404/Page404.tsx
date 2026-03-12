@@ -1,39 +1,43 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 
-function Page404() {
-    const navigate = useNavigate();
+export const Page404 = () => {
+  const navigate = useNavigate();
 
-    return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 text-center">
-            <h1 className="text-9xl font-extrabold text-blue-600 tracking-widest">
-                404
-            </h1>
+  return (
+    <main className="min-h-[100dvh] flex flex-col items-center justify-center bg-bg-body px-6 text-center relative overflow-hidden">
+      <div className="absolute inset-0 -z-10 opacity-[0.03] bg-[radial-gradient(circle_at_center,#000_2px,transparent_2px)] bg-[size:24px_24px]"></div>
 
-            <div className="mt-8">
-                <h2 className="text-3xl font-bold text-gray-800 md:text-4xl">
-                    Схоже, ви загубилися...
-                </h2>
-                <p className="text-gray-600 mt-4 text-lg max-w-md mx-auto">
-                    Ця сторінка або пішла у відпустку, або її ніколи не існувало.
-                    Не хвилюйтеся, ми допоможемо вам повернутися.
-                </p>
-            </div>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <button
-                    onClick={() => navigate(-1)}
-                    className="px-8 py-3 font-semibold rounded-lg border-2 border-blue-600 text-white-600 hover:bg-blue-50 transition-colors"
-                >
-                    Назад
-                </button>
-                <button className="px-8 py-3 font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">
-                    <Link
-                        to="/">
-                        На головну
-                    </Link>
-                </button>
-            </div>
+      <div className="space-y-6 max-w-2xl relative z-10">
+        <h1 className="text-[120px] md:text-[150px] leading-none font-quicksand font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-primary to-pink-accent select-none drop-shadow-sm">
+          404
+        </h1>
+
+        <div className="space-y-4">
+          <h2 className="text-3xl md:text-4xl font-quicksand font-bold text-dark-theme">
+            Ви вийшли за межі системи 👾
+          </h2>
+          <p className="text-lg text-slate-600 max-w-md mx-auto font-inter">
+            Сторінку, яку ви шукаєте, було видалено, або вона існує лише в
+            паралельному всесвіті. Давайте повернемося на безпечну територію.
+          </p>
         </div>
-    );
-};
 
-export default Page404;
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-full sm:w-auto px-8 py-3.5 font-quicksand font-bold text-[18px] rounded-full border-2 border-primary text-primary hover:bg-primary/5 focus:outline-none focus:ring-4 focus:ring-primary/20 active:scale-95 transition-all"
+          >
+            ← Назад
+          </button>
+
+          <Link
+            to="/"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 font-quicksand font-bold text-[18px] rounded-full bg-primary text-white hover:-translate-y-1 shadow-[0_10px_20px_var(--color-primary)] shadow-primary/30 focus:outline-none focus:ring-4 focus:ring-primary/30 active:scale-95 transition-all"
+          >
+            На головну
+          </Link>
+        </div>
+      </div>
+    </main>
+  );
+};
