@@ -16,6 +16,8 @@ from app.models import (
     Submission,
     SubmissionUrl,
     SubmissionUrlOption,
+    SubmissionEvaluation,
+    RequirementEvaluation,
 )
 
 
@@ -153,3 +155,19 @@ class SubmissionUrlFactory(BaseFactory):
 
     submission = factory.SubFactory(SubmissionFactory)
     url = factory.SubFactory(SubmissionUrlOptionFactory)
+
+
+class SubmissionEvaluationFactory(BaseFactory):
+    class Meta:
+        model = SubmissionEvaluation
+
+    submission = factory.SubFactory(SubmissionFactory)
+    jury = factory.SubFactory(UserFactory)
+
+
+class RequirementEvaluationFactory(BaseFactory):
+    class Meta:
+        model = RequirementEvaluation
+
+    evaluation = factory.SubFactory(SubmissionEvaluationFactory)
+    score = factory.Faker("pyint", min_value=0, max_value=100)

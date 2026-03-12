@@ -14,6 +14,8 @@ from app.models import (
     Submission,
     SubmissionUrl,
     SubmissionUrlOption,
+    SubmissionEvaluation,
+    RequirementEvaluation,
 )
 
 from .factories import (
@@ -30,6 +32,8 @@ from .factories import (
     SubmissionFactory,
     SubmissionUrlFactory,
     SubmissionUrlOptionFactory,
+    SubmissionEvaluationFactory,
+    RequirementEvaluationFactory,
 )
 
 
@@ -445,3 +449,94 @@ async def test_submission_url_option_values(create):
 
     assert option.name.startswith("url_option_")
     assert option.display_name == option.name.upper()
+
+
+# EVALUATION TESTS
+async def test_create_submission_evaluation(create):
+    evaluation = await create(SubmissionEvaluationFactory)
+
+    assert evaluation.id is not None
+    assert evaluation.submission is not None
+    assert evaluation.jury is not None
+
+
+async def test_create_requirement_evaluation(create):
+    evaluation = await create(RequirementEvaluationFactory)
+
+    assert evaluation.evaluation_id is not None
+    assert evaluation.evaluation is not None
+    assert 0 <= evaluation.score <= 100
+
+
+async def test_evaluation_multiple_requirements(create):
+    evaluation = await create(SubmissionEvaluationFactory)
+
+    req1 = await create(RequirementEvaluationFactory, evaluation=evaluation)
+    req2 = await create(RequirementEvaluationFactory, evaluation=evaluation)
+
+    assert req1.evaluation_id == evaluation.id
+    assert req2.evaluation_id == evaluation.id
+
+
+async def test_submission_evaluations_relationship(db_session, create):
+    submission = await create(SubmissionFactory)
+
+    await create(SubmissionEvaluationFactory, submission=submission)
+    await create(SubmissionEvaluationFactory, submission=submission)
+
+    stmt = (
+        select(Submission)
+        .where(Submission.team_id == submission.team_id)
+        .options(selectinload(Submission.evaluations))
+    )
+
+    result = await db_session.execute(stmt)
+    db_submission = result.scalar_one()
+
+    assert len(db_submission.evaluations) == 2
+
+
+async def test_judge_cannot_evaluate_twice(create):
+    evaluation = await create(SubmissionEvaluationFactory)
+
+    with pytest.raises(IntegrityError):
+        await create(
+            SubmissionEvaluationFactory,
+            submission=evaluation.submission,
+            jury=evaluation.jury,
+        )
+
+
+async def test_evaluation_jury_relationship(db_session, create):
+    evaluation = await create(SubmissionEvaluationFactory)
+
+    stmt = (
+        select(SubmissionEvaluation)
+        .where(SubmissionEvaluation.id == evaluation.id)
+        .options(selectinload(SubmissionEvaluation.jury))
+    )
+
+    result = await db_session.execute(stmt)
+    db_eval = result.scalar_one()
+
+    assert db_eval.jury.id == evaluation.jury.id
+
+
+async def test_requirement_evaluation_option_relationship(db_session, create):
+    option = await create(TaskRequirementOptionFactory)
+
+    req_eval = await create(
+        RequirementEvaluationFactory,
+        requirement=[option],
+    )
+
+    stmt = (
+        select(RequirementEvaluation)
+        .where(RequirementEvaluation.id == req_eval.id)
+        .options(selectinload(RequirementEvaluation.requirement))
+    )
+
+    result = await db_session.execute(stmt)
+    db_req_eval = result.scalar_one()
+
+    assert db_req_eval.requirement[0].name == option.name
