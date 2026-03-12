@@ -1,3 +1,8 @@
+import { getAuth } from "firebase/auth";
+
 export const Profile = () => {
-  return <h1>Сторінка для профілю</h1>;
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  return <h1>Вітаю, {user?.displayName}</h1>;
 };

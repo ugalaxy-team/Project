@@ -1,3 +1,4 @@
+import { getAuth } from "firebase/auth";
 import { Link, NavLink } from "react-router-dom";
 
 export const Header = () => {
@@ -7,6 +8,8 @@ export const Header = () => {
     { path: "/join", label: "Як долучитись" },
     { path: "/rating", label: "Рейтинг" },
   ];
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   return (
     <div className="w-full bg-primary relative z-50">
@@ -24,8 +27,7 @@ export const Header = () => {
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `group relative font-semibold text-[16px] py-2 transition-colors duration-300 ${
-                  isActive ? "text-accent" : "text-white hover:text-accent"
+                `group relative font-semibold text-[16px] py-2 transition-colors duration-300 ${isActive ? "text-accent" : "text-white hover:text-accent"
                 }`
               }
             >
@@ -33,9 +35,8 @@ export const Header = () => {
                 <>
                   {item.label}
                   <span
-                    className={`absolute bottom-0 left-0 h-[2px] bg-accent transition-all duration-300 ${
-                      isActive ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
+                    className={`absolute bottom-0 left-0 h-[2px] bg-accent transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"
+                      }`}
                   ></span>
                 </>
               )}
@@ -43,9 +44,11 @@ export const Header = () => {
           ))}
         </nav>
 
-        <Link to="/auth" className="btn btn-outline py-2.5 px-7 text-base">
+        {user ? <Link to="/profile" className="btn btn-outline py-2.5 px-7 text-base">
+          Профіль
+        </Link> : <Link to="/auth/sign-in" className="btn btn-outline py-2.5 px-7 text-base">
           Увійти
-        </Link>
+        </Link>}
       </header>
     </div>
   );

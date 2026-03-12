@@ -1,19 +1,25 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home/Home";
-import { Auth } from "./pages/Auth/Auth";
 import { Profile } from "./pages/Profile/Profile";
 import { TournamentsPage } from "./pages/TournamentsPage/TournamentsPage";
 import { TournamentPage } from "./pages/TournamentPage/TournamentPage";
 import { Page404 } from "./pages/Page404/Page404";
+import SignIn from "./pages/Auth/SignIn";
+import SignUp from "./pages/Auth/SignUp";
+import SignOut from "./pages/Auth/SignOut";
 
 export const App = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/auth" element={<Auth />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/tournaments" element={<TournamentsPage />} />
+        <Route path="/auth/" >
+          <Route path="sign-in" element={<SignIn />} />
+          <Route path="sign-up" element={<SignUp />} />
+          <Route path="sign-out" element={<SignOut />} />
+        </Route>
         <Route path="/tournament/:id" element={<TournamentPage />} />
         <Route path="*" element={<Page404 />} />
       </Routes>
