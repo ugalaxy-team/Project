@@ -9,6 +9,7 @@ class RoleRequestBase(BaseModel):
     user_id: int = Field(..., description="User requesting the role")
 
 class RoleRequestPublic(RoleRequestBase):
+    id: int
     user: UserPublic
     role: RolePublic
 
