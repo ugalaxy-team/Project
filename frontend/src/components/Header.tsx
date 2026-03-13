@@ -1,5 +1,5 @@
-import { getAuth } from "firebase/auth";
 import { Link, NavLink } from "react-router-dom";
+import { auth } from "../firebase";
 
 export const Header = () => {
   const navItems = [
@@ -8,7 +8,6 @@ export const Header = () => {
     { path: "/join", label: "Як долучитись" },
     { path: "/rating", label: "Рейтинг" },
   ];
-  const auth = getAuth();
   const user = auth.currentUser;
 
   return (

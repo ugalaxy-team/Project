@@ -1,10 +1,10 @@
-import { getAuth, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
+import { auth } from "../../firebase";
 
 const SignOut = () => {
     useEffect(() => {
-        const auth = getAuth();
         signOut(auth).catch((error) => {
             console.log(error);
         });

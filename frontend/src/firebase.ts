@@ -1,10 +1,10 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { initializeApp, type FirebaseOptions } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { initializeUI, requireDisplayName } from '@firebase-oss/ui-core';
+import { browserLocalPersistence, getAuth, GoogleAuthProvider, onAuthStateChanged, setPersistence } from "firebase/auth";
+import { initializeUI, providerPopupStrategy, requireDisplayName } from '@firebase-oss/ui-core';
 
-const firebaseConfig = {
+const firebaseConfig: FirebaseOptions = {
     apiKey: "AIzaSyDYEFX52SBP1Z4H64li_BD9a-TnrB-8FQ8",
     authDomain: "tournament-project-9a31a.firebaseapp.com",
     projectId: "tournament-project-9a31a",
@@ -17,12 +17,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
+// TODO: implement redirect strategy
 const ui = initializeUI({
     app,
     behaviors: [
         requireDisplayName(),
+        providerPopupStrategy(),
     ],
 });
+await setPersistence(auth, browserLocalPersistence);
+const google = new GoogleAuthProvider();
+google.addScope('profile');
+google.addScope('email');
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -34,4 +40,4 @@ onAuthStateChanged(auth, (user) => {
 });
 
 export default app;
-export { analytics, auth, ui };
+export { analytics, auth, ui, google };
