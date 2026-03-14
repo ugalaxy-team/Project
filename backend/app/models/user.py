@@ -15,23 +15,27 @@ user_roles = Table(
 
 class User(Base, PKMixin):
     __tablename__ = "users"
-
+    # Firbase user id
+    firebase_uid: Mapped[str] = mapped_column(unique=True)
     full_name: Mapped[str] = mapped_column(nullable=False)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
-    password: Mapped[str] = mapped_column(nullable=False)
+    # password: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
     roles: Mapped[list["Role"]] = relationship(
-        secondary=user_roles, back_populates="users", lazy="selectin"
+        secondary=user_roles, back_populates="users", lazy="selectin",
     )
     notifications: Mapped[list["Notification"]] = relationship(
-        back_populates="user", lazy="selectin"
+        back_populates="user", lazy="selectin",
+        cascade="all, delete-orphan",
     )
     role_requests: Mapped[list["RoleRequest"]] = relationship(
-        back_populates="user", lazy="selectin"
+        back_populates="user", lazy="selectin",
+        cascade="all, delete-orphan",
     )
     created_tournaments: Mapped[list["Tournament"]] = relationship(
-        back_populates="creator", lazy="selectin"
+        back_populates="creator", lazy="selectin",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self):
