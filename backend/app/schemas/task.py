@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing_extensions import Self
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -35,8 +35,18 @@ class TaskModel(TaskBase):
     @field_validator("start_time")
     @classmethod
     def start_not_past(cls, value: datetime):
-        if value < datetime.now():
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+
+        if value < datetime.now(timezone.utc):
             raise ValueError("Task cannot start in the past")
+        return value
+
+    @field_validator("end_time")
+    @classmethod
+    def end_make_aware(cls, value: datetime):
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
         return value
 
     @model_validator(mode="after")

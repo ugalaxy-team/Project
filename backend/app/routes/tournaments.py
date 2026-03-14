@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
-from app.schemas import TournamentModels
-from app.models import Tournament
+from app.schemas import TournamentModels, TeamModel
+from app.models import Tournament, Team
 from app.dependencies import SessionDep
 from sqlalchemy import select
 
