@@ -3,20 +3,34 @@ from typing_extensions import Self
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
-class TaskModel(BaseModel):
+class TaskBase(BaseModel):
     title: str = Field(..., min_length=3, description="Short name of the task")
-    description: str = Field(
-        description="A detailed description of what needs to be done"
+    description: str | None = Field(
+        None, description="A detailed description of what needs to be done"
     )
-    start_time: datetime
-    end_time: datetime
-    tournament_id: int = Field(..., gt=0)
-    status_id: str = Field(..., gt=0)
 
     @field_validator("title")
     @classmethod
     def check_title(cls, value: str):
+        if not value.strip():
+            raise ValueError("Title cannot be empty")
         return value.strip()
+
+
+class TaskUpdate(TaskBase):
+    title: str | None = Field(None, min_length=3)
+    description: str | None = None
+    start_time: datetime | None = None
+    end_time: datetime | None = None
+    tournament_id: int | None = Field(None, gt=0)
+    status_id: int | None = Field(None, gt=0)
+
+
+class TaskModel(TaskBase):
+    start_time: datetime
+    end_time: datetime
+    tournament_id: int = Field(..., gt=0)
+    status_id: int = Field(..., gt=0)
 
     @field_validator("start_time")
     @classmethod
