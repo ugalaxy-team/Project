@@ -10,10 +10,10 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 async def get_task(task_id: int, session: SessionDep) -> Task:
     statement = select(Task).where(Task.id == task_id)
-    tournament = (await session.execute(statement)).scalar()
-    if not tournament:
+    task = (await session.execute(statement)).scalar()
+    if not task:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Task not found!")
-    return tournament
+    return task
 
 
 @router.get("/", response_model=list[TaskModel], status_code=status.HTTP_200_OK)
