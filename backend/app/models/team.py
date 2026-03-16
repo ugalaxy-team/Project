@@ -16,11 +16,18 @@ class Team(Base, PKMixin):
         ForeignKey("team_members.id", ondelete="CASCADE"), nullable=True
     )
 
-    tournament: Mapped["Tournament"] = relationship(back_populates="teams")
+    tournament: Mapped["Tournament"] = relationship(back_populates="teams", lazy="selectin")
     members: Mapped[list["TeamMember"]] = relationship(
         back_populates="team",
         foreign_keys="TeamMember.team_id",
         cascade="all, delete-orphan",
+    )
+    captain: Mapped["TeamMember"] = relationship(
+        "TeamMember", foreign_keys="Team.captain_id", post_update=True
+    )
+
+    submission: Mapped["Submission"] = relationship(
+        back_populates="team", cascade="all, delete-orphan"
     )
 
     def __repr__(self):
@@ -39,7 +46,7 @@ class TeamMember(Base, PKMixin):
     )
 
     team: Mapped["Team"] = relationship(
-        back_populates="members", foreign_keys=[team_id]
+        back_populates="members", foreign_keys=[team_id], lazy="selectin"
     )
 
     def __repr__(self):
