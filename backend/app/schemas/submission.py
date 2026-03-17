@@ -10,7 +10,7 @@ class SubmissionUrlOptionModel(BaseModel):
 class SubmissionUrlModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    url_id: str = Field(...)
+    url_id: str = Field(..., description="ID of the URL option")
     url: SubmissionUrlOptionModel | None
 
 
