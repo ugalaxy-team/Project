@@ -16,7 +16,7 @@ class TeamBase(BaseModel):
 class TeamUpdate(TeamBase):
     name: str | None = None
     team_email: EmailStr | None = None
-    contact_info: str | None = None
+    contact_info: PhoneNumber | None = None
     captain_id: int | None = None
 
 

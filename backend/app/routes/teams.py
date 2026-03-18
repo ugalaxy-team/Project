@@ -1,6 +1,7 @@
 from fastapi import status, HTTPException
 from fastapi.routing import APIRouter
 from sqlalchemy import select, update
+from sqlalchemy.exc import IntegrityError
 from app.dependencies import SessionDep
 from app.models import Team
 from app.schemas import TeamModel, TeamUpdate
@@ -31,10 +32,18 @@ async def team(team_id: int, session: SessionDep):
 @router.post("/", response_model=TeamModel, status_code=status.HTTP_201_CREATED)
 async def create_team(team_data: TeamModel, session: SessionDep):
     new_team = Team(**team_data.model_dump())
-
     session.add(new_team)
-    await session.commit()
-    await session.refresh(new_team)
+
+    try:
+        await session.commit()
+        await session.refresh(new_team)
+    except IntegrityError:
+        await session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Team with this name, email or phone number already exists",
+        )
+
     return new_team
 
 
@@ -48,17 +57,27 @@ async def update_team(team_id: int, team_data: TeamUpdate, session: SessionDep):
             detail="No fields provided for update",
         )
 
-    result = await session.execute(
-        update(Team).where(Team.id == team_id).values(**update_data).returning(Team)
-    )
-    updated_team = result.scalar_one_or_none()
+    try:
+        result = await session.execute(
+            update(Team).where(Team.id == team_id).values(**update_data).returning(Team)
+        )
+        updated_team = result.scalar_one_or_none()
 
-    if not updated_team:
+        if not updated_team:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Team not found"
+            )
+
+        await session.commit()
+        await session.refresh(updated_team)
+
+    except IntegrityError:
+        await session.rollback()
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Team not found"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Team with this name, email, or phone number already exists",
         )
 
-    await session.commit()
     return updated_team
 
 
