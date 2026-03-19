@@ -1,8 +1,10 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp, type FirebaseOptions } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { browserLocalPersistence, getAuth, GoogleAuthProvider, onAuthStateChanged, setPersistence } from "firebase/auth";
 import { initializeUI, providerPopupStrategy, requireDisplayName } from '@firebase-oss/ui-core';
+import { setUser } from "./slices/user";
+import { useDispatch } from "react-redux";
+import { store, type AppDispatch } from "./store";
 
 const firebaseConfig: FirebaseOptions = {
     apiKey: "AIzaSyDYEFX52SBP1Z4H64li_BD9a-TnrB-8FQ8",
@@ -32,9 +34,18 @@ google.addScope('email');
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        const uid = user.uid;
-        console.log(uid);
+        const userData = {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            emailVerified: user.emailVerified,
+            isAnonymous: user.isAnonymous,
+        };
+        store.dispatch(setUser(userData));
+        console.log('User authenticated!');
     } else {
+        store.dispatch(setUser(null));
         console.log('Sign out!')
     }
 });

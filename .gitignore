@@ -362,3 +362,4 @@ vite.config.ts.timestamp-*
 .vite/
 *.db
 serviceAccountKey.json
+.vscode

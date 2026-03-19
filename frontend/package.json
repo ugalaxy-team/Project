@@ -12,11 +12,13 @@
   "dependencies": {
     "@firebase-oss/ui-react": "^7.0.2-beta",
     "@lottiefiles/react-lottie-player": "^3.6.0",
+    "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/vite": "^4.2.1",
     "axios": "^1.13.6",
     "firebase": "^12.10.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^7.13.1",
     "tailwindcss": "^4.2.1"
   },
