@@ -23,14 +23,14 @@ async def get_team_member(member_id: int, session: SessionDep) -> TeamMember:
     return member
 
 
-@router.get("/", response_model=list[TeamMemberModel])
+@router.get("/", response_model=list[TeamMemberModel], status_code=status.HTTP_200_OK)
 async def team_members(session: SessionDep):
     statement = select(TeamMember)
     result = await session.execute(statement)
     return result.scalars().all()
 
 
-@router.get("/{member_id}/", response_model=TeamMemberModel)
+@router.get("/{member_id}/", response_model=TeamMemberModel, status_code=status.HTTP_200_OK)
 async def team_member(member_id: int, session: SessionDep):
     return await get_team_member(member_id, session)
 
@@ -53,7 +53,7 @@ async def create_team_member(member_data: TeamMemberModel, session: SessionDep):
     return new_member
 
 
-@router.patch("/{member_id}/", response_model=TeamMemberModel)
+@router.patch("/{member_id}/", response_model=TeamMemberModel, status_code=status.HTTP_200_OK)
 async def update_team_member(
     member_id: int, member_data: TeamMemberUpdate, session: SessionDep
 ):
