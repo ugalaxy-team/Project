@@ -10,6 +10,7 @@ const deleteUser = async (token: string) => {
                 Authorization: `Bearer ${token}`
             },
         });
+        await auth.updateCurrentUser(null);
         store.dispatch(setUser(null));
     } catch (e) {
         console.log(`Error occured ${e}`);
