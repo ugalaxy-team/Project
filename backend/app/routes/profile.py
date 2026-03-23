@@ -1,6 +1,8 @@
 from fastapi import APIRouter, status
 from app.schemas import UserUpdate, UserPublic
 from app.dependencies import SessionDep, CurrentUserDep
+import firebase_admin.auth as auth
+from app.firebase import firebase
 
 router = APIRouter(prefix='/profile', tags=['profile'])
 
@@ -15,4 +17,6 @@ async def edit_profile(session: SessionDep, current_user: CurrentUserDep,
 @router.delete('/', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_profile(session: SessionDep, current_user: CurrentUserDep):
     await session.delete(current_user)
+    if auth.get_user(current_user.firebase_uid):
+        auth.delete_user(current_user.firebase_uid, firebase)
     await session.commit()

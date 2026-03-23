@@ -1,9 +1,16 @@
 import { useSelector } from "react-redux";
-import { auth } from "../../firebase";
 import type { RootState } from "../../store";
+import deleteUser from "../../api/deleteUser";
 
 export const Profile = () => {
   const user = useSelector((s: RootState) => s.user);
+  const handleDeleteUser = async () => {
+    if (!user) return;
+    deleteUser(await user.getIdToken());
+  };
 
-  return <h1>Вітаю, {user?.displayName}</h1>;
+  return <div>
+    <h1>Вітаю, {user?.displayName}</h1>
+    <button onClick={handleDeleteUser}>Delete</button>
+  </div>;
 };

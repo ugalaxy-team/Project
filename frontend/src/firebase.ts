@@ -34,15 +34,7 @@ google.addScope('email');
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        const userData = {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            emailVerified: user.emailVerified,
-            isAnonymous: user.isAnonymous,
-        };
-        store.dispatch(setUser(userData));
+        store.dispatch(setUser(user));
         console.log('User authenticated!');
     } else {
         store.dispatch(setUser(null));

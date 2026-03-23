@@ -1,8 +1,44 @@
 from typing import Annotated
-from fastapi import Depends
+from fastapi import Depends, Header, HTTPException, status
 from app.models import User
+from .session import SessionDep
+from firebase_admin import auth
+from firebase_admin.auth import (
+    InvalidIdTokenError,
+    ExpiredIdTokenError,
+    RevokedIdTokenError,
+    CertificateFetchError,
+    UserDisabledError,
+)
+from app.firebase import firebase
+from app.routes.users import get_user
 
-async def get_current_user():
-    raise NotImplementedError('Authentication logic has to be implemented first!')
+async def get_current_user(
+    session: SessionDep,
+    authorization: Annotated[str, Header()],
+) -> User:
+    token = authorization.replace("Bearer ", "")
+    try:
+        token = auth.verify_id_token(token, firebase)
+        u = auth.get_user_by_email(token['email'])
+        try:
+            user = await get_user(u.uid, session)
+        except HTTPException:
+            user = User(firebase_uid=u.uid, full_name=u.display_name, email=u.email)
+            session.add(user)
+            await session.commit()
+            await session.refresh(user)
+    except (
+        ValueError,
+        InvalidIdTokenError,
+        ExpiredIdTokenError,
+        RevokedIdTokenError,
+        CertificateFetchError,
+        UserDisabledError,
+    ) as e:
+        print(e)
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail='Invalid id token!')
+    return user
+    
 
 CurrentUserDep = Annotated[User, Depends(get_current_user)]
