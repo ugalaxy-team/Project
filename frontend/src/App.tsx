@@ -9,6 +9,7 @@ import SignUp from "./pages/Auth/SignUp";
 import SignOut from "./pages/Auth/SignOut";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 export const App = () => {
   return (
@@ -17,7 +18,11 @@ export const App = () => {
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } />
           <Route path="/tournaments" element={<TournamentsPage />} />
           <Route path="/auth/" >
             <Route path="sign-in" element={<SignIn />} />

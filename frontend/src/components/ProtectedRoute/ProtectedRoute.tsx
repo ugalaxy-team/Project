@@ -1,0 +1,17 @@
+import { type ReactNode } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
+
+interface ProtectedRouteProps {
+    children?: ReactNode;
+}
+
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+    const user = useSelector((s: RootState) => s.user);
+    if (!user) return <Navigate to='/auth/sign-in/' />;
+
+    return children ? children : <Outlet />;
+}
+
+export default ProtectedRoute;
