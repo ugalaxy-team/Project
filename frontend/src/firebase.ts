@@ -3,8 +3,7 @@ import { getAnalytics } from "firebase/analytics";
 import { browserLocalPersistence, getAuth, GoogleAuthProvider, onAuthStateChanged, setPersistence } from "firebase/auth";
 import { initializeUI, providerPopupStrategy, requireDisplayName } from '@firebase-oss/ui-core';
 import { setUser } from "./slices/user";
-import { useDispatch } from "react-redux";
-import { store, type AppDispatch } from "./store";
+import { store } from "./store";
 
 const firebaseConfig: FirebaseOptions = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -32,9 +31,18 @@ const google = new GoogleAuthProvider();
 google.addScope('profile');
 google.addScope('email');
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
     if (user) {
-        store.dispatch(setUser(user));
+        const userData = {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            emailVerified: user.emailVerified,
+            isAnonymous: user.isAnonymous,
+            idToken: await user.getIdToken()
+        };
+        store.dispatch(setUser(userData));
         console.log('User authenticated!');
     } else {
         store.dispatch(setUser(null));

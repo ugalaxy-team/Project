@@ -1,8 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { User } from "firebase/auth";
+
+interface FirebaseUserData {
+    uid: string;
+    email: string | null;
+    displayName: string | null;
+    photoURL: string | null;
+    emailVerified: boolean;
+    isAnonymous: boolean;
+    idToken: string;
+}
 
 interface UserState {
-    user: User | null;
+    user: FirebaseUserData | null;
 };
 
 const initialUserState: UserState = {

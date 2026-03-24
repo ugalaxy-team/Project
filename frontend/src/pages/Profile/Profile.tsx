@@ -6,7 +6,7 @@ export const Profile = () => {
   const user = useSelector((s: RootState) => s.user);
   const handleDeleteUser = async () => {
     if (!user) return;
-    deleteUser(await user.getIdToken());
+    deleteUser(user.idToken);
   };
 
   return <div>
