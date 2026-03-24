@@ -25,8 +25,11 @@ export const userSlice = createSlice({
         setUser: (state, action) => {
             state.user = action.payload;
         },
-
+        setDisplayName: (state, action) => {
+            if (!state.user) return;
+            state.user.displayName = action.payload;
+        }
     }
 })
 
-export const { setUser } = userSlice.actions;
+export const { setUser, setDisplayName } = userSlice.actions;
