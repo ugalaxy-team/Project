@@ -3,12 +3,17 @@ from typing import Annotated
 from app.schemas import UserPublic
 from app.models import User
 from app.dependencies import SessionDep
-from sqlalchemy import select
+from sqlalchemy import select, or_
 
 router = APIRouter(prefix='/users', tags=['users'])
 
-async def get_user(user_id: int, session: SessionDep):
-    statement = select(User).where(User.id==user_id)
+async def get_user(identifier: str | int, session: SessionDep):
+    if isinstance(identifier, str):
+        statement = select(User).where(or_(User.firebase_uid==identifier, User.email==identifier))
+    elif isinstance(identifier, int):
+        statement = select(User).where(User.id==identifier)
+    else:
+        raise ValueError('Wrong user identifier type')
     user = (await session.execute(statement)).scalar()
     if not user:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail='User not found!')

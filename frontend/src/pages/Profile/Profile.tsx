@@ -2,6 +2,13 @@ import React from 'react';
 import './Profile.css';
 
 const Profile = () => {
+  const user = useSelector((s: RootState) => s.user);
+  const handleDeleteUser = async () => {
+    if (!user) return;
+    if (!auth.currentUser) return;
+    deleteUser(auth.currentUser);
+  };
+
   return (
     <div className="profile-container">
       {/* Головна картка профілю */}
@@ -20,6 +27,7 @@ const Profile = () => {
             </div>
           </div>
           <button className="edit-btn">Редагувати профіль</button>
+          <button className="delete-btn">Видалити профіль</button>
         </div>
 
         <div className="divider"></div>

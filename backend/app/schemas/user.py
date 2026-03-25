@@ -12,6 +12,11 @@ class UserBase(BaseModel):
         if not value.strip():
             raise ValueError("The name cannot be empty")
         return value
+    
+class UserCreate(UserBase):
+    id: str = Field(..., description='Firebase user id')
+    email: EmailStr = Field(..., description='Email')
+    # password: str = Field(..., description='Password')
 
 class UserUpdate(UserBase):
     full_name: str | None = None
