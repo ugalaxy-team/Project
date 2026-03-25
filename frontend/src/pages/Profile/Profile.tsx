@@ -1,5 +1,8 @@
-import React from 'react';
 import './Profile.css';
+import { useSelector } from 'react-redux';
+import { auth } from '../../firebase';
+import deleteUser from '../../api/deleteUser';
+import type { RootState } from '../../store';
 
 const Profile = () => {
   const user = useSelector((s: RootState) => s.user);
@@ -27,7 +30,7 @@ const Profile = () => {
             </div>
           </div>
           <button className="edit-btn">Редагувати профіль</button>
-          <button className="delete-btn">Видалити профіль</button>
+          <button onClick={handleDeleteUser} className="edit-btn">Видалити профіль</button>
         </div>
 
         <div className="divider"></div>
@@ -57,7 +60,7 @@ const Profile = () => {
 
       {/* Нижня сітка з двома колонками */}
       <div className="content-grid">
-        
+
         {/* Картка Турніри */}
         <div className="card list-card">
           <h2 className="card-title">
@@ -115,4 +118,4 @@ const Profile = () => {
   );
 };
 
-export {Profile};
+export { Profile };
