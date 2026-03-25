@@ -11,11 +11,11 @@ interface FirebaseUserData {
 }
 
 interface UserState {
-    user: FirebaseUserData | null;
+    user: FirebaseUserData | null | undefined;
 };
 
 const initialUserState: UserState = {
-    user: null,
+    user: undefined,
 }
 
 export const userSlice = createSlice({
