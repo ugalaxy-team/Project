@@ -11,6 +11,7 @@ const Profile = () => {
     if (!auth.currentUser) return;
     deleteUser(auth.currentUser);
   };
+  if (!user) return <div>Loading...</div>
 
   return (
     <div className="profile-container">
@@ -25,7 +26,7 @@ const Profile = () => {
               </svg>
             </div>
             <div className="profile-details">
-              <h1 className="profile-name">Hacker777</h1>
+              <h1 className="profile-name">{user?.displayName}</h1>
               <span className="role-badge">Роль: Користувач</span>
             </div>
           </div>
