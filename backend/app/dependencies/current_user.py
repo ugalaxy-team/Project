@@ -1,5 +1,6 @@
 from typing import Annotated
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer
 from app.models import User
 from .session import SessionDep
 from firebase_admin import auth
@@ -15,11 +16,10 @@ from app.routes.users import get_user
 
 async def get_current_user(
     session: SessionDep,
-    authorization: Annotated[str, Header()],
+    token: Annotated[HTTPBearer, Depends(HTTPBearer())]
 ) -> User:
-    token = authorization.replace("Bearer ", "")
     try:
-        token = auth.verify_id_token(token, firebase)
+        token = auth.verify_id_token(token.credentials, firebase)
         u = auth.get_user_by_email(token['email'])
         try:
             user = await get_user(u.uid, session)
