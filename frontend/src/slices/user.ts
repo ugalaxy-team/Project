@@ -1,13 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface FirebaseUserData {
+export interface FirebaseUserData {
     uid: string;
     email: string | null;
     displayName: string | null;
     photoURL: string | null;
     emailVerified: boolean;
     isAnonymous: boolean;
-    idToken: string;
 }
 
 interface UserState {

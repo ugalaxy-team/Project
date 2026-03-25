@@ -1,13 +1,15 @@
+import type { User } from "firebase/auth";
 import { auth } from "../firebase";
 import { setUser } from "../slices/user";
 import { store } from "../store";
 import apiClient from "./client";
 
-const deleteUser = async (token: string) => {
+const deleteUser = async (user: User) => {
     try {
+        const token = await user.getIdToken();
         await apiClient.delete('/profile/', {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`,
             },
         });
         await auth.updateCurrentUser(null);

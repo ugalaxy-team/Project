@@ -2,7 +2,7 @@ import { initializeApp, type FirebaseOptions } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { browserLocalPersistence, getAuth, GoogleAuthProvider, onAuthStateChanged, setPersistence } from "firebase/auth";
 import { initializeUI, providerPopupStrategy, requireDisplayName } from '@firebase-oss/ui-core';
-import { setUser } from "./slices/user";
+import { setUser, type FirebaseUserData } from "./slices/user";
 import { store } from "./store";
 
 const firebaseConfig: FirebaseOptions = {
@@ -33,14 +33,13 @@ google.addScope('email');
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        const userData = {
+        const userData: FirebaseUserData = {
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,
             photoURL: user.photoURL,
             emailVerified: user.emailVerified,
             isAnonymous: user.isAnonymous,
-            idToken: await user.getIdToken()
         };
         store.dispatch(setUser(userData));
         console.log('User authenticated!');
