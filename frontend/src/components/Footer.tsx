@@ -74,7 +74,7 @@ export const Footer = () => {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="https://t.me/starforlifeukraine"
                     className="text-white hover:text-accent font-medium transition-colors"
                   >
                     Telegram канал
