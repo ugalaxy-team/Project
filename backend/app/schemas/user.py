@@ -18,14 +18,6 @@ class UserCreate(UserBase):
     email: EmailStr = Field(..., description='Email')
     # password: str = Field(..., description='Password')
 
-class UserIDToken(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    id_token: str = Field(..., description='Firebase id token used to identify users')
-
-class UserLogin(BaseModel):
-    email: EmailStr = Field(..., description='Email')
-    password: str = Field(..., description='Password')
-
 class UserUpdate(UserBase):
     full_name: str | None = None
 
