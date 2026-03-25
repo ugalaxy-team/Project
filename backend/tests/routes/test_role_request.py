@@ -10,6 +10,8 @@ from tests.factories import UserFactory, RoleFactory
 @pytest.mark.asyncio
 async def test_role_request_and_approval(create, client, db_session):
     user = await create(UserFactory)
+    stmt = select(User).where(User.id == user.id).options(selectinload(User.roles))
+    user = (await db_session.execute(stmt)).unique().scalar_one()
     role = await create(RoleFactory)
     app.dependency_overrides[get_current_user] = lambda: user
     app.dependency_overrides[get_admin_user] = lambda: user
