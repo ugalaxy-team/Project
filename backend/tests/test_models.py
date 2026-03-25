@@ -63,11 +63,6 @@ async def test_create_user_duplicate_email(db_session, create):
     await db_session.rollback()
 
 
-async def test_create_user_without_password(create):
-    with pytest.raises(IntegrityError):
-        await create(UserFactory, password=None)
-
-
 # ROLE TESTS
 async def test_create_role(create):
     role = await create(RoleFactory, name="jury")

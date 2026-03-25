@@ -34,10 +34,9 @@ class UserFactory(BaseFactory):
     class Meta:
         model = User
 
+    firebase_uid = Faker('uuid4')
     full_name = Faker("name")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
-    password = "very_strong_password"
-
 
 class RoleFactory(BaseFactory):
     class Meta:

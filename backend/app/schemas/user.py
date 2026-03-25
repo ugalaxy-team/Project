@@ -16,7 +16,6 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     id: str = Field(..., description='Firebase user id')
     email: EmailStr = Field(..., description='Email')
-    # password: str = Field(..., description='Password')
 
 class UserUpdate(UserBase):
     full_name: str | None = None
@@ -27,7 +26,6 @@ class UserPublic(UserBase):
 
 class UserModel(UserBase):
     email: EmailStr = Field(..., description="User email")
-    password: str = Field(..., description="User password")
 
     @field_validator("email")
     @classmethod
