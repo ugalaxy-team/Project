@@ -1,15 +1,30 @@
 import './Profile.css';
 import { useSelector } from 'react-redux';
 import { auth } from '../../firebase';
-import type { RootState } from '../../store';
+import { store, type RootState } from '../../store';
 import { deleteUser } from '@/api/requests';
+import { useMutation } from '@tanstack/react-query';
+import { setUser } from '@/slices/user';
 
 const Profile = () => {
   const user = useSelector((s: RootState) => s.user);
+  const deleteUserMutation = useMutation({
+    mutationKey: ['delete user'],
+    mutationFn: async () => {
+      if (!auth.currentUser) return;
+      await deleteUser(auth.currentUser);
+    },
+    onSuccess: async () => {
+      await auth.updateCurrentUser(null);
+      store.dispatch(setUser(null));
+    },
+    onError: (e) => {
+      console.log('An error occured while trying to delete account', e.message)
+    }
+  })
   const handleDeleteUser = async () => {
-    if (!user) return;
     if (!auth.currentUser) return;
-    deleteUser(auth.currentUser);
+    deleteUserMutation.mutate();
   };
   if (!user) return <div>Loading...</div>
 
