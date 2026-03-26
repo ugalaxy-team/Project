@@ -1,8 +1,8 @@
 import './Profile.css';
 import { useSelector } from 'react-redux';
 import { auth } from '../../firebase';
-import deleteUser from '../../api/deleteUser';
 import type { RootState } from '../../store';
+import { deleteUser } from '@/api/requests';
 
 const Profile = () => {
   const user = useSelector((s: RootState) => s.user);
