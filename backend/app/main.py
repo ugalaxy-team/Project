@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
+
 import app.routes.tournaments as tournaments
 import app.routes.users as users
 import app.routes.profile as profile
@@ -8,8 +10,20 @@ import app.routes.teams as teams
 import app.routes.team_members as team_members
 import app.routes.tournament_teams as tournament_teams
 
+from app.core.seeds.status import init_tournament_statuses
+from app.db import AsyncSessionLocal
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with AsyncSessionLocal() as session:
+        await init_tournament_statuses(session)
+
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+
 app.include_router(tournaments.router)
 app.include_router(users.router)
 app.include_router(profile.router)
