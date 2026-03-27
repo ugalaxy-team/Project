@@ -11,6 +11,7 @@ import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
+import { GetOrganizerRole } from "./pages/GetOganizerRole/GetOganizerRole";
 
 export const App = () => {
   return (
@@ -32,6 +33,7 @@ export const App = () => {
             <Route path="forgot-password" element={<ForgotPassword />} />
           </Route>
           <Route path="/tournament/:id" element={<TournamentPage />} />
+          <Route path="/organizerRoleForm" element={<GetOrganizerRole/>} />
           <Route path="*" element={<Page404 />} />
         </Routes>
       </main>
