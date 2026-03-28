@@ -10,6 +10,7 @@ import SignOut from "./pages/Auth/SignOut";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
 
 export const App = () => {
   return (
@@ -28,6 +29,7 @@ export const App = () => {
             <Route path="sign-in" element={<SignIn />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-out" element={<SignOut />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
           </Route>
           <Route path="/tournament/:id" element={<TournamentPage />} />
           <Route path="*" element={<Page404 />} />

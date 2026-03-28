@@ -8,7 +8,7 @@ const SignIn = () => {
         navigate('/');
     };
     return <>
-        <SignInAuthScreen onSignIn={handleSignIn}>
+        <SignInAuthScreen onSignIn={handleSignIn} onForgotPasswordClick={() => navigate('/auth/forgot-password/')}>
             <GoogleSignInButton onSignIn={handleSignIn} provider={google} />
             <Link to={'/auth/sign-up'}>Не маєте аккаунту? Створіть його!</Link>
         </SignInAuthScreen>
