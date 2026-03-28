@@ -1,5 +1,5 @@
 import { GoogleSignInButton, SignInAuthScreen } from "@firebase-oss/ui-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { google } from "../../firebase";
 
 const SignIn = () => {
@@ -7,12 +7,12 @@ const SignIn = () => {
     const handleSignIn = () => {
         navigate('/');
     };
-    return <>
-        <SignInAuthScreen onSignIn={handleSignIn} onForgotPasswordClick={() => navigate('/auth/forgot-password/')}>
-            <GoogleSignInButton onSignIn={handleSignIn} provider={google} />
-            <Link to={'/auth/sign-up'}>Не маєте аккаунту? Створіть його!</Link>
-        </SignInAuthScreen>
-    </>;
+    return <SignInAuthScreen
+        onSignIn={handleSignIn}
+        onForgotPasswordClick={() => navigate('/auth/forgot-password/')}
+        onSignUpClick={() => navigate('/auth/sign-up')}>
+        <GoogleSignInButton onSignIn={handleSignIn} provider={google} />
+    </SignInAuthScreen>
 }
 
 export default SignIn;
