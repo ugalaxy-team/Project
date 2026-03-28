@@ -18,6 +18,7 @@ from app.utils.routes.dates_logic import (
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 
 
+# for future , move to a separate file: get_tournament, get_status_by_name
 async def get_tournament(tournament_id: int, session: SessionDep) -> Tournament:
     statement = (
         select(Tournament)
@@ -114,15 +115,15 @@ async def update_tournament(
         .values(**update_data)
         .returning(Tournament)
     )
-    updated_task = result.scalar_one_or_none()
+    updated_tournament = result.scalar_one_or_none()
 
-    if not updated_task:
+    if not updated_tournament:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Tournament not found"
         )
 
     await session.commit()
-    return updated_task
+    return updated_tournament
 
 
 @router.delete("/{tournament_id}/", status_code=status.HTTP_204_NO_CONTENT)
