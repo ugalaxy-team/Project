@@ -10,12 +10,20 @@ from app.schemas import (
 )
 from app.models import Tournament, TournamentStatusOption
 from app.dependencies import SessionDep
+from app.utils.routes.dates_logic import (
+    validate_dates_on_create,
+    validate_dates_on_update,
+)
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 
 
 async def get_tournament(tournament_id: int, session: SessionDep) -> Tournament:
-    statement = select(Tournament).where(Tournament.id == tournament_id)
+    statement = (
+        select(Tournament)
+        .where(Tournament.id == tournament_id)
+        .options(selectinload(Tournament.status))
+    )
     tournament = (await session.execute(statement)).scalar_one_or_none()
     if not tournament:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Tournament not found!")
@@ -26,17 +34,17 @@ async def get_status_by_name(name: str, session: SessionDep) -> TournamentStatus
     statement = select(TournamentStatusOption).where(
         TournamentStatusOption.name == name
     )
-    status_ = (await session.execute(statement)).scalar()
+    status_ = (await session.execute(statement)).scalar_one_or_none()
 
     if not status_:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
     return status_
 
 
 @router.get("/", response_model=list[TournamentRead], status_code=status.HTTP_200_OK)
 async def tournaments(session: SessionDep):
-    statement = select(Tournament)
+    statement = select(Tournament).options(selectinload(Tournament.status))
     tournaments = await session.execute(statement)
     return tournaments.scalars().all()
 
@@ -54,6 +62,12 @@ async def create_tournament(
     session: SessionDep,
 ):
     draft_status = await get_status_by_name("Draft", session)
+
+    validate_dates_on_create(
+        start_date=tournament.start_date,
+        reg_start=tournament.reg_start,
+        reg_end=tournament.reg_end,
+    )
 
     new_tournament = Tournament(
         **tournament.model_dump(),
@@ -76,7 +90,6 @@ async def update_tournament(
     session: SessionDep,
 ):
     update_data = tournament_data.model_dump(exclude_unset=True)
-
     if not update_data:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -85,23 +98,15 @@ async def update_tournament(
 
     tournament = await get_tournament(tournament_id, session)
 
-    merged_data = {
-        "title": tournament.title,
-        "description": tournament.description,
-        "start_date": tournament.start_date,
-        "reg_start": tournament.reg_start,
-        "reg_end": tournament.reg_end,
-        "max_team": tournament.max_team,
-        **update_data,
-    }
+    start_date = update_data.get("start_date", tournament.start_date)
+    reg_start = update_data.get("reg_start", tournament.reg_start)
+    reg_end = update_data.get("reg_end", tournament.reg_end)
 
-    try:
-        TournamentCreate(**merged_data)
-    except ValidationError as e:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=e.errors()[0]["msg"],
-        )
+    validate_dates_on_update(
+        start_date=start_date,
+        reg_start=reg_start,
+        reg_end=reg_end,
+    )
 
     result = await session.execute(
         update(Tournament)
@@ -109,14 +114,15 @@ async def update_tournament(
         .values(**update_data)
         .returning(Tournament)
     )
-    updated_tournament = result.scalar_one_or_none()
-    if not updated_tournament:
+    updated_task = result.scalar_one_or_none()
+
+    if not updated_task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
         )
 
     await session.commit()
-    return updated_tournament
+    return updated_task
 
 
 @router.delete("/{tournament_id}/", status_code=status.HTTP_204_NO_CONTENT)
