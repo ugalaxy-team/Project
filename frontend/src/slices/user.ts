@@ -9,8 +9,17 @@ export interface FirebaseUserData {
     isAnonymous: boolean;
 }
 
+export interface ApiUserData {
+    roles: object[];
+    notifications: object[];
+    role_requests: object[];
+    created_tournaments: object[];
+}
+
+export interface UserData extends ApiUserData, FirebaseUserData { };
+
 interface UserState {
-    user: FirebaseUserData | null | undefined;
+    user: UserData | null | undefined;
 };
 
 const initialUserState: UserState = {

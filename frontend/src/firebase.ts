@@ -2,8 +2,10 @@ import { initializeApp, type FirebaseOptions } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { browserLocalPersistence, getAuth, GoogleAuthProvider, onAuthStateChanged, setPersistence } from "firebase/auth";
 import { initializeUI, providerPopupStrategy, requireDisplayName } from '@firebase-oss/ui-core';
-import { setUser, type FirebaseUserData } from "./slices/user";
+import { setUser, type ApiUserData, type FirebaseUserData, type UserData } from "./slices/user";
 import { store } from "./store";
+import { queryClient } from "./api/queryClient";
+import { getProfile } from "./api/requests/getProfile";
 
 const firebaseConfig: FirebaseOptions = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -33,7 +35,7 @@ google.addScope('email');
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        const userData: FirebaseUserData = {
+        const firebaseUserData: FirebaseUserData = {
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,
@@ -41,7 +43,16 @@ onAuthStateChanged(auth, async (user) => {
             emailVerified: user.emailVerified,
             isAnonymous: user.isAnonymous,
         };
+        const apiUserData = await queryClient.fetchQuery<ApiUserData>({
+            queryKey: ['user', user.uid],
+            queryFn: async () => await getProfile(user),
+        });
+        const userData: UserData = {
+            ...firebaseUserData,
+            ...apiUserData,
+        };
         store.dispatch(setUser(userData));
+        console.log(userData);
         console.log('User authenticated!');
     } else {
         store.dispatch(setUser(null));

@@ -32,8 +32,6 @@ class User(Base, PKMixin):
         back_populates="user", lazy="selectin",
         cascade="all, delete-orphan",
     )
-    notifications: Mapped[list["Notification"]] = relationship(back_populates="user")
-    role_requests: Mapped[list["RoleRequest"]] = relationship(back_populates="user")
     created_tournaments: Mapped[list["Tournament"]] = relationship(
         back_populates="creator", lazy="selectin",
         cascade="all, delete-orphan",

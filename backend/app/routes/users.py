@@ -27,6 +27,6 @@ async def users(session: SessionDep):
     users = await session.execute(statement)
     return users.scalars().all()
 
-@router.get('/{user_id}/', response_model=UserPublic)
-async def user(user_id: int, user: UserDep, session: SessionDep):
-    return user
+@router.get('/{identifier}/', response_model=UserPublic)
+async def user(identifier: int | str, session: SessionDep):
+    return await get_user(identifier, session)

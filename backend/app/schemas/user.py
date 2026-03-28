@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict
 from .role import RolePublic
+from .notification import NotificationPublic
 
 class UserBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -32,6 +33,9 @@ class UserModel(UserBase):
     def check_email(cls, value: str):
         return value.lower().strip()
 
+from .role_request import RoleRequestPublic
 # Return notifications of current user only
+# TODO: add created_tournaments after the TournamentPublic model will be defined
 class CurrentUser(UserPublic):
-    notifications: list[str]
+    notifications: list[NotificationPublic]
+    role_requests: list[RoleRequestPublic]

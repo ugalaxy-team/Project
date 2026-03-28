@@ -1,12 +1,16 @@
 from fastapi import APIRouter, status
-from app.schemas import UserUpdate, UserPublic
+from app.schemas import UserUpdate, CurrentUser
 from app.dependencies import SessionDep, CurrentUserDep
 import firebase_admin.auth as auth
 from app.firebase import firebase
 
 router = APIRouter(prefix='/profile', tags=['profile'])
 
-@router.patch('/', response_model=UserPublic)
+@router.get('/', response_model=CurrentUser)
+async def get_profile(current_user: CurrentUserDep):
+    return current_user
+
+@router.patch('/', response_model=CurrentUser)
 async def edit_profile(session: SessionDep, current_user: CurrentUserDep,
                 user: UserUpdate):
     user_data = user.model_dump(exclude_unset=True)
