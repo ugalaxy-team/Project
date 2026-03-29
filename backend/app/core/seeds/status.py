@@ -8,6 +8,7 @@ DEFAULT_STATUSES = {
     "registration": "Registration",
     "running": "Running",
     "finished": "Finished",
+    "canceled": "Canceled",
 }
 
 

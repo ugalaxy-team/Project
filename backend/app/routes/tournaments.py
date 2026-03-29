@@ -1,19 +1,19 @@
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select, update
-from pydantic import ValidationError
 
 from app.schemas import (
     TournamentRead,
     TournamentCreate,
     TournamentUpdate,
 )
-from app.models import Tournament, TournamentStatusOption
+from app.models import Tournament
 from app.dependencies import SessionDep
 from app.utils.routes.dates_logic import (
     validate_dates_on_create,
     validate_dates_on_update,
 )
+from app.utils.routes import auto_update_tournament_status, get_status_by_name
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 
@@ -28,19 +28,10 @@ async def get_tournament(tournament_id: int, session: SessionDep) -> Tournament:
     tournament = (await session.execute(statement)).scalar_one_or_none()
     if not tournament:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Tournament not found!")
+
+    await auto_update_tournament_status(tournament, session)
+
     return tournament
-
-
-async def get_status_by_name(name: str, session: SessionDep) -> TournamentStatusOption:
-    statement = select(TournamentStatusOption).where(
-        TournamentStatusOption.name == name
-    )
-    status_ = (await session.execute(statement)).scalar_one_or_none()
-
-    if not status_:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
-
-    return status_
 
 
 @router.get("/", response_model=list[TournamentRead], status_code=status.HTTP_200_OK)
@@ -62,7 +53,7 @@ async def create_tournament(
     tournament: TournamentCreate,
     session: SessionDep,
 ):
-    draft_status = await get_status_by_name("Draft", session)
+    initial_status = await get_status_by_name("draft", session)
 
     validate_dates_on_create(
         start_date=tournament.start_date,
@@ -73,7 +64,7 @@ async def create_tournament(
     new_tournament = Tournament(
         **tournament.model_dump(),
         creator_id=1,
-        status_id=draft_status.id,
+        status_id=initial_status.id,
     )
     session.add(new_tournament)
     await session.commit()
