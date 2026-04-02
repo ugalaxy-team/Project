@@ -56,7 +56,7 @@ export const Header = () => {
             <ProfileDropdown />
           </div>
         ) : (
-          <Link to="/auth/sign-in" className="btn btn-outline py-2.5 px-7 text-base">
+          <Link to="/auth" className="btn btn-outline py-2.5 px-7 text-base">
             Увійти
           </Link>
         )}

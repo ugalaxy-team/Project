@@ -11,7 +11,7 @@ const STATUS_CFG = {
     gradTo: "#059669",
     icon: <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />,
     btnText: "Подати заявку",
-    btnClass: "bg-primary text-white hover:bg-indigo-600",
+    btnClass: "bg-primary text-white hover:bg-indigo-600 shadow-sm",
   },
   active: {
     label: "В процесі",
@@ -36,7 +36,8 @@ const STATUS_CFG = {
       <path d="M12 2a5 5 0 100 10A5 5 0 0012 2zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z" />
     ),
     btnText: "Переглянути результати",
-    btnClass: "bg-bg-body text-slate-400 cursor-default",
+    btnClass:
+      "bg-slate-50 text-slate-400 border border-slate-200 cursor-default",
   },
 };
 
@@ -62,9 +63,9 @@ export const TournamentCard = ({
   const gradId = `grad-${title.replace(/\s+/g, "-")}`;
 
   return (
-    <div className="bg-white rounded-[28px] border-[1.5px] border-slate-200 shadow-sm flex flex-col overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(15,23,42,0.08)]">
-      <div className="p-7 flex flex-col flex-grow">
-        <div className="flex items-start gap-3 mb-3">
+    <div className="h-full bg-white rounded-[28px] border-[1.5px] border-slate-200 shadow-sm flex flex-col overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(15,23,42,0.08)]">
+      <div className="p-7 flex flex-col h-full">
+        <div className="flex items-start gap-3.5 mb-3.5">
           <div className="shrink-0 w-11 h-11 flex items-center justify-center relative drop-shadow-md group-hover:rotate-6 transition-transform duration-300">
             <svg className="absolute inset-0 w-full h-full" viewBox="0 0 24 24">
               <defs>
@@ -86,75 +87,80 @@ export const TournamentCard = ({
               {cfg.icon}
             </svg>
           </div>
-          <h3 className="font-quicksand text-[22px] font-extrabold leading-[1.2] flex-1 text-slate-900">
+          <h3 className="font-quicksand text-[22px] font-extrabold leading-[1.2] flex-1 text-slate-900 line-clamp-2 min-h-[53px]">
             {title}
           </h3>
         </div>
 
-        <div className="flex flex-wrap gap-1.5 mb-3">
+        <div className="flex flex-wrap gap-1.5 mb-3.5 h-[28px]">
           {tags.map((tag, i) => (
             <span
               key={i}
-              className={`px-3 py-1 rounded-full text-[12px] font-extrabold ${TAG_COLORS[tag.type]}`}
+              className={`px-3.5 py-1.5 rounded-full text-[12px] font-extrabold ${TAG_COLORS[tag.type]}`}
             >
               {tag.label}
             </span>
           ))}
         </div>
 
-        <p className="text-[15px] text-slate-500 leading-relaxed font-semibold flex-grow mb-5">
+        <p
+          className="text-[15px] text-slate-500 leading-relaxed font-semibold mb-6 line-clamp-3 min-h-[68px]"
+          title={desc}
+        >
           {desc}
         </p>
 
-        <div className="mb-4">
-          <div className="flex justify-between items-baseline mb-1.5">
-            <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
-              Команди
-            </span>
-            <span className="font-quicksand text-[20px] font-extrabold text-slate-900">
-              {teams}{" "}
-              <span className="text-[13px] text-slate-400">/ {max}</span>
-            </span>
-          </div>
-          <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${isFull ? "bg-accent" : "bg-primary"}`}
-              style={{ width: `${pct}%` }}
-            />
-          </div>
-        </div>
-
-        <div className="flex justify-between items-center pt-4 border-t-[1.5px] border-slate-100 mb-5">
-          <div className="flex items-center gap-1.5 text-[13px] font-bold text-slate-500">
-            <svg
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              strokeWidth="2.5"
-              className="w-3.5 h-3.5 opacity-65"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+        <div className="mt-auto">
+          <div className="mb-4">
+            <div className="flex justify-between items-baseline mb-1.5">
+              <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
+                Команди
+              </span>
+              <span className="font-quicksand text-[20px] font-extrabold text-slate-900">
+                {teams}{" "}
+                <span className="text-[13px] text-slate-400">/ {max}</span>
+              </span>
+            </div>
+            <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden shadow-inner">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${isFull ? "bg-accent" : "bg-primary"}`}
+                style={{ width: `${pct}%` }}
               />
-            </svg>
-            До {deadline}
+            </div>
           </div>
-          <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold ${cfg.badgeBg} ${cfg.badgeText}`}
-          >
-            <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-            {cfg.label}
-          </span>
-        </div>
 
-        <button
-          disabled={status === "completed"}
-          className={`w-full py-3 rounded-xl font-quicksand text-[16px] font-extrabold transition-all duration-200 ${cfg.btnClass}`}
-        >
-          {cfg.btnText}
-        </button>
+          <div className="flex justify-between items-center pt-4 border-t-[1.5px] border-slate-100 mb-5">
+            <div className="flex items-center gap-1.5 text-[14px] font-bold text-slate-500">
+              <svg
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth="2.5"
+                className="w-4 h-4 opacity-65"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              До {deadline}
+            </div>
+            <span
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-extrabold shadow-sm ${cfg.badgeBg} ${cfg.badgeText}`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+              {cfg.label}
+            </span>
+          </div>
+
+          <button
+            disabled={status === "completed"}
+            className={`w-full py-3.5 rounded-xl font-quicksand text-[16px] font-extrabold transition-all duration-200 ${cfg.btnClass}`}
+          >
+            {cfg.btnText}
+          </button>
+        </div>
       </div>
     </div>
   );

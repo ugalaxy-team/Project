@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
-import  apiClient from "@/api/client"; 
+import apiClient from "@/api/client"; 
 import { Hero } from "../../components/Hero";
 
 // --- ТИПІЗАЦІЯ ---
@@ -92,12 +92,10 @@ export const TournamentPage = () => {
 
       try {
         setIsLoading(true);
-        // Використовуємо apiClient замість fetch
         const response = await apiClient.get<TournamentData>(`/tournaments/${id}`);
         setTournament(response.data);
         setError(null);
       } catch (err: any) {
-        // Обробка помилок відповідно до Swagger (422 Validation Error або загальні)
         const errorMessage = 
           err.response?.data?.detail?.[0]?.msg || 
           err.response?.data?.message || 
@@ -115,7 +113,6 @@ export const TournamentPage = () => {
   const currentStatus: TourneyStatus = "active"; 
   const statusInfo = STATUS_CONFIG[currentStatus];
 
-  // Стан завантаження
   if (isLoading) {
     return (
       <div className="min-h-screen bg-bg-body flex flex-col items-center justify-center font-quicksand text-white">
@@ -127,7 +124,6 @@ export const TournamentPage = () => {
     );
   }
 
-  // Стан помилки
   if (error || !tournament) {
     return (
       <div className="min-h-screen bg-bg-body flex items-center justify-center p-5">
@@ -150,7 +146,6 @@ export const TournamentPage = () => {
 
   return (
     <div className="min-h-screen bg-bg-body font-inter text-dark-theme flex flex-col selection:bg-accent/30">
-
       <Hero
         bgText="SLOVO JAM"
         description=""
@@ -271,7 +266,6 @@ const DescriptionTab = ({ description }: { description: string }) => (
       </p>
     </section>
 
-    {/* Заглушка під статичні дані, якщо згодом з'являться на бекенді */}
     <section>
       <h3 className="text-[24px] text-dark-theme font-quicksand font-bold mb-6 flex items-center gap-3">
         <div className="bg-primary/10 p-2 rounded-xl">
@@ -280,7 +274,6 @@ const DescriptionTab = ({ description }: { description: string }) => (
         Ключові вимоги:
       </h3>
       <ul className="flex flex-col gap-5 text-[17px] text-slate-600 pl-2">
-        {/* Приклад статичного контенту */}
         <li className="flex gap-4 items-start bg-slate-50/50 p-4 rounded-2xl hover:bg-slate-50 transition-colors">
           <div className="w-2.5 h-2.5 rounded-full bg-primary mt-2 shrink-0 shadow-[0_0_8px_rgba(var(--color-primary),0.6)]"></div>
           <p className="leading-relaxed">Створити інноваційний проект з використанням GameDev підходів.</p>

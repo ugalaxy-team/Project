@@ -9,13 +9,11 @@ import { ContactPage } from "./pages/Contact/Contact";
 import { AboutUs } from "./pages/AboutUs/AboutUs";
 import { SupportPage } from "./pages/SupportPage/SupportPage";
 import { FaqPage } from "./pages/FaqPage/FaqPage";
-import SignIn from "./pages/Auth/SignIn";
-import SignUp from "./pages/Auth/SignUp";
-import SignOut from "./pages/Auth/SignOut";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 import { RoleRequestPage } from "./pages/GetRole/RoleRequestPage";
 import { Toaster } from 'react-hot-toast';
+import { AuthPage } from "./pages/Auth/AuthPage";
 
 export const App = () => {
   return (
@@ -44,12 +42,8 @@ export const App = () => {
             <Route path="*" element={<Page404 />} />
           </Route>
 
-          <Route path="/auth">
-            <Route path="sign-in" element={<SignIn />} />
-            <Route path="sign-up" element={<SignUp />} />
-            <Route path="sign-out" element={<SignOut />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-          </Route>
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/auth/forgot-password" element={<ForgotPassword />} />
         </Routes>
       </BrowserRouter>
     </>
