@@ -29,6 +29,12 @@ RoleRequestDep = Annotated[RoleRequest, Depends(get_role_request)]
 
 AdminUserDep = Annotated[User, Depends(get_admin_user)]
 
+@router.get('/', response_model=list[RoleRequestPublic])
+async def role_requests(session: SessionDep):
+    statement = select(RoleRequest)
+    requests = await session.execute(statement)
+    return requests.scalars().all()
+
 @router.post('/', 
              response_model=RoleRequestPublic,
              dependencies=[Depends(get_current_user)])
