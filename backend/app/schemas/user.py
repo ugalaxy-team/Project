@@ -24,6 +24,7 @@ class UserUpdate(UserBase):
 
 class UserPublic(UserBase):
     email: EmailStr
+    firebase_uid: str
     roles: list[RolePublic]
 
 class UserModel(UserBase):
