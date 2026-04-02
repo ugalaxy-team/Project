@@ -15,7 +15,7 @@ class UserBase(BaseModel):
         return value
     
 class UserCreate(UserBase):
-    id: str = Field(..., description='Firebase user id')
+    firebase_uid: str = Field(..., description='Firebase user id')
     email: EmailStr = Field(..., description='Email')
 
 class UserUpdate(UserBase):
