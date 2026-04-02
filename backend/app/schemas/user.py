@@ -20,6 +20,7 @@ class UserCreate(UserBase):
 
 class UserUpdate(UserBase):
     full_name: str | None = None
+    email: str | None = None
 
 class UserPublic(UserBase):
     email: EmailStr
