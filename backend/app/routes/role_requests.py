@@ -3,13 +3,22 @@ from fastapi.encoders import jsonable_encoder
 from typing import Annotated
 from app.dependencies import SessionDep, CurrentUserDep, get_current_user
 from sqlalchemy import select
-from app.models import RoleRequest, User, Role
+from sqlalchemy.orm import selectinload
+from app.models import RoleRequest, User, Role, RoleRequestInfo
 from app.schemas import RoleRequestPublic, RoleRequestCreate, UserPublic
 
 router = APIRouter(prefix='/role-requests', tags=['role requests'])
 
 async def get_role_request(request_id: int, session: SessionDep) -> RoleRequest:
-    statement = select(RoleRequest).where(RoleRequest.id==request_id)
+    statement = (
+        select(RoleRequest)
+        .options(
+            selectinload(RoleRequest.info).selectinload(RoleRequestInfo.option),
+            selectinload(RoleRequest.role),
+            selectinload(RoleRequest.user),
+        )
+        .where(RoleRequest.id==request_id)
+    )
     result = await session.execute(statement)
     request = result.scalar()
     if not request:
@@ -31,7 +40,11 @@ AdminUserDep = Annotated[User, Depends(get_admin_user)]
 
 @router.get('/', response_model=list[RoleRequestPublic])
 async def role_requests(session: SessionDep):
-    statement = select(RoleRequest)
+    statement = select(RoleRequest).options(
+        selectinload(RoleRequest.info).selectinload(RoleRequestInfo.option),
+        selectinload(RoleRequest.role),
+        selectinload(RoleRequest.user),
+    )
     requests = await session.execute(statement)
     return requests.scalars().all()
 
@@ -40,19 +53,24 @@ async def role_requests(session: SessionDep):
              dependencies=[Depends(get_current_user)])
 async def create_request(
     session: SessionDep, 
-    request: RoleRequestCreate
+    request_create: RoleRequestCreate
 ):
-    request = RoleRequestCreate.model_validate(request)
+    request = RoleRequestCreate.model_validate(request_create)
     statement = select(RoleRequest).where(RoleRequest.role_id==request.role_id, 
                                           RoleRequest.user_id==request.user_id)
     r = (await session.execute(statement)).scalar()
     if r:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail='Role requests already exists!')
-    request = RoleRequest(**request.model_dump())
-    session.add(request)
+    request_data = request.model_dump()
+    info = request_data.pop('info')
+    role_request = RoleRequest(**request_data)
+    session.add(role_request)
+    await session.flush()
+    for j in info:
+        i = RoleRequestInfo(**j, request_id=role_request.id)
+        session.add(i)
     await session.commit()
-    await session.refresh(request)
-    return request
+    return await get_role_request(role_request.id, session)
 
 @router.get('/{request_id}/', response_model=RoleRequestPublic)
 async def get_request(request_id: int, session: SessionDep, request: RoleRequestDep):
