@@ -23,6 +23,7 @@ class UserUpdate(UserBase):
     email: str | None = None
 
 class UserPublic(UserBase):
+    id: int
     email: EmailStr
     firebase_uid: str
     roles: list[RolePublic]
