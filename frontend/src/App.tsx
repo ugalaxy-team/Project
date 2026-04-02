@@ -9,6 +9,7 @@ import SignIn from "./pages/Auth/SignIn";
 import SignUp from "./pages/Auth/SignUp";
 import SignOut from "./pages/Auth/SignOut";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import { AuthPage } from "./pages/Auth/AuthPage";
 
 export const App = () => {
   return (
@@ -31,11 +32,7 @@ export const App = () => {
         </Route>
 
         {/* Без нього */}
-        <Route path="/auth">
-          <Route path="sign-in" element={<SignIn />} />
-          <Route path="sign-up" element={<SignUp />} />
-          <Route path="sign-out" element={<SignOut />} />
-        </Route>
+        <Route path="/auth" element={<AuthPage />} />
       </Routes>
     </BrowserRouter>
   );

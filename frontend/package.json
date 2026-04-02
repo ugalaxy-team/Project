@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@firebase-oss/ui-react": "^7.0.2-beta",
+    "@hookform/resolvers": "^5.2.2",
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/vite": "^4.2.1",
@@ -18,11 +19,15 @@
     "@tanstack/react-query-devtools": "^5.95.2",
     "axios": "^1.13.6",
     "firebase": "^12.10.0",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^1.7.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hook-form": "^7.72.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.13.1",
-    "tailwindcss": "^4.2.1"
+    "tailwindcss": "^4.2.1",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

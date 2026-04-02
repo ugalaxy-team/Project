@@ -45,7 +45,7 @@ export const Home = () => {
         ]}
         mascot={{
           circularText: "★ ЗНАЙДИ КОМАНДУ ★ ПРОЯВИ СЕБЕ",
-          lottieSrc: "/hedgehog.json",
+          lottieSrc: "/star.json",
           buttonText: "Долучитись",
           buttonLink: "/register",
         }}

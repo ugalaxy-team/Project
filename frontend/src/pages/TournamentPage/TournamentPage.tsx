@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, type ReactNode } from "react";
-import { Header } from "../../components/Header";
 import { Hero } from "../../components/Hero";
 
 const TABS = [
@@ -157,8 +156,6 @@ export const TournamentPage = () => {
 
   return (
     <div className="min-h-screen bg-bg-body font-inter text-dark-theme flex flex-col">
-      <Header />
-
       <Hero
         bgText="SLOVO JAM"
         description=""
