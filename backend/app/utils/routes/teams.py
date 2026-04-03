@@ -30,7 +30,7 @@ def check_registration_open(tournament: Tournament):
 
     if not (reg_start <= now <= reg_end):
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="Registration is closed",
         )
 

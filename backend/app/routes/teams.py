@@ -1,12 +1,12 @@
 from datetime import datetime, timezone
 from fastapi import status, HTTPException
 from fastapi.routing import APIRouter
-from sqlalchemy import select, update, func
+from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 from sqlalchemy.exc import IntegrityError
 
 from app.dependencies import SessionDep
-from app.models import Team, TeamMember, Tournament
+from app.models import Team
 from app.schemas import TeamModel, TeamUpdate
 from app.utils.routes import (
     get_tournament,
@@ -81,7 +81,10 @@ async def update_team(
     update_data = team_data.model_dump(exclude_unset=True)
 
     if not update_data:
-        raise HTTPException(400, "No fields provided for update")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No fields provided for update",
+        )
 
     await session.execute(
         update(Team)
@@ -94,7 +97,10 @@ async def update_team(
 
     except IntegrityError:
         await session.rollback()
-        raise HTTPException(400, "Update violates constraints")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Update violates constraints",
+        )
 
     statement = (
         select(Team)
