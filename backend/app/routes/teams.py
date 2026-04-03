@@ -1,165 +1,121 @@
+from datetime import datetime, timezone
 from fastapi import status, HTTPException
 from fastapi.routing import APIRouter
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func
+from sqlalchemy.orm import selectinload
 from sqlalchemy.exc import IntegrityError
+
 from app.dependencies import SessionDep
-from app.models import Team, Tournament
+from app.models import Team, TeamMember, Tournament
 from app.schemas import TeamModel, TeamUpdate
+from app.utils.routes import (
+    get_tournament,
+    check_registration_open,
+    get_team,
+    validate_team_registration,
+    create_team,
+)
 
 router = APIRouter(prefix="/tournaments/{tournament_id}/teams", tags=["teams"])
 
 
-async def get_team(team_id: int, session: SessionDep) -> Team:
-    statement = select(Team).where(Team.id == team_id)
-    team = (await session.execute(statement)).scalar()
-    if not team:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Team not found!")
-    return team
-
-
 @router.get("/", response_model=list[TeamModel], status_code=status.HTTP_200_OK)
 async def teams(tournament_id: int, session: SessionDep):
-    statement = select(Team).where(Team.tournament_id == tournament_id)
-    teams = await session.execute(statement)
-    return teams.scalars().all()
+    await get_tournament(tournament_id, session)
+
+    statement = (
+        select(Team)
+        .where(Team.tournament_id == tournament_id)
+        .options(selectinload(Team.members), selectinload(Team.captain))
+    )
+
+    result = await session.execute(statement)
+    return result.scalars().all()
 
 
 @router.get("/{team_id}/", response_model=TeamModel, status_code=status.HTTP_200_OK)
-async def team(team_id: int, session: SessionDep):
-    return await get_team(team_id, session)
+async def team(team_id: int, tournament_id: int, session: SessionDep):
+    return await get_team(team_id, tournament_id, session)
 
 
 @router.post("/", response_model=TeamModel, status_code=status.HTTP_201_CREATED)
-async def create_team(team_data: TeamModel, session: SessionDep):
-    new_team = Team(**team_data.model_dump())
-    session.add(new_team)
+async def create_team(tournament_id: int, team_data: TeamModel, session: SessionDep):
+
+    tournament = await get_tournament(tournament_id, session)
+    check_registration_open(tournament)
+
+    await validate_team_registration(tournament, team_data, session)
 
     try:
+        new_team = await create_team(tournament_id, team_data, session)
         await session.commit()
-        await session.refresh(new_team)
-    except IntegrityError:
+    except IntegrityError as e:
         await session.rollback()
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Team with this name, email or phone number already exists",
+            status.HTTP_400_BAD_REQUEST, detail=f"Registration failed: {str(e.orig)}"
         )
 
-    return new_team
+    statement = (
+        select(Team)
+        .where(Team.id == new_team.id)
+        .options(selectinload(Team.members), selectinload(Team.captain))
+    )
+    result = await session.execute(statement)
+    return result.scalar_one_or_none()
 
 
 @router.patch("/{team_id}/", response_model=TeamModel, status_code=status.HTTP_200_OK)
-async def update_team(team_id: int, team_data: TeamUpdate, session: SessionDep):
+async def update_team(
+    team_id: int, tournament_id: int, team_data: TeamUpdate, session: SessionDep
+):
+    tournament = await get_tournament(tournament_id, session)
+
+    if datetime.now(timezone.utc) > tournament.reg_end.replace(tzinfo=timezone.utc):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Editing is forbidden after registration ends",
+        )
+
+    await get_team(team_id, tournament_id, session)
+
     update_data = team_data.model_dump(exclude_unset=True)
 
     if not update_data:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No fields provided for update",
-        )
+        raise HTTPException(400, "No fields provided for update")
+
+    await session.execute(
+        update(Team)
+        .where(Team.id == team_id, Team.tournament_id == tournament_id)
+        .values(**update_data)
+    )
 
     try:
-        result = await session.execute(
-            update(Team).where(Team.id == team_id).values(**update_data).returning(Team)
-        )
-        updated_team = result.scalar_one_or_none()
-
-        if not updated_team:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Team not found"
-            )
-
         await session.commit()
-        await session.refresh(updated_team)
 
     except IntegrityError:
         await session.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Team with this name, email, or phone number already exists",
-        )
+        raise HTTPException(400, "Update violates constraints")
 
-    return updated_team
+    statement = (
+        select(Team)
+        .where(Team.id == team_id)
+        .options(selectinload(Team.members), selectinload(Team.captain))
+    )
+
+    result = await session.execute(statement)
+    return result.scalar_one_or_none()
 
 
 @router.delete("/{team_id}/", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_team(team_id: int, session: SessionDep):
-    team = await get_team(team_id, session)
+async def delete_team(team_id: int, tournament_id: int, session: SessionDep):
+    tournament = await get_tournament(tournament_id, session)
+
+    if datetime.now(timezone.utc) > tournament.reg_end.replace(tzinfo=timezone.utc):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Deletion is forbidden"
+        )
+
+    team = await get_team(team_id, tournament_id, session)
 
     await session.delete(team)
     await session.commit()
-
-
-# @router.get("/", response_model=list[TeamModel], status_code=status.HTTP_200_OK)
-# async def tournament_participants(
-#     tournament_id: int,
-#     session: SessionDep,
-# ):
-#     statement = select(Team).where(Team.tournament_id == tournament_id)
-#     teams = await session.execute(statement)
-#     return teams.scalars().all()
-
-
-# @router.post(
-#     "/",
-#     response_model=TeamModel,
-#     status_code=status.HTTP_201_CREATED,
-# )
-# async def register_team(
-#     team: TeamModel,
-#     session: SessionDep,
-# ):
-#     if await session.scalar(select(Team).where(Team.name == team.name)):
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST, detail="Team name already exists"
-#         )
-
-#     if await session.scalar(select(Team).where(Team.team_email == team.team_email)):
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST, detail="Team email already exists"
-#         )
-
-#     if await session.scalar(select(Team).where(Team.contact_info == team.contact_info)):
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST,
-#             detail="Contact info already exists",
-#         )
-
-#     new_team = Team(**team.model_dump())
-
-#     session.add(new_team)
-
-#     try:
-#         await session.commit()
-#         await session.refresh(new_team)
-
-#     except IntegrityError:
-#         await session.rollback()
-#         raise HTTPException(
-#             status_code=400,
-#             detail="Team violates unique constraints",
-#         )
-
-#     return new_team
-
-
-# @router.delete("/{team_id}", status_code=status.HTTP_204_NO_CONTENT)
-# async def leave_tournament(
-#     tournament_id: int,
-#     team_id: int,
-#     session: SessionDep,
-# ):
-#     statement = select(Team).where(
-#         Team.id == team_id,
-#         Team.tournament_id == tournament_id,
-#     )
-#     result = await session.execute(statement)
-#     team = result.scalar_one_or_none()
-
-#     if not team:
-#         raise HTTPException(
-#             status.HTTP_404_NOT_FOUND,
-#             detail="Team not found in this tournament",
-#         )
-
-#     await session.delete(team)
-#     await session.commit()
