@@ -6,7 +6,7 @@ from .option import OptionBase
 class RoleRequestBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     
-    role_id: int = Field(..., description="Role being requested")
+    role_name: str = Field(..., description="Role being requested")
     user_id: int = Field(..., description="User requesting the role")
 
 class RoleRequestInfoOptionBase(OptionBase):

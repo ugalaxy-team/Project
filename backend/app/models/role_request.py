@@ -7,7 +7,7 @@ from .mixin import PKMixin, OptionMixin
 class RoleRequest(Base, PKMixin):
     __tablename__ = "role_requests"
 
-    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"))
+    role_name: Mapped[str] = mapped_column(ForeignKey("roles.name"))
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     role: Mapped["Role"] = relationship(back_populates="requests", lazy="selectin")
@@ -19,7 +19,7 @@ class RoleRequest(Base, PKMixin):
     )
 
     def __repr__(self):
-        return f"<RoleRequest(role_id={self.role_id}, user_id={self.user_id})>"
+        return f"<RoleRequest(role_name={self.role_name}, user_id={self.user_id})>"
 
 class RoleRequestInfoOption(Base, OptionMixin):
     __tablename__ = 'role_request_info_options'

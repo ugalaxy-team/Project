@@ -43,6 +43,8 @@ class RoleFactory(BaseFactory):
         model = Role
 
     name = factory.Iterator(["admin", "user", "jury"])
+    display_name = factory.Iterator(["Admin", "User", "Jury"])
+    description = factory.Iterator('Test role')
 
 
 class TournamentStatusOptionFactory(BaseFactory):

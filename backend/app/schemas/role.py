@@ -1,13 +1,14 @@
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import Field, field_validator, ConfigDict
+from .option import OptionBase, OptionUpdate
 
-class RoleBase(BaseModel):
+class RoleBase(OptionBase):
     model_config = ConfigDict(from_attributes=True)
     
-    name: str = Field(..., description="Role name")
+    description: str = Field(..., description="Role description")
 
 
-class RoleUpdate(RoleBase):
-    name: str | None = None
+class RoleUpdate(OptionUpdate):
+    description: str | None = None
 
 class RolePublic(RoleBase):
     pass

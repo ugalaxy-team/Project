@@ -66,7 +66,7 @@ async def test_create_user_duplicate_email(db_session, create):
 # ROLE TESTS
 async def test_create_role(create):
     role = await create(RoleFactory, name="jury")
-    assert role.id is not None
+    assert role.name is not None
     assert role.name == "jury"
 
 
@@ -632,7 +632,7 @@ async def test_role_requests_relationship(db_session, create):
     await create(RoleRequestFactory, role=role)
     await create(RoleRequestFactory, role=role)
 
-    stmt = select(Role).where(Role.id == role.id).options(selectinload(Role.requests))
+    stmt = select(Role).where(role.name == role.name).options(selectinload(Role.requests))
     result = await db_session.execute(stmt)
     db_role = result.scalar_one()
 

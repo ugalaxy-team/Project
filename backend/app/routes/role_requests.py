@@ -56,7 +56,7 @@ async def create_request(
     request_create: RoleRequestCreate
 ):
     request = RoleRequestCreate.model_validate(request_create)
-    statement = select(RoleRequest).where(RoleRequest.role_id==request.role_id, 
+    statement = select(RoleRequest).where(RoleRequest.role_name==request.role_name, 
                                           RoleRequest.user_id==request.user_id)
     r = (await session.execute(statement)).scalar()
     if r:

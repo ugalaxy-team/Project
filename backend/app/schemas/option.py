@@ -6,3 +6,7 @@ class OptionBase(BaseModel):
     name: str = Field(..., description='Option name')
     display_name: str = Field(..., description='Option description')
     
+class OptionUpdate(OptionBase):
+    name: str | None = None
+    display_name: str | None = None
+    

@@ -17,11 +17,11 @@ async def test_role_request_and_approval(create, client, db_session):
     app.dependency_overrides[get_admin_user] = lambda: user
     assert len(user.roles) == 0
     resp = await client.post('/role-requests/', json={
-        'role_id': role.id,
+        'role_name': role.name,
         'user_id': user.id,
     })
     assert resp.status_code == 200
-    assert resp.json()['role_id'] == role.id
+    assert resp.json()['role_name'] == role.name
     assert resp.json()['user_id'] == user.id
     req_id = resp.json()['id']
     s = select(RoleRequest)
@@ -40,11 +40,11 @@ async def test_create_role_request_exists(create, client, db_session):
     user = (await db_session.execute(stmt)).unique().scalar_one()
     role = await create(RoleFactory)
     app.dependency_overrides[get_current_user] = lambda: user
-    r = RoleRequest(role_id=role.id, user_id=user.id)
+    r = RoleRequest(role_name=role.name, user_id=user.id)
     db_session.add(r)
     await db_session.commit()
     resp = await client.post('/role-requests/', json={
-        'role_id': role.id,
+        'role_name': role.name,
         'user_id': user.id,
     })
     assert resp.status_code == 400
@@ -61,7 +61,7 @@ async def test_role_request_disapproval(create, client, db_session):
     user = (await db_session.execute(stmt)).unique().scalar_one()
     role = await create(RoleFactory)
     app.dependency_overrides[get_current_user] = lambda: user
-    r = RoleRequest(role_id=role.id, user_id=user.id)
+    r = RoleRequest(role_name=role.name, user_id=user.id)
     db_session.add(r)
     await db_session.commit()
     await db_session.refresh(r)
@@ -79,13 +79,13 @@ async def test_get_role_request(create, client, db_session):
     user = (await db_session.execute(stmt)).unique().scalar_one()
     role = await create(RoleFactory)
     app.dependency_overrides[get_current_user] = lambda: user
-    r = RoleRequest(role_id=role.id, user_id=user.id)
+    r = RoleRequest(role_name=role.name, user_id=user.id)
     db_session.add(r)
     await db_session.commit()
     await db_session.refresh(r)
     resp = await client.get(f'/role-requests/{r.id}/')
     assert resp.status_code == 200
-    assert resp.json()['role_id'] == r.role_id
+    assert resp.json()['role_name'] == r.role_name
     assert resp.json()['user_id'] == r.user_id
     app.dependency_overrides.pop(get_current_user)
 
@@ -96,7 +96,7 @@ async def test_delete_role_request(create, client, db_session):
     user = (await db_session.execute(stmt)).unique().scalar_one()
     role = await create(RoleFactory)
     app.dependency_overrides[get_current_user] = lambda: user
-    r = RoleRequest(role_id=role.id, user_id=user.id)
+    r = RoleRequest(role_name=role.name, user_id=user.id)
     db_session.add(r)
     await db_session.commit()
     await db_session.refresh(r)
