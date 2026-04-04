@@ -5,3 +5,4 @@ from .tournament import TournamentModels, TournamentStatusOptionModel
 from .notification import NotificationPublic, NotificationCreate
 from .user import UserModel, UserPublic, UserUpdate, UserCreate, CurrentUser
 from .role_request import RoleRequestPublic, RoleRequestCreate
+from .role import RoleCreate, RolePublic, RoleUpdate
