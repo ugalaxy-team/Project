@@ -12,9 +12,12 @@ import { Footer } from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 import { GetOrganizerRole } from "./pages/GetOganizerRole/GetOganizerRole";
+import {Toaster} from 'react-hot-toast'
 
 export const App = () => {
   return (
+    <>
+    <Toaster position="top-center"reverseOrder={false}/>
     <BrowserRouter>
       <Header />
       <main>
@@ -39,5 +42,6 @@ export const App = () => {
       </main>
       <Footer />
     </BrowserRouter>
+    </>
   );
 };

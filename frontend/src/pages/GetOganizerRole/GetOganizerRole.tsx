@@ -1,8 +1,55 @@
 import './GetOrganizerRole.css';
 import Lottie from 'lottie-react';
 import star from './star.json'; 
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
+import { roleRequest } from '@/api/requests/roleRequest';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const GetOrganizerRole = () => {
+    const currentUser = useSelector((state: RootState) => state.user);
+    const navigate = useNavigate(); 
+
+    const createRequests = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault(); 
+        if (!currentUser?.id) {
+            toast.error("Користувач не знайдений або не авторизований!");
+            return;
+        }
+
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+
+        const info = [
+            { option_name: "ПІБ", value: formData.get("fullName") as string },
+            { option_name: "Контакти", value: formData.get("contact") as string },
+            { option_name: "Вік", value: formData.get("age") as string },
+            { option_name: "Досвід", value: formData.get("experience") as string },
+            { option_name: "Причина", value: formData.get("reason") as string },
+            { option_name: "Плани", value: formData.get("plans") as string },
+        ];
+
+        try {
+            const status = await roleRequest("user", currentUser.id, info);
+            console.log("Успішний статус:", status);
+            
+            toast.success("Заявку відправлено! Очікуйте на відповідь");
+            form.reset();
+            navigate("/"); 
+
+        } catch (error: any) {
+            console.error("Помилка відправки заявки:", error);
+            if (error.response && error.response.status === 400) {
+                if (error.response.data?.detail === "Role requests already exists!") {
+                    toast.error("Ви вже подавали заявку на цю роль! Очікуйте на рішення.");
+                    return;
+                }
+            }
+            toast.error("Щось пішло не так. Спробуйте пізніше.");
+        }
+    }
+
     return(
         <div className="page-layout">
             <div className="brand-panel">
@@ -28,34 +75,34 @@ const GetOrganizerRole = () => {
             <div className="form-panel">
                 <div className="form-card">
                     <p className="form-note"><strong>* — обов'язкове поле</strong></p>
-                    <form className="role-form" onSubmit={(e) => e.preventDefault()}>
+                    <form className="role-form" onSubmit={createRequests}>
                         <div className="input-group">
-                            <input type="text" id="fullName" placeholder=" " required />
+                            <input type="text" id="fullName" name="fullName" placeholder=" " required />
                             <label htmlFor="fullName">ПІБ *</label>
                         </div>
 
                         <div className="input-group">
-                            <input type="text" id="contact" placeholder=" " required />
+                            <input type="text" id="contact" name="contact" placeholder=" " required />
                             <label htmlFor="contact">Email / Telegram *</label>
                         </div>
 
                         <div className="input-group">
-                            <input type="number" id="age" placeholder=" " required />
+                            <input type="number" id="age" name="age" placeholder=" " required />
                             <label htmlFor="age">Ваш вік *</label>
                         </div>
                         
                         <div className="input-group">
-                            <textarea id="experience" placeholder=" " rows="2" required></textarea>
+                            <textarea id="experience" name="experience" placeholder=" " rows={2} required></textarea>
                             <label htmlFor="experience">Чи маєте досвід організації чогось? *</label>
                         </div>
 
                         <div className="input-group">
-                            <textarea id="reason" placeholder=" " rows="3" required></textarea>
+                            <textarea id="reason" name="reason" placeholder=" " rows={3} required></textarea>
                             <label htmlFor="reason">Чому ви хочете стати організатором? *</label>
                         </div>
 
                         <div className="input-group">
-                            <textarea id="plans" placeholder=" " rows="3" required></textarea>
+                            <textarea id="plans" name="plans" placeholder=" " rows={3} required></textarea>
                             <label htmlFor="plans">Що ви плануєте робити на цій ролі? *</label>
                         </div>
 
