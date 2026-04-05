@@ -1,0 +1,167 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TournamentPage > matches snapshot 1`] = `
+<div>
+  <div
+    class="min-h-screen bg-bg-body font-inter text-dark-theme flex flex-col"
+  >
+    <div
+      data-testid="mock-header"
+    >
+      Фейковий Хедер
+    </div>
+    <div
+      data-testid="mock-hero"
+    >
+      Фейковий Хіро з анімацією
+    </div>
+    <main
+      class="max-w-[1000px] w-full mx-auto mt-6 mb-[100px] relative z-10 px-5"
+    >
+      <div
+        class="flex justify-center mb-10 relative overflow-x-auto no-scrollbar"
+      >
+        <div
+          class="flex gap-8 relative pb-4 min-w-max px-2"
+        >
+          <button
+            class="font-quicksand font-bold text-[22px] cursor-pointer relative z-10 transition-colors duration-300 text-primary"
+          >
+            Опис завдання
+          </button>
+          <button
+            class="font-quicksand font-bold text-[22px] cursor-pointer relative z-10 transition-colors duration-300 text-slate-400 hover:text-primary/70"
+          >
+            Шукають команду
+          </button>
+          <button
+            class="font-quicksand font-bold text-[22px] cursor-pointer relative z-10 transition-colors duration-300 text-slate-400 hover:text-primary/70"
+          >
+            Команди (3)
+          </button>
+          <button
+            class="font-quicksand font-bold text-[22px] cursor-pointer relative z-10 transition-colors duration-300 text-slate-400 hover:text-primary/70"
+          >
+            Результати
+          </button>
+          <div
+            class="absolute bottom-0 h-[4px] bg-primary rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-0"
+            style="left: 0px; width: 0px;"
+          />
+        </div>
+      </div>
+      <div
+        class="bg-bg-card rounded-[32px] p-8 md:p-[60px] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] min-h-[400px]"
+      >
+        <div
+          class="animate-[fadeIn_0.4s_ease_forwards] flex flex-col gap-10"
+        >
+          <section>
+            <h2
+              class="text-[32px] text-dark-theme font-quicksand font-bold mb-6"
+            >
+              Що потрібно зробити?
+            </h2>
+            <p
+              class="text-[18px] text-slate-600 leading-[1.7]"
+            >
+              Ваша мета — створити ядро аналог лінукс, створити ядро аналог лінукс, створити ядро аналог лінукс, створити ядро аналог лінукс, створити ядро аналог лінукс, створити ядро аналог лінукс, створити ядро аналог лінукс, створити ядро аналог лінукс, створити ядро аналог лінукс, створити ядро аналог лінукс, створити ядро аналог лінукс
+            </p>
+          </section>
+          <section>
+            <h3
+              class="text-[24px] text-dark-theme font-quicksand font-bold mb-5 flex items-center gap-3"
+            >
+              <svg
+                fill="none"
+                height="28"
+                stroke="var(--color-primary)"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                viewBox="0 0 24 24"
+                width="28"
+              >
+                <path
+                  d="M22 11.08V12a10 10 0 1 1-5.93-9.14"
+                />
+                <polyline
+                  points="22 4 12 14.01 9 11.01"
+                />
+              </svg>
+               Ключові вимоги:
+            </h3>
+            <ul
+              class="flex flex-col gap-4 text-[18px] text-slate-600 pl-2"
+            >
+              <li
+                class="flex gap-3 items-start"
+              >
+                <div
+                  class="w-2 h-2 rounded-full bg-primary mt-2.5 shrink-0"
+                />
+                <p>
+                  створити ядро аналог лінукс, створити ядро аналог лінукс, створити ядро аналог лінукс,
+                </p>
+              </li>
+              <li
+                class="flex gap-3 items-start"
+              >
+                <div
+                  class="w-2 h-2 rounded-full bg-primary mt-2.5 shrink-0"
+                />
+                <p>
+                  створити ядро аналог лінукс,
+                </p>
+              </li>
+              <li
+                class="flex gap-3 items-start"
+              >
+                <div
+                  class="w-2 h-2 rounded-full bg-primary mt-2.5 shrink-0"
+                />
+                <p>
+                  створити ядро аналог лінукс, створити ядро аналог лінукс,
+                </p>
+              </li>
+            </ul>
+          </section>
+          <section
+            class="bg-slate-50 p-8 rounded-[24px] border border-slate-100"
+          >
+            <h3
+              class="text-[20px] text-dark-theme font-quicksand font-bold mb-4"
+            >
+              Стек технологій:
+            </h3>
+            <p
+              class="text-[16px] text-slate-500 mb-5"
+            >
+              Жодних жорстких обмежень! Всього лиш вимога писати на перфокатрі, та використовуючи два резистора і пачку мівіни змусити це чудо запуститись.
+            </p>
+            <div
+              class="flex flex-wrap gap-3"
+            >
+              <span
+                class="px-5 py-2 bg-white text-dark-theme border-2 border-slate-200 rounded-full font-quicksand font-bold shadow-sm"
+              >
+                Перфокарти
+              </span>
+              <span
+                class="px-5 py-2 bg-white text-dark-theme border-2 border-slate-200 rounded-full font-quicksand font-bold shadow-sm"
+              >
+                Два резистора
+              </span>
+              <span
+                class="px-5 py-2 bg-white text-dark-theme border-2 border-slate-200 rounded-full font-quicksand font-bold shadow-sm"
+              >
+                Пачка мівіни
+              </span>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+`;
