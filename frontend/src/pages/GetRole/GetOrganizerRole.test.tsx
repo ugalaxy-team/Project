@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { GetOrganizerRole } from './GetOrganizerRole';
+import { GetOrganizerRole } from './RoleRequestPage';
 import { roleRequest } from '@/api/requests/roleRequest';
 
 vi.mock('react-redux', () => ({
