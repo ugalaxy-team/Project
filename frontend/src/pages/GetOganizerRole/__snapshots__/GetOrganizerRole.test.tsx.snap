@@ -1,0 +1,170 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`GetOrganizerRole Component > renders correctly and matches snapshot 1`] = `
+<div>
+  <div
+    class="page-layout"
+  >
+    <div
+      class="brand-panel"
+    >
+      <div
+        class="brand-content"
+      >
+        <div
+          class="logo-placeholder"
+        >
+          <div
+            data-testid="lottie-mock"
+          />
+        </div>
+        <h2>
+          UGalaxy
+        </h2>
+        <p
+          class="brand-subtitle"
+        >
+          STAR FOR LIFE
+        </p>
+        <h1
+          class="form-title"
+        >
+          Заявка на роль організатора
+        </h1>
+        <p
+          class="form-description"
+        >
+          Заповніть форму нижче, щоб подати заявку. Ми розглядаємо кожну заявку вручну.
+          <br />
+          <br />
+          <b>
+            Важливо:
+          </b>
+           відповідайте чесно та детально — це підвищує ваші шанси.
+        </p>
+      </div>
+    </div>
+    <div
+      class="form-panel"
+    >
+      <div
+        class="form-card"
+      >
+        <p
+          class="form-note"
+        >
+          <strong>
+            * — обов'язкове поле
+          </strong>
+        </p>
+        <form
+          class="role-form"
+        >
+          <div
+            class="input-group"
+          >
+            <input
+              id="fullName"
+              name="fullName"
+              placeholder=" "
+              required=""
+              type="text"
+            />
+            <label
+              for="fullName"
+            >
+              ПІБ *
+            </label>
+          </div>
+          <div
+            class="input-group"
+          >
+            <input
+              id="contact"
+              name="contact"
+              placeholder=" "
+              required=""
+              type="text"
+            />
+            <label
+              for="contact"
+            >
+              Email / Telegram *
+            </label>
+          </div>
+          <div
+            class="input-group"
+          >
+            <input
+              id="age"
+              name="age"
+              placeholder=" "
+              required=""
+              type="number"
+            />
+            <label
+              for="age"
+            >
+              Ваш вік *
+            </label>
+          </div>
+          <div
+            class="input-group"
+          >
+            <textarea
+              id="experience"
+              name="experience"
+              placeholder=" "
+              required=""
+              rows="2"
+            />
+            <label
+              for="experience"
+            >
+              Чи маєте досвід організації чогось? *
+            </label>
+          </div>
+          <div
+            class="input-group"
+          >
+            <textarea
+              id="reason"
+              name="reason"
+              placeholder=" "
+              required=""
+              rows="3"
+            />
+            <label
+              for="reason"
+            >
+              Чому ви хочете стати організатором? *
+            </label>
+          </div>
+          <div
+            class="input-group"
+          >
+            <textarea
+              id="plans"
+              name="plans"
+              placeholder=" "
+              required=""
+              rows="3"
+            />
+            <label
+              for="plans"
+            >
+              Що ви плануєте робити на цій ролі? *
+            </label>
+          </div>
+          <button
+            class="submit-button"
+            type="submit"
+          >
+            Надіслати форму
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+`;

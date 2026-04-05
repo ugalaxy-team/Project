@@ -11,7 +11,7 @@ import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
-import { GetOrganizerRole } from "./pages/GetOganizerRole/GetOganizerRole";
+import { GetOrganizerRole } from "./pages/GetOganizerRole/GetOrganizerRole";
 import {Toaster} from 'react-hot-toast'
 
 export const App = () => {
