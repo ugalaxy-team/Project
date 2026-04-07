@@ -4,6 +4,7 @@ import { Profile } from "./pages/Profile/Profile";
 import { TournamentsPage } from "./pages/TournamentsPage/TournamentsPage";
 import { TournamentPage } from "./pages/TournamentPage/TournamentPage";
 import { Page404 } from "./pages/Page404/Page404";
+import { ContactPage } from "./pages/Contact/Contact";
 import SignIn from "./pages/Auth/SignIn";
 import SignUp from "./pages/Auth/SignUp";
 import SignOut from "./pages/Auth/SignOut";
@@ -37,6 +38,7 @@ export const App = () => {
           </Route>
           <Route path="/tournament/:id" element={<TournamentPage />} />
           <Route path="/RoleRequestForm" element={<RoleRequestPage/>} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<Page404 />} />
         </Routes>
       </main>
