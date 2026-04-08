@@ -1,19 +1,19 @@
 import { Link, NavLink } from "react-router-dom";
-import { auth } from "../firebase";
-import { Activity, useState } from "react";
-import { store, type RootState } from "../store";
 import { useSelector } from "react-redux";
+import { type RootState } from "../store";
+
+import { ProfileDropdown } from "./ProfileDropdown"; 
+import { NotificationsDropdown } from "./NotificationsDropdown"; 
 
 export const Header = () => {
   const navItems = [
     { path: "/tournaments", label: "Турніри" },
-    { path: "/projects", label: "Проєкти" },
-    { path: "/join", label: "Як долучитись" },
-    { path: "/rating", label: "Рейтинг" },
+    { path: "/aboutUs", label: "Про нас" },
+    { path: "/support", label: "Чим ви можете допомогти" },
+    { path: "/contact", label: "Контакти" },
   ];
+  
   const user = useSelector((s: RootState) => s.user);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
     <div className="w-full bg-primary relative z-50">
@@ -31,7 +31,8 @@ export const Header = () => {
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `group relative font-semibold text-[16px] py-2 transition-colors duration-300 ${isActive ? "text-accent" : "text-white hover:text-accent"
+                `group relative font-semibold text-[16px] py-2 transition-colors duration-300 ${
+                  isActive ? "text-accent" : "text-white hover:text-accent"
                 }`
               }
             >
@@ -39,8 +40,9 @@ export const Header = () => {
                 <>
                   {item.label}
                   <span
-                    className={`absolute bottom-0 left-0 h-[2px] bg-accent transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"
-                      }`}
+                    className={`absolute bottom-0 left-0 h-[2px] bg-accent transition-all duration-300 ${
+                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
                   ></span>
                 </>
               )}
@@ -48,23 +50,16 @@ export const Header = () => {
           ))}
         </nav>
 
-        {user ? <div>
-          <Link to="/profile" className="btn btn-outline py-2.5 px-7 text-base">
-            Профіль
+        {user ? (
+          <div className="flex items-center gap-4">
+            <NotificationsDropdown />
+            <ProfileDropdown />
+          </div>
+        ) : (
+          <Link to="/auth" className="btn btn-outline py-2.5 px-7 text-base">
+            Увійти
           </Link>
-          <button onClick={toggleMenu}>Open</button>
-          <Activity mode={isMenuOpen ? 'visible' : 'hidden'}>
-            <ul>
-              <li>
-                <Link to="/auth/sign-out" className="btn btn-outline py-2.5 px-7 text-base">
-                  Вийти
-                </Link>
-              </li>
-            </ul>
-          </Activity>
-        </div> : <Link to="/auth/sign-in" className="btn btn-outline py-2.5 px-7 text-base">
-          Увійти
-        </Link>}
+        )}
       </header>
     </div>
   );

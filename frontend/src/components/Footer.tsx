@@ -26,18 +26,10 @@ export const Footer = () => {
               <ul className="list-none space-y-2">
                 <li>
                   <Link
-                    to="/tasks"
+                    to="/tournaments"
                     className="text-white hover:text-accent font-medium transition-colors"
                   >
-                    Всі завдання
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/rating"
-                    className="text-white hover:text-accent font-medium transition-colors"
-                  >
-                    Рейтинг учасників
+                    Всі турніри
                   </Link>
                 </li>
                 <li>
@@ -61,28 +53,12 @@ export const Footer = () => {
 
             <div className="flex flex-col">
               <h4 className="font-quicksand font-extrabold text-[20px] mb-3 text-slate-400">
-                Спільнота
+                Інформація
               </h4>
               <ul className="list-none space-y-2">
                 <li>
-                  <a
-                    href="#"
-                    className="text-white hover:text-accent font-medium transition-colors"
-                  >
-                    Discord сервер
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://t.me/starforlifeukraine"
-                    className="text-white hover:text-accent font-medium transition-colors"
-                  >
-                    Telegram канал
-                  </a>
-                </li>
-                <li>
                   <Link
-                    to="/about"
+                    to="/aboutUs"
                     className="text-white hover:text-accent font-medium transition-colors"
                   >
                     Про нас
@@ -90,7 +66,7 @@ export const Footer = () => {
                 </li>
                 <li>
                   <Link
-                    to="/contacts"
+                    to="/contact"
                     className="text-white hover:text-accent font-medium transition-colors"
                   >
                     Контакти
