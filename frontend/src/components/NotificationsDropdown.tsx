@@ -1,19 +1,20 @@
 import { useState, useRef, useEffect } from "react";
-// import { useSelector } from "react-redux";
-// import { type RootState } from "../store";
+import { useSelector } from "react-redux";
+import { type RootState } from "../store";
 
 export const NotificationsDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  /*
   const notifications = [
     { body: "🚀 Турнір 'Зимова битва' розпочнеться за 2 години!" },
     { body: "✅ Ваша заявка на проєкт Star for Life успішно прийнята. Вітаємо в команді!" },
     { body: "👑 Адміністратор надав вам нову роль. Тепер ви можете створювати проєкти." },
     { body: "🔔 Це просто тестове повідомлення, щоб перевірити, як працює скрол у менюшці, коли тексту дуже багато і повідомлень теж багато." }
-  ];
+  ];*/
 
-  // const notifications = useSelector((s: RootState) => s.user?.notifications || []);
+  const notifications = useSelector((s: RootState) => s.user?.notifications || []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
