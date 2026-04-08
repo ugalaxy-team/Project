@@ -1,10 +1,13 @@
 import { useEffect, useRef, useCallback } from "react";
 import { TournamentCard } from "../../../components/TournamentCard";
 import { TOURNAMENTS_DATA } from "../../../data/mockTournaments";
+import { useNavigate } from "react-router-dom";
 
 export const TournamentSlider = () => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
 
   const isPaused = useRef(false);
   const progressRef = useRef(0);
@@ -75,9 +78,14 @@ export const TournamentSlider = () => {
       <div className="w-full max-w-[1320px] mx-auto px-5 relative z-10">
         <div className="mb-14 flex flex-col lg:flex-row justify-between items-center lg:items-end gap-6">
           <h2 className="text-[32px] md:text-[52px] lg:text-[64px] leading-[1.1] uppercase font-quicksand font-extrabold text-dark-theme whitespace-nowrap">
-            Обери свій напрямок
+            Знайди свій турнір
           </h2>
-          <button className="btn btn-dark shrink-0 mb-2">Всі завдання</button>
+          <button
+            className="btn btn-dark shrink-0 mb-2"
+            onClick={() => navigate("/tournaments")}
+          >
+            Всі турніри
+          </button>
         </div>
 
         <div

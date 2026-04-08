@@ -9,6 +9,7 @@ import { ContactPage } from "./pages/Contact/Contact";
 import { AboutUs } from "./pages/AboutUs/AboutUs";
 import { SupportPage } from "./pages/SupportPage/SupportPage";
 import { FaqPage } from "./pages/FaqPage/FaqPage";
+import { RulesPage } from "./pages/Rules/Rules";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 import { RoleRequestPage } from "./pages/GetRole/RoleRequestPage";
@@ -39,6 +40,7 @@ export const App = () => {
             <Route path="/aboutUs" element={<AboutUs />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/faq" element={<FaqPage />} />
+            <Route path="/rules" element={<RulesPage />} />
             <Route path="*" element={<Page404 />} />
           </Route>
 
