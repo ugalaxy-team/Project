@@ -7,6 +7,7 @@ import { Page404 } from "./pages/Page404/Page404";
 import { ContactPage } from "./pages/Contact/Contact";
 import { AboutUs } from "./pages/AboutUs/AboutUs";
 import { SupportPage } from "./pages/SupportPage/SupportPage";
+import { FaqPage } from "./pages/FaqPage/FaqPage";
 import SignIn from "./pages/Auth/SignIn";
 import SignUp from "./pages/Auth/SignUp";
 import SignOut from "./pages/Auth/SignOut";
@@ -43,6 +44,7 @@ export const App = () => {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/aboutUs" element={<AboutUs />} />
           <Route path="/support" element={<SupportPage />} />
+          <Route path="/faq" element={<FaqPage />} />
           <Route path="*" element={<Page404 />} />
         </Routes>
       </main>

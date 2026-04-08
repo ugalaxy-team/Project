@@ -26,10 +26,10 @@ export const Footer = () => {
               <ul className="list-none space-y-2">
                 <li>
                   <Link
-                    to="/tasks"
+                    to="/tournaments"
                     className="text-white hover:text-accent font-medium transition-colors"
                   >
-                    Всі завдання
+                    Всі турніри
                   </Link>
                 </li>
                 <li>
@@ -58,7 +58,7 @@ export const Footer = () => {
               <ul className="list-none space-y-2">
                 <li>
                   <Link
-                    to="/about"
+                    to="/aboutUs"
                     className="text-white hover:text-accent font-medium transition-colors"
                   >
                     Про нас
@@ -66,7 +66,7 @@ export const Footer = () => {
                 </li>
                 <li>
                   <Link
-                    to="/contacts"
+                    to="/contact"
                     className="text-white hover:text-accent font-medium transition-colors"
                   >
                     Контакти
