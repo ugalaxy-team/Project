@@ -34,14 +34,6 @@ export const Footer = () => {
                 </li>
                 <li>
                   <Link
-                    to="/rating"
-                    className="text-white hover:text-accent font-medium transition-colors"
-                  >
-                    Рейтинг учасників
-                  </Link>
-                </li>
-                <li>
-                  <Link
                     to="/rules"
                     className="text-white hover:text-accent font-medium transition-colors"
                   >
@@ -61,25 +53,9 @@ export const Footer = () => {
 
             <div className="flex flex-col">
               <h4 className="font-quicksand font-extrabold text-[20px] mb-3 text-slate-400">
-                Спільнота
+                Інформація
               </h4>
               <ul className="list-none space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-white hover:text-accent font-medium transition-colors"
-                  >
-                    Discord сервер
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://t.me/starforlifeukraine"
-                    className="text-white hover:text-accent font-medium transition-colors"
-                  >
-                    Telegram канал
-                  </a>
-                </li>
                 <li>
                   <Link
                     to="/about"
