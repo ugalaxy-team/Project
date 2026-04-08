@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field, field_validator, ConfigDict
-from .user import UserPublic
 
 
 class NotificationBase(BaseModel):
@@ -8,6 +7,7 @@ class NotificationBase(BaseModel):
     body: str = Field(..., description="Notification body")
     user_id: int = Field(..., description="Notification receiver")
 
+from .user import UserPublic
 class NotificationPublic(NotificationBase):
     user: UserPublic
 
