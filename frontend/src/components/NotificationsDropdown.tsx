@@ -6,15 +6,7 @@ export const NotificationsDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  /*
-  const notifications = [
-    { body: "🚀 Турнір 'Зимова битва' розпочнеться за 2 години!" },
-    { body: "✅ Ваша заявка на проєкт Star for Life успішно прийнята. Вітаємо в команді!" },
-    { body: "👑 Адміністратор надав вам нову роль. Тепер ви можете створювати проєкти." },
-    { body: "🔔 Це просто тестове повідомлення, щоб перевірити, як працює скрол у менюшці, коли тексту дуже багато і повідомлень теж багато." }
-  ];*/
-
-  const notifications = useSelector((s: RootState) => s.user?.notifications || []);
+  const notifications = useSelector((s: RootState) => s.notifications?.items || []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -58,9 +50,9 @@ export const NotificationsDropdown = () => {
 
           <div className="max-h-80 overflow-y-auto">
             {notifications.length > 0 ? (
-              notifications.map((notification, index) => (
+              notifications.map((notification) => (
                 <div 
-                  key={index} 
+                  key={notification.id}
                   className="px-4 py-4 hover:bg-gray-50 border-b border-gray-100 last:border-0 transition-colors cursor-pointer"
                 >
                   <p className="text-sm text-gray-800 font-medium leading-relaxed">
@@ -77,7 +69,6 @@ export const NotificationsDropdown = () => {
               </div>
             )}
           </div>
-
         </div>
       )}
     </div>
