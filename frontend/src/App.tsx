@@ -15,6 +15,7 @@ import ForgotPassword from "./pages/Auth/ForgotPassword";
 import { RoleRequestPage } from "./pages/GetRole/RoleRequestPage";
 import { Toaster } from 'react-hot-toast';
 import { AuthPage } from "./pages/Auth/AuthPage";
+import SignOut from "./pages/Auth/SignOut";
 
 export const App = () => {
   return (
@@ -41,6 +42,7 @@ export const App = () => {
             <Route path="/support" element={<SupportPage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/rules" element={<RulesPage />} />
+            <Route path="/auth/sign-out" element={<SignOut />} />
             <Route path="*" element={<Page404 />} />
           </Route>
 
