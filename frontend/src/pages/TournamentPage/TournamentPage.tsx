@@ -1,9 +1,8 @@
-import { useState, useRef, useEffect, type ReactNode } from "react";
+import { useState, useRef, useEffect, useMemo, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import apiClient from "@/api/client"; 
 import { Hero } from "../../components/Hero";
 
-// --- ТИПІЗАЦІЯ ---
 interface TournamentData {
   title: string;
   description: string;
@@ -23,7 +22,6 @@ const TABS = [
 type TabId = (typeof TABS)[number]["id"];
 type TourneyStatus = "registration" | "active" | "waiting" | "finished";
 
-// --- ІКОНКИ ---
 const RegistrationIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><line x1="19" y1="8" x2="19" y2="14" /><line x1="22" y1="11" x2="16" y2="11" /></svg>
 );
@@ -75,6 +73,19 @@ const STATUS_CONFIG: Record<TourneyStatus, { label: string; className: string; i
   },
 };
 
+const getTimeLeftInfo = (targetDate: Date) => {
+  const now = new Date();
+  const diffMs = targetDate.getTime() - now.getTime();
+  
+  if (diffMs <= 0) return "0 годин";
+
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffDays > 0) return `${diffDays} днів`;
+  return `${diffHours} годин`;
+};
+
 export const TournamentPage = () => {
   const { id } = useParams<{ id: string }>(); 
   
@@ -110,7 +121,54 @@ export const TournamentPage = () => {
     fetchTournament();
   }, [id]);
 
-  const currentStatus: TourneyStatus = "active"; 
+  const { currentStatus, deadlineValue, deadlineLabel } = useMemo(() => {
+    if (!tournament) {
+      return { currentStatus: "waiting" as TourneyStatus, deadlineValue: "...", deadlineLabel: "Завантаження" };
+    }
+
+    const now = new Date();
+    const regStart = new Date(tournament.reg_start);
+    const regEnd = new Date(tournament.reg_end);
+    const eventStart = new Date(tournament.start_date);
+    
+    const eventEnd = new Date(eventStart.getTime() + 48 * 60 * 60 * 1000); 
+
+    if (now < regStart) {
+      return { 
+        currentStatus: "waiting" as TourneyStatus, 
+        deadlineValue: getTimeLeftInfo(regStart), 
+        deadlineLabel: "До початку реєстрації" 
+      };
+    }
+    if (now >= regStart && now <= regEnd) {
+      return { 
+        currentStatus: "registration" as TourneyStatus, 
+        deadlineValue: getTimeLeftInfo(regEnd), 
+        deadlineLabel: "До кінця реєстрації" 
+      };
+    }
+    if (now > regEnd && now < eventStart) {
+      return { 
+        currentStatus: "waiting" as TourneyStatus, 
+        deadlineValue: getTimeLeftInfo(eventStart), 
+        deadlineLabel: "До старту турніру" 
+      };
+    }
+    if (now >= eventStart && now <= eventEnd) {
+      return { 
+        currentStatus: "active" as TourneyStatus, 
+        deadlineValue: getTimeLeftInfo(eventEnd), 
+        deadlineLabel: "До здачі роботи" 
+      };
+    }
+    
+    return { 
+      currentStatus: "finished" as TourneyStatus, 
+      deadlineValue: "Завершено", 
+      deadlineLabel: "Турнір" 
+    };
+  }, [tournament]);
+
   const statusInfo = STATUS_CONFIG[currentStatus];
 
   if (isLoading) {
@@ -165,7 +223,7 @@ export const TournamentPage = () => {
             </h1>
 
             <div className="flex flex-wrap items-center justify-center w-full gap-8 md:gap-12 mb-12 text-base normal-case bg-white/5 hover:bg-white/10 transition-colors px-6 md:px-12 py-8 rounded-[32px] backdrop-blur-xl border border-white/10 shadow-2xl">
-              <StatItem value="48 годин" label="Дедлайн" />
+              <StatItem value={deadlineValue} label={deadlineLabel} />
               <div className="hidden md:block w-[1px] h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent self-center"></div>
               <StatItem value={`До ${tournament.max_team}`} label="Учасників у команді" />
               <div className="hidden md:block w-[1px] h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent self-center"></div>
