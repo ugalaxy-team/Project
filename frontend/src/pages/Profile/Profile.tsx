@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { setUser } from "@/slices/user";
 
 const Profile = () => {
-  const user = useSelector((s: RootState) => s.user);
+  const user = useSelector((s: RootState) => s.user.user);
   const deleteUserMutation = useMutation({
     mutationKey: ["delete user"],
     mutationFn: async () => {

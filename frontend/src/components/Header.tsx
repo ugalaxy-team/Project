@@ -13,7 +13,7 @@ export const Header = () => {
     { path: "/contact", label: "Контакти" },
   ];
   
-  const user = useSelector((s: RootState) => s.user);
+  const user = useSelector((s: RootState) => s.user.user);
 
   return (
     <div className="w-full bg-primary relative z-50">
@@ -50,16 +50,15 @@ export const Header = () => {
           ))}
         </nav>
 
-        {user ? (
+        {user?.uid ? (
+
           <div className="flex items-center gap-4">
             <NotificationsDropdown />
             <ProfileDropdown />
           </div>
         ) : (
-          <Link to="/auth" className="btn btn-outline py-2.5 px-7 text-base">
-            Увійти
-          </Link>
-        )}
+        <Link to="/auth" className="btn btn-outline py-2.5 px-7 text-base">Увійти</Link>
+    )}
       </header>
     </div>
   );
