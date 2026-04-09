@@ -30,8 +30,8 @@ export const Hero = ({
   mascot,
 }: HeroProps) => {
   return (
-    <section className="relative bg-primary pt-[60px] pb-[200px] flex flex-col items-center text-center px-5">
-      <div className="absolute top-[10%] left-0 flex gap-8 text-[22vw] font-quicksand font-extrabold whitespace-nowrap pointer-events-none text-white/5 z-0 leading-[0.8] animate-marquee">
+    <section className="relative bg-primary pt-[40px] md:pt-[60px] pb-[160px] md:pb-[200px] mb-[80px] md:mb-[150px] flex flex-col items-center text-center px-5 overflow-x-clip">
+      <div className="absolute top-[10%] left-0 flex gap-4 md:gap-8 text-[25vw] md:text-[22vw] font-quicksand font-extrabold whitespace-nowrap pointer-events-none text-white/5 z-0 leading-[0.8] animate-marquee">
         <span>
           {bgText} ★ {bgText} ★&nbsp;
         </span>
@@ -49,18 +49,18 @@ export const Hero = ({
         </div>
       ))}
 
-      <div className="relative w-full max-w-[1320px] mx-auto px-5 flex flex-col items-center">
-        <h1 className="relative z-10 leading-[1] uppercase tracking-[-0.04em] font-quicksand font-extrabold text-[clamp(60px,10vw,140px)] text-white mt-10">
+      <div className="relative w-full max-w-[1320px] mx-auto px-2 md:px-5 flex flex-col items-center">
+        <h1 className="relative z-10 leading-[1.1] md:leading-[1] uppercase tracking-[-0.04em] font-quicksand font-extrabold text-[clamp(42px,10vw,140px)] text-white mt-8 md:mt-10">
           {title}
         </h1>
 
-        <p className="relative z-10 text-[22px] font-medium max-w-[800px] mx-auto my-10 opacity-90 text-white font-inter">
+        <p className="relative z-10 text-[16px] md:text-[22px] font-medium max-w-[800px] mx-auto my-6 md:my-10 opacity-90 text-white font-inter px-2">
           {description}
         </p>
       </div>
-
+      
       {mascot && (
-        <div className="absolute -bottom-[80px] left-1/2 -translate-x-1/2 w-[280px] h-[280px] bg-accent rounded-full flex flex-col items-center justify-center z-20 shadow-[0_20px_40px_rgba(0,0,0,0.15)] border-[8px] border-primary">
+        <div className="absolute -bottom-[60px] md:-bottom-[80px] left-1/2 -translate-x-1/2 w-[220px] h-[220px] md:w-[280px] md:h-[280px] bg-accent rounded-full flex flex-col items-center justify-center z-20 shadow-[0_20px_40px_rgba(0,0,0,0.15)] border-[6px] md:border-[8px] border-primary">
           <div className="absolute w-full h-full animate-[spin_15s_linear_infinite]">
             <svg viewBox="0 0 100 100" className="w-full h-full">
               <path
@@ -74,32 +74,32 @@ export const Hero = ({
             </svg>
           </div>
 
-          <Player
-            autoplay
-            loop
-            src={mascot.lottieSrc}
-            style={{
-              width: "140px",
-              height: "140px",
-              zIndex: 10,
-              marginBottom: "10px",
-            }}
-          />
+          <div className="w-[100px] h-[100px] md:w-[140px] md:h-[140px] z-10 mb-2 md:mb-3">
+            <Player
+              autoplay
+              loop
+              src={mascot.lottieSrc}
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+            />
+          </div>
 
           <Link
             to={mascot.buttonLink}
-            className="btn btn-primary absolute -bottom-6 px-8 py-3 text-base shadow-xl bg-primary text-white rounded-full font-quicksand font-bold hover:-translate-y-1 transition-transform"
+            className="btn btn-primary absolute -bottom-5 md:-bottom-6 px-6 py-2.5 md:px-8 md:py-3 text-sm md:text-base shadow-xl bg-primary text-white rounded-full font-quicksand font-bold hover:-translate-y-1 transition-transform whitespace-nowrap"
           >
             {mascot.buttonText}
           </Link>
         </div>
       )}
-
+      
       <div className="absolute -bottom-[1px] left-0 w-full leading-[0] z-0">
         <svg
           viewBox="0 0 1440 100"
           preserveAspectRatio="none"
-          className="block h-[100px] w-[calc(100%+1.3px)]"
+          className="block h-[60px] md:h-[100px] w-[calc(100%+1.3px)]"
         >
           <path
             fill="var(--color-bg-body)"
