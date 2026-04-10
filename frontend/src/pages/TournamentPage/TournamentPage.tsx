@@ -184,19 +184,29 @@ export const TournamentPage = () => {
 
   if (error || !tournament) {
     return (
-      <div className="min-h-screen bg-bg-body flex items-center justify-center p-5">
-        <div className="max-w-md w-full bg-white/5 backdrop-blur-xl border border-red-500/30 rounded-3xl p-8 flex flex-col items-center text-center shadow-2xl">
-          <div className="text-red-400 mb-4">
+      <div className="min-h-[70vh] bg-bg-body flex items-center justify-center p-5">
+        <div className="max-w-md w-full bg-white border border-red-100 rounded-[32px] p-8 md:p-10 flex flex-col items-center text-center shadow-[0_20px_50px_-10px_rgba(239,68,68,0.15)] animate-[fadeIn_0.4s_ease_forwards]">
+          <div className="text-red-500 bg-red-50 p-5 rounded-full mb-6 shadow-inner">
             <AlertIcon />
           </div>
-          <h2 className="text-2xl font-quicksand font-bold text-white mb-2">Ой, халепа!</h2>
-          <p className="text-red-200/80 mb-6">{error || "Турнір не знайдено"}</p>
+          <h2 className="text-2xl md:text-3xl font-quicksand font-black text-slate-800 mb-4">
+            Ой, халепа!
+          </h2>
+          <p className="text-slate-600 text-[17px] mb-3 font-medium leading-relaxed">
+            Проблемки. Турнір трохи загубився в мережі або щось пішло не так. Але не хвилюйтесь, ми вже намагаємося його знайти!
+          </p>
+          <div className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 mb-8 w-full">
+            <p className="text-sm text-red-400 font-mono truncate">
+              {error || "Помилка 500: Турнір не знайдено"}
+            </p>
+          </div>
           <button 
             onClick={() => window.location.reload()} 
-            className="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all font-medium border border-white/10"
+            className="w-full sm:w-auto px-8 py-3.5 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-300 font-bold shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] hover:-translate-y-1"
           >
             Спробувати знову
           </button>
+          
         </div>
       </div>
     );
