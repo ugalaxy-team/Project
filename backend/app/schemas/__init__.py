@@ -6,7 +6,7 @@ from .tournament import (
     TournamentBase,
     TournamentUpdate,
     TournamentCreate,
-    TournamentRead,
+    TournamentPublic,
     TournamentStatusOptionModel,
 )
 from .user import UserModel, UserPublic, UserUpdate

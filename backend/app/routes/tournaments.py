@@ -3,7 +3,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy import select, update
 
 from app.schemas import (
-    TournamentRead,
+    TournamentPublic,
     TournamentCreate,
     TournamentUpdate,
 )
@@ -13,7 +13,7 @@ from app.utils.routes.dates_logic import (
     validate_dates_on_create,
     validate_dates_on_update,
 )
-from app.utils.routes import auto_update_tournament_status, get_status_by_name
+from app.utils.fsm import auto_update_tournament_status, get_status_by_name
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 
@@ -34,7 +34,7 @@ async def get_tournament(tournament_id: int, session: SessionDep) -> Tournament:
     return tournament
 
 
-@router.get("/", response_model=list[TournamentRead], status_code=status.HTTP_200_OK)
+@router.get("/", response_model=list[TournamentPublic], status_code=status.HTTP_200_OK)
 async def tournaments(session: SessionDep):
     statement = select(Tournament).options(selectinload(Tournament.status))
     tournaments = await session.execute(statement)
@@ -42,13 +42,13 @@ async def tournaments(session: SessionDep):
 
 
 @router.get(
-    "/{tournament_id}/", response_model=TournamentRead, status_code=status.HTTP_200_OK
+    "/{tournament_id}/", response_model=TournamentPublic, status_code=status.HTTP_200_OK
 )
 async def tournament(tournament_id: int, session: SessionDep):
     return await get_tournament(tournament_id, session)
 
 
-@router.post("/", response_model=TournamentRead, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=TournamentPublic, status_code=status.HTTP_201_CREATED)
 async def create_tournament(
     tournament: TournamentCreate,
     session: SessionDep,
@@ -74,7 +74,7 @@ async def create_tournament(
 
 
 @router.patch(
-    "/{tournament_id}/", response_model=TournamentRead, status_code=status.HTTP_200_OK
+    "/{tournament_id}/", response_model=TournamentPublic, status_code=status.HTTP_200_OK
 )
 async def update_tournament(
     tournament_id: int,

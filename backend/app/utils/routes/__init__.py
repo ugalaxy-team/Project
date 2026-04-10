@@ -6,4 +6,3 @@ from .teams import (
     validate_team_registration,
     create_team,
 )
-from .tournament_status import auto_update_tournament_status, get_status_by_name

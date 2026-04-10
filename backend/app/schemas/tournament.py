@@ -35,7 +35,7 @@ class TournamentStatusOptionModel(BaseModel):
     name: StrippedStr = Field(..., min_length=3)
 
 
-class TournamentRead(TournamentBase):
+class TournamentPublic(TournamentBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int

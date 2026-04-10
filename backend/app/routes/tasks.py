@@ -1,11 +1,13 @@
 from fastapi import status, HTTPException
 from fastapi.routing import APIRouter
 from sqlalchemy import select, update
+
 from app.dependencies import SessionDep
 from app.models import Task
 from app.schemas import TaskModel, TaskUpdate
+from app.utils.fsm import TaskStatus
 
-router = APIRouter(prefix="/tasks", tags=["tasks"])
+router = APIRouter(prefix="/tournaments/{tournament_id}/tasks", tags=["tasks"])
 
 
 async def get_task(task_id: int, session: SessionDep) -> Task:
@@ -17,10 +19,10 @@ async def get_task(task_id: int, session: SessionDep) -> Task:
 
 
 @router.get("/", response_model=list[TaskModel], status_code=status.HTTP_200_OK)
-async def tasks(session: SessionDep):
-    statement = select(Task)
-    users = await session.execute(statement)
-    return users.scalars().all()
+async def tasks(tournament_id: int, session: SessionDep):
+    statement = select(Task).where(Task.tournament_id == tournament_id)
+    result = await session.execute(statement)
+    return result.scalars().all()
 
 
 @router.get("/{task_id}/", response_model=TaskModel, status_code=status.HTTP_200_OK)
@@ -29,7 +31,7 @@ async def task(task_id: int, session: SessionDep):
 
 
 @router.post("/", response_model=TaskModel, status_code=status.HTTP_201_CREATED)
-async def create_task(task_data: TaskModel, session: SessionDep):
+async def create_task(tournament_id: int, task_data: TaskModel, session: SessionDep):
     new_task = Task(**task_data.model_dump())
 
     session.add(new_task)
