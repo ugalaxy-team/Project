@@ -146,7 +146,7 @@ body {
   border: 1px solid var(--border-color);
 }
 
-.contact-chip a {
+.contact-chip .contact-value {
   text-decoration: none;
   color: #111827;
   font-weight: 500;
@@ -157,10 +157,10 @@ body {
 }
 
 .blue-chip { background-color: #eff6ff; border-color: #bfdbfe; }
-.blue-chip a { color: #2563eb; }
+.blue-chip .contact-value { color: #2563eb; }
 
 .purple-chip { background-color: #f5f3ff; border-color: #ddd6fe; }
-.purple-chip a { color: #7c3aed; }
+.purple-chip .contact-value { color: #7c3aed; }
 
 /* Нижня сітка */
 .content-grid {

@@ -65,19 +65,19 @@ const Profile = () => {
           <div className="contact-methods">
             <div className="contact-chip">
               <span className="contact-label">Email:</span>
-              <a href="mailto:hacker777@example.com">hacker777@example.com</a>
+              <span className="contact-value">hacker777@example.com</span>
             </div>
             <div className="contact-chip blue-chip">
               <span className="contact-label">Telegram:</span>
-              <a href="#">@hacker777</a>
+              <span className="contact-value">{user.telegram ?? 'Відсутній'}</span>
             </div>
             <div className="contact-chip">
               <span className="contact-label">GitHub:</span>
-              <a href="#">hacker777</a>
+              <span className="contact-value">{user.github ?? 'Відсутній'}</span>
             </div>
             <div className="contact-chip purple-chip">
               <span className="contact-label">Discord:</span>
-              <a href="#">@hacker777</a>
+              <span className="contact-value">{user.discord ?? 'Відсутній'}</span>
             </div>
           </div>
         </div>

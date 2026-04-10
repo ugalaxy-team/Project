@@ -14,6 +14,9 @@ export interface ApiUserData {
     notifications: object[];
     role_requests: object[];
     created_tournaments: object[];
+    telegram?: string;
+    github?: string;
+    discord?: string;
 }
 
 export interface UserData extends ApiUserData, FirebaseUserData { };

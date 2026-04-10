@@ -20,12 +20,18 @@ class UserCreate(UserBase):
 class UserUpdate(UserBase):
     full_name: str | None = None
     email: str | None = None
+    telegram: str | None = None
+    github: str | None = None
+    discord: str | None = None
 
 class UserPublic(UserBase):
     id: int
     email: EmailStr
     firebase_uid: str
     roles: list[RolePublic]
+    telegram: str | None
+    github: str | None
+    discord: str | None
 
 class UserModel(UserBase):
     email: EmailStr = Field(..., description="User email")
