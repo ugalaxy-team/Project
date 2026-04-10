@@ -8,9 +8,9 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-    const user = useSelector((s: RootState) => s.user);
+    const user = useSelector((s: RootState) => s.user.user);
     if (user === undefined) return <div>Loading...</div>;
-    if (user === null) return <Navigate to='/auth/sign-in/' />;
+    if (user === null) return <Navigate to='/auth' />;
 
     return children ? children : <Outlet />;
 }
