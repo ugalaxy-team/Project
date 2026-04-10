@@ -15,7 +15,9 @@ class Tournament(Base, PKMixin):
     start_date: Mapped[datetime]
     reg_start: Mapped[datetime]
     reg_end: Mapped[datetime]
-    max_team: Mapped[int]
+    min_people_in_team: Mapped[int]
+    max_people_in_team: Mapped[int]
+    max_teams: Mapped[int]
     active_task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), nullable=True)
     status_id: Mapped[int] = mapped_column(ForeignKey("tournament_status_options.id"))
     creator_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
