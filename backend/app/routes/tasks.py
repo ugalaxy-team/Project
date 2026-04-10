@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 
 from app.dependencies import SessionDep
 from app.models import Task
-from app.schemas import TaskModel, TaskUpdate
+from app.schemas import TaskCreate, TaskUpdate, TaskPublic
 from app.utils.fsm import TaskStatus
 
 router = APIRouter(prefix="/tournaments/{tournament_id}/tasks", tags=["tasks"])
@@ -18,29 +18,30 @@ async def get_task(task_id: int, session: SessionDep) -> Task:
     return task
 
 
-@router.get("/", response_model=list[TaskModel], status_code=status.HTTP_200_OK)
+@router.get("/", response_model=list[TaskPublic], status_code=status.HTTP_200_OK)
 async def tasks(tournament_id: int, session: SessionDep):
     statement = select(Task).where(Task.tournament_id == tournament_id)
     result = await session.execute(statement)
     return result.scalars().all()
 
 
-@router.get("/{task_id}/", response_model=TaskModel, status_code=status.HTTP_200_OK)
+@router.get("/{task_id}/", response_model=TaskPublic, status_code=status.HTTP_200_OK)
 async def task(task_id: int, session: SessionDep):
     return await get_task(task_id, session)
 
 
-@router.post("/", response_model=TaskModel, status_code=status.HTTP_201_CREATED)
-async def create_task(tournament_id: int, task_data: TaskModel, session: SessionDep):
-    new_task = Task(**task_data.model_dump())
+# @router.post("/", response_model=TaskPublic, status_code=status.HTTP_201_CREATED)
+# async def create_task(tournament_id: int, task_data: TaskCreate, session: SessionDep):
+#     task_dict = task_data.model_dump(exclude={"requirements"})
+#     new_task = Task(**task_dict)
 
-    session.add(new_task)
-    await session.commit()
-    await session.refresh(new_task)
-    return new_task
+#     session.add(new_task)
+#     await session.commit()
+#     await session.refresh(new_task)
+#     return new_task
 
 
-@router.patch("/{task_id}/", response_model=TaskModel, status_code=status.HTTP_200_OK)
+@router.patch("/{task_id}/", response_model=TaskPublic, status_code=status.HTTP_200_OK)
 async def update_task(task_id: int, task_data: TaskUpdate, session: SessionDep):
     update_data = task_data.model_dump(exclude_unset=True)
 

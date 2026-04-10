@@ -9,7 +9,7 @@ import app.routes.submissions as submissions
 import app.routes.teams as teams
 import app.routes.team_members as team_members
 
-from app.core.seeds.status import init_tournament_statuses, init_task_statuses
+from app.core.seeds import init_tournament_statuses, init_task_statuses, init_categories
 from app.db import AsyncSessionLocal
 
 
@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
     async with AsyncSessionLocal() as session:
         await init_tournament_statuses(session)
         await init_task_statuses(session)
-
+        await init_categories(session)
     yield
 
 
