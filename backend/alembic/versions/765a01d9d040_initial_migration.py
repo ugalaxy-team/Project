@@ -1,8 +1,8 @@
-"""my_local_fix
+"""Initial migration
 
-Revision ID: 8bb9c2b1a990
+Revision ID: 765a01d9d040
 Revises: 
-Create Date: 2026-04-04 16:45:51.775994
+Create Date: 2026-04-10 12:50:06.140924
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '8bb9c2b1a990'
+revision: str = '765a01d9d040'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -72,6 +72,9 @@ def upgrade() -> None:
     sa.Column('full_name', sa.String(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('telegram', sa.String(), nullable=True),
+    sa.Column('github', sa.String(), nullable=True),
+    sa.Column('discord', sa.String(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
@@ -141,7 +144,9 @@ def upgrade() -> None:
     sa.Column('start_date', sa.DateTime(), nullable=False),
     sa.Column('reg_start', sa.DateTime(), nullable=False),
     sa.Column('reg_end', sa.DateTime(), nullable=False),
-    sa.Column('max_team', sa.Integer(), nullable=False),
+    sa.Column('min_people_in_team', sa.Integer(), nullable=False),
+    sa.Column('max_people_in_team', sa.Integer(), nullable=False),
+    sa.Column('max_teams', sa.Integer(), nullable=False),
     sa.Column('active_task_id', sa.Integer(), nullable=True),
     sa.Column('status_id', sa.Integer(), nullable=False),
     sa.Column('creator_id', sa.Integer(), nullable=False),

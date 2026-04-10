@@ -5,9 +5,12 @@ import { store, type RootState } from "../../store";
 import { deleteUser } from "@/api/requests";
 import { useMutation } from "@tanstack/react-query";
 import { setUser } from "@/slices/user";
+import { useState } from "react";
+import { EditProfileModal } from "./EditProfileModal";
 
 const Profile = () => {
   const user = useSelector((s: RootState) => s.user.user);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const deleteUserMutation = useMutation({
     mutationKey: ["delete user"],
     mutationFn: async () => {
@@ -52,7 +55,7 @@ const Profile = () => {
               <span className="role-badge">Роль: Користувач</span>
             </div>
           </div>
-          <button className="edit-btn">Редагувати профіль</button>
+          <button onClick={() => setIsEditModalOpen(true)} className="edit-btn">Редагувати профіль</button>
           <button onClick={handleDeleteUser} className="edit-btn">
             Видалити профіль
           </button>
@@ -65,7 +68,7 @@ const Profile = () => {
           <div className="contact-methods">
             <div className="contact-chip">
               <span className="contact-label">Email:</span>
-              <span className="contact-value">hacker777@example.com</span>
+              <span className="contact-value">{user.email ?? 'Відсутній'}</span>
             </div>
             <div className="contact-chip blue-chip">
               <span className="contact-label">Telegram:</span>
@@ -148,6 +151,11 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      <EditProfileModal 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)} 
+        currentUser={user} 
+      />
     </div>
   );
 };
