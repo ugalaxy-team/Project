@@ -57,7 +57,9 @@ export const Header = () => {
           {user?.uid ? (
             <div className="flex items-center gap-2 md:gap-4">
               <NotificationsDropdown />
-              <ProfileDropdown />
+              <div className="hidden lg:block">
+                <ProfileDropdown />
+              </div>
             </div>
           ) : (
             <Link to="/auth" className="btn btn-outline py-2 px-5 md:py-2.5 md:px-7 text-sm md:text-base hidden sm:flex">
@@ -79,6 +81,7 @@ export const Header = () => {
           </button>
         </div>
       </header>
+
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute top-full left-0 w-full bg-primary shadow-2xl border-t border-white/10 flex flex-col px-5 py-4 gap-4 animate-in slide-in-from-top-2">
           {navItems.map((item) => (
@@ -95,7 +98,12 @@ export const Header = () => {
               {item.label}
             </NavLink>
           ))}
-          {!user?.uid && (
+          
+          {user?.uid ? (
+            <div className="mt-2 pt-4 border-t border-white/10">
+              <ProfileDropdown />
+            </div>
+          ) : (
             <Link 
               to="/auth" 
               onClick={() => setIsMobileMenuOpen(false)}
