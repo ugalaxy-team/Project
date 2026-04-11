@@ -15,9 +15,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import type { FirebaseError } from "firebase/app";
-import { auth, google } from "../../firebase";
-import { store } from "../../store";
-import { setDisplayName } from "../../slices/user";
+import { auth, google, syncUser } from "../../firebase";
 
 import starAnimation from "../../../public/star.json";
 
@@ -111,10 +109,8 @@ export const AuthPage = () => {
           data.email,
           data.password,
         );
-        if (data.displayName) {
-          await updateProfile(cred.user, { displayName: data.displayName });
-          store.dispatch(setDisplayName(data.displayName));
-        }
+        await updateProfile(cred.user, { displayName: data.displayName });
+        await syncUser(cred.user);
       }
       navigate("/");
     } catch (e) {

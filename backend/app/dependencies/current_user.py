@@ -20,14 +20,17 @@ async def get_current_user(
 ) -> User:
     try:
         token = auth.verify_id_token(token.credentials, firebase)
-        u = auth.get_user_by_email(token['email'])
+        u: auth.UserRecord = auth.get_user_by_email(token['email'])
         try:
             user = await get_user(u.uid, session)
-        except HTTPException:
-            user = User(firebase_uid=u.uid, full_name=u.display_name, email=u.email)
-            session.add(user)
-            await session.commit()
-            await session.refresh(user)
+        except HTTPException as e:
+            if e.status_code == status.HTTP_404_NOT_FOUND:
+                if not u.display_name:
+                    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Full name is null!')
+                user = User(firebase_uid=u.uid, full_name=u.display_name, email=u.email)
+                session.add(user)
+                await session.commit()
+                await session.refresh(user)
     except (
         ValueError,
         InvalidIdTokenError,

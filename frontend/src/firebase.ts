@@ -1,6 +1,6 @@
 import { initializeApp, type FirebaseOptions } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { browserLocalPersistence, getAuth, GoogleAuthProvider, onAuthStateChanged, setPersistence } from "firebase/auth";
+import { browserLocalPersistence, getAuth, GoogleAuthProvider, onAuthStateChanged, setPersistence, type User } from "firebase/auth";
 import { initializeUI, providerPopupStrategy, requireDisplayName } from '@firebase-oss/ui-core';
 import { setUser, type ApiUserData, type FirebaseUserData, type UserData } from "./slices/user";
 import { store } from "./store";
@@ -33,31 +33,61 @@ const google = new GoogleAuthProvider();
 google.addScope('profile');
 google.addScope('email');
 
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        const firebaseUserData: FirebaseUserData = {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            emailVerified: user.emailVerified,
-            isAnonymous: user.isAnonymous,
-        };
+const baseApiUserData: ApiUserData = {
+    roles: [],
+    notifications: [],
+    role_requests: [],
+    created_tournaments: [],
+    telegram: undefined,
+    github: undefined,
+    discord: undefined,
+};
+
+export const syncUser = async (user: User | null) => {
+    if (!user) {
+        store.dispatch(setUser(null));
+        return;
+    }
+
+    const firebaseUserData: FirebaseUserData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName ?? user.email ?? user.uid,
+        photoURL: user.photoURL,
+        emailVerified: user.emailVerified,
+        isAnonymous: user.isAnonymous,
+    };
+
+    try {
         const apiUserData = await queryClient.fetchQuery<ApiUserData>({
             queryKey: ['user', user.uid],
-            queryFn: async () => await getProfile(user),
+            queryFn: async () => {
+                const data = await getProfile(user);
+                if (!data) return null;
+                return data;
+            },
         });
+
         const userData: UserData = {
+            ...baseApiUserData,
             ...firebaseUserData,
             ...apiUserData,
         };
+
         store.dispatch(setUser(userData));
-        console.log(userData);
         console.log('User authenticated!');
-    } else {
-        store.dispatch(setUser(null));
-        console.log('Sign out!')
+    } catch (error) {
+        console.error('Failed to sync user with API, falling back to Firebase data', error);
+        const userData: UserData = {
+            ...baseApiUserData,
+            ...firebaseUserData,
+        };
+        store.dispatch(setUser(userData));
     }
+};
+
+onAuthStateChanged(auth, async (user) => {
+    await syncUser(user);
 });
 
 export default app;

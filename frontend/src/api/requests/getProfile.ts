@@ -4,7 +4,6 @@ import apiClient from "../client";
 export const getProfile = async (user: User) => {
     try {
         const token = await user.getIdToken();
-        console.log(token)
         const resp = await apiClient.get('/profile/', {
             headers: {
                 Authorization: `Bearer ${token}`,
