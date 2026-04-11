@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
-import apiClient from "@/api/client"; 
+import apiClient from "@/api/client";
 import { Hero } from "../../components/Hero";
 
 interface TournamentData {
@@ -9,7 +9,7 @@ interface TournamentData {
   start_date: string;
   reg_start: string;
   reg_end: string;
-  max_team: number;
+  max_teams: number;
 }
 
 const TABS = [
@@ -76,7 +76,7 @@ const STATUS_CONFIG: Record<TourneyStatus, { label: string; className: string; i
 const getTimeLeftInfo = (targetDate: Date) => {
   const now = new Date();
   const diffMs = targetDate.getTime() - now.getTime();
-  
+
   if (diffMs <= 0) return "0 годин";
 
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
@@ -87,8 +87,8 @@ const getTimeLeftInfo = (targetDate: Date) => {
 };
 
 export const TournamentPage = () => {
-  const { id } = useParams<{ id: string }>(); 
-  
+  const { id } = useParams<{ id: string }>();
+
   const [tournament, setTournament] = useState<TournamentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -107,11 +107,11 @@ export const TournamentPage = () => {
         setTournament(response.data);
         setError(null);
       } catch (err: any) {
-        const errorMessage = 
-          err.response?.data?.detail?.[0]?.msg || 
-          err.response?.data?.message || 
+        const errorMessage =
+          err.response?.data?.detail?.[0]?.msg ||
+          err.response?.data?.message ||
           "Не вдалося завантажити інформацію про турнір.";
-        
+
         setError(errorMessage);
       } finally {
         setIsLoading(false);
@@ -130,42 +130,42 @@ export const TournamentPage = () => {
     const regStart = new Date(tournament.reg_start);
     const regEnd = new Date(tournament.reg_end);
     const eventStart = new Date(tournament.start_date);
-    
-    const eventEnd = new Date(eventStart.getTime() + 48 * 60 * 60 * 1000); 
+
+    const eventEnd = new Date(eventStart.getTime() + 48 * 60 * 60 * 1000);
 
     if (now < regStart) {
-      return { 
-        currentStatus: "waiting" as TourneyStatus, 
-        deadlineValue: getTimeLeftInfo(regStart), 
-        deadlineLabel: "До початку реєстрації" 
+      return {
+        currentStatus: "waiting" as TourneyStatus,
+        deadlineValue: getTimeLeftInfo(regStart),
+        deadlineLabel: "До початку реєстрації"
       };
     }
     if (now >= regStart && now <= regEnd) {
-      return { 
-        currentStatus: "registration" as TourneyStatus, 
-        deadlineValue: getTimeLeftInfo(regEnd), 
-        deadlineLabel: "До кінця реєстрації" 
+      return {
+        currentStatus: "registration" as TourneyStatus,
+        deadlineValue: getTimeLeftInfo(regEnd),
+        deadlineLabel: "До кінця реєстрації"
       };
     }
     if (now > regEnd && now < eventStart) {
-      return { 
-        currentStatus: "waiting" as TourneyStatus, 
-        deadlineValue: getTimeLeftInfo(eventStart), 
-        deadlineLabel: "До старту турніру" 
+      return {
+        currentStatus: "waiting" as TourneyStatus,
+        deadlineValue: getTimeLeftInfo(eventStart),
+        deadlineLabel: "До старту турніру"
       };
     }
     if (now >= eventStart && now <= eventEnd) {
-      return { 
-        currentStatus: "active" as TourneyStatus, 
-        deadlineValue: getTimeLeftInfo(eventEnd), 
-        deadlineLabel: "До здачі роботи" 
+      return {
+        currentStatus: "active" as TourneyStatus,
+        deadlineValue: getTimeLeftInfo(eventEnd),
+        deadlineLabel: "До здачі роботи"
       };
     }
-    
-    return { 
-      currentStatus: "finished" as TourneyStatus, 
-      deadlineValue: "Завершено", 
-      deadlineLabel: "Турнір" 
+
+    return {
+      currentStatus: "finished" as TourneyStatus,
+      deadlineValue: "Завершено",
+      deadlineLabel: "Турнір"
     };
   }, [tournament]);
 
@@ -200,13 +200,13 @@ export const TournamentPage = () => {
               {error || "Помилка 500: Турнір не знайдено"}
             </p>
           </div>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="w-full sm:w-auto px-8 py-3.5 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-300 font-bold shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] hover:-translate-y-1"
           >
             Спробувати знову
           </button>
-          
+
         </div>
       </div>
     );
@@ -235,7 +235,7 @@ export const TournamentPage = () => {
             <div className="flex flex-wrap items-center justify-center w-full gap-8 md:gap-12 mb-12 text-base normal-case bg-white/5 hover:bg-white/10 transition-colors px-6 md:px-12 py-8 rounded-[32px] backdrop-blur-xl border border-white/10 shadow-2xl">
               <StatItem value={deadlineValue} label={deadlineLabel} />
               <div className="hidden md:block w-[1px] h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent self-center"></div>
-              <StatItem value={`До ${tournament.max_team}`} label="Учасників у команді" />
+              <StatItem value={`До ${tournament.max_teams}`} label="Учасників у команді" />
               <div className="hidden md:block w-[1px] h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent self-center"></div>
               <StatItem value="Top 3" label="Призові місця" />
             </div>
@@ -296,11 +296,10 @@ const TournamentMainContent = ({ tournament }: { tournament: TournamentData }) =
                 tabsRef.current[index] = el;
               }}
               onClick={() => setActiveTab(tab.id)}
-              className={`font-quicksand font-bold text-[20px] md:text-[22px] cursor-pointer relative z-10 transition-colors duration-300 px-2 py-1 ${
-                activeTab === tab.id
+              className={`font-quicksand font-bold text-[20px] md:text-[22px] cursor-pointer relative z-10 transition-colors duration-300 px-2 py-1 ${activeTab === tab.id
                   ? "text-primary"
                   : "text-slate-400 hover:text-primary/70"
-              }`}
+                }`}
             >
               {tab.label}
             </button>
