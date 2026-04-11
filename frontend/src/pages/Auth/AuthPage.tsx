@@ -299,7 +299,7 @@ export const AuthPage = () => {
                     Пароль
                   </label>
                   <Link
-                    to="/forgot-password"
+                    to="/auth/forgot-password"
                     className={`text-[13px] font-semibold text-indigo-500 ${isLogin ? "opacity-100" : "opacity-0 pointer-events-none"}`}
                   >
                     Забули пароль?

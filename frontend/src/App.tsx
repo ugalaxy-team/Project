@@ -36,18 +36,19 @@ export const App = () => {
             />
             <Route path="/tournaments" element={<TournamentsPage />} />
             <Route path="/tournament/:id" element={<TournamentPage />} />
-            <Route path="/RoleRequestForm" element={<RoleRequestPage/>} />
+            <Route path="/RoleRequestForm" element={<RoleRequestPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/aboutUs" element={<AboutUs />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/rules" element={<RulesPage />} />
-            <Route path="/auth/sign-out" element={<SignOut />} />
             <Route path="*" element={<Page404 />} />
           </Route>
-
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+          <Route path="/auth/">
+            <Route index element={<AuthPage />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="sign-out" element={<SignOut />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </>
