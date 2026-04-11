@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Lottie from 'lottie-react';
-import star from './star.json'; 
+import star from './star.json';
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
-import { roleRequest } from '@/api/requests/roleRequest';
+import { requestRole } from '@/api/requests/requestRole';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import apiClient from '@/api/client';
+import { auth } from '@/firebase';
 
 interface Role {
     name: string;
@@ -15,8 +16,8 @@ interface Role {
 }
 
 const RoleRequestPage = () => {
-    const currentUser = useSelector((state: RootState) => state.user);
-    const navigate = useNavigate(); 
+    const user = useSelector((state: RootState) => state.user.user);
+    const navigate = useNavigate();
 
     const [roles, setRoles] = useState<Role[]>([]);
     const [selectedRole, setSelectedRole] = useState<Role | null>(null);
@@ -25,8 +26,8 @@ const RoleRequestPage = () => {
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                const response = await apiClient.get('/roles/'); 
-                const data: Role[] = response.data; 
+                const response = await apiClient.get('/roles/');
+                const data: Role[] = response.data;
                 const filteredRoles = data.filter(role => role.name !== 'user');
                 setRoles(filteredRoles);
                 if (filteredRoles.length > 0) {
@@ -42,9 +43,9 @@ const RoleRequestPage = () => {
     }, []);
 
     const createRequests = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault(); 
-        
-        if (!currentUser?.id) {
+        e.preventDefault();
+
+        if (!user) {
             toast.error("Користувач не знайдений або не авторизований!");
             return;
         }
@@ -67,10 +68,11 @@ const RoleRequestPage = () => {
         ];
 
         try {
-            await roleRequest(selectedRole.name, currentUser.id, info);
+            if (!auth.currentUser) return;
+            await requestRole(selectedRole.name, auth.currentUser, user.id, info);
             toast.success("Заявку відправлено! Очікуйте на відповідь");
             form.reset();
-            navigate("/"); 
+            navigate("/");
         } catch (error: any) {
             if (error.response && error.response.status === 400) {
                 if (error.response.data?.detail === "Role requests already exists!") {
@@ -85,26 +87,26 @@ const RoleRequestPage = () => {
     const inputClasses = "peer w-full px-[18px] pt-6 pb-2 border border-slate-200 rounded-xl bg-[#fafafa] text-sm text-gray-800 transition-all focus:outline-none focus:border-[#7b00ff] focus:bg-white focus:shadow-[0_0_0_3px_rgba(123,0,255,0.1)] placeholder-transparent";
     const labelClasses = "absolute left-[18px] top-1.5 text-[11px] font-medium text-[#7b00ff] pointer-events-none transition-all peer-placeholder-shown:top-[18px] peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:text-[#7b00ff] peer-focus:font-medium";
 
-    return(
+    return (
         <div className="flex flex-col md:flex-row min-h-screen font-sans bg-[#f7f8fc]">
             <div className="flex-1 bg-[#7b00ff] text-white flex flex-col items-center justify-center p-10">
                 <div className="max-w-[480px] text-center md:text-left">
                     <div className="text-[64px] mb-2.5 text-center">
-                        <Lottie 
-                            animationData={star} 
-                            loop={true} 
-                            style={{ width: 120, height: 120, margin: '0 auto' }} 
+                        <Lottie
+                            animationData={star}
+                            loop={true}
+                            style={{ width: 120, height: 120, margin: '0 auto' }}
                         />
                     </div>
                     <h2 className="text-[32px] m-0 font-extrabold text-center">UGalaxy</h2>
                     <p className="text-sm tracking-[2px] mt-1 mb-10 opacity-90 text-center">STAR FOR LIFE</p>
-                    
+
                     <h1 className="text-[28px] font-extrabold text-white mt-0 mb-4 leading-[1.2]">
                         Заявка на роль {selectedRole ? selectedRole.display_name.toLowerCase() : '...'}
                     </h1>
                     <p className="text-[15px] text-white/85 leading-[1.6] mb-6">
                         {selectedRole ? selectedRole.description : 'Заповніть форму нижче, щоб подати заявку. Ми розглядаємо кожну заявку вручну.'}
-                        <br/><br/>
+                        <br /><br />
                         <b className="font-bold">Важливо:</b> відповідайте чесно та детально — це підвищує ваші шанси.
                     </p>
                 </div>
@@ -125,11 +127,10 @@ const RoleRequestPage = () => {
                                             key={role.name}
                                             type="button"
                                             onClick={() => setSelectedRole(role)}
-                                            className={`px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer text-sm md:text-base font-medium border-2 ${
-                                                isActive 
-                                                ? 'border-[#7b00ff] bg-[#7b00ff]/10 text-[#7b00ff] shadow-sm' 
+                                            className={`px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer text-sm md:text-base font-medium border-2 ${isActive
+                                                ? 'border-[#7b00ff] bg-[#7b00ff]/10 text-[#7b00ff] shadow-sm'
                                                 : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300'
-                                            }`}
+                                                }`}
                                         >
                                             {role.display_name}
                                         </button>
@@ -155,7 +156,7 @@ const RoleRequestPage = () => {
                             <input type="number" id="age" name="age" placeholder=" " required className={inputClasses} />
                             <label htmlFor="age" className={labelClasses}>Ваш вік *</label>
                         </div>
-                        
+
                         <div className="relative w-full">
                             <textarea id="experience" name="experience" placeholder=" " rows={2} required className={`${inputClasses} min-h-[80px] resize-y`}></textarea>
                             <label htmlFor="experience" className={labelClasses}>Чи маєте релевантний досвід? *</label>
@@ -171,9 +172,9 @@ const RoleRequestPage = () => {
                             <label htmlFor="plans" className={labelClasses}>Що ви плануєте робити на цій ролі? *</label>
                         </div>
 
-                        <button 
-                            type="submit" 
-                            className="mt-2.5 p-4 bg-[#7b00ff] text-white border-none rounded-full text-base font-bold cursor-pointer transition-all hover:bg-[#6a00e0] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed" 
+                        <button
+                            type="submit"
+                            className="mt-2.5 p-4 bg-[#7b00ff] text-white border-none rounded-full text-base font-bold cursor-pointer transition-all hover:bg-[#6a00e0] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             disabled={!selectedRole || isLoadingRoles}
                         >
                             Надіслати форму

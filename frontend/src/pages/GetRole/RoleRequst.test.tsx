@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { RoleRequestPage } from './RoleRequestPage';
-import { roleRequest } from '@/api/requests/roleRequest';
+import { requestRole } from '@/api/requests/requestRole';
 import apiClient from '@/api/client';
 
 vi.mock('react-redux', () => ({
@@ -24,8 +24,8 @@ vi.mock('react-hot-toast', () => ({
 }));
 
 
-vi.mock('@/api/requests/roleRequest', () => ({
-  roleRequest: vi.fn(),
+vi.mock('@/api/requests/requestRole', () => ({
+  requestRole: vi.fn(),
 }));
 
 vi.mock('@/api/client', () => ({
@@ -44,7 +44,7 @@ describe('RoleRequestPage Component', () => {
   const mockRoles = [
     { name: 'admin', display_name: 'Administrator', description: 'Admin role' },
     { name: 'moderator', display_name: 'Moderator', description: 'Mod role' },
-    { name: 'user', display_name: 'User', description: 'Regular user' }, 
+    { name: 'user', display_name: 'User', description: 'Regular user' },
   ];
 
   beforeEach(() => {
@@ -68,14 +68,14 @@ describe('RoleRequestPage Component', () => {
       expect(screen.getByText('Moderator')).toBeInTheDocument();
     });
     expect(screen.queryByText('User')).not.toBeInTheDocument();
-    
+
     expect(screen.getByText('Заявка на роль administrator')).toBeInTheDocument();
   });
 
   it('shows error toast if role fetching fails', async () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
     vi.mocked(apiClient.get).mockRejectedValue(new Error('Network Error'));
-    
+
     render(<RoleRequestPage />);
 
     await waitFor(() => {
@@ -86,17 +86,17 @@ describe('RoleRequestPage Component', () => {
   it('shows error when user is missing on submit', async () => {
     vi.mocked(useSelector).mockReturnValue(null);
     const { container } = render(<RoleRequestPage />);
-    
+
     await waitFor(() => expect(screen.getByText('Administrator')).toBeInTheDocument());
 
     fireEvent.submit(container.querySelector('form')!);
-    
+
     expect(toast.error).toHaveBeenCalledWith('Користувач не знайдений або не авторизований!');
   });
 
   it('submits form as Tolka and navigates on success', async () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    vi.mocked(roleRequest).mockResolvedValue(200);
+    vi.mocked(requestRole).mockResolvedValue(200);
 
     const { container } = render(<RoleRequestPage />);
 
@@ -114,7 +114,7 @@ describe('RoleRequestPage Component', () => {
     fireEvent.submit(container.querySelector('form')!);
 
     await waitFor(() => {
-      expect(roleRequest).toHaveBeenCalledWith('moderator', '123', [
+      expect(requestRole).toHaveBeenCalledWith('moderator', '123', [
         { option_name: 'ПІБ', value: 'Толька' },
         { option_name: 'Контакти', value: '@tolka_boss' },
         { option_name: 'Вік', value: '22' },
@@ -130,14 +130,14 @@ describe('RoleRequestPage Component', () => {
 
   it('shows duplicate error on 400 response', async () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    vi.mocked(roleRequest).mockRejectedValue({
+    vi.mocked(requestRole).mockRejectedValue({
       response: { status: 400, data: { detail: 'Role requests already exists!' } }
     });
 
     const { container } = render(<RoleRequestPage />);
-    
+
     await waitFor(() => expect(screen.getByText('Administrator')).toBeInTheDocument());
-    
+
     fireEvent.submit(container.querySelector('form')!);
 
     await waitFor(() => {
@@ -147,12 +147,12 @@ describe('RoleRequestPage Component', () => {
 
   it('shows fallback error on API failure', async () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    vi.mocked(roleRequest).mockRejectedValue(new Error('Network Error'));
+    vi.mocked(requestRole).mockRejectedValue(new Error('Network Error'));
 
     const { container } = render(<RoleRequestPage />);
-    
+
     await waitFor(() => expect(screen.getByText('Administrator')).toBeInTheDocument());
-    
+
     fireEvent.submit(container.querySelector('form')!);
 
     await waitFor(() => {
