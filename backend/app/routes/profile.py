@@ -14,10 +14,14 @@ async def get_profile(current_user: CurrentUserDep):
 async def edit_profile(session: SessionDep, current_user: CurrentUserDep,
                 user: UserUpdate):
     user_data = user.model_dump(exclude_unset=True)
-    current_user.full_name = user_data['full_name']
-    current_user.telegram = user_data['telegram']
-    current_user.github = user_data['github']
-    current_user.discord = user_data['discord']
+    if 'full_name' in user_data:
+        current_user.full_name = user_data['full_name']
+    if 'telegram' in user_data:
+        current_user.telegram = user_data['telegram']
+    if 'github' in user_data:
+        current_user.github = user_data['github']
+    if 'discord' in user_data:
+        current_user.discord = user_data['discord']
     await session.commit()
     return current_user
 
