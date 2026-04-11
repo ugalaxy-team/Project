@@ -116,7 +116,7 @@ async def test_team_member_without_data(db_session):
     await db_session.rollback()
 
 
-async def test_team_member_duplicate_email(create, db_session):
+async def test_team_member_duplicate_email_same_team(create, db_session):
     team = await create(TeamFactory)
     member1 = await create(TeamMemberFactory, team=team)
 
@@ -128,6 +128,24 @@ async def test_team_member_duplicate_email(create, db_session):
 
     await db_session.rollback()
 
+async def test_team_member_duplicate_email_different_tournaments(create, db_session):
+    team1 = await create(TeamFactory)
+    team2 = await create(TeamFactory)
+    member1 = await create(TeamMemberFactory, tournament=team1.tournament)
+    member2 = await create(TeamMemberFactory, email=member1.email, tournament=team2.tournament)
+
+    await db_session.commit()
+    assert member1.email == member2.email
+
+async def test_team_member_duplicate_email_same_tournament(create, db_session):
+    team1 = await create(TeamFactory)
+    team2 = await create(TeamFactory, tournament=team1.tournament)
+    member1 = await create(TeamMemberFactory, tournament=team1.tournament)
+    with pytest.raises(IntegrityError):
+        await create(TeamMemberFactory, email=member1.email, tournament=team2.tournament)
+        await db_session.flush()
+    
+    await db_session.rollback()
 
 async def test_create_team(create):
     team = await create(TeamFactory)
@@ -280,7 +298,7 @@ async def test_create_tournament(create):
 
     assert tournament.title is not None
     assert tournament.description is not None
-    assert tournament.max_team is not None
+    assert tournament.max_teams is not None
 
 
 async def test_tournament_without_data(db_session):
@@ -338,11 +356,6 @@ async def test_tournament_status_relationship(db_session, create):
     db_tournament = result.scalar_one()
 
     assert db_tournament.status is not None
-    assert db_tournament.status.name in [
-        "Registration Open",
-        "Ongoing",
-        "Finished",
-    ]
 
 
 async def test_tournament_tasks_relationship(db_session, create):

@@ -22,6 +22,6 @@ class TeamMemberModel(BaseModel):
     
     full_name: str = Field(..., min_length=3)
     email: EmailStr = Field(..., description="Contact email")
-    telegram_username: str
+    telegram: str
     educational_institution: str
     team_id: int = Field(..., gt=0)

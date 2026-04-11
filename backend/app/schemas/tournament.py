@@ -11,7 +11,7 @@ class TournamentModels(BaseModel):
     start_date: datetime
     reg_start: datetime
     reg_end: datetime
-    max_team: int = Field(..., gt=0)
+    max_teams: int = Field(..., gt=0)
 
     @field_validator("title")
     @classmethod

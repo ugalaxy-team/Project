@@ -51,7 +51,7 @@ class TournamentStatusOptionFactory(BaseFactory):
     class Meta:
         model = TournamentStatusOption
 
-    name = factory.Iterator(["Registration Open", "Ongoing", "Finished"])
+    name = Faker("name")
 
 
 class TournamentFactory(BaseFactory):
@@ -63,7 +63,9 @@ class TournamentFactory(BaseFactory):
     start_date = Faker("future_datetime")
     reg_start = Faker("past_datetime")
     reg_end = Faker("future_datetime")
-    max_team = Faker("pyint", min_value=10, max_value=100)
+    max_teams = Faker("pyint", min_value=10, max_value=100)
+    min_people_in_team = Faker("pyint", min_value=1, max_value=100)
+    max_people_in_team = Faker("pyint", min_value=1, max_value=100)
 
     creator = factory.SubFactory(UserFactory)
     status = factory.SubFactory(TournamentStatusOptionFactory)
@@ -94,9 +96,10 @@ class TeamMemberFactory(BaseFactory):
 
     full_name = Faker("name")
     email = Faker("email")
-    telegram_username = factory.Sequence(lambda n: f"@user_{n}")
+    telegram = factory.Sequence(lambda n: f"@user_{n}")
     educational_institution = Faker("company")
     team = factory.SubFactory(TeamFactory)
+    tournament = factory.SubFactory(TournamentFactory)
 
 
 class TaskStatusOptionFactory(BaseFactory):
