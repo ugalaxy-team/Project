@@ -1,6 +1,6 @@
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
+from typing import Optional
 from .base import Base
 from .mixin import PKMixin
 
@@ -40,7 +40,7 @@ class TeamMember(Base, PKMixin):
     full_name: Mapped[str] = mapped_column(nullable=False)
     email: Mapped[str] = mapped_column(nullable=False)
     telegram: Mapped[str] = mapped_column(nullable=False)
-    educational_institution: Mapped[str] = mapped_column(nullable=False)
+    educational_institution: Mapped[Optional[str]] = mapped_column(nullable=True)
     team_id: Mapped[int] = mapped_column(
         ForeignKey("teams.id", use_alter=True, name="fk_teammember_team")
     )
