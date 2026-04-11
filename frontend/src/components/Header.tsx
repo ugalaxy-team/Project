@@ -3,19 +3,19 @@ import { Link, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { type RootState } from "../store";
 
-import { ProfileDropdown } from "./ProfileDropdown"; 
-import { NotificationsDropdown } from "./NotificationsDropdown"; 
+import { ProfileDropdown } from "./ProfileDropdown";
+import { NotificationsDropdown } from "./NotificationsDropdown";
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
     { path: "/tournaments", label: "Турніри" },
-    { path: "/aboutUs", label: "Про нас" },
+    { path: "/about-us", label: "Про нас" },
     { path: "/support", label: "Чим ви можете допомогти" },
     { path: "/contact", label: "Контакти" },
   ];
-  
+
   const user = useSelector((s: RootState) => s.user.user);
 
   return (
@@ -34,8 +34,7 @@ export const Header = () => {
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `group relative font-semibold text-[16px] py-2 transition-colors duration-300 ${
-                  isActive ? "text-accent" : "text-white hover:text-accent"
+                `group relative font-semibold text-[16px] py-2 transition-colors duration-300 ${isActive ? "text-accent" : "text-white hover:text-accent"
                 }`
               }
             >
@@ -43,9 +42,8 @@ export const Header = () => {
                 <>
                   {item.label}
                   <span
-                    className={`absolute bottom-0 left-0 h-[2px] bg-accent transition-all duration-300 ${
-                      isActive ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
+                    className={`absolute bottom-0 left-0 h-[2px] bg-accent transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"
+                      }`}
                   ></span>
                 </>
               )}
@@ -67,7 +65,7 @@ export const Header = () => {
             </Link>
           )}
 
-          <button 
+          <button
             className="lg:hidden text-white p-2 focus:outline-none"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -90,22 +88,21 @@ export const Header = () => {
               to={item.path}
               onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) =>
-                `block font-semibold text-[18px] py-2 transition-colors duration-300 ${
-                  isActive ? "text-accent" : "text-white hover:text-accent"
+                `block font-semibold text-[18px] py-2 transition-colors duration-300 ${isActive ? "text-accent" : "text-white hover:text-accent"
                 }`
               }
             >
               {item.label}
             </NavLink>
           ))}
-          
+
           {user?.uid ? (
             <div className="mt-2 pt-4 border-t border-white/10">
               <ProfileDropdown />
             </div>
           ) : (
-            <Link 
-              to="/auth" 
+            <Link
+              to="/auth"
               onClick={() => setIsMobileMenuOpen(false)}
               className="btn btn-outline py-2 px-5 mt-2 text-center sm:hidden"
             >

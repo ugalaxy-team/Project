@@ -58,7 +58,7 @@ export const Home = () => {
         <div className="max-w-[1320px] mx-auto bg-gradient-to-r from-[#6b73ff] to-[#4c51bf] rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-12 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-8 relative overflow-hidden group">
           <div className="absolute -left-10 -top-10 w-40 h-40 bg-white/20 rounded-full blur-3xl transition-transform duration-700 group-hover:scale-150"></div>
           <div className="absolute right-20 -bottom-10 w-32 h-32 bg-yellow-300/20 rounded-full blur-2xl"></div>
-          
+
           <div className="relative z-10 text-center lg:text-left flex-1">
             <span className="inline-block bg-white/20 text-white backdrop-blur-sm border border-white/30 text-xs md:text-sm font-semibold px-4 py-1.5 rounded-full mb-4 md:mb-5">
               Нові можливості
@@ -70,10 +70,10 @@ export const Home = () => {
               Подай заявку на отримання нової ролі та розблокуй додатковий функціонал для себе та своєї команди.
             </p>
           </div>
-          
+
           <div className="relative z-10 shrink-0 mt-2 md:mt-0 w-full sm:w-auto">
-            <Link 
-              to="/RoleRequestForm" 
+            <Link
+              to="/role-request-form"
               className="flex sm:inline-flex items-center justify-center w-full sm:w-auto bg-white text-[#5c68ff] font-bold text-base md:text-lg px-6 py-3 md:px-8 md:py-4 rounded-xl hover:bg-slate-50 hover:-translate-y-1 shadow-lg hover:shadow-xl transition-all duration-300"
             >
               Отримати роль

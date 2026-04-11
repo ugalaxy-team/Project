@@ -36,9 +36,13 @@ export const App = () => {
             />
             <Route path="/tournaments" element={<TournamentsPage />} />
             <Route path="/tournament/:id" element={<TournamentPage />} />
-            <Route path="/RoleRequestForm" element={<RoleRequestPage />} />
+            <Route path="/role-request-form" element={
+              <ProtectedRoute>
+                <RoleRequestPage />
+              </ProtectedRoute>
+            } />
             <Route path="/contact" element={<ContactPage />} />
-            <Route path="/aboutUs" element={<AboutUs />} />
+            <Route path="/about-us" element={<AboutUs />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/rules" element={<RulesPage />} />

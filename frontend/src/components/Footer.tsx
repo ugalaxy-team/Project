@@ -48,7 +48,7 @@ export const Footer = () => {
               </h4>
               <ul className="list-none space-y-2">
                 <li>
-                  <Link to="/aboutUs" className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors">
+                  <Link to="/about-us" className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors">
                     Про нас
                   </Link>
                 </li>
