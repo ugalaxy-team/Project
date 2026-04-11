@@ -10,6 +10,7 @@ export interface FirebaseUserData {
 }
 
 export interface ApiUserData {
+    id: number;
     roles: object[];
     notifications: object[];
     role_requests: object[];

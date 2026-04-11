@@ -34,6 +34,7 @@ google.addScope('profile');
 google.addScope('email');
 
 const baseApiUserData: ApiUserData = {
+    id: -1,
     roles: [],
     notifications: [],
     role_requests: [],
