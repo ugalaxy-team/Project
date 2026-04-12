@@ -15,14 +15,12 @@ vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
 }));
 
-
 vi.mock('react-hot-toast', () => ({
   default: {
     success: vi.fn(),
     error: vi.fn(),
   },
 }));
-
 
 vi.mock('@/api/requests/requestRole', () => ({
   requestRole: vi.fn(),
@@ -31,6 +29,12 @@ vi.mock('@/api/requests/requestRole', () => ({
 vi.mock('@/api/client', () => ({
   default: {
     get: vi.fn(),
+  },
+}));
+
+vi.mock('@/firebase', () => ({
+  auth: {
+    currentUser: { uid: 'mock-user-123' },
   },
 }));
 
@@ -63,12 +67,13 @@ describe('RoleRequestPage Component', () => {
   it('fetches and displays roles correctly, filtering out "user"', async () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
     render(<RoleRequestPage />);
+    
     await waitFor(() => {
       expect(screen.getByText('Administrator')).toBeInTheDocument();
       expect(screen.getByText('Moderator')).toBeInTheDocument();
     });
+    
     expect(screen.queryByText('User')).not.toBeInTheDocument();
-
     expect(screen.getByText('Заявка на роль administrator')).toBeInTheDocument();
   });
 
@@ -94,9 +99,9 @@ describe('RoleRequestPage Component', () => {
     expect(toast.error).toHaveBeenCalledWith('Користувач не знайдений або не авторизований!');
   });
 
-  it('submits form as Tolka and navigates on success', async () => {
+  it('submits form successfully and navigates', async () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    vi.mocked(requestRole).mockResolvedValue(200);
+    vi.mocked(requestRole).mockResolvedValue(200 as any);
 
     const { container } = render(<RoleRequestPage />);
 
@@ -114,7 +119,7 @@ describe('RoleRequestPage Component', () => {
     fireEvent.submit(container.querySelector('form')!);
 
     await waitFor(() => {
-      expect(requestRole).toHaveBeenCalledWith('moderator', '123', [
+      expect(requestRole).toHaveBeenCalledWith('moderator', { uid: 'mock-user-123' }, '123', [
         { option_name: 'ПІБ', value: 'Толька' },
         { option_name: 'Контакти', value: '@tolka_boss' },
         { option_name: 'Вік', value: '22' },

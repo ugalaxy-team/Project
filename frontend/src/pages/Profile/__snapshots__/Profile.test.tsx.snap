@@ -42,7 +42,7 @@ exports[`Profile Component > renders correctly and matches snapshot 1`] = `
             <h1
               class="profile-name"
             >
-              Тестер
+              Супер Хакер
             </h1>
             <span
               class="role-badge"
@@ -84,11 +84,11 @@ exports[`Profile Component > renders correctly and matches snapshot 1`] = `
             >
               Email:
             </span>
-            <a
-              href="mailto:hacker777@example.com"
+            <span
+              class="contact-value"
             >
               hacker777@example.com
-            </a>
+            </span>
           </div>
           <div
             class="contact-chip blue-chip"
@@ -98,11 +98,11 @@ exports[`Profile Component > renders correctly and matches snapshot 1`] = `
             >
               Telegram:
             </span>
-            <a
-              href="#"
+            <span
+              class="contact-value"
             >
               @hacker777
-            </a>
+            </span>
           </div>
           <div
             class="contact-chip"
@@ -112,11 +112,11 @@ exports[`Profile Component > renders correctly and matches snapshot 1`] = `
             >
               GitHub:
             </span>
-            <a
-              href="#"
+            <span
+              class="contact-value"
             >
               hacker777
-            </a>
+            </span>
           </div>
           <div
             class="contact-chip purple-chip"
@@ -126,11 +126,11 @@ exports[`Profile Component > renders correctly and matches snapshot 1`] = `
             >
               Discord:
             </span>
-            <a
-              href="#"
+            <span
+              class="contact-value"
             >
-              @hacker777
-            </a>
+              hacker#7777
+            </span>
           </div>
         </div>
       </div>
