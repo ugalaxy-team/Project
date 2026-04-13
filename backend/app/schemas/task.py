@@ -19,6 +19,8 @@ class TaskBase(BaseModel):
             raise ValueError("Title cannot be empty")
         return value.strip()
 
+
+class TaskCreate(TaskBase):
     @field_validator("start_time")
     @classmethod
     def start_not_past(cls, value: datetime):
@@ -43,16 +45,12 @@ class TaskBase(BaseModel):
         return self
 
 
-class TaskCreate(TaskBase):
-    tournament_id: int
-
-
 class TaskUpdate(BaseModel):
     title: str | None = Field(None, min_length=3)
     description: str | None = None
     start_time: datetime | None = None
     end_time: datetime | None = None
-    status_id: str | None = None
+    requirements: list[str] | None = None
 
 
 class TaskPublic(TaskBase):
@@ -61,3 +59,10 @@ class TaskPublic(TaskBase):
     id: int
     tournament_id: int = Field(..., gt=0)
     status_id: str = Field(...)
+
+    @field_validator("requirements", mode="before")
+    @classmethod
+    def transform_requirements(cls, value):
+        if isinstance(value, list) and len(value) > 0 and not isinstance(value[0], str):
+            return [req.name for req in value]
+        return value

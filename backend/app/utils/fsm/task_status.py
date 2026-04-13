@@ -13,6 +13,7 @@ class TaskStatus(StateMachine):
     evaluated = State("Evaluated", value="evaluated", final=True)
 
     start = draft.to(active)
+    reset_to_draft = active.to(draft)
     close = active.to(submission_closed)
     evaluate = submission_closed.to(evaluated)
 
@@ -28,12 +29,15 @@ class TaskStatus(StateMachine):
         end = self.task.end_time.replace(tzinfo=timezone.utc)
 
         changed = False
+        if self.current_state == self.active and now < start:
+            self.reset_to_draft()
+            changed = True
 
-        if self.current_state == self.draft and now >= start:
+        elif self.current_state == self.draft and now >= start:
             self.start()
             changed = True
 
-        if self.current_state == self.active and now > end:
+        elif self.current_state == self.active and now > end:
             self.close()
             changed = True
 
@@ -41,7 +45,8 @@ class TaskStatus(StateMachine):
 
 
 async def update_tasks_status(session: SessionDep):
-    result = await session.execute(select(Task))
+    statement = select(Task).where(Task.status_id != "evaluated")
+    result = await session.execute(statement)
     tasks = result.scalars().all()
 
     changed = False

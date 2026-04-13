@@ -4,7 +4,7 @@ from app.models import TaskRequirementOption, TaskRequirementCategory
 from app.schemas import TaskRequirementOptionCreate, TaskRequirementOptionPublic
 from app.dependencies import SessionDep
 
-router = APIRouter(prefix="/task-options", tags=["task options"])
+router = APIRouter(prefix="/task-options", tags=["task-options"])
 
 
 @router.get(
