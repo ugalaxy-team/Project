@@ -6,9 +6,10 @@ from app.dependencies import get_current_user
 from app.routes.role_requests import get_admin_user
 from app.models import RoleRequest, User
 from tests.factories import UserFactory, RoleFactory
+from app.websockets import sio
 
 @pytest.mark.asyncio
-async def test_role_request_and_approval(create, client, db_session):
+async def test_role_request_and_approval(create, client, db_session, mocker):
     user = await create(UserFactory)
     stmt = select(User).where(User.id == user.id).options(selectinload(User.roles))
     user = (await db_session.execute(stmt)).unique().scalar_one()
@@ -26,10 +27,15 @@ async def test_role_request_and_approval(create, client, db_session):
     req_id = resp.json()['id']
     s = select(RoleRequest)
     assert len((await db_session.execute(s)).scalars().all()) == 1
+    app.state.user_websocket_sessions[user.id] = {
+        'sid': 'test'
+    }
+    spy = mocker.spy(sio, 'emit')
     resp = await client.post(f'/role-requests/{req_id}/approve/')
     assert resp.status_code == 200
     assert len(resp.json()['roles']) == 1
     assert len((await db_session.execute(s)).scalars().all()) == 0
+    assert spy.call_count == 1
     app.dependency_overrides.pop(get_current_user)
     app.dependency_overrides.pop(get_admin_user)
 
@@ -55,7 +61,7 @@ async def test_create_role_request_exists(create, client, db_session):
     app.dependency_overrides.pop(get_current_user)
 
 @pytest.mark.asyncio
-async def test_role_request_disapproval(create, client, db_session):
+async def test_role_request_disapproval(create, client, db_session, mocker):
     user = await create(UserFactory)
     stmt = select(User).where(User.id == user.id).options(selectinload(User.roles))
     user = (await db_session.execute(stmt)).unique().scalar_one()
@@ -65,9 +71,14 @@ async def test_role_request_disapproval(create, client, db_session):
     db_session.add(r)
     await db_session.commit()
     await db_session.refresh(r)
+    app.state.user_websocket_sessions[user.id] = {
+        'sid': 'test'
+    }
+    spy = mocker.spy(sio, 'emit')
     resp = await client.post(f'/role-requests/{r.id}/reject/')
     assert resp.status_code == 200
     assert len(user.roles) == 0
+    assert spy.call_count == 1
     s = select(RoleRequest)
     assert len((await db_session.execute(s)).scalars().all()) == 0
     app.dependency_overrides.pop(get_current_user)

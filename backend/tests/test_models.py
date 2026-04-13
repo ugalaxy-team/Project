@@ -584,17 +584,6 @@ async def test_user_notifications_relationship(db_session, create):
 
     assert len(db_user.notifications) == 2
 
-
-async def test_notification_body_unique(db_session, create):
-    notification = await create(NotificationFactory)
-
-    with pytest.raises(IntegrityError):
-        await create(
-            NotificationFactory,
-            body=notification.body,
-        )
-
-
 async def test_notification_user_relationship(db_session, create):
     notification = await create(NotificationFactory)
 

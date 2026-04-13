@@ -1,6 +1,8 @@
 from app.dependencies import SessionDep
 from app.schemas import NotificationCreate, NotificationPublic
-from app.models import Notification
+from app.models import Notification, User
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from string import Template
 
 async def send_notification(notification: NotificationCreate, session: SessionDep, **kwargs) -> Notification:
@@ -16,5 +18,14 @@ async def send_notification(notification: NotificationCreate, session: SessionDe
     session.add(notification)
     await session.commit()
     await session.refresh(notification)
-    await sio.emit('notification', NotificationPublic.model_validate(notification).model_dump(), user_sid)
+    user_result = await session.execute(
+        select(User).options(selectinload(User.roles)).where(User.id == notification.user_id)
+    )
+    user = user_result.scalar_one()
+    payload = NotificationPublic.model_validate({
+        'body': notification.body,
+        'user_id': notification.user_id,
+        'user': user,
+    })
+    await sio.emit('notification', payload.model_dump(), user_sid)
     return notification
