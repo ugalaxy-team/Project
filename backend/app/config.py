@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     ROLE_REQUEST_APPROVED_MESSAGE: str = '''
     Your role request was approved. The role $role was granted to you!
     '''
-    ROLE_REQUEST_DIS_MESSAGE: str = '''
-    Your role request was approved. You were not granted the role $role
+    ROLE_REQUEST_REJECTED_MESSAGE: str = '''
+    Your role request was rejected. You were not granted the role $role
     '''
 
 

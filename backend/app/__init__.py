@@ -7,7 +7,6 @@ import app.routes.roles as roles
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 import socketio
-import uvicorn
 
 app = FastAPI()
 app.state.user_websocket_sessions = {}

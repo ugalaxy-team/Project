@@ -5,7 +5,9 @@ from app.dependencies import SessionDep, CurrentUserDep, get_current_user
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.models import RoleRequest, User, Role, RoleRequestInfo
-from app.schemas import RoleRequestPublic, RoleRequestCreate, UserPublic
+from app.schemas import RoleRequestPublic, RoleRequestCreate, UserPublic, NotificationCreate
+from app.config import settings
+from app.util import send_notification
 
 router = APIRouter(prefix='/role-requests', tags=['role requests'])
 
@@ -83,12 +85,16 @@ async def approve_request(request_id: int, request: RoleRequestDep, session: Ses
     await session.delete(request)
     await session.commit()
     await session.refresh(request.user)
+    notification = NotificationCreate(body=settings.ROLE_REQUEST_APPROVED_MESSAGE, user_id=request.user.id)
+    await send_notification(notification, session, role=request.role.name)
     return request.user
 
-@router.post('/{request_id}/disapprove/', response_model=UserPublic)
-async def disapprove_request(request_id: int, request: RoleRequestDep, session: SessionDep):
+@router.post('/{request_id}/reject/', response_model=UserPublic)
+async def reject_request(request_id: int, request: RoleRequestDep, session: SessionDep):
     await session.delete(request)
     await session.commit()
+    notification = NotificationCreate(body=settings.ROLE_REQUEST_REJECTED_MESSAGE, user_id=request.user.id)
+    await send_notification(notification, session, role=request.role.name)
     return request.user
 
 @router.delete('/{request_id}/', 

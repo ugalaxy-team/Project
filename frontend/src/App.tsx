@@ -22,11 +22,10 @@ import { auth } from "./firebase";
 import { useEffect, useState } from "react";
 
 export const App = () => {
-  const [socket, setSocket] = useState<Socket>();
+  const [socket, setSocket] = useState<Socket | null>(null);
   useEffect(() => {
     const initSocket = async () => {
       const token = await auth.currentUser?.getIdToken();
-      console.log(token)
       if (token) {
         const s = io(import.meta.env.VITE_SOCKETIO_SERVER_URL, {
           auth: { token }

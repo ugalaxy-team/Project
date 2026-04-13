@@ -65,7 +65,7 @@ async def test_role_request_disapproval(create, client, db_session):
     db_session.add(r)
     await db_session.commit()
     await db_session.refresh(r)
-    resp = await client.post(f'/role-requests/{r.id}/disapprove/')
+    resp = await client.post(f'/role-requests/{r.id}/reject/')
     assert resp.status_code == 200
     assert len(user.roles) == 0
     s = select(RoleRequest)

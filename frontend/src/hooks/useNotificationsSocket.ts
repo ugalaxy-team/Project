@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addNotification } from "../slices/notifications";
+import type { Socket } from "socket.io-client";
 
 
-export const useNotificationsSocket = (socket: any) => {
+export const useNotificationsSocket = (socket: Socket | null) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!socket) return;
     const handleNewNotification = (data: { body: string }) => {
       dispatch(
         addNotification({
@@ -16,11 +16,12 @@ export const useNotificationsSocket = (socket: any) => {
         })
       );
     };
+    if (!socket) return;
 
-    socket.on("on_notification", handleNewNotification);
+    socket.on("notification", handleNewNotification);
 
     return () => {
-      socket.off("on_notification", handleNewNotification);
+      socket.off("notification", handleNewNotification);
     };
   }, [dispatch, socket]);
 };
