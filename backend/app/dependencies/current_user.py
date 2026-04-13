@@ -16,10 +16,15 @@ from app.routes.users import get_user
 
 async def get_current_user(
     session: SessionDep,
-    token: Annotated[HTTPBearer, Depends(HTTPBearer())]
+    token: Annotated[HTTPBearer | str, Depends(HTTPBearer())]
 ) -> User:
     try:
-        token = auth.verify_id_token(token.credentials, firebase)
+        # If using http
+        if hasattr(token, 'credentials'):
+            token = auth.verify_id_token(token.credentials, firebase)
+        # If using websockets
+        else: 
+            token = auth.verify_id_token(token, firebase)
         u: auth.UserRecord = auth.get_user_by_email(token['email'])
         try:
             user = await get_user(u.uid, session)

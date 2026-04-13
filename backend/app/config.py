@@ -5,6 +5,11 @@ import os
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file="../.env", extra='ignore')
     SECRET_KEY: str = os.getenv("SECRET_KEY")
+    # TODO: Move this to a config file
+    CORS_ORIGINS: list[str] = [
+        "http://localhost",
+        "http://localhost:5173",
+    ]
     SQLALCHEMY_DATABASE_URI: str = os.getenv("SQLALCHEMY_DATABASE_URI")
     ROLE_REQUEST_NOTIFICATION_MESSAGE: str = '''
     A user $user requested a role $role. Do you approve this request?

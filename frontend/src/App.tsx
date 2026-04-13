@@ -16,8 +16,38 @@ import { RoleRequestPage } from "./pages/GetRole/RoleRequestPage";
 import { Toaster } from 'react-hot-toast';
 import { AuthPage } from "./pages/Auth/AuthPage";
 import SignOut from "./pages/Auth/SignOut";
+import { useNotificationsSocket } from "./hooks/useNotificationsSocket";
+import { io, Socket } from 'socket.io-client';
+import { auth } from "./firebase";
+import { useEffect, useState } from "react";
 
 export const App = () => {
+  const [socket, setSocket] = useState<Socket>();
+  useEffect(() => {
+    const initSocket = async () => {
+      const token = await auth.currentUser?.getIdToken();
+      console.log(token)
+      if (token) {
+        const s = io(import.meta.env.VITE_SOCKETIO_SERVER_URL, {
+          auth: { token }
+        });
+
+        setSocket(s);
+
+        return () => {
+          s.disconnect();
+        };
+      }
+    };
+
+    initSocket();
+  }, []);
+  useNotificationsSocket(socket);
+
+  if (!socket) {
+    return <div>Connecting to notifications...</div>;
+  }
+
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
