@@ -13,7 +13,7 @@ from app.utils.routes import (
     check_registration_open,
     get_team,
     validate_team_registration,
-    create_team,
+    create_team_record,
 )
 
 router = APIRouter(prefix="/tournaments/{tournament_id}/teams", tags=["teams"])
@@ -47,7 +47,7 @@ async def create_team(tournament_id: int, team_data: TeamModel, session: Session
     await validate_team_registration(tournament, team_data, session)
 
     try:
-        new_team = await create_team(tournament_id, team_data, session)
+        new_team = await create_team_record(tournament_id, team_data, session)
         await session.commit()
     except IntegrityError as e:
         await session.rollback()

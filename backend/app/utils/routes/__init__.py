@@ -5,5 +5,5 @@ from .teams import (
     check_registration_open,
     get_team,
     validate_team_registration,
-    create_team,
+    create_team_record,
 )

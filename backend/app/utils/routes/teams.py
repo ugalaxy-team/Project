@@ -76,7 +76,7 @@ async def validate_team_registration(
         )
 
 
-async def create_team(
+async def create_team_record(
     tournament_id: int, team_data: TeamModel, session: AsyncSession
 ) -> Team:
 
