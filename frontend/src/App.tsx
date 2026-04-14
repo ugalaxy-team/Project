@@ -35,7 +35,7 @@ export const App = () => {
           auth: { token }
         });
         currentSocket.on("connect_error", () => {
-          toast.error("Проблеми з сервером :(. Сповіщення тимчасово не працюють", { id: "socket-error", duration: 5000000000000000 });
+          toast.error("Проблеми з сервером :(. Сповіщення тимчасово не працюють", { id: "socket-error" });
         });
         currentSocket.on("connect", () => {
           toast.dismiss("socket-error");
