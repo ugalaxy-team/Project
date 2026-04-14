@@ -13,39 +13,50 @@ import { RulesPage } from "./pages/Rules/Rules";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 import { RoleRequestPage } from "./pages/GetRole/RoleRequestPage";
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast'; 
 import { AuthPage } from "./pages/Auth/AuthPage";
 import SignOut from "./pages/Auth/SignOut";
 import { useNotificationsSocket } from "./hooks/useNotificationsSocket";
 import { io, Socket } from 'socket.io-client';
 import { auth } from "./firebase";
+import { onAuthStateChanged } from "firebase/auth"; 
 import { useEffect, useState } from "react";
 
 export const App = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
+
   useEffect(() => {
-    const initSocket = async () => {
-      const token = await auth.currentUser?.getIdToken();
-      if (token) {
-        const s = io(import.meta.env.VITE_SOCKETIO_SERVER_URL, {
+    let currentSocket: Socket | null = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        currentSocket = io(import.meta.env.VITE_SOCKETIO_SERVER_URL, {
           auth: { token }
         });
+        currentSocket.on("connect_error", () => {
+          toast.error("Проблеми з сервером :(. Сповіщення тимчасово не працюють", { id: "socket-error", duration: 5000000000000000 });
+        });
+        currentSocket.on("connect", () => {
+          toast.dismiss("socket-error");
+        });
 
-        setSocket(s);
-
-        return () => {
-          s.disconnect();
-        };
+        setSocket(currentSocket);
+      } else {
+        if (currentSocket) {
+          currentSocket.disconnect();
+          setSocket(null);
+        }
+      }
+    });
+    return () => {
+      unsubscribeAuth();
+      if (currentSocket) {
+        currentSocket.disconnect();
       }
     };
-
-    initSocket();
   }, []);
   useNotificationsSocket(socket);
-
-  if (!socket) {
-    return <div>Connecting to notifications...</div>;
-  }
 
   return (
     <>
