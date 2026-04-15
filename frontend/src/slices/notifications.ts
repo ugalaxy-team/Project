@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { setUser } from "./user";
 
 export interface AppNotification {
   id: string; 
@@ -19,11 +20,20 @@ const notificationsSlice = createSlice({
   initialState,
   reducers: {
     addNotification: (state, action: PayloadAction<AppNotification>) => {
-      state.items.unshift(action.payload);
+      if (!state.items.find(n => n.id === action.payload.id)) {
+        state.items.unshift(action.payload);
+      }
     },
     clearNotifications: (state) => {
       state.items = [];
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(setUser, (state, action) => {
+      if (action.payload && action.payload.notifications) {
+        state.items = action.payload.notifications;
+      }
+    });
   },
 });
 

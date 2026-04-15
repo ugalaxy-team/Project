@@ -3,23 +3,23 @@ import { useDispatch } from "react-redux";
 import { addNotification } from "../slices/notifications";
 import type { Socket } from "socket.io-client";
 
-
 export const useNotificationsSocket = (socket: Socket | null) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const handleNewNotification = (data: { body: string }) => {
+    if (!socket) return;
+
+    const handleNewNotification = (data: { body: string; id?: string }) => {
       dispatch(
         addNotification({
-          id: crypto.randomUUID(),
+          id: data.id || crypto.randomUUID(),
           body: data.body,
+          isRead: false
         })
       );
     };
-    if (!socket) return;
 
     socket.on("notification", handleNewNotification);
-
     return () => {
       socket.off("notification", handleNewNotification);
     };

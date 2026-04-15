@@ -6,8 +6,8 @@ export const NotificationsDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const notifications = useSelector((s: RootState) => s.notifications?.items || []);
-
+  const notifications = useSelector((s: RootState) => s.notifications.items);
+  
   const toggleMenu = () => setIsOpen(!isOpen);
 
   useEffect(() => {
@@ -50,14 +50,9 @@ export const NotificationsDropdown = () => {
 
           <div className="max-h-80 overflow-y-auto">
             {notifications.length > 0 ? (
-              notifications.map((notification) => (
-                <div 
-                  key={notification.id}
-                  className="px-4 py-4 hover:bg-gray-50 border-b border-gray-100 last:border-0 transition-colors cursor-pointer"
-                >
-                  <p className="text-sm text-gray-800 font-medium leading-relaxed">
-                    {notification.body}
-                  </p>
+              notifications.map((notification, index) => (
+                <div key={`${notification.id}-${index}`} className="px-4 py-4 hover:bg-gray-50 border-b border-gray-100 last:border-0 transition-colors cursor-pointer">
+                  <p className="text-sm text-gray-800 font-medium leading-relaxed">{notification.body}</p>
                 </div>
               ))
             ) : (
