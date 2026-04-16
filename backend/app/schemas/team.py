@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr, field_validator
+from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
 

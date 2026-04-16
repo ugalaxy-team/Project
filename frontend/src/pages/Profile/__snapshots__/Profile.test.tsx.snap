@@ -1,0 +1,420 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Profile Component > renders correctly and matches snapshot 1`] = `
+<div>
+  <div
+    class="profile-container"
+  >
+    <div
+      class="card profile-header-card"
+    >
+      <div
+        class="profile-header-top"
+      >
+        <div
+          class="profile-info-wrapper"
+        >
+          <div
+            class="avatar-container"
+          >
+            <svg
+              class="avatar-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+              />
+              <circle
+                cx="12"
+                cy="7"
+                r="4"
+              />
+            </svg>
+          </div>
+          <div
+            class="profile-details"
+          >
+            <h1
+              class="profile-name"
+            >
+              Супер Хакер
+            </h1>
+            <span
+              class="role-badge"
+            >
+              Роль: Користувач
+            </span>
+          </div>
+        </div>
+        <button
+          class="edit-btn"
+        >
+          Редагувати профіль
+        </button>
+        <button
+          class="edit-btn"
+        >
+          Видалити профіль
+        </button>
+      </div>
+      <div
+        class="divider"
+      />
+      <div
+        class="contact-section"
+      >
+        <h3
+          class="section-subtitle"
+        >
+          СПОСОБИ ЗВ'ЯЗКУ
+        </h3>
+        <div
+          class="contact-methods"
+        >
+          <div
+            class="contact-chip"
+          >
+            <span
+              class="contact-label"
+            >
+              Email:
+            </span>
+            <span
+              class="contact-value"
+            >
+              hacker777@example.com
+            </span>
+          </div>
+          <div
+            class="contact-chip blue-chip"
+          >
+            <span
+              class="contact-label"
+            >
+              Telegram:
+            </span>
+            <span
+              class="contact-value"
+            >
+              @hacker777
+            </span>
+          </div>
+          <div
+            class="contact-chip"
+          >
+            <span
+              class="contact-label"
+            >
+              GitHub:
+            </span>
+            <span
+              class="contact-value"
+            >
+              hacker777
+            </span>
+          </div>
+          <div
+            class="contact-chip purple-chip"
+          >
+            <span
+              class="contact-label"
+            >
+              Discord:
+            </span>
+            <span
+              class="contact-value"
+            >
+              hacker#7777
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="content-grid"
+    >
+      <div
+        class="card list-card"
+      >
+        <h2
+          class="card-title"
+        >
+          <span
+            class="dot blue-dot"
+          />
+           Турніри
+        </h2>
+        <div
+          class="list-container"
+        >
+          <div
+            class="list-item"
+          >
+            <span>
+              Напишіть Ядро Лінукс
+            </span>
+            <svg
+              class="chevron-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <polyline
+                points="9 18 15 12 9 6"
+              />
+            </svg>
+          </div>
+          <div
+            class="list-item"
+          >
+            <span>
+              Напишіть свою мову програмування на рівні C++
+            </span>
+            <svg
+              class="chevron-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <polyline
+                points="9 18 15 12 9 6"
+              />
+            </svg>
+          </div>
+          <div
+            class="list-item"
+          >
+            <span>
+              Напишіть гру на JavaScript
+            </span>
+            <svg
+              class="chevron-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <polyline
+                points="9 18 15 12 9 6"
+              />
+            </svg>
+          </div>
+          <div
+            class="list-item"
+          >
+            <span>
+              Напишіть чат-бота на Python
+            </span>
+            <svg
+              class="chevron-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <polyline
+                points="9 18 15 12 9 6"
+              />
+            </svg>
+          </div>
+          <div
+            class="list-item"
+          >
+            <span>
+              Напишіть свою операційну систему
+            </span>
+            <svg
+              class="chevron-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <polyline
+                points="9 18 15 12 9 6"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div
+        class="card list-card"
+      >
+        <h2
+          class="card-title"
+        >
+          <span
+            class="dot yellow-dot"
+          />
+           Команди
+        </h2>
+        <div
+          class="list-container"
+        >
+          <div
+            class="list-item team-item"
+          >
+            <div
+              class="robot-icon-wrapper"
+            >
+              <svg
+                class="robot-icon"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  height="12"
+                  rx="2"
+                  width="16"
+                  x="4"
+                  y="8"
+                />
+                <path
+                  d="M2 14h2"
+                />
+                <path
+                  d="M20 14h2"
+                />
+                <path
+                  d="M15 13v2"
+                />
+                <path
+                  d="M9 13v2"
+                />
+                <path
+                  d="M12 8V4"
+                />
+                <path
+                  d="M12 4h.01"
+                />
+              </svg>
+            </div>
+            <span
+              class="team-name"
+            >
+              Шалені програмісти
+            </span>
+          </div>
+          <div
+            class="list-item team-item"
+          >
+            <div
+              class="robot-icon-wrapper"
+            >
+              <svg
+                class="robot-icon"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  height="12"
+                  rx="2"
+                  width="16"
+                  x="4"
+                  y="8"
+                />
+                <path
+                  d="M2 14h2"
+                />
+                <path
+                  d="M20 14h2"
+                />
+                <path
+                  d="M15 13v2"
+                />
+                <path
+                  d="M9 13v2"
+                />
+                <path
+                  d="M12 8V4"
+                />
+                <path
+                  d="M12 4h.01"
+                />
+              </svg>
+            </div>
+            <span
+              class="team-name"
+            >
+              Кодери мрії
+            </span>
+          </div>
+          <div
+            class="list-item team-item"
+          >
+            <div
+              class="robot-icon-wrapper"
+            >
+              <svg
+                class="robot-icon"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  height="12"
+                  rx="2"
+                  width="16"
+                  x="4"
+                  y="8"
+                />
+                <path
+                  d="M2 14h2"
+                />
+                <path
+                  d="M20 14h2"
+                />
+                <path
+                  d="M15 13v2"
+                />
+                <path
+                  d="M9 13v2"
+                />
+                <path
+                  d="M12 8V4"
+                />
+                <path
+                  d="M12 4h.01"
+                />
+              </svg>
+            </div>
+            <span
+              class="team-name"
+            >
+              Лінус Торвальдс
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,14 +1,13 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
+from sqlalchemy import String
 from .base import Base
-from .mixin import PKMixin
+from .mixin import OptionMixin
 from .user import User, user_roles
 
 
-class Role(Base, PKMixin):
+class Role(Base, OptionMixin):
     __tablename__ = "roles"
-
-    name: Mapped[str] = mapped_column(nullable=False, unique=True)
+    description: Mapped[str] = mapped_column(String(4096))
 
     users: Mapped[list["User"]] = relationship(
         secondary=user_roles, back_populates="roles", lazy="selectin"
