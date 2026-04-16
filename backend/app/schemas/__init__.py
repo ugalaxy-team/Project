@@ -1,7 +1,7 @@
 from .evaluation import RequirementEvaluationModel, SubmissionEvaluationModel
 from .submission import SubmissionUrlOptionModel, SubmissionUrlModel, SubmissionModel
 from .task_options import TaskRequirementOptionCreate, TaskRequirementOptionPublic
-from .task import TaskBase, TaskCreate,TaskUpdate, TaskPublic
+from .task import TaskBase, TaskCreate, TaskUpdate, TaskPublic
 from .team import TeamModel, TeamUpdate, TeamMemberModel, TeamMemberUpdate
 from .tournament import (
     TournamentBase,
