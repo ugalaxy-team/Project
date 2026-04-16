@@ -8,3 +8,4 @@ from .task import Task, TaskRequirementCategory, TaskRequirementOption, TaskStat
 from .team import Team, TeamMember
 from .tournament import Tournament, TournamentStatusOption
 from .user import User
+

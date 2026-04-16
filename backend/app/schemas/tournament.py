@@ -1,17 +1,16 @@
+from typing import Annotated
 from datetime import datetime
 from typing_extensions import Self
-from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class TournamentModels(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    
     title: str = Field(..., min_length=3)
     description: str
     start_date: datetime
     reg_start: datetime
     reg_end: datetime
-    max_teams: int = Field(..., gt=0)
+    max_team: int = Field(..., gt=0)
 
     @field_validator("title")
     @classmethod
@@ -36,6 +35,4 @@ class TournamentModels(BaseModel):
 
 
 class TournamentStatusOptionModel(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    
     name: str = Field(..., min_length=3)

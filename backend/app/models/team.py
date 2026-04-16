@@ -7,7 +7,8 @@ from .mixin import PKMixin
 
 class Team(Base, PKMixin):
     __tablename__ = "teams"
-
+    __table_args__ = (UniqueConstraint("contact_info", "tournament_id"),)
+    
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
     team_email: Mapped[str] = mapped_column(nullable=False, unique=True)
     contact_info: Mapped[str] = mapped_column(nullable=False, unique=True)
@@ -16,7 +17,9 @@ class Team(Base, PKMixin):
         ForeignKey("team_members.id", ondelete="CASCADE"), nullable=True
     )
 
-    tournament: Mapped["Tournament"] = relationship(back_populates="teams", lazy="selectin")
+    tournament: Mapped["Tournament"] = relationship(
+        back_populates="teams", lazy="selectin"
+    )
     members: Mapped[list["TeamMember"]] = relationship(
         back_populates="team",
         foreign_keys="TeamMember.team_id",

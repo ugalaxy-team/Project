@@ -25,16 +25,16 @@ class User(Base, PKMixin):
     discord: Mapped[str] = mapped_column(nullable=True)
 
     roles: Mapped[list["Role"]] = relationship(
-        secondary=user_roles, back_populates="users", lazy="selectin",
+        secondary=user_roles, back_populates="users", lazy="selectin"
     )
     notifications: Mapped[list["Notification"]] = relationship(
-        back_populates="user", lazy="selectin",
-        cascade="all, delete-orphan",
+        back_populates="user", lazy="selectin"
     )
     role_requests: Mapped[list["RoleRequest"]] = relationship(
-        back_populates="user", lazy="selectin",
-        cascade="all, delete-orphan",
+        back_populates="user", lazy="selectin"
     )
+    notifications: Mapped[list["Notification"]] = relationship(back_populates="user")
+    role_requests: Mapped[list["RoleRequest"]] = relationship(back_populates="user")
     created_tournaments: Mapped[list["Tournament"]] = relationship(
         back_populates="creator", lazy="selectin",
         cascade="all, delete-orphan",
