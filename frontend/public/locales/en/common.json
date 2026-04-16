@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "tournaments": "Tournaments",
+    "about": "About Us",
+    "support": "Support Us",
+    "contact": "Contact"
+  },
+  "auth": {
+    "login": "Sign In"
+  }
+}
