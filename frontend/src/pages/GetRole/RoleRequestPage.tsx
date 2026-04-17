@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Lottie from 'lottie-react';
 import star from './star.json';
 import { useSelector } from "react-redux";
@@ -6,52 +6,23 @@ import type { RootState } from "@/store";
 import { requestRole } from '@/api/requests/requestRole';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import apiClient from '@/api/client';
 import { auth } from '@/firebase';
-
-interface Role {
-    name: string;
-    display_name: string;
-    description: string;
-}
 
 const RoleRequestPage = () => {
     const user = useSelector((state: RootState) => state.user.user);
     const navigate = useNavigate();
 
-    const [roles, setRoles] = useState<Role[]>([]);
-    const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-    const [isLoadingRoles, setIsLoadingRoles] = useState(true);
-
-    useEffect(() => {
-        const fetchRoles = async () => {
-            try {
-                const response = await apiClient.get('/roles/');
-                const data: Role[] = response.data;
-                const filteredRoles = data.filter(role => role.name !== 'user');
-                setRoles(filteredRoles);
-                if (filteredRoles.length > 0) {
-                    setSelectedRole(filteredRoles[0]);
-                }
-            } catch (error) {
-                toast.error("Не вдалося завантажити список ролей");
-            } finally {
-                setIsLoadingRoles(false);
-            }
-        };
-        fetchRoles();
-    }, []);
+    const ORGANIZER_ROLE = {
+        name: 'organizer',
+        display_name: 'Організатора',
+        description: 'Заповніть форму нижче, щоб подати заявку. Ми розглядаємо кожну заявку вручну.'
+    };
 
     const createRequests = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!user) {
             toast.error("Користувач не знайдений або не авторизований!");
-            return;
-        }
-
-        if (!selectedRole) {
-            toast.error("Будь ласка, оберіть роль, на яку подаєте заявку!");
             return;
         }
 
@@ -69,7 +40,7 @@ const RoleRequestPage = () => {
 
         try {
             if (!auth.currentUser) return;
-            await requestRole(selectedRole.name, auth.currentUser, user.id, info);
+            await requestRole(ORGANIZER_ROLE.name, auth.currentUser, user.id, info);
             toast.success("Заявку відправлено! Очікуйте на відповідь");
             form.reset();
             navigate("/");
@@ -102,10 +73,10 @@ const RoleRequestPage = () => {
                     <p className="text-sm tracking-[2px] mt-1 mb-10 opacity-90 text-center">STAR FOR LIFE</p>
 
                     <h1 className="text-[28px] font-extrabold text-white mt-0 mb-4 leading-[1.2]">
-                        Заявка на роль {selectedRole ? selectedRole.display_name.toLowerCase() : '...'}
+                        Заявка на роль {ORGANIZER_ROLE.display_name}
                     </h1>
                     <p className="text-[15px] text-white/85 leading-[1.6] mb-6">
-                        {selectedRole ? selectedRole.description : 'Заповніть форму нижче, щоб подати заявку. Ми розглядаємо кожну заявку вручну.'}
+                        {ORGANIZER_ROLE.description}
                         <br /><br />
                         <b className="font-bold">Важливо:</b> відповідайте чесно та детально — це підвищує ваші шанси.
                     </p>
@@ -114,30 +85,11 @@ const RoleRequestPage = () => {
 
             <div className="flex-1 flex items-center justify-center p-10 px-5">
                 <div className="bg-white w-full max-w-[420px] p-10 rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.04)]">
-                    <div className="mb-6">
-                        <p className="mb-3 font-semibold text-gray-800">Оберіть бажану роль:</p>
-                        {isLoadingRoles ? (
-                            <p className="text-gray-500 text-sm animate-pulse">Завантаження ролей...</p>
-                        ) : (
-                            <div className="flex flex-wrap gap-3">
-                                {roles.map((role) => {
-                                    const isActive = selectedRole?.name === role.name;
-                                    return (
-                                        <button
-                                            key={role.name}
-                                            type="button"
-                                            onClick={() => setSelectedRole(role)}
-                                            className={`px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer text-sm md:text-base font-medium border-2 ${isActive
-                                                ? 'border-[#7b00ff] bg-[#7b00ff]/10 text-[#7b00ff] shadow-sm'
-                                                : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300'
-                                                }`}
-                                        >
-                                            {role.display_name}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        )}
+                    
+                    <div className="mb-6 p-4 bg-[#7b00ff]/10 border border-[#7b00ff]/20 rounded-xl">
+                        <p className="text-sm text-[#7b00ff] font-medium text-center">
+                            Наразі ви можете отримати лише роль Організатора. Запити на інші ролі тимчасово вимкнені.
+                        </p>
                     </div>
 
                     <p className="text-[13px] text-[#7b00ff] font-bold mb-4">* — обов'язкове поле</p>
@@ -175,7 +127,6 @@ const RoleRequestPage = () => {
                         <button
                             type="submit"
                             className="mt-2.5 p-4 bg-[#7b00ff] text-white border-none rounded-full text-base font-bold cursor-pointer transition-all hover:bg-[#6a00e0] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={!selectedRole || isLoadingRoles}
                         >
                             Надіслати форму
                         </button>
