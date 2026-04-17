@@ -39,6 +39,15 @@ describe('ForgotPassword Component', () => {
     return { user };
   };
 
+  it('matches snapshot', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <ForgotPassword />
+      </MemoryRouter>
+    );
+    expect(container).toMatchSnapshot();
+  });
+
   // Render & Basic UI Elements
   describe('1. Initial Render & UI Elements', () => {
     it('renders the main heading and description', () => {

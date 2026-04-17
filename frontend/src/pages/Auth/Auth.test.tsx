@@ -13,7 +13,6 @@ import {
   signOut,
 } from 'firebase/auth';
 import { syncUser } from '../../firebase';
-
 const mockNavigate = vi.fn();
 
 vi.mock('react-router-dom', async () => {
@@ -62,6 +61,15 @@ describe('AuthPage Component', () => {
     render(<MemoryRouter><AuthPage /></MemoryRouter>);
     return { user };
   };
+
+ it('matches snapshot', () => {
+  const { container } = render(
+    <MemoryRouter>
+      <AuthPage />
+    </MemoryRouter>
+  );
+  expect(container).toMatchSnapshot();
+});
 
   // Render & Basic UI Elements
   describe('1. Initial Render & UI Elements', () => {

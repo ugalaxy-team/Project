@@ -19,22 +19,42 @@ vi.mock('../../firebase', () => ({
   },
 }));
 
+vi.mock('../../store', () => ({
+  store: {
+    dispatch: vi.fn(),
+  },
+}));
+
+vi.mock('@/api/requests', () => ({
+  deleteUser: vi.fn(),
+}));
+
+vi.mock('@/slices/user', () => ({
+  setUser: vi.fn(),
+}));
+
 vi.mock('./EditProfileModal', () => ({
   EditProfileModal: ({ isOpen }: { isOpen: boolean }) => (
-    isOpen ? <div data-testid="edit-profile-modal">Модалка відкрита</div> : null
+    isOpen ? <div data-testid="edit-profile-modal">Modal Open</div> : null
   ),
 }));
 
 const mockUserFull = {
-  displayName: 'Супер Хакер',
+  displayName: 'Super Hacker',
   email: 'hacker777@example.com',
   telegram: '@hacker777',
   github: 'hacker777',
   discord: 'hacker#7777',
+  roles: [{ display_name: 'Admin' }, { name: 'manager' }],
+};
+
+const mockUserFallbackName = {
+  full_name: 'Fallback Name',
+  roles: [],
 };
 
 const mockUserPartial = {
-  displayName: 'Тестер',
+  displayName: 'Tester',
 };
 
 describe('Profile Component', () => {
@@ -49,10 +69,10 @@ describe('Profile Component', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('shows "Loading..." when user is null', () => {
+  it('displays loading state when user is null', () => {
     vi.mocked(useSelector).mockReturnValue(null);
     render(<Profile />);
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
   it('calls delete mutation on delete button click', () => {
@@ -61,7 +81,7 @@ describe('Profile Component', () => {
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
     render(<Profile />);
     
-    fireEvent.click(screen.getByText("Видалити профіль"));
+    fireEvent.click(screen.getByText('Видалити'));
     expect(mockMutate).toHaveBeenCalled();
   });
 
@@ -70,16 +90,24 @@ describe('Profile Component', () => {
     render(<Profile />);
     
     expect(screen.queryByTestId('edit-profile-modal')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByText("Редагувати профіль"));
+    fireEvent.click(screen.getByText('Редагувати профіль'));
     expect(screen.getByTestId('edit-profile-modal')).toBeInTheDocument();
   });
 
-  it('displays user name and role', () => {
+  it('displays user name and roles correctly', () => {
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
     render(<Profile />);
     
-    expect(screen.getByText('Супер Хакер')).toBeInTheDocument();
-    expect(screen.getByText('Роль: Користувач')).toBeInTheDocument();
+    expect(screen.getByText('Super Hacker')).toBeInTheDocument();
+    expect(screen.getByText('Роль: Admin, manager')).toBeInTheDocument();
+  });
+
+  it('displays fallback full_name and no roles message', () => {
+    vi.mocked(useSelector).mockReturnValue(mockUserFallbackName);
+    render(<Profile />);
+    
+    expect(screen.getByText('Fallback Name')).toBeInTheDocument();
+    expect(screen.getByText('Роль: Немає ролей')).toBeInTheDocument();
   });
 
   it('displays correct contact details when available', () => {
@@ -92,7 +120,7 @@ describe('Profile Component', () => {
     expect(screen.getByText('hacker#7777')).toBeInTheDocument();
   });
 
-  it('displays "Відсутній" for missing contact details', () => {
+  it('displays missing state for missing contact details', () => {
     vi.mocked(useSelector).mockReturnValue(mockUserPartial);
     render(<Profile />);
     
@@ -100,12 +128,15 @@ describe('Profile Component', () => {
     expect(missingBadges).toHaveLength(4);
   });
 
-  it('displays tournament and team lists', () => {
+  it('displays tournament and team lists correctly', () => {
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
     render(<Profile />);
     
     expect(screen.getByText('Напишіть Ядро Лінукс')).toBeInTheDocument();
+    expect(screen.getByText('Напишіть свою мову програмування')).toBeInTheDocument();
+    expect(screen.getByText('Напишіть гру на JS')).toBeInTheDocument();
+    
     expect(screen.getByText('Шалені програмісти')).toBeInTheDocument();
-    expect(screen.getByText('Лінус Торвальдс')).toBeInTheDocument();
+    expect(screen.getByText('Кодери мрії')).toBeInTheDocument();
   });
 });
