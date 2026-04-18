@@ -40,4 +40,4 @@ class TeamUpdate(BaseModel):
 
 class TeamModel(TeamBase):
     captain: TeamMemberModel
-    members: list[TeamMemberModel] = Field(..., min_items=1)
+    members: list[TeamMemberModel] = Field(..., min_length=1)

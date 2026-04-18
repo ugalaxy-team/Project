@@ -26,6 +26,7 @@ async def edit_profile(
     if "discord" in user_data:
         current_user.discord = user_data["discord"]
     await session.commit()
+    await session.refresh(current_user, attribute_names=["roles", "notifications"])
     return current_user
 
 

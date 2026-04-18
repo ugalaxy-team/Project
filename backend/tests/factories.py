@@ -29,6 +29,12 @@ class BaseFactory(SQLAlchemyModelFactory):
         sqlalchemy_session = None
         sqlalchemy_session_persistence = None
 
+class BaseOptionFactory(BaseFactory):
+    class Meta:
+        abstract = True
+
+    name = Faker('name')
+    display_name = factory.LazyAttribute(lambda f: f.name.upper())
 
 class UserFactory(BaseFactory):
     class Meta:
@@ -47,11 +53,9 @@ class RoleFactory(BaseFactory):
     description = factory.Iterator('Test role')
 
 
-class TournamentStatusOptionFactory(BaseFactory):
+class TournamentStatusOptionFactory(BaseOptionFactory):
     class Meta:
         model = TournamentStatusOption
-
-    name = Faker("name")
 
 
 class TournamentFactory(BaseFactory):
@@ -102,13 +106,11 @@ class TeamMemberFactory(BaseFactory):
     tournament = factory.SubFactory(TournamentFactory)
 
 
-class TaskStatusOptionFactory(BaseFactory):
+class TaskStatusOptionFactory(BaseOptionFactory):
     class Meta:
         model = TaskStatusOption
 
     name = factory.Iterator(["draft", "active", "finished"])
-    display_name = factory.LazyAttribute(lambda f: f.name.upper())
-
 
 class TaskFactory(BaseFactory):
     class Meta:
@@ -122,20 +124,14 @@ class TaskFactory(BaseFactory):
     status = factory.SubFactory(TaskStatusOptionFactory)
 
 
-class TaskRequirementCategoryFactory(BaseFactory):
+class TaskRequirementCategoryFactory(BaseOptionFactory):
     class Meta:
         model = TaskRequirementCategory
 
-    name = factory.Sequence(lambda n: f"category_{n}")
-    display_name = factory.LazyAttribute(lambda f: f.name.upper())
 
-
-class TaskRequirementOptionFactory(BaseFactory):
+class TaskRequirementOptionFactory(BaseOptionFactory):
     class Meta:
         model = TaskRequirementOption
-
-    name = factory.Sequence(lambda n: f"category_{n}")
-    display_name = factory.LazyAttribute(lambda f: f.name.upper())
 
     category = factory.SubFactory(TaskRequirementCategoryFactory)
 
@@ -147,12 +143,11 @@ class SubmissionFactory(BaseFactory):
     team = factory.SubFactory(TeamFactory)
 
 
-class SubmissionUrlOptionFactory(BaseFactory):
+class SubmissionUrlOptionFactory(BaseOptionFactory):
     class Meta:
         model = SubmissionUrlOption
 
     name = factory.Sequence(lambda n: f"url_option_{n}")
-    display_name = factory.LazyAttribute(lambda f: f.name.upper())
 
 
 class SubmissionUrlFactory(BaseFactory):
