@@ -10,6 +10,9 @@ i18n
   .init({
     fallbackLng: "uk",
     supportedLngs: ["uk", "en"],
+    ns: ["common", "auth"],
+    defaultNS: "common",
+
     debug: import.meta.env.DEV,
 
     interpolation: {

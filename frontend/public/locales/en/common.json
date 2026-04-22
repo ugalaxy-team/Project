@@ -2,10 +2,42 @@
   "nav": {
     "tournaments": "Tournaments",
     "about": "About Us",
-    "support": "Support Us",
+    "support": "Support",
     "contact": "Contact"
   },
   "auth": {
     "login": "Sign In"
+  },
+  "footer": {
+    "description": "A place where the best ideas are born. Create, learn, win.",
+    "platform_title": "Platform",
+    "info_title": "Information",
+    "all_tournaments": "All Tournaments",
+    "rules": "Rules",
+    "faq": "FAQ",
+    "about": "About Us",
+    "contact": "Contact",
+    "copyright": "© 2026 UGalaxy x Star for Life. All rights reserved."
+  },
+  "profile_dropdown": {
+    "button": "Profile",
+    "my_profile": "My Profile",
+    "logout": "Log Out"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "new_count": "{{count}} new",
+    "empty": "No new notifications"
+  },
+  "errors": {
+    "404": {
+      "title": "You've gone beyond the system 👾",
+      "description": "The page you are looking for has been removed or only exists in a parallel universe. Let's get back to safe territory.",
+      "back": "Back",
+      "go_home": "Home"
+    }
+  },
+  "ui": {
+    "loading": "Loading..."
   }
 }

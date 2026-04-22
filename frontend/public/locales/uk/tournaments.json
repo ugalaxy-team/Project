@@ -1,0 +1,33 @@
+{
+  "hero": {
+    "bgText": "ТУРНІРИ",
+    "title": "Усі турніри",
+    "description": "Знайди івент, який підходить саме тобі. Від коду до дизайну — збирай команду та перемагай."
+  },
+  "search": {
+    "placeholder": "Пошук турніру…"
+  },
+  "filters": {
+    "all": "Всі події",
+    "registration": "Реєстрація",
+    "active": "В процесі",
+    "completed": "Архів"
+  },
+  "results": {
+    "found": "Знайдено:",
+    "tournaments_zero": "турнірів",
+    "tournaments_one": "турнір",
+    "tournaments_few": "турніри",
+    "tournaments_many": "турнірів"
+  },
+  "empty": {
+    "title": "Нічого не знайдено",
+    "subtitle": "Спробуй змінити фільтр або запит"
+  },
+  "pagination": {
+    "prev": "Назад",
+    "next": "Вперед",
+    "page": "Сторінка",
+    "of": "з"
+  }
+}
