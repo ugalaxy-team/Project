@@ -1,9 +1,12 @@
 import { useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { TournamentCard } from "../../../components/TournamentCard";
 import { TOURNAMENTS_DATA } from "../../../data/mockTournaments";
-import { useNavigate } from "react-router-dom";
+import { Button } from "../../../components/ui/Button"; // Підключаємо наш еталонний компонент
 
 export const TournamentSlider = () => {
+  const { t } = useTranslation("home"); // Додано локалізацію
   const sliderRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -73,30 +76,33 @@ export const TournamentSlider = () => {
   }, [handleNext]);
 
   return (
-    <section className="bg-bg-body text-dark-theme relative pt-[120px] pb-[60px] md:pt-[10px] md:pb-[100px] w-full overflow-hidden">
+    // Змінено bg-bg-body та text-text-main для адаптивності
+    <section className="bg-bg-body text-text-main relative pt-[120px] pb-[60px] md:pt-[10px] md:pb-[100px] w-full overflow-hidden transition-colors duration-300">
       <div className="w-full max-w-[1320px] mx-auto px-4 md:px-5 relative z-10">
         <div className="mb-8 md:mb-14 flex flex-col md:flex-row justify-between items-center md:items-end gap-4 md:gap-6">
-          <h2 className="text-[28px] sm:text-[32px] md:text-[52px] lg:text-[64px] leading-[1.1] uppercase font-quicksand font-extrabold text-dark-theme whitespace-normal md:whitespace-nowrap text-center md:text-left">
-            Знайди свій турнір
+          <h2 className="text-[28px] sm:text-[32px] md:text-[52px] lg:text-[64px] leading-[1.1] uppercase font-quicksand font-extrabold text-text-main whitespace-normal md:whitespace-nowrap text-center md:text-left transition-colors duration-300">
+            {t("slider.title", "Знайди свій турнір")}
           </h2>
-          <button
-            className="btn btn-dark shrink-0 mb-0 md:mb-2 px-6 py-2.5 md:px-8 md:py-3 text-sm md:text-base w-full md:w-auto"
+          <Button
+            variant="outline"
+            className="w-full md:w-auto"
             onClick={() => navigate("/tournaments")}
           >
-            Всі турніри
-          </button>
+            {t("slider.all_tournaments", "Всі турніри")}
+          </Button>
         </div>
 
         <div
-          className="group relative mt-8 md:mt-14"
+          className="relative mt-8 md:mt-14"
           onMouseEnter={() => (isPaused.current = true)}
           onMouseLeave={() => (isPaused.current = false)}
           onTouchStart={() => (isPaused.current = true)}
           onTouchEnd={() => (isPaused.current = false)}
         >
+          {/* Стрілки переведені на bg-bg-card та border-border */}
           <button
             onClick={handlePrev}
-            className="absolute -left-4 xl:-left-20 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 bg-white shadow-2xl text-primary rounded-full hidden md:flex items-center justify-center transition-all hover:scale-110 border border-slate-100"
+            className="absolute -left-4 xl:-left-20 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 bg-bg-card shadow-lg shadow-primary/10 text-primary rounded-full hidden md:flex items-center justify-center transition-all hover:scale-110 hover:shadow-primary/20 border border-border"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -118,13 +124,17 @@ export const TournamentSlider = () => {
             className="w-full overflow-x-auto no-scrollbar snap-x snap-mandatory py-6 md:py-10 -my-6 md:-my-10"
             ref={sliderRef}
           >
-            <div className="flex gap-6 w-max px-2">
+            <div className="flex gap-6 w-max px-2 pt-2">
               {TOURNAMENTS_DATA.map((card) => (
                 <div
                   key={card.id}
-                  className="tournament-card-wrapper shrink-0 snap-center md:snap-start w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[408px] transition-transform duration-300 hover:-translate-y-2 md:hover:-translate-y-6"
+                  // ДОДАНО group: Це вирішує проблему дьоргання мишки!
+                  className="group tournament-card-wrapper shrink-0 snap-center md:snap-start w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[408px]"
                 >
-                  <TournamentCard {...card} />
+                  {/* Підстрибує внутрішній блок, а зовнішній (group) залишається нерухомим і тримає hover */}
+                  <div className="h-full transition-transform duration-300 ease-out group-hover:-translate-y-2 md:group-hover:-translate-y-4">
+                    <TournamentCard {...card} />
+                  </div>
                 </div>
               ))}
               <div className="w-6 md:w-20 shrink-0"></div>
@@ -133,7 +143,7 @@ export const TournamentSlider = () => {
 
           <button
             onClick={handleNext}
-            className="absolute -right-4 xl:-right-20 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 bg-white shadow-2xl text-primary rounded-full hidden md:flex items-center justify-center transition-all hover:scale-110 border border-slate-100"
+            className="absolute -right-4 xl:-right-20 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 bg-bg-card shadow-lg shadow-primary/10 text-primary rounded-full hidden md:flex items-center justify-center transition-all hover:scale-110 hover:shadow-primary/20 border border-border"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -153,7 +163,8 @@ export const TournamentSlider = () => {
         </div>
 
         <div className="flex justify-center mt-8 md:mt-12">
-          <div className="w-full max-w-[180px] md:max-w-[240px] h-1.5 bg-slate-200 rounded-full overflow-hidden relative">
+          {/* Трек прогрес-бару тепер bg-border */}
+          <div className="w-full max-w-[180px] md:max-w-[240px] h-1.5 bg-border rounded-full overflow-hidden relative transition-colors duration-300">
             <div
               ref={progressBarRef}
               className="absolute top-0 left-0 h-full bg-primary rounded-full transition-all duration-100 ease-linear"
