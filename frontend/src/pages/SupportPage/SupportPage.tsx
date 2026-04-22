@@ -1,109 +1,102 @@
-import React from 'react';
+import React from "react";
+import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import { Heart, Handshake, Users2 } from "lucide-react";
+import { Hero } from "../../components/Hero";
+import { Button } from "../../components/ui/Button";
 
-const SupportPage: React.FC = () => {
+export const SupportPage: React.FC = () => {
+  const { t } = useTranslation("support");
+
   const supportOptions = [
     {
-      title: 'Задонатити',
-      description: 'Твій фінансовий внесок безпосередньо допомагає забезпечувати дітей якісною освітою, психологічною підтримкою та необхідними ресурсами.',
-      buttonText: 'Зробити внесок',
-      link: 'https://www.sflua.org/uk/donate-1',
-      gradient: 'from-rose-400 to-pink-500',
-      iconBg: 'bg-rose-100',
-      iconColor: 'text-rose-500',
-      btnHover: 'hover:shadow-rose-500/30',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-        </svg>
-      ),
+      badge: t("options.donate.badge"),
+      title: t("options.donate.title"),
+      description: t("options.donate.description"),
+      buttonText: t("options.donate.button"),
+      link: "https://www.sflua.org/uk/donate-1",
+      icon: <Heart className="w-7 h-7" strokeWidth={2.5} />,
     },
     {
-      title: 'Партнерство',
-      description: 'Стань нашим партнером! Разом ми зможемо реалізувати масштабні проекти, залучити більше ресурсів та створити сталі зміни в суспільстві.',
-      buttonText: 'Стати партнером',
-      link: 'mailto:team@starforlife.org.ua?subject=Potential%20partnership',
-      gradient: 'from-blue-500 to-indigo-600',
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
-      btnHover: 'hover:shadow-blue-500/30',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-        </svg>
-      ),
+      badge: t("options.partnership.badge"),
+      title: t("options.partnership.title"),
+      description: t("options.partnership.description"),
+      buttonText: t("options.partnership.button"),
+      link: "mailto:team@starforlife.org.ua?subject=Potential%20partnership",
+      icon: <Handshake className="w-7 h-7" strokeWidth={2.5} />,
     },
     {
-      title: 'Волонтерство',
-      description: 'Поділися своїм часом, знаннями та навичками. Твоя особиста участь та підтримка можуть стати вирішальними для майбутнього дитини.',
-      buttonText: 'Стати волонтером',
-      link: 'https://www.sflua.org/uk/volunteer', // TODO: Встав сюди посилання на анкету волонтера
-      gradient: 'from-emerald-400 to-teal-500',
-      iconBg: 'bg-emerald-100',
-      iconColor: 'text-emerald-600',
-      btnHover: 'hover:shadow-emerald-500/30',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-        </svg>
-      ),
+      badge: t("options.volunteer.badge"),
+      title: t("options.volunteer.title"),
+      description: t("options.volunteer.description"),
+      buttonText: t("options.volunteer.button"),
+      link: "https://www.sflua.org/uk/volunteer",
+      icon: <Users2 className="w-7 h-7" strokeWidth={2.5} />,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans pb-20">
-      <div className="relative bg-gradient-to-r from-[#6b73ff] to-[#4c51bf] pt-24 pb-48 px-6 overflow-hidden flex flex-col items-center">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-        <div className="absolute bottom-10 right-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+    <div className="w-full flex flex-col min-h-screen bg-bg-body text-text-main pb-20 font-quicksand transition-colors duration-300">
+      <Hero
+        bgText={t("hero.bg_text")}
+        title={t("hero.title")}
+        description={t("hero.description")}
+      />
 
-        <span className="inline-block bg-white/20 text-white backdrop-blur-sm border border-white/30 text-sm font-semibold px-5 py-1.5 rounded-full mb-6 relative z-10">
-          Твоя підтримка важлива
-        </span>
-        <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 text-center tracking-tight relative z-10">
-          ПІДТРИМАТИ НАС
-        </h1>
-        <p className="text-white/90 text-lg md:text-xl text-center max-w-2xl relative z-10 font-medium">
-          Ось кілька способів, як ви можете нас підтримати та долучитися до створення кращого майбутнього для дітей України.
-        </p>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 -mt-28 relative z-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="flex-grow w-full max-w-[1320px] mx-auto px-6 -mt-[90px] relative z-20 space-y-10">
+        {/* Сітка карток (Адаптивна) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {supportOptions.map((option, index) => (
-            <div 
-              key={index} 
-              className="bg-white rounded-[2rem] p-8 shadow-xl border border-slate-100 flex flex-col justify-between hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group"
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="bg-bg-card rounded-[32px] p-8 shadow-sm border border-border flex flex-col justify-between transition-colors duration-300"
             >
               <div>
-                <div className={`w-16 h-16 rounded-2xl ${option.iconBg} ${option.iconColor} flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300`}>
+                <span className="inline-block bg-primary/10 text-primary font-bold px-4 py-1.5 rounded-full mb-6 text-[13px] uppercase tracking-wide">
+                  {option.badge}
+                </span>
+
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6">
                   {option.icon}
                 </div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-4">{option.title}</h3>
-                <p className="text-slate-500 leading-relaxed mb-8">
+
+                <h3 className="text-[24px] font-extrabold text-text-main mb-4 leading-tight">
+                  {option.title}
+                </h3>
+
+                <p className="text-text-muted text-[16px] leading-relaxed mb-8 font-medium italic">
                   {option.description}
                 </p>
               </div>
-              <a 
-                href={option.link} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className={`w-full block text-center py-4 px-6 rounded-xl text-white font-bold text-lg bg-gradient-to-r ${option.gradient} shadow-lg ${option.btnHover} hover:-translate-y-1 transition-all duration-300`}
-              >
-                {option.buttonText}
+
+              <a href={option.link} target="_blank" rel="noopener noreferrer">
+                <Button
+                  variant="primary"
+                  className="w-full py-4 text-[16px] font-bold"
+                >
+                  {option.buttonText}
+                </Button>
               </a>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </div>
-  
-      <div className="max-w-4xl mx-auto px-6 mt-20 text-center">
-        <div className="bg-slate-200/50 rounded-3xl p-8 border border-slate-200">
-          <p className="text-slate-600 font-medium text-lg">
-            Кожна гривня, кожна година вашого часу та кожна спільна ініціатива наближають нас до мети. <span className="font-bold text-slate-800">Дякуємо, що ви з нами!</span> 💙💛
+
+        {/* Фінальна плашка (Адаптивна) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-primary/5 rounded-[32px] p-8 md:p-12 border border-primary/20 text-center transition-colors duration-300"
+        >
+          <p className="text-text-muted font-bold text-lg md:text-xl leading-relaxed max-w-4xl mx-auto">
+            {t("footer_note")}
           </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
 };
-
-export { SupportPage };

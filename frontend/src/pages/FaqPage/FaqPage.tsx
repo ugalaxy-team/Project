@@ -1,48 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import { Plus, Minus } from "lucide-react";
+import { Hero } from "../../components/Hero";
 
-const FaqPage: React.FC = () => {
+export const FaqPage: React.FC = () => {
+  const { t } = useTranslation("faq");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs = [
     {
-      question: 'Хто ми і що це за платформа?',
-      answer: 'Це платформа від благодійного фонду Star for Life Ukraine. Ми допомагаємо молоді розвиватися через освіту, менторство та практику. Тут можна брати участь у турнірах, знайомитися з однодумцями та прокачувати свої навички.',
+      question: t("q1", "Хто ми і що це за платформа?"),
+      answer: t(
+        "a1",
+        "Це платформа від благодійного фонду Star for Life Ukraine. Ми допомагаємо молоді розвиватися через освіту, менторство та практику. Тут можна брати участь у турнірах, знайомитися з однодумцями та прокачувати свої навички.",
+      ),
     },
     {
-      question: 'Чому все безкоштовно?',
-      answer: 'Жодного підступу 🙂 Участь безкоштовна, бо платформу підтримують партнери та донори. Наша мета — дати рівні можливості кожному.',
+      question: t("q2", "Чому все безкоштовно?"),
+      answer: t(
+        "a2",
+        "Жодного підступу 🙂 Участь безкоштовна, бо платформу підтримують партнери та донори. Наша мета — дати рівні можливості кожному.",
+      ),
     },
     {
-      question: 'Які тут турніри?',
-      answer: 'Є IT-турніри, кіберспорт, дизайн, математика, творчі конкурси та інші напрямки. Кожен знайде щось для себе.',
+      question: t("q3", "Які тут турніри?"),
+      answer: t(
+        "a3",
+        "Є IT-турніри, кіберспорт, дизайн, математика, творчі конкурси та інші напрямки. Кожен знайде щось для себе.",
+      ),
     },
     {
-      question: 'Як взяти участь у турнірі?',
-      answer: 'Все просто: зареєструйся, обери турнір у розділі «Турніри» та натисни «Взяти участь». У деяких турнірах потрібна команда — її можна створити або приєднатися до існуючої.',
+      question: t("q4", "Як взяти участь у турнірі?"),
+      answer: t(
+        "a4",
+        "Все просто: зареєструйся, обери турнір у розділі «Турніри» та натисни «Взяти участь». У деяких турнірах потрібна команда — її можна створити або приєднатися до існуючої.",
+      ),
     },
     {
-      question: 'Що я отримаю від участі?',
-      answer: 'Практичний досвід, розвиток навичок, роботу в команді та нові знайомства. Також є можливість виграти призи: гаджети, курси, менторство або мерч.',
+      question: t("q5", "Що я отримаю від участі?"),
+      answer: t(
+        "a5",
+        "Практичний досвід, розвиток навичок, роботу в команді та нові знайомства. Також є можливість виграти призи: гаджети, курси, менторство або мерч.",
+      ),
     },
     {
-      question: 'Як змінити роль на платформі?',
-      answer: 'Спочатку всі мають роль «Користувач». Щоб отримати іншу роль, подай заявку на сторінці «Отримання ролі» — ми її перевіримо.',
+      question: t("q6", "Як змінити роль на платформі?"),
+      answer: t(
+        "a6",
+        "Спочатку всі мають роль «Користувач». Щоб отримати іншу роль, подай заявку на сторінці «Отримання ролі» — ми її перевіримо.",
+      ),
     },
     {
-      question: 'Що робити, якщо виникла проблема?',
-      answer: 'Якщо щось не працює (реєстрація, команда тощо) — звернись у підтримку через розділ «Контакти». Ми обов\'язково допоможемо.',
+      question: t("q7", "Що робити, якщо виникла проблема?"),
+      answer: t(
+        "a7",
+        "Якщо щось не працює (реєстрація, команда тощо) — звернись у підтримку через розділ «Контакти». Ми обов'язково допоможемо.",
+      ),
     },
     {
-      question: 'Чи є обмеження за віком?',
-      answer: 'Більшість турнірів орієнтовані на підлітків і студентів, але умови можуть відрізнятися. Перевіряй опис конкретного турніру.',
+      question: t("q8", "Чи є обмеження за віком?"),
+      answer: t(
+        "a8",
+        "Більшість турнірів орієнтовані на підлітків і студентів, але умови можуть відрізнятися. Перевіряй опис конкретного турніру.",
+      ),
     },
     {
-      question: 'Чи можна брати участь самому (без команди)?',
-      answer: 'Так. У багатьох турнірах можна брати участь індивідуально або знайти команду вже на платформі.',
+      question: t("q9", "Чи можна брати участь самому (без команди)?"),
+      answer: t(
+        "a9",
+        "Так. У багатьох турнірах можна брати участь індивідуально або знайти команду вже на платформі.",
+      ),
     },
     {
-      question: 'Чи можна брати участь у кількох турнірах одночасно?',
-      answer: 'Так, якщо графік не перетинається і ти встигаєш брати повноцінну участь у всіх обраних змаганнях.',
+      question: t("q10", "Чи можна брати участь у кількох турнірах одночасно?"),
+      answer: t(
+        "a10",
+        "Так, якщо графік не перетинається і ти встигаєш брати повноцінну участь у всіх обраних змаганнях.",
+      ),
     },
   ];
 
@@ -51,69 +86,86 @@ const FaqPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans pb-20">
-      <div className="relative bg-gradient-to-r from-[#6b73ff] to-[#4c51bf] pt-24 pb-48 px-6 overflow-hidden flex flex-col items-center">
-        <div className="absolute top-10 left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-20 w-56 h-56 bg-white/10 rounded-full blur-3xl"></div>
+    <div className="w-full flex flex-col min-h-screen bg-[#F8FAFC] font-inter pb-24">
+      {/* 1. Наш ідеальний Hero */}
+      <Hero
+        bgText={t("hero.bg_text", "FAQ")}
+        title={t("hero.title", "Часті Питання")}
+        description={t(
+          "hero.description",
+          "Зібрали для вас відповіді на найпопулярніші запитання. Не знайшли свого? Напишіть нам у підтримку!",
+        )}
+      />
 
-        <span className="inline-block bg-white/20 text-white backdrop-blur-sm border border-white/30 text-sm font-semibold px-5 py-1.5 rounded-full mb-6 relative z-10">
-          Допомога та відповіді
-        </span>
-        <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 text-center tracking-tight relative z-10">
-          ЧАСТІ ПИТАННЯ
-        </h1>
-        <p className="text-white/90 text-lg md:text-xl text-center max-w-2xl relative z-10 font-medium">
-          Зібрали для вас відповіді на найпопулярніші запитання. Не знайшли свого? Напишіть нам у підтримку!
-        </p>
-      </div>
-
-      <div className="max-w-3xl mx-auto px-6 -mt-28 relative z-20">
+      {/* 2. Контейнер контенту (звужений до max-w-3xl для зручного читання) */}
+      <div className="flex-grow w-full max-w-3xl mx-auto px-6 -mt-[80px] relative z-20">
         <div className="space-y-4">
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
 
             return (
-              <div 
-                key={index} 
-                className={`bg-white rounded-2xl shadow-lg border transition-colors duration-300 overflow-hidden ${
-                  isOpen ? 'border-[#6b73ff] shadow-[#6b73ff]/10' : 'border-slate-100 hover:border-[#6b73ff]/50'
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                // Дизайн карток чітко за вашою дизайн-системою
+                className={`bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.03)] border transition-all duration-300 overflow-hidden ${
+                  isOpen
+                    ? "border-[#6366F1]/30 shadow-[0_8px_30px_rgba(99,102,241,0.08)]"
+                    : "border-slate-100 hover:border-slate-200 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
                 }`}
               >
                 <button
                   onClick={() => toggleFaq(index)}
-                  className="w-full flex items-center justify-between p-6 text-left focus:outline-none group"
+                  className="w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group"
                 >
-                  <span className={`text-lg font-bold pr-6 transition-colors duration-300 ${isOpen ? 'text-[#5c68ff]' : 'text-slate-800 group-hover:text-[#5c68ff]'}`}>
+                  <span
+                    className={`font-quicksand font-bold text-[18px] md:text-[20px] pr-6 transition-colors duration-300 ${
+                      isOpen
+                        ? "text-[#6366F1]"
+                        : "text-slate-900 group-hover:text-[#6366F1]"
+                    }`}
+                  >
                     {faq.question}
                   </span>
-                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${isOpen ? 'bg-[#5c68ff] text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-[#eff1ff] group-hover:text-[#5c68ff]'}`}>
-                    <svg
-                      className={`w-5 h-5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      viewBox="0 0 24 24"
-                    >
-                      {isOpen ? (
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
-                      ) : (
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                      )}
-                    </svg>
+
+                  {/* Кнопка розгортання з іконками */}
+                  <div
+                    className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                      isOpen
+                        ? "bg-[#6366F1] text-white rotate-180"
+                        : "bg-slate-50 text-slate-400 group-hover:bg-[#6366F1]/10 group-hover:text-[#6366F1]"
+                    }`}
+                  >
+                    {isOpen ? (
+                      <Minus size={20} strokeWidth={2.5} />
+                    ) : (
+                      <Plus size={20} strokeWidth={2.5} />
+                    )}
                   </div>
                 </button>
-                <div 
-                  className={`grid transition-all duration-300 ease-in-out ${
-                    isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-                  }`}
-                >
-                  <div className="overflow-hidden">
-                    <div className="p-6 pt-0 text-slate-600 leading-relaxed font-medium">
-                      {faq.answer}
-                    </div>
-                  </div>
-                </div>
-              </div>
+
+                {/* Плавна анімація відкриття через Framer Motion */}
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
+                      <div className="px-6 md:px-8 pb-6 md:pb-8 pt-0">
+                        <div className="w-full h-[1px] bg-slate-100 mb-6"></div>
+                        <p className="text-slate-500 text-[16px] leading-relaxed font-medium">
+                          {faq.answer}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             );
           })}
         </div>
@@ -121,5 +173,3 @@ const FaqPage: React.FC = () => {
     </div>
   );
 };
-
-export { FaqPage };
