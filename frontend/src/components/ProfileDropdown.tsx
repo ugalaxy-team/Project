@@ -1,49 +1,38 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { auth } from "../firebase";
 import { useSelector } from "react-redux";
 import { type RootState } from "../store";
+import { useClickOutside } from "../hooks/useClickOutside";
+import { cn } from "../utils/cn";
 
 export const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation("common");
 
-  // Отримуємо дані юзера
   const fbUser = auth.currentUser;
   const reduxUser = useSelector((s: RootState) => s.user.user);
 
-  // Формуємо дані для відображення
   const photoURL = fbUser?.photoURL;
   const displayName =
     fbUser?.displayName || reduxUser?.full_name || "Користувач";
   const initial = displayName.charAt(0).toUpperCase();
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  useClickOutside(dropdownRef, () => setIsOpen(false));
+  const toggleMenu = () => setIsOpen((prev) => !prev);
   const closeMenu = () => setIsOpen(false);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   return (
     <div className="relative" ref={dropdownRef}>
+      {/* Кнопка профілю у хідері: залишається з білими акцентами */}
       <button
         onClick={toggleMenu}
-        className="btn btn-outline py-1.5 pl-1.5 pr-4 text-base flex items-center gap-2.5 rounded-full transition-all hover:shadow-md bg-white/10 border-white/20 hover:bg-white/20"
+        aria-expanded={isOpen}
+        className="py-1.5 pl-1.5 pr-4 text-base flex items-center gap-2.5 rounded-full transition-all hover:shadow-md bg-white/10 border border-white/20 hover:bg-white/20"
       >
-        {/* ФІОЛЕТОВА АВАТАРКА */}
-        <div className="w-8 h-8 rounded-full overflow-hidden bg-[#6A66FF] flex items-center justify-center text-white shrink-0 shadow-sm border-2 border-[#6A66FF]">
+        <div className="w-8 h-8 rounded-full overflow-hidden bg-primary flex items-center justify-center text-white shrink-0 shadow-sm border-2 border-white/20">
           {photoURL ? (
             <img
               src={photoURL}
@@ -61,7 +50,10 @@ export const ProfileDropdown = () => {
         </span>
 
         <svg
-          className={`w-4 h-4 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+          className={cn(
+            "w-4 h-4 text-white transition-transform duration-300",
+            isOpen && "rotate-180",
+          )}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -75,16 +67,16 @@ export const ProfileDropdown = () => {
         </svg>
       </button>
 
+      {/* Меню, що випадає: переведено на дизайн-систему */}
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl py-2 flex flex-col border border-gray-100 overflow-hidden z-50">
+        <div className="absolute right-0 mt-3 w-56 bg-bg-card rounded-xl shadow-xl py-2 flex flex-col border border-border overflow-hidden z-50 transition-colors duration-300">
           <Link
             to="/profile"
             onClick={closeMenu}
-            // Додав hover:text-[#6A66FF], щоб іконки меню теж підсвічувались фіолетовим
-            className="px-5 py-3 text-gray-700 font-semibold hover:bg-gray-50 hover:text-[#6A66FF] transition-colors flex items-center gap-3"
+            className="px-5 py-3 text-text-main font-semibold hover:bg-bg-body hover:text-primary transition-colors flex items-center gap-3 group"
           >
             <svg
-              className="w-5 h-5 text-gray-400 transition-colors group-hover:text-[#6A66FF]"
+              className="w-5 h-5 text-text-muted transition-colors group-hover:text-primary"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -98,14 +90,17 @@ export const ProfileDropdown = () => {
             </svg>
             {t("profile_dropdown.my_profile")}
           </Link>
-          <hr className="border-gray-100 my-1 mx-3" />
+
+          <hr className="border-border my-1 mx-3 transition-colors duration-300" />
+
           <Link
             to="/auth/sign-out"
             onClick={closeMenu}
-            className="px-5 py-3 text-red-600 font-semibold hover:bg-red-50 transition-colors flex items-center gap-3 group"
+            // Кнопка "Вийти" - адаптивний прозоро-червоний фон
+            className="px-5 py-3 text-red-500 font-semibold hover:bg-red-500/10 transition-colors flex items-center gap-3 group"
           >
             <svg
-              className="w-5 h-5 text-red-500 transition-colors group-hover:text-red-600"
+              className="w-5 h-5 text-red-500 transition-transform group-hover:scale-110"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
