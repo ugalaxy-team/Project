@@ -4,10 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
-import { Player } from "@lottiefiles/react-lottie-player";
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "../../components/ui";
-
+import { useTranslation } from "react-i18next";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -15,9 +13,11 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import type { FirebaseError } from "firebase/app";
-import { auth, google, syncUser } from "../../firebase";
 
-import starAnimation from "../../../public/star.json";
+import { auth, google, syncUser } from "../../firebase";
+import { Button } from "../../components/ui/Button";
+import { AuthLayout } from "../../components/layouts/AuthLayout";
+import { cn } from "../../utils/cn";
 
 const GoogleIcon = () => (
   <svg
@@ -49,17 +49,17 @@ const authSchema = z
   .object({
     mode: z.enum(["login", "register"]),
     displayName: z.string().optional(),
-    email: z.string().email("Некоректний формат email"),
-    password: z.string().min(8, "Мінімум 8 символів"),
+    email: z.string().email("errors.email_invalid"),
+    password: z.string().min(8, "errors.pass_short"),
   })
   .superRefine((data, ctx) => {
     if (
       data.mode === "register" &&
-      (!data.displayName || data.displayName.length < 2)
+      (!data.displayName || data.displayName.trim().length < 2)
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Нікнейм обов'язковий (мінімум 2 символи)",
+        message: "errors.nick_required",
         path: ["displayName"],
       });
     }
@@ -68,6 +68,7 @@ const authSchema = z
 type AuthFormData = z.infer<typeof authSchema>;
 
 export const AuthPage = () => {
+  const { t } = useTranslation("auth");
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -109,277 +110,230 @@ export const AuthPage = () => {
           data.email,
           data.password,
         );
-        await updateProfile(cred.user, { displayName: data.displayName });
+        await updateProfile(cred.user, {
+          displayName: data.displayName?.trim(),
+        });
         await syncUser(cred.user);
       }
       navigate("/");
     } catch (e) {
       const err = e as FirebaseError;
-      if (err.code === "auth/email-already-in-use")
-        setFirebaseError("Цей email вже використовується.");
-      else if (
-        err.code === "auth/invalid-credential" ||
-        err.code === "auth/wrong-password"
-      )
-        setFirebaseError("Невірний email або пароль.");
-      else setFirebaseError("Сталася помилка. Спробуйте ще раз.");
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      await signInWithPopup(auth, google);
-      navigate("/");
-    } catch (error) {
-      console.error("Google Sign-In Error:", error);
+      setFirebaseError(
+        err.code === "auth/email-already-in-use"
+          ? t("errors.email_in_use")
+          : err.code === "auth/invalid-credential"
+            ? t("errors.invalid_creds")
+            : t("errors.unknown"),
+      );
     }
   };
 
   return (
-    <>
-      <style>{`
-        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-        .animate-marquee { animation: marquee 50s linear infinite; }
-        .animate-marquee-reverse { animation: marquee 60s linear infinite reverse; }
-      `}</style>
+    <AuthLayout>
+      <div className="mb-4 min-h-[76px]">
+        {/* text-text-main замість text-slate-900 */}
+        <h2 className="font-quicksand font-extrabold text-[34px] text-text-main leading-[1.1] mb-1.5 transition-colors">
+          {isLogin ? t("title_login") : t("title_register")}
+        </h2>
+        {/* text-text-muted замість text-slate-600 */}
+        <p className="text-[15px] font-medium text-text-muted transition-colors">
+          {isLogin ? t("subtitle_login") : t("subtitle_register")}
+        </p>
+      </div>
 
-      <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900 font-inter">
-        <div className="hidden md:flex w-1/2 flex-col items-center justify-center relative overflow-hidden bg-indigo-500">
-          <div className="absolute top-[15%] left-0 right-0 overflow-hidden pointer-events-none">
-            <div className="flex w-max font-quicksand font-extrabold text-[17vw] leading-[0.88] text-white/5 whitespace-nowrap select-none animate-marquee">
-              <span>
-                UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★&nbsp;
-              </span>
-              <span>
-                UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★&nbsp;
-              </span>
-            </div>
-          </div>
-          <div className="absolute bottom-[15%] left-0 right-0 overflow-hidden pointer-events-none">
-            <div className="flex w-max font-quicksand font-extrabold text-[17vw] leading-[0.88] text-white/5 whitespace-nowrap select-none animate-marquee-reverse">
-              <span>
-                STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★&nbsp;
-              </span>
-              <span>
-                STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★&nbsp;
-              </span>
-            </div>
-          </div>
+      {/* bg-border/50 замість bg-slate-100 */}
+      <div
+        role="tablist"
+        className="flex bg-border/50 rounded-full p-1.5 relative mb-3 transition-colors"
+      >
+        {/* bg-bg-card замість bg-white */}
+        <motion.div
+          className="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-bg-card rounded-full shadow-sm z-0"
+          animate={{ x: isLogin ? "100%" : "0%" }}
+        />
+        <button
+          type="button"
+          role="tab"
+          aria-selected={!isLogin}
+          className={cn(
+            "flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 transition-colors",
+            !isLogin ? "text-text-main" : "text-text-muted",
+          )}
+          onClick={() => toggleMode("register")}
+        >
+          {t("tabs.register")}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={isLogin}
+          className={cn(
+            "flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 transition-colors",
+            isLogin ? "text-text-main" : "text-text-muted",
+          )}
+          onClick={() => toggleMode("login")}
+        >
+          {t("tabs.login")}
+        </button>
+      </div>
 
-          <div className="relative z-10 flex flex-col items-center">
-            <Player
-              autoplay
-              loop
-              src={starAnimation}
-              style={{
-                width: "240px",
-                height: "240px",
-                filter: "drop-shadow(0 16px 40px rgba(0, 0, 0, 0.25))",
-              }}
-            />
-            <div className="text-center mt-1">
-              <div className="font-quicksand font-extrabold text-[64px] text-white leading-none tracking-tight">
-                UGalaxy
-              </div>
-              <div className="text-yellow-400 font-extrabold text-[24px] leading-none">
-                ×
-              </div>
-              <div className="font-quicksand font-bold text-[21px] text-white/85 tracking-widest uppercase">
-                Star for Life
-              </div>
-            </div>
-            <p className="mt-5 text-[15px] font-medium text-white/60 text-center max-w-[290px] leading-relaxed">
-              Твоя історія починається тут. Створюй, втілюй, змінюй світ.
-            </p>
-          </div>
-
-          {/* Легка, м'яка хвилька */}
-          <div className="absolute top-0 -right-[1px] w-[6vw] h-full z-10 text-slate-50 pointer-events-none">
-            <svg
-              viewBox="0 0 100 1440"
-              preserveAspectRatio="none"
-              className="w-full h-full block"
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <AnimatePresence initial={false}>
+          {!isLogin && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              style={{ overflow: "hidden" }}
             >
-              <path
-                fill="currentColor"
-                d="M80,0 C65,320 65,420 80,720 C95,1020 95,1120 80,1440 L100,1440 L100,0 Z"
-              />
-            </svg>
-          </div>
-        </div>
-
-        <div className="flex-1 flex items-center justify-center p-6 md:p-8 overflow-y-auto">
-          <motion.div
-            className="bg-white w-full max-w-[460px] rounded-[32px] p-8 md:p-11 shadow-[0_10px_40px_-8px_rgba(15,23,42,0.1)]"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="mb-8 min-h-[76px]">
-              <h2 className="font-quicksand font-extrabold text-[34px] text-slate-900 leading-[1.1] mb-1.5">
-                {isLogin ? "З поверненням!" : "Створити акаунт"}
-              </h2>
-              <p className="text-[15px] font-medium text-slate-600">
-                {isLogin
-                  ? "Продовжуйте свій шлях в UGalaxy"
-                  : "Готовий до нових челенджів?"}
-              </p>
-            </div>
-
-            <div className="flex bg-slate-100 rounded-full p-1.5 relative mb-7">
-              <motion.div
-                className="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-full shadow-sm z-0"
-                animate={{ x: isLogin ? "100%" : "0%" }}
-              />
-              <button
-                type="button"
-                className={`flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 ${!isLogin ? "text-slate-900" : "text-slate-500"}`}
-                onClick={() => toggleMode("register")}
-              >
-                Реєстрація
-              </button>
-              <button
-                type="button"
-                className={`flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 ${isLogin ? "text-slate-900" : "text-slate-500"}`}
-                onClick={() => toggleMode("login")}
-              >
-                Вхід
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <AnimatePresence initial={false}>
-                {!isLogin && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    style={{ overflow: "hidden" }}
-                  >
-                    <div className="mb-4">
-                      <label className="font-quicksand font-bold text-[14px] text-slate-900 block mb-2">
-                        Нікнейм
-                      </label>
-                      <input
-                        className={`w-full px-5 py-3.5 bg-slate-50 border-2 rounded-full outline-none transition-all ${errors.displayName ? "border-red-500" : "border-slate-200 focus:border-indigo-500"}`}
-                        type="text"
-                        placeholder="Наприклад, izachoc"
-                        {...register("displayName")}
-                      />
-                      {errors.displayName && (
-                        <span className="text-red-500 text-[12px] mt-1 block px-2">
-                          {errors.displayName.message}
-                        </span>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
               <div className="mb-4">
-                <label className="font-quicksand font-bold text-[14px] text-slate-900 block mb-2">
-                  Email
+                <label
+                  htmlFor="displayName"
+                  className="font-quicksand font-bold text-[14px] text-text-main block mb-2 transition-colors"
+                >
+                  {t("fields.nickname.label")}
                 </label>
                 <input
-                  className={`w-full px-5 py-3.5 bg-slate-50 border-2 rounded-full outline-none transition-all ${errors.email ? "border-red-500" : "border-slate-200 focus:border-indigo-500"}`}
-                  type="email"
-                  placeholder="name@example.com"
-                  {...register("email")}
+                  id="displayName"
+                  // Додано text-text-main, bg-bg-body, placeholder:text-text-muted/50
+                  className={cn(
+                    "w-full px-5 py-3.5 bg-bg-body text-text-main placeholder:text-text-muted/50 border-2 rounded-full outline-none transition-all",
+                    errors.displayName
+                      ? "border-red-500"
+                      : "border-border focus:border-primary",
+                  )}
+                  type="text"
+                  placeholder={t("fields.nickname.placeholder")}
+                  {...register("displayName")}
                 />
-                {errors.email && (
+                {errors.displayName && (
                   <span className="text-red-500 text-[12px] mt-1 block px-2">
-                    {errors.email.message}
+                    {t(errors.displayName.message as string)}
                   </span>
                 )}
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-              <div className="mb-4">
-                <div className="flex justify-between items-center mb-2">
-                  <label className="font-quicksand font-bold text-[14px] text-slate-900">
-                    Пароль
-                  </label>
-                  <Link
-                    to="/auth/forgot-password"
-                    className={`text-[13px] font-semibold text-indigo-500 ${isLogin ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-                  >
-                    Забули пароль?
-                  </Link>
-                </div>
-                <div className="relative flex items-center">
-                  <input
-                    className={`w-full pl-5 pr-12 py-3.5 bg-slate-50 border-2 rounded-full outline-none transition-all ${errors.password ? "border-red-500" : passwordValue ? (isPasswordValid ? "border-indigo-500" : "border-red-500") : "border-slate-200 focus:border-indigo-500"}`}
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Мінімум 8 символів"
-                    {...register("password")}
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-4 text-slate-400 p-1"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <span className="text-red-500 text-[12px] mt-1 block px-2">
-                    {errors.password.message}
-                  </span>
-                )}
-              </div>
-
-              {firebaseError && (
-                <div className="text-red-500 text-[14px] text-center mb-4 font-medium">
-                  {firebaseError}
-                </div>
-              )}
-
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full mt-2"
-                isLoading={isSubmitting}
-              >
-                {isLogin ? "Увійти" : "Зареєструватись"}
-              </Button>
-
-              <div className="flex items-center gap-3.5 my-5">
-                <div className="flex-1 h-[1.5px] bg-slate-200"></div>
-                <span className="text-[12px] font-semibold text-slate-400 tracking-widest uppercase">
-                  або
-                </span>
-                <div className="flex-1 h-[1.5px] bg-slate-200"></div>
-              </div>
-
-              <Button
-                variant="outline"
-                type="button"
-                className="w-full"
-                leftIcon={<GoogleIcon />}
-                onClick={handleGoogleSignIn}
-              >
-                Вхід через Google
-              </Button>
-
-              <p className="text-center text-[12px] text-slate-400 font-medium mt-5">
-                {isLogin ? "Входячи" : "Реєструючись"}, ти погоджуєшся з <br />
-                <a
-                  href="#"
-                  className="text-indigo-500 font-semibold hover:underline"
-                >
-                  Умовами використання
-                </a>{" "}
-                та{" "}
-                <a
-                  href="#"
-                  className="text-indigo-500 font-semibold hover:underline"
-                >
-                  Політикою конфіденційності
-                </a>
-              </p>
-            </form>
-          </motion.div>
+        <div className="mb-4">
+          <label
+            htmlFor="email"
+            className="font-quicksand font-bold text-[14px] text-text-main block mb-2 transition-colors"
+          >
+            {t("fields.email.label")}
+          </label>
+          <input
+            id="email"
+            className={cn(
+              "w-full px-5 py-3.5 bg-bg-body text-text-main placeholder:text-text-muted/50 border-2 rounded-full outline-none transition-all",
+              errors.email
+                ? "border-red-500"
+                : "border-border focus:border-primary",
+            )}
+            type="email"
+            placeholder={t("fields.email.placeholder")}
+            {...register("email")}
+          />
+          {errors.email && (
+            <span className="text-red-500 text-[12px] mt-1 block px-2">
+              {t(errors.email.message as string)}
+            </span>
+          )}
         </div>
-      </div>
-    </>
+
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <label
+              htmlFor="password"
+              className="font-quicksand font-bold text-[14px] text-text-main transition-colors"
+            >
+              {t("fields.password.label")}
+            </label>
+            <Link
+              to="/auth/forgot-password"
+              className={cn(
+                "text-[13px] font-semibold text-primary transition-opacity hover:underline",
+                isLogin ? "opacity-100" : "opacity-0 pointer-events-none",
+              )}
+            >
+              {t("fields.password.forgot")}
+            </Link>
+          </div>
+          <div className="relative flex items-center">
+            <input
+              id="password"
+              className={cn(
+                "w-full pl-5 pr-12 py-3.5 bg-bg-body text-text-main placeholder:text-text-muted/50 border-2 rounded-full outline-none transition-all",
+                errors.password || (passwordValue && !isPasswordValid)
+                  ? "border-red-500"
+                  : "border-border focus:border-primary",
+              )}
+              type={showPassword ? "text" : "password"}
+              placeholder={t("fields.password.placeholder")}
+              {...register("password")}
+            />
+            <button
+              type="button"
+              className="absolute right-4 text-text-muted hover:text-text-main transition-colors p-1"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+          {errors.password && (
+            <span className="text-red-500 text-[12px] mt-1 block px-2">
+              {t(errors.password.message as string)}
+            </span>
+          )}
+        </div>
+
+        {firebaseError && (
+          // bg-red-500/10 border-red-500/20 ідеально виглядає і в світлій, і в темній темі
+          <div className="text-red-500 text-[13px] text-center mb-4 font-medium bg-red-500/10 p-2.5 rounded-xl border border-red-500/20">
+            {firebaseError}
+          </div>
+        )}
+
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full mt-2"
+          isLoading={isSubmitting}
+        >
+          {isLogin ? t("submit.login") : t("submit.register")}
+        </Button>
+
+        <div className="flex items-center gap-3.5 my-5" aria-hidden="true">
+          <div className="flex-1 h-[1.5px] bg-border transition-colors" />
+          <span className="text-[12px] font-semibold text-text-muted tracking-widest uppercase transition-colors">
+            {t("submit.or")}
+          </span>
+          <div className="flex-1 h-[1.5px] bg-border transition-colors" />
+        </div>
+
+        <Button
+          variant="outline"
+          type="button"
+          className="w-full"
+          leftIcon={<GoogleIcon />}
+          onClick={() => signInWithPopup(auth, google)}
+        >
+          {t("submit.google")}
+        </Button>
+
+        <p className="text-center text-[12px] text-text-muted font-medium mt-5 leading-relaxed transition-colors">
+          {t("footer.agree")}{" "}
+          <Link to="/rules" className="text-primary hover:underline">
+            {t("footer.terms")}
+          </Link>
+          <br />
+          {t("footer.and")}{" "}
+          <Link to="/privacy" className="text-primary hover:underline">
+            {t("footer.privacy")}
+          </Link>
+        </p>
+      </form>
+    </AuthLayout>
   );
 };
