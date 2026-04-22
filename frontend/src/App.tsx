@@ -11,7 +11,7 @@ import { SupportPage } from "./pages/SupportPage/SupportPage";
 import { FaqPage } from "./pages/FaqPage/FaqPage";
 import { RulesPage } from "./pages/Rules/Rules";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import ForgotPassword from "./pages/Auth/ForgotPassword";
+import { ForgotPassword } from "./pages/Auth/ForgotPassword";
 import { RoleRequestPage } from "./pages/GetRole/RoleRequestPage";
 import { Toaster, toast } from "react-hot-toast";
 import { AuthPage } from "./pages/Auth/AuthPage";
@@ -21,6 +21,9 @@ import { io, Socket } from "socket.io-client";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
+
+// Імпорт нашої нової сторінки
+import { RegPage } from "./pages/RegistrationPage/RegCommand";
 
 // Утиліта для скролу нагору при кожній зміні URL
 const ScrollToTop = () => {
@@ -74,7 +77,7 @@ export const App = () => {
     <>
       <Toaster position="top-center" reverseOrder={false} />
       <BrowserRouter>
-        <ScrollToTop /> {/* <--- Додали сюди! */}
+        <ScrollToTop />
         <Routes>
           {/* Сторінки з Хедером та Футером */}
           <Route element={<MainLayout />}>
@@ -104,11 +107,23 @@ export const App = () => {
             <Route path="/rules" element={<RulesPage />} />
             <Route path="*" element={<Page404 />} />
           </Route>
+
+          {/* Самостійні сторінки без MainLayout (на весь екран) */}
           <Route path="/auth/">
             <Route index element={<AuthPage />} />
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="sign-out" element={<SignOut />} />
           </Route>
+
+          {/* СТОРІНКА РЕЄСТРАЦІЇ НА ТУРНІР */}
+          <Route
+            path="/tournament/:id/register"
+            element={
+              <ProtectedRoute>
+                <RegPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>

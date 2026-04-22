@@ -1,22 +1,23 @@
-// LanguageSwitcher.tsx
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import { cn } from "../../utils/cn";
+
+const LANGUAGES = [
+  { code: "uk", label: "UK", flag: "🇺🇦", title: "Українська" },
+  { code: "en", label: "EN", flag: "🇬🇧", title: "English" },
+];
 
 export const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
-
-  const languages = [
-    { code: "uk", label: "UK", flag: "🇺🇦", title: "Українська" },
-    { code: "en", label: "EN", flag: "🇬🇧", title: "English" },
-  ];
 
   return (
     <div
       role="group"
       aria-label="Вибір мови"
-      className="flex items-center bg-white/10 p-[3px] rounded-full border border-white/10 gap-0.5"
+      // Фон-трек у стилі сторінки авторизації (сірий у світлій темі, темний у темній)
+      className="flex items-center bg-border/60 p-1 rounded-full transition-colors duration-300"
     >
-      {languages.map((lang) => {
+      {LANGUAGES.map((lang) => {
         const isActive = i18n.resolvedLanguage === lang.code;
         return (
           <button
@@ -25,19 +26,23 @@ export const LanguageSwitcher = () => {
             title={lang.title}
             aria-pressed={isActive}
             aria-label={lang.title}
-            className={`relative flex items-center gap-[5px] px-2.5 py-[5px] rounded-full text-[12px] font-bold tracking-[0.05em] transition-colors duration-200 select-none border-0 bg-transparent cursor-pointer z-10
-              ${isActive ? "text-[#6A66FF]" : "text-white/60 hover:text-white/90"}`}
+            className={cn(
+              "relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold tracking-wide transition-colors duration-300 select-none border-0 bg-transparent cursor-pointer z-10",
+              // Текст змінюється як у табах авторизації
+              isActive
+                ? "text-text-main"
+                : "text-text-muted hover:text-text-main",
+            )}
           >
             {isActive && (
               <motion.div
                 layoutId="activeLangBg"
-                className="absolute inset-0 bg-white rounded-full shadow-sm"
+                // Плаваюча плашка бере колір карток системи
+                className="absolute inset-0 bg-bg-card rounded-full shadow-sm"
                 transition={{ type: "spring", stiffness: 420, damping: 32 }}
               />
             )}
-            <span className="relative z-20 text-[13px] leading-none">
-              {lang.flag}
-            </span>
+            <span className="relative z-20 leading-none">{lang.flag}</span>
             <span className="relative z-20">{lang.label}</span>
           </button>
         );
