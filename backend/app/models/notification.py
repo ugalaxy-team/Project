@@ -9,7 +9,7 @@ from .user import User
 class Notification(Base, PKMixin):
     __tablename__ = "notifications"
 
-    body: Mapped[str] = mapped_column(String(4096), unique=True)
+    body: Mapped[str] = mapped_column(String(4096))
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
     user: Mapped["User"] = relationship(

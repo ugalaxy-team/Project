@@ -7,6 +7,7 @@ import app.routes.roles as roles
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 import socketio
+from .admin import setup_admin
 
 app = FastAPI()
 app.state.user_websocket_sessions = {}
@@ -28,4 +29,6 @@ app.include_router(users.router)
 app.include_router(profile.router)
 app.include_router(role_requests.router)
 app.include_router(roles.router)
+
+setup_admin(app)
 
