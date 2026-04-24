@@ -66,7 +66,7 @@ async def validate_team_registration(
 
     count_stmt = select(func.count()).where(Team.tournament_id == tournament.id)
     teams_count = (await session.execute(count_stmt)).scalar()
-    if teams_count >= tournament.max_team:
+    if teams_count >= tournament.max_teams:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Tournament is full")
 
     all_emails = [team_data.captain.email] + [m.email for m in team_data.members]

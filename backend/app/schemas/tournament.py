@@ -16,7 +16,7 @@ class TournamentBase(BaseModel):
     start_date: datetime
     reg_start: datetime
     reg_end: datetime
-    max_team: int = Field(..., gt=1)
+    max_teams: int = Field(..., gt=1)
 
 
 class TournamentCreate(TournamentBase):
@@ -29,7 +29,7 @@ class TournamentUpdate(BaseModel):
     start_date: datetime | None = None
     reg_start: datetime | None = None
     reg_end: datetime | None = None
-    max_team: int | None = Field(None, gt=1)
+    max_teams: int | None = Field(None, gt=1)
 
 
 class TournamentStatusOptionModel(BaseModel):
