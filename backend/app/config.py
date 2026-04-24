@@ -2,15 +2,17 @@ import os
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-BASE_DIR = Path(__file__).resolve().parent
+BACKEND_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = BACKEND_DIR.parent
+ENV_PATH = Path(BASE_DIR, '.env')
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra='ignore')
+    model_config = SettingsConfigDict(env_file=ENV_PATH, extra='ignore')
 
     SECRET_KEY: str = os.getenv("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI: str = os.getenv("SQLALCHEMY_DATABASE_URI")
-    FIREBASE_CERT_PATH: str = str(BASE_DIR / "serviceAccountKey.json")
+    FIREBASE_CERT_PATH: str = str(Path(BACKEND_DIR, 'app', 'serviceAccountKey.json'))
     
     # TODO: Move this to a config file
     CORS_ORIGINS: list[str] = [
