@@ -1,9 +1,11 @@
 from datetime import datetime
-from sqlalchemy import ForeignKey, Table, Column, func
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, Table, Column, func, join
+from sqlalchemy.orm import Mapped, foreign, mapped_column, relationship
 
 from .base import Base
 from .mixin import PKMixin
+from .team import Team, TeamMember
+from .tournament import Tournament
 
 user_roles = Table(
     "user_roles",
@@ -38,6 +40,14 @@ class User(Base, PKMixin):
     created_tournaments: Mapped[list["Tournament"]] = relationship(
         back_populates="creator", lazy="selectin",
         cascade="all, delete-orphan",
+    )
+    particaptes_in: Mapped[list["Tournament"]] = relationship(
+        "Tournament",
+        secondary=lambda: join(TeamMember.__table__, Team.__table__, TeamMember.team_id == Team.id),
+        primaryjoin=lambda: User.email == foreign(TeamMember.email),
+        secondaryjoin=lambda: Tournament.id == foreign(Team.tournament_id),
+        viewonly=True,
+        lazy="selectin",
     )
 
     def __repr__(self):

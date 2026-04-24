@@ -36,6 +36,7 @@ class UserPublic(UserBase):
     telegram: str | None
     github: str | None
     discord: str | None
+    particaptes_in: list["TournamentPublic"] = Field(default_factory=list)
 
 
 class UserModel(UserBase):
@@ -49,6 +50,7 @@ class UserModel(UserBase):
 
 from .role_request import RoleRequestPublic
 from .notification import NotificationPublic
+from .tournament import TournamentPublic
 
 
 # Return notifications of current user only

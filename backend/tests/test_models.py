@@ -99,6 +99,34 @@ async def test_user_roles_relationship(db_session, create):
     assert "admin" in [r.name for r in db_user.roles]
 
 
+async def test_user_particaptes_in_relationship(db_session, create):
+    user = await create(UserFactory)
+    tournament1 = await create(TournamentFactory)
+    tournament2 = await create(TournamentFactory)
+    other_tournament = await create(TournamentFactory)
+
+    team1 = await create(TeamFactory, tournament=tournament1)
+    team2 = await create(TeamFactory, tournament=tournament2)
+    other_team = await create(TeamFactory, tournament=other_tournament)
+
+    await create(TeamMemberFactory, team=team1, tournament=tournament1, email=user.email)
+    await create(TeamMemberFactory, team=team2, tournament=tournament2, email=user.email)
+    await create(TeamMemberFactory, team=other_team, tournament=other_tournament)
+
+    stmt = (
+        select(User)
+        .where(User.id == user.id)
+        .options(selectinload(User.particaptes_in))
+    )
+    result = await db_session.execute(stmt)
+    db_user = result.unique().scalar_one()
+
+    assert {tournament.id for tournament in db_user.particaptes_in} == {
+        tournament1.id,
+        tournament2.id,
+    }
+
+
 # TEAM/TEAM MEMBER TESTS
 async def test_create_team_member(create):
     member = await create(TeamMemberFactory)
