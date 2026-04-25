@@ -82,13 +82,9 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 mb-10">
           <ListCard title="Турніри" dotColor="bg-[#6366F1]" items={[
             "Напишіть Ядро Лінукс", "Напишіть свою мову програмування", "Напишіть гру на JS"
-          ]} />
-          
-          <ListCard title="Команди" dotColor="bg-[#FBBF24]" isTeams items={[
-            "Шалені програмісти", "Кодери мрії"
           ]} />
         </div>
       </div>
