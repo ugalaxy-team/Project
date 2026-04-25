@@ -41,7 +41,7 @@ class User(Base, PKMixin):
         back_populates="creator", lazy="selectin",
         cascade="all, delete-orphan",
     )
-    particaptes_in: Mapped[list["Tournament"]] = relationship(
+    participates_in: Mapped[list["Tournament"]] = relationship(
         "Tournament",
         secondary=lambda: join(TeamMember.__table__, Team.__table__, TeamMember.team_id == Team.id),
         primaryjoin=lambda: User.email == foreign(TeamMember.email),

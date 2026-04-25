@@ -99,7 +99,7 @@ async def test_user_roles_relationship(db_session, create):
     assert "admin" in [r.name for r in db_user.roles]
 
 
-async def test_user_particaptes_in_relationship(db_session, create):
+async def test_user_participates_in_relationship(db_session, create):
     user = await create(UserFactory)
     tournament1 = await create(TournamentFactory)
     tournament2 = await create(TournamentFactory)
@@ -116,12 +116,12 @@ async def test_user_particaptes_in_relationship(db_session, create):
     stmt = (
         select(User)
         .where(User.id == user.id)
-        .options(selectinload(User.particaptes_in))
+        .options(selectinload(User.participates_in))
     )
     result = await db_session.execute(stmt)
     db_user = result.unique().scalar_one()
 
-    assert {tournament.id for tournament in db_user.particaptes_in} == {
+    assert {tournament.id for tournament in db_user.participates_in} == {
         tournament1.id,
         tournament2.id,
     }

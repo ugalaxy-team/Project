@@ -36,7 +36,7 @@ class UserPublic(UserBase):
     telegram: str | None
     github: str | None
     discord: str | None
-    particaptes_in: list["TournamentPublic"] = Field(default_factory=list)
+    participates_in: list["TournamentPublic"] = Field(default_factory=list)
 
 
 class UserModel(UserBase):
