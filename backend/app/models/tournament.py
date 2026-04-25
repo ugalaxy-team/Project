@@ -13,6 +13,7 @@ class Tournament(Base, PKMixin):
     title: Mapped[str] = mapped_column(nullable=False)
     description: Mapped[str]
     start_date: Mapped[datetime]
+    end_date: Mapped[datetime]
     reg_start: Mapped[datetime]
     reg_end: Mapped[datetime]
     min_people_in_team: Mapped[int]
