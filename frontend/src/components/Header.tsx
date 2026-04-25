@@ -56,7 +56,7 @@ export const Header = () => {
             <div className="flex items-center gap-2 md:gap-4">
               <NotificationsDropdown />
               <div className="hidden lg:block">
-                <ProfileDropdown />
+                <ProfileDropdown userRoles={user?.roles || []} />
               </div>
             </div>
           ) : (
@@ -98,7 +98,7 @@ export const Header = () => {
 
           {user?.uid ? (
             <div className="mt-2 pt-4 border-t border-white/10">
-              <ProfileDropdown />
+              <ProfileDropdown userRoles={user?.roles || []} isMobile={true} />
             </div>
           ) : (
             <Link
