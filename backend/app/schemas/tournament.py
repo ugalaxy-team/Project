@@ -19,6 +19,7 @@ class TournamentBase(BaseModel):
     title: StrippedStr = Field(..., min_length=3)
     description: str
     start_date: datetime
+    end_date: datetime
     reg_start: datetime
     reg_end: datetime
     max_teams: int = Field(..., gt=1)
@@ -32,6 +33,7 @@ class TournamentUpdate(BaseModel):
     title: StrippedStr | None = Field(None, min_length=3)
     description: str | None = None
     start_date: datetime | None = None
+    end_date: datetime | None = None
     reg_start: datetime | None = None
     reg_end: datetime | None = None
     max_teams: int | None = Field(None, gt=1)
@@ -52,3 +54,4 @@ class TournamentPublic(TournamentBase):
     tasks: list[TaskPublic]
     active_task: TaskPublic
     teams: list[TeamPublic]
+    status_name: str = Field(validation_alias="status.display_name")
