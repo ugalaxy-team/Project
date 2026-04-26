@@ -22,13 +22,17 @@ from app.models import (
 )
 
 
+class NamePrimaryKeyAdmin(ModelView):
+    form_include_pk = True
+
+
 class UserAdmin(ModelView, model=User):
     column_list = [User.id, User.full_name, User.email, User.firebase_uid, User.created_at]
     column_searchable_list = [User.full_name, User.email, User.firebase_uid]
 
 
-class RoleAdmin(ModelView, model=Role):
-    column_list = [Role.name, Role.name]
+class RoleAdmin(NamePrimaryKeyAdmin, model=Role):
+    column_list = [Role.name, Role.display_name, Role.description]
     column_searchable_list = [Role.name]
 
 
@@ -50,7 +54,7 @@ class TournamentAdmin(ModelView, model=Tournament):
     column_searchable_list = [Tournament.title]
 
 
-class TournamentStatusOptionAdmin(ModelView, model=TournamentStatusOption):
+class TournamentStatusOptionAdmin(NamePrimaryKeyAdmin, model=TournamentStatusOption):
     column_list = [TournamentStatusOption.name, TournamentStatusOption.display_name]
 
 
@@ -66,15 +70,15 @@ class TaskAdmin(ModelView, model=Task):
     column_searchable_list = [Task.title]
 
 
-class TaskStatusOptionAdmin(ModelView, model=TaskStatusOption):
+class TaskStatusOptionAdmin(NamePrimaryKeyAdmin, model=TaskStatusOption):
+    column_list = [TaskStatusOption.name, TaskStatusOption.display_name]
+
+
+class TaskRequirementCategoryAdmin(NamePrimaryKeyAdmin, model=TaskRequirementCategory):
     pass
 
 
-class TaskRequirementCategoryAdmin(ModelView, model=TaskRequirementCategory):
-    pass
-
-
-class TaskRequirementOptionAdmin(ModelView, model=TaskRequirementOption):
+class TaskRequirementOptionAdmin(NamePrimaryKeyAdmin, model=TaskRequirementOption):
     pass
 
 
@@ -105,7 +109,7 @@ class SubmissionAdmin(ModelView, model=Submission):
     pass
 
 
-class SubmissionUrlOptionAdmin(ModelView, model=SubmissionUrlOption):
+class SubmissionUrlOptionAdmin(NamePrimaryKeyAdmin, model=SubmissionUrlOption):
     pass
 
 
