@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated
 
 from datetime import datetime
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, AliasPath
 
 from .option import OptionPublic
 from .task import TaskPublic
@@ -53,4 +53,4 @@ class TournamentPublic(TournamentBase):
     tasks: list[TaskPublic]
     active_task: TaskPublic
     teams: list[TeamPublic]
-    status_name: str = Field(validation_alias="status.display_name")
+    status_name: str = Field(validation_alias=AliasPath("status", "display_name"))
