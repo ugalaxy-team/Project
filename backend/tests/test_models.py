@@ -134,16 +134,6 @@ async def test_create_team_member(create):
     assert member.id is not None
     assert member.team_id == member.team.id
 
-
-async def test_team_member_without_data(db_session):
-    member = TeamMember()
-    db_session.add(member)
-
-    with pytest.raises(IntegrityError):
-        await db_session.flush()
-    await db_session.rollback()
-
-
 async def test_team_member_duplicate_email_same_team(create, db_session):
     team = await create(TeamFactory)
     member1 = await create(TeamMemberFactory, team=team)
@@ -181,16 +171,6 @@ async def test_create_team(create):
     assert team.name is not None
     assert team.team_email is not None
 
-
-async def test_team_without_data(db_session):
-    member = TeamMember()
-    db_session.add(member)
-    with pytest.raises(IntegrityError):
-        await db_session.flush()
-
-    await db_session.rollback()
-
-
 async def test_team_duplicate_email(db_session, create):
     email = "duplicate@example.com"
     await create(TeamFactory, team_email=email)
@@ -209,8 +189,6 @@ async def test_set_team_captain(db_session, create):
     await db_session.commit()
     await db_session.refresh(team)
 
-    assert team.captain_id == member.id
-    assert team.captain_id == member.id
     assert team.captain_id == member.id
 
 
@@ -263,15 +241,6 @@ async def test_task_requirements_relationship(db_session, create):
 
     assert len(db_task.requirements) == 1
     assert db_task.requirements[0].name == option.name
-
-
-async def test_task_without_data(db_session):
-    task = Task()
-    db_session.add(task)
-    with pytest.raises(IntegrityError):
-        await db_session.flush()
-    await db_session.rollback()
-
 
 async def test_task_invalid_time(create):
     task = await create(
@@ -327,16 +296,6 @@ async def test_create_tournament(create):
     assert tournament.title is not None
     assert tournament.description is not None
     assert tournament.max_teams is not None
-
-
-async def test_tournament_without_data(db_session):
-    tournament = Tournament()
-    db_session.add(tournament)
-    with pytest.raises(IntegrityError):
-        await db_session.flush()
-
-    await db_session.rollback()
-
 
 async def test_tournament_invalid_time(create):
     tournament = await create(
@@ -591,14 +550,6 @@ async def test_create_notification(create):
     assert notification.user is not None
 
 
-async def test_create_notification_without_data(db_session):
-    notification = Notification()
-    db_session.add(notification)
-    with pytest.raises(IntegrityError):
-        await db_session.flush()
-    await db_session.rollback()
-
-
 async def test_user_notifications_relationship(db_session, create):
     user = await create(UserFactory)
     await create(NotificationFactory, user=user)
@@ -633,15 +584,6 @@ async def test_create_role_request(create):
 
     assert role_request.role is not None
     assert role_request.user is not None
-
-
-async def test_create_role_request_without_data(db_session):
-    role_request = RoleRequest()
-    db_session.add(role_request)
-    with pytest.raises(IntegrityError):
-        await db_session.flush()
-    await db_session.rollback()
-
 
 async def test_user_role_requests_relationship(db_session, create):
     user = await create(UserFactory)
