@@ -38,7 +38,7 @@ class TournamentStatus(StateMachine):
         result = await self.session.execute(statement)
         status_option = result.scalar_one()
 
-        self.tournament.status_id = status_option.id
+        self.tournament.status_id = status_option.name
         self.tournament.status = status_option
 
         await self.session.commit()

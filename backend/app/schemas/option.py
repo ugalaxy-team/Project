@@ -10,3 +10,5 @@ class OptionUpdate(OptionBase):
     name: str | None = None
     display_name: str | None = None
     
+class OptionPublic(OptionBase):
+    pass

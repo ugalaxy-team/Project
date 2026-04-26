@@ -1,5 +1,13 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict
 from .role import RolePublic
+
+if TYPE_CHECKING:
+    from .notification import NotificationPublic
+    from .tournament import TournamentPublic
 
 
 class UserBase(BaseModel):
@@ -36,7 +44,6 @@ class UserPublic(UserBase):
     telegram: str | None
     github: str | None
     discord: str | None
-    participates_in: list["TournamentPublic"] = Field(default_factory=list)
 
 
 class UserModel(UserBase):
@@ -48,12 +55,8 @@ class UserModel(UserBase):
         return value.lower().strip()
 
 
-from .role_request import RoleRequestPublic
-from .notification import NotificationPublic
-from .tournament import TournamentPublic
-
-
 # Return notifications of current user only
-# TODO: add created_tournaments after the TournamentPublic model will be defined
 class CurrentUser(UserPublic):
-    notifications: list[NotificationPublic]
+    notifications: list["NotificationPublic"]
+    participates_in: list["TournamentPublic"] = Field(default_factory=list)
+    created_tournaments: list["TournamentPublic"]

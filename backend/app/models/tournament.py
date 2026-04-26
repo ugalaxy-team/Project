@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
-from .mixin import PKMixin
+from .mixin import PKMixin, OptionMixin
 
 
 class Tournament(Base, PKMixin):
@@ -19,7 +19,7 @@ class Tournament(Base, PKMixin):
     max_people_in_team: Mapped[int]
     max_teams: Mapped[int]
     active_task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), nullable=True)
-    status_id: Mapped[int] = mapped_column(ForeignKey("tournament_status_options.id"))
+    status_id: Mapped[str] = mapped_column(ForeignKey("tournament_status_options.name"))
     creator_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
     teams: Mapped[list["Team"]] = relationship(
@@ -45,11 +45,10 @@ class Tournament(Base, PKMixin):
         return f"<Tournament(id={self.id}, title={self.title})>"
 
 
-class TournamentStatusOption(Base, PKMixin):
+class TournamentStatusOption(Base, OptionMixin):
     __tablename__ = "tournament_status_options"
 
-    name: Mapped[str] = mapped_column(unique=True, index=True)
-    display_name: Mapped[str] = mapped_column(nullable=False)
+    name: Mapped[str] = mapped_column(primary_key=True, index=True)
 
     tournaments: Mapped[List["Tournament"]] = relationship(
         back_populates="status", lazy="selectin"

@@ -7,7 +7,7 @@ from app.schemas import (
     TournamentCreate,
     TournamentUpdate,
 )
-from app.models import Tournament
+from app.models import Team, Tournament, User
 from app.dependencies import SessionDep
 from app.utils.routes.dates_logic import (
     validate_dates_on_create,
@@ -17,13 +17,21 @@ from app.utils.fsm import auto_update_tournament_status, get_status_by_name
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 
+tournament_load_options = (
+    selectinload(Tournament.status),
+    selectinload(Tournament.creator).selectinload(User.roles),
+    selectinload(Tournament.tasks),
+    selectinload(Tournament.active_task),
+    selectinload(Tournament.teams).selectinload(Team.members),
+)
+
 
 # for future , move to a separate file: get_tournament, get_status_by_name
 async def get_tournament(tournament_id: int, session: SessionDep) -> Tournament:
     statement = (
         select(Tournament)
         .where(Tournament.id == tournament_id)
-        .options(selectinload(Tournament.status))
+        .options(*tournament_load_options)
     )
     tournament = (await session.execute(statement)).scalar_one_or_none()
     if not tournament:
@@ -36,7 +44,7 @@ async def get_tournament(tournament_id: int, session: SessionDep) -> Tournament:
 
 @router.get("/", response_model=list[TournamentPublic], status_code=status.HTTP_200_OK)
 async def tournaments(session: SessionDep):
-    statement = select(Tournament).options(selectinload(Tournament.status))
+    statement = select(Tournament).options(*tournament_load_options)
     tournaments = await session.execute(statement)
     return tournaments.scalars().all()
 
@@ -64,7 +72,7 @@ async def create_tournament(
     new_tournament = Tournament(
         **tournament.model_dump(),
         creator_id=1,
-        status_id=initial_status.id,
+        status_id=initial_status.name,
     )
     session.add(new_tournament)
     await session.commit()

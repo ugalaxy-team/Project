@@ -1,8 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
+if TYPE_CHECKING:
+    from .tournament import TournamentPublic
 
-class TeamMemberModel(BaseModel):
+
+class TeamMemberBase(BaseModel):
     full_name: str = Field(..., min_length=3)
     email: EmailStr = Field(..., description="Contact email")
     telegram_username: str
@@ -13,6 +20,9 @@ class TeamMemberModel(BaseModel):
     def normalize_email(cls, value: EmailStr):
         return value.lower()
 
+class TeamMemberCreate(BaseModel):
+    pass
+
 
 class TeamMemberUpdate(BaseModel):
     full_name: str | None = Field(None, min_length=3)
@@ -20,6 +30,8 @@ class TeamMemberUpdate(BaseModel):
     telegram_username: str | None = None
     educational_institution: str | None = None
 
+class TeamMemberPublic(BaseModel):
+    pass
 
 class TeamBase(BaseModel):
     name: str = Field(..., description="Name of the team")
@@ -39,5 +51,9 @@ class TeamUpdate(BaseModel):
 
 
 class TeamModel(TeamBase):
-    captain: TeamMemberModel
-    members: list[TeamMemberModel] = Field(..., min_length=1)
+    captain: TeamMemberPublic
+    members: list[TeamMemberPublic] = Field(..., min_length=1)
+
+class TeamPublic(TeamBase):
+    tournament: 'TournamentPublic'
+    members: list[TeamMemberPublic]

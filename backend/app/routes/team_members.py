@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.dependencies import SessionDep
 from app.models import TeamMember
-from app.schemas import TeamMemberModel, TeamMemberUpdate
+from app.schemas import TeamMemberPublic, TeamMemberUpdate
 from app.utils.routes import get_team, check_registration_open, get_tournament
 
 router = APIRouter(
@@ -31,7 +31,7 @@ async def get_team_member(
     return member
 
 
-@router.get("/", response_model=list[TeamMemberModel], status_code=status.HTTP_200_OK)
+@router.get("/", response_model=list[TeamMemberPublic], status_code=status.HTTP_200_OK)
 async def team_members(tournament_id: int, team_id: int, session: SessionDep):
     await get_team(team_id, tournament_id, session)
 
@@ -41,7 +41,7 @@ async def team_members(tournament_id: int, team_id: int, session: SessionDep):
 
 
 @router.get(
-    "/{member_id}/", response_model=TeamMemberModel, status_code=status.HTTP_200_OK
+    "/{member_id}/", response_model=TeamMemberPublic, status_code=status.HTTP_200_OK
 )
 async def team_member(
     tournament_id: int, team_id: int, member_id: int, session: SessionDep
@@ -51,9 +51,9 @@ async def team_member(
     return await get_team_member(member_id, team_id, session)
 
 
-@router.post("/", response_model=TeamMemberModel, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=TeamMemberPublic, status_code=status.HTTP_201_CREATED)
 async def create_team_member(
-    tournament_id: int, team_id: int, member_data: TeamMemberModel, session: SessionDep
+    tournament_id: int, team_id: int, member_data: TeamMemberCreate, session: SessionDep
 ):
     await get_team(team_id, tournament_id, session)
 
@@ -79,7 +79,7 @@ async def create_team_member(
 
 
 @router.patch(
-    "/{member_id}/", response_model=TeamMemberModel, status_code=status.HTTP_200_OK
+    "/{member_id}/", response_model=TeamMemberPublic, status_code=status.HTTP_200_OK
 )
 async def update_team_member(
     tournament_id: int,

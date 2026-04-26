@@ -51,7 +51,7 @@ class TournamentAdmin(ModelView, model=Tournament):
 
 
 class TournamentStatusOptionAdmin(ModelView, model=TournamentStatusOption):
-    column_list = [TournamentStatusOption.id, TournamentStatusOption.name, TournamentStatusOption.display_name]
+    column_list = [TournamentStatusOption.name, TournamentStatusOption.display_name]
 
 
 class TaskAdmin(ModelView, model=Task):

@@ -1,11 +1,16 @@
-from datetime import datetime
-from typing_extensions import Self
-from pydantic import BaseModel, Field, field_validator, model_validator
+from __future__ import annotations
 
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
+
 from datetime import datetime
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 
+from .option import OptionPublic
+from .task import TaskPublic
+
+if TYPE_CHECKING:
+    from .team import TeamPublic
+    from .user import UserPublic
 
 StrippedStr = Annotated[str, AfterValidator(lambda v: v.strip())]
 
@@ -35,7 +40,6 @@ class TournamentUpdate(BaseModel):
 class TournamentStatusOptionModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int
     name: StrippedStr = Field(..., min_length=3)
 
 
@@ -43,3 +47,8 @@ class TournamentPublic(TournamentBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    creator: 'UserPublic'
+    status: OptionPublic
+    tasks: list[TaskPublic]
+    active_task: TaskPublic
+    teams: list[TeamPublic]

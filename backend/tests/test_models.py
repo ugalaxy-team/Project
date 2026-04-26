@@ -408,7 +408,7 @@ async def test_create_tournament_status_option(db_session, create):
     tournament_status_option = await create(TournamentStatusOptionFactory)
 
     stmt = select(TournamentStatusOption).where(
-        TournamentStatusOption.id == tournament_status_option.id
+        TournamentStatusOption.name == tournament_status_option.name
     )
 
     result = await db_session.execute(stmt)
