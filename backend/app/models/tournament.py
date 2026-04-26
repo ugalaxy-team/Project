@@ -18,15 +18,11 @@ class Tournament(Base, PKMixin, AsyncAttrs):
     min_people_in_team: Mapped[int]
     max_people_in_team: Mapped[int]
     max_teams: Mapped[int]
-    active_task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), nullable=True)
     status_id: Mapped[str] = mapped_column(ForeignKey("tournament_status_options.name"))
     creator_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
     teams: Mapped[list["Team"]] = relationship(
         back_populates="tournament", lazy="selectin"
-    )
-    active_task: Mapped["Task"] = relationship(
-        "Task", foreign_keys="Tournament.active_task_id", lazy="selectin"
     )
     tasks: Mapped[list["Task"]] = relationship(
         "Task",
@@ -40,6 +36,26 @@ class Tournament(Base, PKMixin, AsyncAttrs):
     creator: Mapped["User"] = relationship(
         back_populates="created_tournaments", lazy="selectin"
     )
+
+    @property
+    def active_task(self) -> Task | None:
+        tasks = self.__dict__.get("tasks")
+        if tasks is None:
+            session = inspect(self).session
+            if session is None:
+                return None
+            tasks = [
+                task
+                for task in session.identity_map.values()
+                if isinstance(task, Task) and task.tournament_id == self.id
+            ]
+
+        for task in tasks:
+            if task.status_id == "active":
+                return task
+
+        return None
+
 
     @property
     def end_date(self) -> datetime | None:

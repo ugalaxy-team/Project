@@ -44,23 +44,6 @@ async def task(tournament_id: int, task_id: int, session: SessionDep):
     return task
 
 
-@router.get("/active", response_model=TaskPublic, status_code=status.HTTP_200_OK)
-async def get_active_task(tournament_id: int, session: SessionDep):
-    await update_tasks_status(session)
-
-    result = await session.execute(
-        select(Task).where(
-            Task.tournament_id == tournament_id, Task.status_id == "active"
-        )
-    )
-    task = result.scalar_one_or_none()
-
-    if not task:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="No active task")
-
-    return task
-
-
 @router.post("/", response_model=TaskPublic, status_code=status.HTTP_201_CREATED)
 async def create_task(tournament_id: int, task_data: TaskCreate, session: SessionDep):
     task_dict = task_data.model_dump(exclude={"requirements"})

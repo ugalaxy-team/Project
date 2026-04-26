@@ -325,6 +325,28 @@ async def test_tournament_end_time(create, db_session):
     await db_session.refresh(tournament2)
     assert tournament2.end_date == t2.end_time
 
+async def test_tournament_active_task(create, db_session):
+    tournament = await create(TournamentFactory)
+    active = await create(TaskStatusOptionFactory, name='active')
+    finished = await create(TaskStatusOptionFactory, name='finished')
+    draft = await create(TaskStatusOptionFactory, name='draft')
+    t1 = await create(
+        TaskFactory, 
+        tournament=tournament, 
+        status=active
+    )
+    t2 = await create(
+        TaskFactory, 
+        tournament=tournament,
+        status_id=finished
+    )
+    t3 = await create(
+        TaskFactory, 
+        tournament=tournament,
+        status_id=draft
+    )
+    assert tournament.active_task.id == t1.id
+
 async def test_tournament_invalid_time(create):
     tournament = await create(
         TournamentFactory,

@@ -121,7 +121,15 @@ class TaskFactory(BaseFactory):
     start_time = Faker("future_datetime")
     end_time = Faker("future_datetime")
     tournament = factory.SubFactory(TournamentFactory)
-    status = factory.SubFactory(TaskStatusOptionFactory)
+    status_id = factory.Iterator(["draft", "active", "finished"])
+
+    @classmethod
+    def _adjust_kwargs(cls, **kwargs):
+        status_id = kwargs.get("status_id")
+        if isinstance(status_id, TaskStatusOption):
+            kwargs["status"] = status_id
+            kwargs.pop("status_id")
+        return super()._adjust_kwargs(**kwargs)
 
 
 class TaskRequirementCategoryFactory(BaseOptionFactory):

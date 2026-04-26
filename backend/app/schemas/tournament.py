@@ -51,6 +51,6 @@ class TournamentPublic(TournamentBase):
     creator: 'UserPublic'
     status: OptionPublic
     tasks: list[TaskPublic]
-    active_task: TaskPublic
+    active_task: TaskPublic | None
     teams: list[TeamPublic]
     status_name: str = Field(validation_alias=AliasPath("status", "display_name"))

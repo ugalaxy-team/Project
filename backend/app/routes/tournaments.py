@@ -21,7 +21,6 @@ tournament_load_options = (
     selectinload(Tournament.status),
     selectinload(Tournament.creator).selectinload(User.roles),
     selectinload(Tournament.tasks),
-    selectinload(Tournament.active_task),
     selectinload(Tournament.teams).selectinload(Team.members),
 )
 
