@@ -34,7 +34,7 @@ class Team(Base, PKMixin):
     )
 
     def __repr__(self):
-        return f"<Team(id={self.id}, name='{self.name}')>"
+        return f"<Team(id={self.id}, name={self.name}, tournament_id={self.tournament_id})>"
 
 
 class TeamMember(Base, PKMixin):
@@ -67,5 +67,5 @@ class TeamMember(Base, PKMixin):
 
     def __repr__(self):
         return (
-            f"<TeamMember(id={self.id}, name='{self.full_name}', email='{self.email}')>"
+            f"<TeamMember(id={self.id}, full_name={self.full_name}, email={self.email}, team_id={self.team_id})>"
         )

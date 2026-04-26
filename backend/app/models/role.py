@@ -17,4 +17,4 @@ class Role(Base, OptionMixin):
     )
 
     def __repr__(self):
-        return f"<Role(role={self.name})>"
+        return f"<Role(name={self.name}, display_name={self.display_name})>"

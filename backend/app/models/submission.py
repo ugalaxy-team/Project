@@ -14,6 +14,9 @@ class Submission(Base):
         back_populates="submission"
     )
 
+    def __repr__(self):
+        return f"<Submission(team_id={self.team_id})>"
+
 
 class SubmissionUrl(Base):
     __tablename__ = "submission_urls"
@@ -27,6 +30,12 @@ class SubmissionUrl(Base):
     submission: Mapped["Submission"] = relationship(back_populates="urls", lazy="selectin")
     url: Mapped["SubmissionUrlOption"] = relationship(lazy="selectin")
 
+    def __repr__(self):
+        return f"<SubmissionUrl(submission_id={self.submission_id}, url_id={self.url_id})>"
+
 
 class SubmissionUrlOption(Base, OptionMixin):
     __tablename__ = "submission_url_options"
+
+    def __repr__(self):
+        return f"<SubmissionUrlOption(name={self.name}, display_name={self.display_name})>"

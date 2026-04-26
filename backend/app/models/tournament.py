@@ -73,7 +73,7 @@ class Tournament(Base, PKMixin, AsyncAttrs):
         return max((task.end_time for task in tasks), default=None)
 
     def __repr__(self):
-        return f"<Tournament(id={self.id}, title={self.title})>"
+        return f"<Tournament(id={self.id}, title={self.title}, status_id={self.status_id})>"
 
 
 class TournamentStatusOption(Base, OptionMixin):
@@ -84,3 +84,6 @@ class TournamentStatusOption(Base, OptionMixin):
     tournaments: Mapped[List["Tournament"]] = relationship(
         back_populates="status", lazy="selectin"
     )
+
+    def __repr__(self):
+        return f"<TournamentStatusOption(name={self.name}, display_name={self.display_name})>"

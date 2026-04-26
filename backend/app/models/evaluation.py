@@ -36,6 +36,9 @@ class SubmissionEvaluation(Base, PKMixin):
         back_populates="evaluation", lazy="selectin"
     )
 
+    def __repr__(self):
+        return f"<SubmissionEvaluation(id={self.id}, submission_id={self.submission_id}, jury_id={self.jury_id})>"
+
 
 class RequirementEvaluation(Base, PKMixin):
     __tablename__ = "requirement_evaluations"
@@ -49,3 +52,7 @@ class RequirementEvaluation(Base, PKMixin):
     requirement: Mapped[list["TaskRequirementOption"]] = relationship(
         secondary=evaluation_requirements, lazy="selectin"
     )
+
+    def __repr__(self):
+        requirement_count = len(self.requirement) if "requirement" in self.__dict__ else "?"
+        return f"<RequirementEvaluation(id={self.id}, evaluation_id={self.evaluation_id}, score={self.score}, requirements={requirement_count})>"

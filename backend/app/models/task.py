@@ -41,10 +41,15 @@ class Task(Base, PKMixin):
         secondary=task_requirements, lazy="selectin"
     )
 
+    def __repr__(self):
+        return f"<Task(id={self.id}, title={self.title}, status_id={self.status_id}, tournament_id={self.tournament_id})>"
 
 class TaskStatusOption(Base, OptionMixin):
     __tablename__ = "task_statuses"
     tasks: Mapped[list["Task"]] = relationship(back_populates="status", lazy="selectin")
+
+    def __repr__(self):
+        return f"<TaskStatusOption(name={self.name}, display_name={self.display_name})>"
 
 
 class TaskRequirementOption(Base, OptionMixin):
@@ -55,6 +60,9 @@ class TaskRequirementOption(Base, OptionMixin):
     category: Mapped["TaskRequirementCategory"] = relationship(
         back_populates="task_requirement_options", lazy="selectin"
     )
+
+    def __repr__(self):
+        return f"<TaskRequirementOption(name={self.name}, display_name={self.display_name}, category_id={self.category_id})>"
 
 
 class TaskRequirementCategory(Base, OptionMixin):
@@ -73,3 +81,6 @@ class TaskRequirementCategory(Base, OptionMixin):
     task_requirement_options: Mapped[list["TaskRequirementOption"]] = relationship(
         back_populates="category", lazy="selectin"
     )
+
+    def __repr__(self):
+        return f"<TaskRequirementCategory(name={self.name}, display_name={self.display_name}, main_id={self.main_id})>"

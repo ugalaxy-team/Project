@@ -17,4 +17,7 @@ class Notification(Base, PKMixin):
     )
 
     def __repr__(self):
-        return f"<Notification(body={self.body[:20]})>"
+        body_preview = self.body[:20]
+        if len(self.body) > 20:
+            body_preview += "..."
+        return f"<Notification(id={self.id}, user_id={self.user_id}, body={body_preview})>"

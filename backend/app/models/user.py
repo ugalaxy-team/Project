@@ -51,4 +51,4 @@ class User(Base, PKMixin):
     )
 
     def __repr__(self):
-        return f"<User(id={self.id}, email={self.email})>"
+        return f"<User(id={self.id}, full_name={self.full_name}, email={self.email})>"

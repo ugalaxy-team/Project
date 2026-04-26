@@ -23,6 +23,9 @@ class RoleRequest(Base, PKMixin):
 class RoleRequestInfoOption(Base, OptionMixin):
     __tablename__ = "role_request_info_options"
 
+    def __repr__(self):
+        return f"<RoleRequestInfoOption(name={self.name}, display_name={self.display_name})>"
+
 
 class RoleRequestInfo(Base, PKMixin):
     __tablename__ = "role_request_info"
@@ -36,4 +39,7 @@ class RoleRequestInfo(Base, PKMixin):
     option: Mapped[RoleRequestInfoOption] = relationship(lazy="selectin")
 
     def __repr__(self):
-        return f"<RoleRequestInfo(request_id={self.request_id}, key={self.option_name}>"
+        value_preview = self.value[:20]
+        if len(self.value) > 20:
+            value_preview += "..."
+        return f"<RoleRequestInfo(request_id={self.request_id}, option_name={self.option_name}, value={value_preview})>"
