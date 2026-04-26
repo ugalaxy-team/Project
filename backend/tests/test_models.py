@@ -297,6 +297,34 @@ async def test_create_tournament(create):
     assert tournament.description is not None
     assert tournament.max_teams is not None
 
+async def test_tournament_end_time(create, db_session):
+    tournament1 = await create(TournamentFactory)
+    tournament2 = await create(TournamentFactory)
+    t1 = await create(
+        TaskFactory, 
+        tournament=tournament1, 
+        end_time=datetime.now() + timedelta(hours=12)
+    )
+    t2 = await create(
+        TaskFactory, 
+        tournament=tournament1, 
+        end_time=datetime.now() + timedelta(days=1)
+    )
+    t3 = await create(
+        TaskFactory, 
+        tournament=tournament1, 
+        end_time=datetime.now() + timedelta(weeks=1)
+    )
+    assert tournament1.end_date == t3.end_time
+    assert not tournament2.end_date
+
+    t2.tournament_id = tournament2.id
+    t1.tournament_id = tournament2.id
+    await db_session.commit()
+
+    await db_session.refresh(tournament2)
+    assert tournament2.end_date == t2.end_time
+
 async def test_tournament_invalid_time(create):
     tournament = await create(
         TournamentFactory,
