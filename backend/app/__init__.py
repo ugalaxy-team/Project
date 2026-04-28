@@ -5,6 +5,8 @@ import app.routes.role_requests as role_requests
 import app.routes.roles as roles
 import app.routes.task_options as task_options
 import app.routes.tasks as tasks
+import app.routes.team_members as team_members
+import app.routes.teams as teams
 import app.routes.tournaments as tournaments
 import app.routes.users as users
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,6 +34,8 @@ app.include_router(role_requests.router)
 app.include_router(roles.router)
 app.include_router(task_options.router)
 app.include_router(tasks.router)
+app.include_router(team_members.router)
+app.include_router(teams.router)
 app.include_router(tournaments.router)
 app.include_router(users.router)
 
