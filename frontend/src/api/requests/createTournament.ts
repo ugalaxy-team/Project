@@ -3,29 +3,14 @@ export interface TournamentData {
     title: string;
     description: string;
     start_date: string;
+    end_date: string;
     reg_start: string;
     reg_end: string;
     max_teams: number;
 }
 
-export const createTournament = async (
-    title: string, 
-    description: string, 
-    start_date: string, 
-    reg_end: string,
-    reg_start: string, 
-    max_teams: number
-) => {
+export const createTournament = async (data: TournamentData) => {
     try {
-        const data: TournamentData = {
-            title,
-            description,
-            start_date,
-            reg_start,
-            reg_end,
-            max_teams,
-        };
-        
         const resp = await apiClient.post("/tournaments", data);
         return resp.data;
     } catch (e) {
