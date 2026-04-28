@@ -10,7 +10,7 @@ class Notification(Base, PKMixin):
     __tablename__ = "notifications"
 
     body: Mapped[str] = mapped_column(String(4096))
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
 
     user: Mapped["User"] = relationship(
         back_populates="notifications", lazy="selectin"

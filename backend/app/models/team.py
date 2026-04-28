@@ -12,7 +12,9 @@ class Team(Base, PKMixin):
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
     team_email: Mapped[str] = mapped_column(nullable=False, unique=True)
     contact_info: Mapped[str] = mapped_column(nullable=False, unique=True)
-    tournament_id: Mapped[int] = mapped_column(ForeignKey("tournaments.id"))
+    tournament_id: Mapped[int] = mapped_column(
+        ForeignKey("tournaments.id", ondelete="CASCADE")
+    )
     captain_id: Mapped[int] = mapped_column(
         ForeignKey("team_members.id", ondelete="CASCADE"), nullable=True
     )
@@ -45,10 +47,14 @@ class TeamMember(Base, PKMixin):
     telegram: Mapped[str] = mapped_column(nullable=False)
     educational_institution: Mapped[Optional[str]] = mapped_column(nullable=True)
     team_id: Mapped[int] = mapped_column(
-        ForeignKey("teams.id", use_alter=True, name="fk_teammember_team")
+        ForeignKey(
+            "teams.id", use_alter=True, name="fk_teammember_team", ondelete="CASCADE"
+        )
     )
     # This field exists so we can impose contraints related to it
-    tournament_id: Mapped[int] = mapped_column(ForeignKey("tournaments.id"))
+    tournament_id: Mapped[int] = mapped_column(
+        ForeignKey("tournaments.id", ondelete="CASCADE")
+    )
     
     __table_args__ = (
         UniqueConstraint("tournament_id", "email", name="uq_tournament_member_email"),

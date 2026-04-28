@@ -18,17 +18,22 @@ class Tournament(Base, PKMixin, AsyncAttrs):
     min_people_in_team: Mapped[int]
     max_people_in_team: Mapped[int]
     max_teams: Mapped[int]
-    status_id: Mapped[str] = mapped_column(ForeignKey("tournament_status_options.name"))
-    creator_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    status_id: Mapped[str] = mapped_column(
+        ForeignKey("tournament_status_options.name", ondelete="CASCADE")
+    )
+    creator_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
 
     teams: Mapped[list["Team"]] = relationship(
-        back_populates="tournament", lazy="selectin"
+        back_populates="tournament", lazy="selectin", cascade="all, delete-orphan"
     )
     tasks: Mapped[list["Task"]] = relationship(
         "Task",
         back_populates="tournament",
         foreign_keys="Task.tournament_id",
         lazy="selectin",
+        cascade="all, delete-orphan",
     )
     status: Mapped["TournamentStatusOption"] = relationship(
         back_populates="tournaments", lazy="selectin"
@@ -82,7 +87,7 @@ class TournamentStatusOption(Base, OptionMixin):
     name: Mapped[str] = mapped_column(primary_key=True, index=True)
 
     tournaments: Mapped[List["Tournament"]] = relationship(
-        back_populates="status", lazy="selectin"
+        back_populates="status", lazy="selectin", cascade="all, delete-orphan"
     )
 
     def __repr__(self):

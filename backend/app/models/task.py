@@ -25,7 +25,12 @@ class Task(Base, PKMixin):
     start_time: Mapped[datetime]
     end_time: Mapped[datetime]
     tournament_id: Mapped[int] = mapped_column(
-        ForeignKey("tournaments.id", use_alter=True, name="fk_task_tournament")
+        ForeignKey(
+            "tournaments.id",
+            use_alter=True,
+            name="fk_task_tournament",
+            ondelete="CASCADE",
+        )
     )
     tournament: Mapped["Tournament"] = relationship(
         "Tournament",
@@ -33,7 +38,9 @@ class Task(Base, PKMixin):
         foreign_keys="Task.tournament_id",
         lazy="selectin",
     )
-    status_id: Mapped[str] = mapped_column(ForeignKey("task_statuses.name"))
+    status_id: Mapped[str] = mapped_column(
+        ForeignKey("task_statuses.name", ondelete="CASCADE")
+    )
     status: Mapped["TaskStatusOption"] = relationship(
         back_populates="tasks", lazy="selectin"
     )
@@ -46,7 +53,9 @@ class Task(Base, PKMixin):
 
 class TaskStatusOption(Base, OptionMixin):
     __tablename__ = "task_statuses"
-    tasks: Mapped[list["Task"]] = relationship(back_populates="status", lazy="selectin")
+    tasks: Mapped[list["Task"]] = relationship(
+        back_populates="status", lazy="selectin", cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<TaskStatusOption(name={self.name}, display_name={self.display_name})>"
@@ -55,7 +64,7 @@ class TaskStatusOption(Base, OptionMixin):
 class TaskRequirementOption(Base, OptionMixin):
     __tablename__ = "task_requirement_options"
     category_id: Mapped[str] = mapped_column(
-        ForeignKey("task_requirement_categories.name")
+        ForeignKey("task_requirement_categories.name", ondelete="CASCADE")
     )
     category: Mapped["TaskRequirementCategory"] = relationship(
         back_populates="task_requirement_options", lazy="selectin"
@@ -68,10 +77,13 @@ class TaskRequirementOption(Base, OptionMixin):
 class TaskRequirementCategory(Base, OptionMixin):
     __tablename__ = "task_requirement_categories"
     main_id: Mapped[str] = mapped_column(
-        ForeignKey("task_requirement_categories.name"), nullable=True
+        ForeignKey("task_requirement_categories.name", ondelete="CASCADE"),
+        nullable=True,
     )
     sub_categories: Mapped[list["TaskRequirementCategory"]] = relationship(
-        back_populates="parent_category", lazy="selectin"
+        back_populates="parent_category",
+        lazy="selectin",
+        cascade="all, delete-orphan",
     )
     parent_category: Mapped["TaskRequirementCategory"] = relationship(
         back_populates="sub_categories",
@@ -79,7 +91,7 @@ class TaskRequirementCategory(Base, OptionMixin):
         lazy="selectin",
     )
     task_requirement_options: Mapped[list["TaskRequirementOption"]] = relationship(
-        back_populates="category", lazy="selectin"
+        back_populates="category", lazy="selectin", cascade="all, delete-orphan"
     )
 
     def __repr__(self):

@@ -13,7 +13,7 @@ class Role(Base, OptionMixin):
         secondary=user_roles, back_populates="roles", lazy="selectin"
     )
     requests: Mapped[list["RoleRequest"]] = relationship(
-        back_populates="role", lazy="selectin"
+        back_populates="role", lazy="selectin", cascade="all, delete-orphan"
     )
 
     def __repr__(self):

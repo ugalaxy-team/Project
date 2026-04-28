@@ -217,6 +217,43 @@ async def test_team_cascade_delete_members(db_session, create):
     assert result.scalar_one_or_none() is None
 
 
+async def test_tournament_cascade_delete_children(db_session, create):
+    tournament = await create(TournamentFactory)
+    task = await create(TaskFactory, tournament=tournament)
+    team = await create(TeamFactory, tournament=tournament)
+    member = await create(TeamMemberFactory, team=team, tournament=tournament)
+    submission = await create(SubmissionFactory, team=team)
+    url = await create(SubmissionUrlFactory, submission=submission)
+    evaluation = await create(SubmissionEvaluationFactory, submission=submission)
+    requirement_evaluation = await create(
+        RequirementEvaluationFactory, evaluation=evaluation
+    )
+
+    ids = {
+        "task": task.id,
+        "team": team.id,
+        "member": member.id,
+        "submission": submission.team_id,
+        "url": (url.submission_id, url.url_id),
+        "evaluation": evaluation.id,
+        "requirement_evaluation": requirement_evaluation.id,
+    }
+
+    await db_session.delete(tournament)
+    await db_session.commit()
+
+    assert await db_session.get(Task, ids["task"]) is None
+    assert await db_session.get(Team, ids["team"]) is None
+    assert await db_session.get(TeamMember, ids["member"]) is None
+    assert await db_session.get(Submission, ids["submission"]) is None
+    assert await db_session.get(SubmissionUrl, ids["url"]) is None
+    assert await db_session.get(SubmissionEvaluation, ids["evaluation"]) is None
+    assert (
+        await db_session.get(RequirementEvaluation, ids["requirement_evaluation"])
+        is None
+    )
+
+
 # TASK TESTS
 async def test_create_task(create):
     task = await create(TaskFactory)

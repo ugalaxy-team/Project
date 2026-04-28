@@ -8,8 +8,8 @@ from .mixin import PKMixin, OptionMixin
 class RoleRequest(Base, PKMixin):
     __tablename__ = "role_requests"
 
-    role_name: Mapped[str] = mapped_column(ForeignKey("roles.name"))
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    role_name: Mapped[str] = mapped_column(ForeignKey("roles.name", ondelete="CASCADE"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
 
     role: Mapped["Role"] = relationship(back_populates="requests", lazy="selectin")
     user: Mapped["User"] = relationship(back_populates="role_requests", lazy="selectin")
@@ -29,9 +29,11 @@ class RoleRequestInfoOption(Base, OptionMixin):
 
 class RoleRequestInfo(Base, PKMixin):
     __tablename__ = "role_request_info"
-    request_id: Mapped[int] = mapped_column(ForeignKey("role_requests.id"))
+    request_id: Mapped[int] = mapped_column(
+        ForeignKey("role_requests.id", ondelete="CASCADE")
+    )
     option_name: Mapped[str] = mapped_column(
-        ForeignKey("role_request_info_options.name")
+        ForeignKey("role_request_info_options.name", ondelete="CASCADE")
     )
     value: Mapped[str] = mapped_column(String(4096))
 

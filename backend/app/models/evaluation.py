@@ -24,16 +24,18 @@ class SubmissionEvaluation(Base, PKMixin):
     __tablename__ = "evaluations"
     __table_args__ = (UniqueConstraint("submission_id", "jury_id"),)
     submission_id: Mapped[int] = mapped_column(
-        ForeignKey("submissions.team_id"), nullable=False
+        ForeignKey("submissions.team_id", ondelete="CASCADE"), nullable=False
     )
-    jury_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    jury_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
 
     submission: Mapped["Submission"] = relationship(
         back_populates="evaluations", lazy="selectin"
     )
     jury: Mapped["User"] = relationship(lazy="selectin")
     requirement_evaluations: Mapped[list["RequirementEvaluation"]] = relationship(
-        back_populates="evaluation", lazy="selectin"
+        back_populates="evaluation", lazy="selectin", cascade="all, delete-orphan"
     )
 
     def __repr__(self):
@@ -43,7 +45,7 @@ class SubmissionEvaluation(Base, PKMixin):
 class RequirementEvaluation(Base, PKMixin):
     __tablename__ = "requirement_evaluations"
     evaluation_id: Mapped[int] = mapped_column(
-        ForeignKey("evaluations.id"), nullable=False
+        ForeignKey("evaluations.id", ondelete="CASCADE"), nullable=False
     )
     evaluation: Mapped["SubmissionEvaluation"] = relationship(
         back_populates="requirement_evaluations", lazy="selectin"
