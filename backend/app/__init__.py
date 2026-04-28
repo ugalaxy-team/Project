@@ -1,9 +1,12 @@
 from fastapi import FastAPI
-import app.routes.tournaments as tournaments
-import app.routes.users as users
+
 import app.routes.profile as profile
 import app.routes.role_requests as role_requests
 import app.routes.roles as roles
+import app.routes.task_options as task_options
+import app.routes.tasks as tasks
+import app.routes.tournaments as tournaments
+import app.routes.users as users
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 import socketio
@@ -24,11 +27,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(tournaments.router)
-app.include_router(users.router)
 app.include_router(profile.router)
 app.include_router(role_requests.router)
 app.include_router(roles.router)
+app.include_router(task_options.router)
+app.include_router(tasks.router)
+app.include_router(tournaments.router)
+app.include_router(users.router)
 
 setup_admin(app)
-
