@@ -1,22 +1,36 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import type { TournamentData } from "@/api/requests/createTournament";
 
 interface CreateTournamentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (data: any) => Promise<void>;
+  onCreate: (data: TournamentData) => Promise<void>;
 }
 
-export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTournamentModalProps) => {
-  const [formData, setFormData] = useState({
+interface FormData {
+  title: string;
+  description: string;
+  start_date: string;
+  reg_start: string;
+  reg_end: string;
+  max_teams: number;
+}
+
+export const CreateTournamentModal: React.FC<CreateTournamentModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  onCreate 
+}) => {
+  const initialState: FormData = {
     title: "",
     description: "",
     start_date: "",
     reg_start: "",
     reg_end: "",
     max_teams: 2,
-  });
+  };
 
+  const [formData, setFormData] = useState<FormData>(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
@@ -33,10 +47,10 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
     e.preventDefault();
     setIsSubmitting(true);
 
+    try {
       const formatDate = (dateStr: string) => {
         if (!dateStr) return null;
-        const d = new Date(dateStr);
-        return d.toISOString();
+        return new Date(dateStr).toISOString();
       };
 
       const dataToSubmit: TournamentData = {
@@ -45,22 +59,17 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
         start_date: formatDate(formData.start_date)!,
         reg_start: formatDate(formData.reg_start)!,
         reg_end: formatDate(formData.reg_end)!,
-        max_teams: Number(formData.max_teams),
+        max_teams: formData.max_teams,
       };
 
       await onCreate(dataToSubmit);
-      
-      setFormData({
-        title: "",
-        description: "",
-        start_date: "",
-        reg_start: "",
-        reg_end: "",
-        max_teams: 2,
-      });
-      
+      setFormData(initialState);
       onClose();
-
+    } catch (error) {
+      console.error("Помилка при створенні турніру:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -92,7 +101,11 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
             <div className="space-y-2">
               <label className="block text-sm font-bold text-slate-700 uppercase tracking-wide">Назва турніру</label>
               <input 
-                name="title" type="text" value={formData.title} onChange={handleChange} required
+                name="title" 
+                type="text" 
+                value={formData.title} 
+                onChange={handleChange} 
+                required
                 placeholder="Введіть круту назву..." 
                 className="w-full px-4 py-3 bg-white text-slate-900 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff] shadow-sm transition-all"
               />
@@ -101,7 +114,10 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
             <div className="space-y-2">
               <label className="block text-sm font-bold text-slate-700 uppercase tracking-wide">Опис</label>
               <textarea 
-                name="description" value={formData.description} onChange={handleChange} rows={3}
+                name="description" 
+                value={formData.description} 
+                onChange={handleChange} 
+                rows={3}
                 placeholder="Про що цей турнір?" 
                 className="w-full px-4 py-3 bg-white text-slate-900 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff] shadow-sm transition-all resize-none"
               />
@@ -112,11 +128,25 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-b pb-2 text-center md:text-left">Реєстрація</h4>
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-600">Початок</label>
-                  <input name="reg_start" type="datetime-local" value={formData.reg_start} onChange={handleChange} required className="w-full px-3 py-2.5 bg-slate-50 text-slate-900 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff]"/>
+                  <input 
+                    name="reg_start" 
+                    type="datetime-local" 
+                    value={formData.reg_start} 
+                    onChange={handleChange} 
+                    required 
+                    className="w-full px-3 py-2.5 bg-slate-50 text-slate-900 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff]"
+                  />
                 </div>
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-600">Кінець</label>
-                  <input name="reg_end" type="datetime-local" value={formData.reg_end} onChange={handleChange} required className="w-full px-3 py-2.5 bg-slate-50 text-slate-900 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff]"/>
+                  <input 
+                    name="reg_end" 
+                    type="datetime-local" 
+                    value={formData.reg_end} 
+                    onChange={handleChange} 
+                    required 
+                    className="w-full px-3 py-2.5 bg-slate-50 text-slate-900 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff]"
+                  />
                 </div>
               </div>
 
@@ -124,7 +154,14 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-b pb-2 text-center md:text-left">Турнір</h4>
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-600">Початок</label>
-                  <input name="start_date" type="datetime-local" value={formData.start_date} onChange={handleChange} required className="w-full px-3 py-2.5 bg-slate-50 text-slate-900 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff]"/>
+                  <input 
+                    name="start_date" 
+                    type="datetime-local" 
+                    value={formData.start_date} 
+                    onChange={handleChange} 
+                    required 
+                    className="w-full px-3 py-2.5 bg-slate-50 text-slate-900 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff]"
+                  />
                 </div>
               </div>
             </div>
@@ -132,7 +169,12 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
             <div className="space-y-2">
               <label className="block text-sm font-bold text-slate-700 uppercase tracking-wide">Макс. кількість команд</label>
               <input 
-                name="max_teams" type="number" min="2" value={formData.max_teams} onChange={handleChange} required
+                name="max_teams" 
+                type="number" 
+                min="2" 
+                value={formData.max_teams} 
+                onChange={handleChange} 
+                required
                 className="w-full md:w-1/3 px-4 py-3 bg-white text-slate-900 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff] shadow-sm transition-all"
               />
             </div>
@@ -141,13 +183,17 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
 
         <div className="p-6 border-t border-slate-100 bg-white flex justify-end items-center gap-3 shrink-0 rounded-b-[2rem]">
           <button 
-            type="button" onClick={onClose} disabled={isSubmitting}
-            className="px-6 py-3 rounded-xl font-bold text-sm text-slate-500 hover:bg-slate-100 transition-colors"
+            type="button" 
+            onClick={onClose} 
+            disabled={isSubmitting}
+            className="px-6 py-3 rounded-xl font-bold text-sm text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-50"
           >
             СКАСУВАТИ
           </button>
           <button 
-            type="submit" form="create-tournament-form" disabled={isSubmitting}
+            type="submit" 
+            form="create-tournament-form" 
+            disabled={isSubmitting}
             className="bg-gradient-to-r from-[#6b73ff] to-[#4c51bf] hover:from-[#5a6de0] hover:to-[#3d4096] text-white px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
           >
             {isSubmitting ? "СТВОРЕННЯ..." : "СТВОРИТИ ТУРНІР"}

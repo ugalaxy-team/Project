@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { type RootState } from "../../store"; 
 import { getAllTournaments } from "@/api/requests/getAllTournaments"; 
 import { deleteTournament } from "@/api/requests/deleteTournament";
@@ -53,11 +54,9 @@ interface Roles {
 
 const OrganizerPanel = () => {
   const currentUser = useSelector((s: RootState) => s.user.user);
+  const queryClient = useQueryClient();
 
   const [activeTab, setActiveTab] = useState<"tournaments" | "jury">("tournaments");
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
-  const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -70,37 +69,45 @@ const OrganizerPanel = () => {
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
   const [addedJurors, setAddedJurors] = useState<number[]>([]); 
 
-  useEffect(() => {
-    const fetchTournaments = async () => {
-      if (!currentUser?.id) return; 
-      try {
-        setIsLoading(true);
-        const data = await getAllTournaments();
-        const myTournaments = data.filter((t: Tournament) => t.creator?.id === currentUser.id);
-        setTournaments(myTournaments);
-      } catch (error) {
-        console.error("Помилка завантаження турнірів:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchTournaments();
-  }, [currentUser]);
+  const { data: tournaments = [], isLoading } = useQuery({
+    queryKey: ["tournaments", currentUser?.id],
+    queryFn: async () => {
+      const data = await getAllTournaments();
+      return data.filter((t: Tournament) => t.creator?.id === currentUser?.id);
+    },
+    enabled: !!currentUser?.id,
+  });
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const data = await getAllUsers();
-        setAllUsers(data); 
-      } catch (error) {
-        console.error("Помилка завантаження користувачів:", error);
-      }
-    };
-    fetchUsers();
-  }, []);
+  const { data: allUsers = [] } = useQuery({
+    queryKey: ["users"],
+    queryFn: getAllUsers,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteTournament,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tournaments"] });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) => updateTournament(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tournaments"] });
+      setIsEditModalOpen(false);
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: createTournament,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tournaments"] });
+      setIsCreateModalOpen(false);
+    },
+  });
 
   const filteredTournaments = useMemo(() => {
-    return tournaments.filter(t => {
+    return tournaments.filter((t: Tournament) => {
       const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             t.id.toString().includes(searchQuery);
       const matchesStatus = statusFilter === "all" || t.status?.name === statusFilter;
@@ -127,8 +134,7 @@ const OrganizerPanel = () => {
 
   const handleDeleteTournament = async (id: number) => {
     try {
-      await deleteTournament(id);
-      setTournaments(prev => prev.filter(t => t.id !== id));
+      await deleteMutation.mutateAsync(id);
     } catch (error) {
       console.error("Помилка при видаленні:", error);
     }
@@ -336,7 +342,7 @@ const OrganizerPanel = () => {
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {tournaments.map((t) => (
+                      {tournaments.map((t: Tournament) => (
                         <div 
                           key={t.id} 
                           className="group border border-slate-100 rounded-[2rem] p-6 flex justify-between items-center bg-slate-50/50 hover:bg-white hover:shadow-xl transition-all cursor-pointer" 
@@ -458,7 +464,7 @@ const OrganizerPanel = () => {
                 {allUsers.length === 0 ? (
                   <p className="text-center text-slate-500 font-bold py-6">Завантаження списку експертів...</p>
                 ) : (
-                  allUsers.map(user => {
+                  allUsers.map((user: User) => {
                     const isAdded = addedJurors.includes(user.id);
                     return (
                       <div 
@@ -514,18 +520,14 @@ const OrganizerPanel = () => {
         onClose={() => setIsEditModalOpen(false)}
         tournament={selectedTournament}
         onSave={async (id, data) => {
-          await updateTournament(id, data);
-          setTournaments(prev => prev.map(t => t.id === id ? { ...t, ...data } : t));
-          setIsEditModalOpen(false);
+          await updateMutation.mutateAsync({ id, data });
         }}
       />
       <CreateTournamentModal 
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onCreate={async (data) => {
-          const res = await createTournament(data);
-          setTournaments(prev => [res.data, ...prev]);
-          setIsCreateModalOpen(false);
+          await createMutation.mutateAsync(data);
         }}
       />
 
