@@ -7,6 +7,21 @@ import { requestRole } from '@/api/requests/requestRole';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { auth } from '@/firebase';
+import { useMutation } from '@tanstack/react-query';
+
+type RoleOptionName = "ПІБ" | "Контакти" | "Вік" | "Досвід" | "Причина" | "Плани";
+
+interface RoleRequestOption {
+    option_name: RoleOptionName;
+    value: string;
+}
+
+interface MutationParams {
+    role: string;
+    currentUser: any;
+    userId: string;
+    info: RoleRequestOption[];
+}
 
 const RoleRequestPage = () => {
     const user = useSelector((state: RootState) => state.user.user);
@@ -18,33 +33,14 @@ const RoleRequestPage = () => {
         description: 'Заповніть форму нижче, щоб подати заявку. Ми розглядаємо кожну заявку вручну.'
     };
 
-    const createRequests = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        if (!user) {
-            toast.error("Користувач не знайдений або не авторизований!");
-            return;
-        }
-
-        const form = e.currentTarget;
-        const formData = new FormData(form);
-
-        const info = [
-            { option_name: "ПІБ", value: formData.get("fullName") as string },
-            { option_name: "Контакти", value: formData.get("contact") as string },
-            { option_name: "Вік", value: formData.get("age") as string },
-            { option_name: "Досвід", value: formData.get("experience") as string },
-            { option_name: "Причина", value: formData.get("reason") as string },
-            { option_name: "Плани", value: formData.get("plans") as string },
-        ];
-
-        try {
-            if (!auth.currentUser) return;
-            await requestRole(ORGANIZER_ROLE.name, auth.currentUser, user.id, info);
+    const mutation = useMutation({
+        mutationFn: ({ role, currentUser, userId, info }: MutationParams) => 
+            requestRole(role, currentUser, userId, info),
+        onSuccess: () => {
             toast.success("Заявку відправлено! Очікуйте на відповідь");
-            form.reset();
             navigate("/");
-        } catch (error: any) {
+        },
+        onError: (error: any) => {
             if (error.response && error.response.status === 400) {
                 if (error.response.data?.detail === "Role requests already exists!") {
                     toast.error("Ви вже подавали заявку на цю роль! Очікуйте на рішення.");
@@ -53,7 +49,36 @@ const RoleRequestPage = () => {
             }
             toast.error("Щось пішло не так. Спробуйте пізніше.");
         }
-    }
+    });
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (!user) {
+            toast.error("Користувач не знайдений або не авторизований!");
+            return;
+        }
+
+        if (!auth.currentUser) return;
+
+        const formData = new FormData(e.currentTarget);
+        
+        const info: RoleRequestOption[] = [
+            { option_name: "ПІБ", value: (formData.get("fullName") as string) || "" },
+            { option_name: "Контакти", value: (formData.get("contact") as string) || "" },
+            { option_name: "Вік", value: (formData.get("age") as string) || "" },
+            { option_name: "Досвід", value: (formData.get("experience") as string) || "" },
+            { option_name: "Причина", value: (formData.get("reason") as string) || "" },
+            { option_name: "Плани", value: (formData.get("plans") as string) || "" },
+        ];
+
+        mutation.mutate({
+            role: ORGANIZER_ROLE.name,
+            currentUser: auth.currentUser,
+            userId: user.id,
+            info
+        });
+    };
 
     const inputClasses = "peer w-full px-[18px] pt-6 pb-2 border border-slate-200 rounded-xl bg-[#fafafa] text-sm text-gray-800 transition-all focus:outline-none focus:border-[#7b00ff] focus:bg-white focus:shadow-[0_0_0_3px_rgba(123,0,255,0.1)] placeholder-transparent";
     const labelClasses = "absolute left-[18px] top-1.5 text-[11px] font-medium text-[#7b00ff] pointer-events-none transition-all peer-placeholder-shown:top-[18px] peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:text-[#7b00ff] peer-focus:font-medium";
@@ -88,12 +113,12 @@ const RoleRequestPage = () => {
                     
                     <div className="mb-6 p-4 bg-[#7b00ff]/10 border border-[#7b00ff]/20 rounded-xl">
                         <p className="text-sm text-[#7b00ff] font-medium text-center">
-                            Наразі ви можете отримати лише роль Організатора. Запити на інші ролі тимчасово вимкнені.
+                            Наразі ви можете отримати лише роль Організатора
                         </p>
                     </div>
 
                     <p className="text-[13px] text-[#7b00ff] font-bold mb-4">* — обов'язкове поле</p>
-                    <form className="flex flex-col gap-4" onSubmit={createRequests}>
+                    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                         <div className="relative w-full">
                             <input type="text" id="fullName" name="fullName" placeholder=" " required className={inputClasses} />
                             <label htmlFor="fullName" className={labelClasses}>ПІБ *</label>
@@ -126,9 +151,10 @@ const RoleRequestPage = () => {
 
                         <button
                             type="submit"
+                            disabled={mutation.isPending}
                             className="mt-2.5 p-4 bg-[#7b00ff] text-white border-none rounded-full text-base font-bold cursor-pointer transition-all hover:bg-[#6a00e0] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Надіслати форму
+                            {mutation.isPending ? "Відправка..." : "Надіслати форму"}
                         </button>
                     </form>
                 </div>
