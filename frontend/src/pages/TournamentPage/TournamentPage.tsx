@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/api/client";
 import { Hero } from "../../components/Hero";
 
@@ -89,37 +90,16 @@ const getTimeLeftInfo = (targetDate: Date) => {
 export const TournamentPage = () => {
   const { id } = useParams<{ id: string }>();
 
-  const [tournament, setTournament] = useState<TournamentData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchTournament = async () => {
-      if (!id) {
-        setError("ID турніру не знайдено");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        const response = await apiClient.get<TournamentData>(`/tournaments/${id}`);
-        setTournament(response.data);
-        setError(null);
-      } catch (err: any) {
-        const errorMessage =
-          err.response?.data?.detail?.[0]?.msg ||
-          err.response?.data?.message ||
-          "Не вдалося завантажити інформацію про турнір.";
-
-        setError(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTournament();
-  }, [id]);
+  const { data: tournament, isLoading, error, refetch } = useQuery({
+    queryKey: ['tournament', id],
+    queryFn: async () => {
+      if (!id) throw new Error("ID турніру не знайдено");
+      const response = await apiClient.get<TournamentData>(`/tournaments/${id}`);
+      return response.data;
+    },
+    enabled: !!id,
+    retry: 1
+  });
 
   const { currentStatus, deadlineValue, deadlineLabel } = useMemo(() => {
     if (!tournament) {
@@ -130,7 +110,6 @@ export const TournamentPage = () => {
     const regStart = new Date(tournament.reg_start);
     const regEnd = new Date(tournament.reg_end);
     const eventStart = new Date(tournament.start_date);
-
     const eventEnd = new Date(eventStart.getTime() + 48 * 60 * 60 * 1000);
 
     if (now < regStart) {
@@ -169,8 +148,6 @@ export const TournamentPage = () => {
     };
   }, [tournament]);
 
-  const statusInfo = STATUS_CONFIG[currentStatus];
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-bg-body flex flex-col items-center justify-center font-quicksand text-white">
@@ -183,6 +160,11 @@ export const TournamentPage = () => {
   }
 
   if (error || !tournament) {
+    const errorMessage = (error as any)?.response?.data?.detail?.[0]?.msg || 
+                         (error as any)?.response?.data?.message || 
+                         (error as Error)?.message || 
+                         "Не вдалося завантажити інформацію про турнір.";
+
     return (
       <div className="min-h-[70vh] bg-bg-body flex items-center justify-center p-5">
         <div className="max-w-md w-full bg-white border border-red-100 rounded-[32px] p-8 md:p-10 flex flex-col items-center text-center shadow-[0_20px_50px_-10px_rgba(239,68,68,0.15)] animate-[fadeIn_0.4s_ease_forwards]">
@@ -197,20 +179,21 @@ export const TournamentPage = () => {
           </p>
           <div className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 mb-8 w-full">
             <p className="text-sm text-red-400 font-mono truncate">
-              {error || "Помилка 500: Турнір не знайдено"}
+              {errorMessage}
             </p>
           </div>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => refetch()}
             className="w-full sm:w-auto px-8 py-3.5 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-300 font-bold shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] hover:-translate-y-1"
           >
             Спробувати знову
           </button>
-
         </div>
       </div>
     );
   }
+
+  const statusInfo = STATUS_CONFIG[currentStatus];
 
   return (
     <div className="min-h-screen bg-bg-body font-inter text-dark-theme flex flex-col selection:bg-accent/30">
