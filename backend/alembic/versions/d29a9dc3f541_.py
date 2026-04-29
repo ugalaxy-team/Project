@@ -1,8 +1,8 @@
-"""Initial migration
+"""empty message
 
-Revision ID: 765a01d9d040
+Revision ID: d29a9dc3f541
 Revises: 
-Create Date: 2026-04-10 12:50:06.140924
+Create Date: 2026-04-29 18:07:35.581129
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '765a01d9d040'
+revision: str = 'd29a9dc3f541'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -41,7 +41,7 @@ def upgrade() -> None:
     sa.Column('main_id', sa.String(), nullable=True),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('display_name', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['main_id'], ['task_requirement_categories.name'], ),
+    sa.ForeignKeyConstraint(['main_id'], ['task_requirement_categories.name'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('name')
     )
     op.create_table('task_statuses',
@@ -49,24 +49,14 @@ def upgrade() -> None:
     sa.Column('display_name', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('name')
     )
-    op.create_table('team_members',
-    sa.Column('full_name', sa.String(), nullable=False),
-    sa.Column('email', sa.String(), nullable=False),
-    sa.Column('telegram_username', sa.String(), nullable=False),
-    sa.Column('educational_institution', sa.String(), nullable=False),
-    sa.Column('team_id', sa.Integer(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['team_id'], ['teams.id'], name='fk_teammember_team', use_alter=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('telegram_username')
-    )
     op.create_table('tournament_status_options',
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('name')
+    sa.Column('display_name', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('name')
     )
+    with op.batch_alter_table('tournament_status_options', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_tournament_status_options_name'), ['name'], unique=False)
+
     op.create_table('users',
     sa.Column('firebase_uid', sa.String(), nullable=False),
     sa.Column('full_name', sa.String(), nullable=False),
@@ -84,35 +74,50 @@ def upgrade() -> None:
     sa.Column('body', sa.String(length=4096), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('body')
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('role_requests',
     sa.Column('role_name', sa.String(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['role_name'], ['roles.name'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['role_name'], ['roles.name'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('task_requirement_options',
     sa.Column('category_id', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('display_name', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['category_id'], ['task_requirement_categories.name'], ),
+    sa.ForeignKeyConstraint(['category_id'], ['task_requirement_categories.name'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('name')
     )
     op.create_table('tasks',
     sa.Column('title', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=False),
-    sa.Column('tournament_id', sa.Integer(), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
     sa.Column('start_time', sa.DateTime(), nullable=False),
     sa.Column('end_time', sa.DateTime(), nullable=False),
+    sa.Column('tournament_id', sa.Integer(), nullable=False),
     sa.Column('status_id', sa.String(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['status_id'], ['task_statuses.name'], ),
-    sa.ForeignKeyConstraint(['tournament_id'], ['tournaments.id'], name='fk_task_tournament', use_alter=True),
+    sa.ForeignKeyConstraint(['status_id'], ['task_statuses.name'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['tournament_id'], ['tournaments.id'], name='fk_task_tournament', ondelete='CASCADE', use_alter=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('tournaments',
+    sa.Column('title', sa.String(), nullable=False),
+    sa.Column('description', sa.String(), nullable=False),
+    sa.Column('start_date', sa.DateTime(), nullable=False),
+    sa.Column('reg_start', sa.DateTime(), nullable=False),
+    sa.Column('reg_end', sa.DateTime(), nullable=False),
+    sa.Column('min_people_in_team', sa.Integer(), nullable=False),
+    sa.Column('max_people_in_team', sa.Integer(), nullable=False),
+    sa.Column('max_teams', sa.Integer(), nullable=False),
+    sa.Column('status_id', sa.String(), nullable=False),
+    sa.Column('creator_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['creator_id'], ['users.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['status_id'], ['tournament_status_options.name'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user_roles',
@@ -127,34 +132,32 @@ def upgrade() -> None:
     sa.Column('option_name', sa.String(), nullable=False),
     sa.Column('value', sa.String(length=4096), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['option_name'], ['role_request_info_options.name'], ),
-    sa.ForeignKeyConstraint(['request_id'], ['role_requests.id'], ),
+    sa.ForeignKeyConstraint(['option_name'], ['role_request_info_options.name'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['request_id'], ['role_requests.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('task_requirements',
-    sa.Column('requirement_id', sa.String(), nullable=False),
     sa.Column('task_id', sa.Integer(), nullable=False),
+    sa.Column('requirement_id', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['requirement_id'], ['task_requirement_options.name'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['task_id'], ['tasks.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('requirement_id', 'task_id')
+    sa.PrimaryKeyConstraint('task_id', 'requirement_id')
     )
-    op.create_table('tournaments',
-    sa.Column('title', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=False),
-    sa.Column('start_date', sa.DateTime(), nullable=False),
-    sa.Column('reg_start', sa.DateTime(), nullable=False),
-    sa.Column('reg_end', sa.DateTime(), nullable=False),
-    sa.Column('min_people_in_team', sa.Integer(), nullable=False),
-    sa.Column('max_people_in_team', sa.Integer(), nullable=False),
-    sa.Column('max_teams', sa.Integer(), nullable=False),
-    sa.Column('active_task_id', sa.Integer(), nullable=True),
-    sa.Column('status_id', sa.Integer(), nullable=False),
-    sa.Column('creator_id', sa.Integer(), nullable=False),
+    op.create_table('team_members',
+    sa.Column('full_name', sa.String(), nullable=False),
+    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('telegram', sa.String(), nullable=False),
+    sa.Column('educational_institution', sa.String(), nullable=True),
+    sa.Column('team_id', sa.Integer(), nullable=False),
+    sa.Column('tournament_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['active_task_id'], ['tasks.id'], ),
-    sa.ForeignKeyConstraint(['creator_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['status_id'], ['tournament_status_options.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.ForeignKeyConstraint(['team_id'], ['teams.id'], name='fk_teammember_team', ondelete='CASCADE', use_alter=True),
+    sa.ForeignKeyConstraint(['tournament_id'], ['tournaments.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('team_id', 'email', name='uq_team_member_email'),
+    sa.UniqueConstraint('team_id', 'telegram', name='uq_team_member_telegram'),
+    sa.UniqueConstraint('tournament_id', 'email', name='uq_tournament_member_email'),
+    sa.UniqueConstraint('tournament_id', 'telegram', name='uq_tournament_member_telegram')
     )
     op.create_table('teams',
     sa.Column('name', sa.String(), nullable=False),
@@ -164,38 +167,39 @@ def upgrade() -> None:
     sa.Column('captain_id', sa.Integer(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['captain_id'], ['team_members.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['tournament_id'], ['tournaments.id'], ),
+    sa.ForeignKeyConstraint(['tournament_id'], ['tournaments.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('contact_info'),
+    sa.UniqueConstraint('contact_info', 'tournament_id'),
     sa.UniqueConstraint('name'),
     sa.UniqueConstraint('team_email')
     )
     op.create_table('submissions',
     sa.Column('team_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['team_id'], ['teams.id'], ),
+    sa.ForeignKeyConstraint(['team_id'], ['teams.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('team_id')
     )
     op.create_table('evaluations',
     sa.Column('submission_id', sa.Integer(), nullable=False),
     sa.Column('jury_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['jury_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['submission_id'], ['submissions.team_id'], ),
+    sa.ForeignKeyConstraint(['jury_id'], ['users.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['submission_id'], ['submissions.team_id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('submission_id', 'jury_id')
     )
     op.create_table('submission_urls',
     sa.Column('submission_id', sa.Integer(), nullable=False),
     sa.Column('url_id', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['submission_id'], ['submissions.team_id'], ),
-    sa.ForeignKeyConstraint(['url_id'], ['submission_url_options.name'], ),
+    sa.ForeignKeyConstraint(['submission_id'], ['submissions.team_id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['url_id'], ['submission_url_options.name'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('submission_id', 'url_id')
     )
     op.create_table('requirement_evaluations',
     sa.Column('evaluation_id', sa.Integer(), nullable=False),
     sa.Column('score', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['evaluation_id'], ['evaluations.id'], ),
+    sa.ForeignKeyConstraint(['evaluation_id'], ['evaluations.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('evaluation_requirements',
@@ -217,17 +221,20 @@ def downgrade() -> None:
     op.drop_table('evaluations')
     op.drop_table('submissions')
     op.drop_table('teams')
-    op.drop_table('tournaments')
+    op.drop_table('team_members')
     op.drop_table('task_requirements')
     op.drop_table('role_request_info')
     op.drop_table('user_roles')
+    op.drop_table('tournaments')
     op.drop_table('tasks')
     op.drop_table('task_requirement_options')
     op.drop_table('role_requests')
     op.drop_table('notifications')
     op.drop_table('users')
+    with op.batch_alter_table('tournament_status_options', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_tournament_status_options_name'))
+
     op.drop_table('tournament_status_options')
-    op.drop_table('team_members')
     op.drop_table('task_statuses')
     op.drop_table('task_requirement_categories')
     op.drop_table('submission_url_options')

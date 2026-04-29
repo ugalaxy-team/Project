@@ -1,4 +1,7 @@
+import socketio
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 import app.routes.profile as profile
 import app.routes.role_requests as role_requests
@@ -9,12 +12,24 @@ import app.routes.team_members as team_members
 import app.routes.teams as teams
 import app.routes.tournaments as tournaments
 import app.routes.users as users
-from fastapi.middleware.cors import CORSMiddleware
+from app.core.seeds import init_tournament_statuses, init_task_statuses, init_categories
+from app.db import AsyncSessionLocal
 from .config import settings
-import socketio
 from .admin import setup_admin
 
-app = FastAPI()
+
+# temporary decision
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with AsyncSessionLocal() as session:
+        await init_tournament_statuses(session)
+        await init_task_statuses(session)
+
+        await init_categories(session)
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 app.state.user_websocket_sessions = {}
 
 from .websockets import *

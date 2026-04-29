@@ -7,6 +7,7 @@ from .base import Base
 from .mixin import PKMixin, OptionMixin
 from .task import Task
 
+
 class Tournament(Base, PKMixin, AsyncAttrs):
     __tablename__ = "tournaments"
 
@@ -60,7 +61,6 @@ class Tournament(Base, PKMixin, AsyncAttrs):
                 return task
 
         return None
-
 
     @property
     def end_date(self) -> datetime | None:
