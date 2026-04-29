@@ -59,7 +59,6 @@ export const EditTournamentModal = ({ isOpen, onClose, tournament, onSave }: Edi
         title: formData.title,
         description: formData.description,
         start_date: formData.start_date ? new Date(formData.start_date).toISOString() : null,
-        end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null,
         reg_start: formData.reg_start ? new Date(formData.reg_start).toISOString() : null,
         reg_end: formData.reg_end ? new Date(formData.reg_end).toISOString() : null,
         max_teams: formData.max_teams,

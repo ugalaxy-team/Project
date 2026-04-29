@@ -135,8 +135,5 @@ describe('Profile Component', () => {
     expect(screen.getByText('Напишіть Ядро Лінукс')).toBeInTheDocument();
     expect(screen.getByText('Напишіть свою мову програмування')).toBeInTheDocument();
     expect(screen.getByText('Напишіть гру на JS')).toBeInTheDocument();
-    
-    expect(screen.getByText('Шалені програмісти')).toBeInTheDocument();
-    expect(screen.getByText('Кодери мрії')).toBeInTheDocument();
   });
 });

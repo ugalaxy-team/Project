@@ -12,7 +12,6 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
     title: "",
     description: "",
     start_date: "",
-    end_date: "",
     reg_start: "",
     reg_end: "",
     max_teams: 2,
@@ -44,7 +43,6 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
         title: formData.title.trim(),
         description: formData.description.trim(),
         start_date: formatDate(formData.start_date)!,
-        end_date: formatDate(formData.end_date)!,
         reg_start: formatDate(formData.reg_start)!,
         reg_end: formatDate(formData.reg_end)!,
         max_teams: Number(formData.max_teams),
@@ -56,7 +54,6 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
         title: "",
         description: "",
         start_date: "",
-        end_date: "",
         reg_start: "",
         reg_end: "",
         max_teams: 2,
@@ -128,10 +125,6 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: CreateTourn
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-600">Початок</label>
                   <input name="start_date" type="datetime-local" value={formData.start_date} onChange={handleChange} required className="w-full px-3 py-2.5 bg-slate-50 text-slate-900 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff]"/>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-600">Кінець</label>
-                  <input name="end_date" type="datetime-local" value={formData.end_date} onChange={handleChange} required className="w-full px-3 py-2.5 bg-slate-50 text-slate-900 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff]"/>
                 </div>
               </div>
             </div>
