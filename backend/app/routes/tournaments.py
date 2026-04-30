@@ -8,7 +8,7 @@ from app.schemas import (
     TournamentUpdate,
 )
 from app.models import Team, Tournament, User
-from app.dependencies import SessionDep
+from app.dependencies import SessionDep, CurrentUserDep
 from app.utils.routes.dates_logic import (
     validate_dates_on_create,
     validate_dates_on_update,
@@ -57,9 +57,14 @@ async def tournament(tournament_id: int, session: SessionDep):
 
 @router.post("/", response_model=TournamentPublic, status_code=status.HTTP_201_CREATED)
 async def create_tournament(
-    tournament: TournamentCreate,
-    session: SessionDep,
+    tournament: TournamentCreate, session: SessionDep, user: CurrentUserDep
 ):
+    user_roles_names = [role.name for role in user.roles]
+
+    if not any(role in user_roles_names for role in ["admin", "organizer"]):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Do not have permision"
+        )
     initial_status = await get_status_by_name("draft", session)
 
     validate_dates_on_create(
@@ -70,7 +75,7 @@ async def create_tournament(
 
     new_tournament = Tournament(
         **tournament.model_dump(),
-        creator_id=1,
+        creator_id=user.id,
         status_id=initial_status.name,
     )
     session.add(new_tournament)
