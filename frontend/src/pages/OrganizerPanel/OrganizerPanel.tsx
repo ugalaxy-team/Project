@@ -178,7 +178,7 @@ const OrganizerPanel = () => {
             👋 Привіт, {'Організаторе'}!
           </span>
           <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-black tracking-wider mb-4 drop-shadow-md uppercase italic leading-tight">
-            ШТАБ ОРГАНІЗАТОРА
+            ПАНЕЛЬ ОРГАНІЗАТОРА
           </h1>
         </div>
         <div className="absolute -bottom-[1px] left-0 w-full leading-[0]">

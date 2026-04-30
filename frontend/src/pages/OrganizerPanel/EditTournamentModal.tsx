@@ -15,7 +15,6 @@ interface UpdateTournamentData {
   title: string;
   description: string;
   start_date: string | null;
-  end_date: string | null;
   reg_start: string | null;
   reg_end: string | null;
   max_teams: number;
@@ -95,7 +94,6 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
         title: formData.title,
         description: formData.description,
         start_date: formData.start_date ? new Date(formData.start_date).toISOString() : null,
-        end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null,
         reg_start: formData.reg_start ? new Date(formData.reg_start).toISOString() : null,
         reg_end: formData.reg_end ? new Date(formData.reg_end).toISOString() : null,
         max_teams: formData.max_teams,
@@ -194,16 +192,6 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
                     name="start_date" 
                     type="datetime-local" 
                     value={formData.start_date} 
-                    onChange={handleChange} 
-                    className="w-full px-3 py-2.5 bg-slate-50 text-slate-900 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff]"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-600">Кінець</label>
-                  <input 
-                    name="end_date" 
-                    type="datetime-local" 
-                    value={formData.end_date} 
                     onChange={handleChange} 
                     className="w-full px-3 py-2.5 bg-slate-50 text-slate-900 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6b73ff]"
                   />
