@@ -61,7 +61,7 @@ exports[`RoleRequestPage Component > matches snapshot 1`] = `
           <p
             class="text-sm text-[#7b00ff] font-medium text-center"
           >
-            Наразі ви можете отримати лише роль Організатора. Запити на інші ролі тимчасово вимкнені.
+            Наразі ви можете отримати лише роль Організатора
           </p>
         </div>
         <p
