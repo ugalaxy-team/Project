@@ -42,7 +42,7 @@ describe('RoleRequestPage Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useNavigate).mockReturnValue(mockNavigate);
-    auth.currentUser = { uid: 'mock-user-123' } as any;
+    (auth as { currentUser: any }).currentUser = { uid: 'mock-user-123' };
   });
 
   it('matches snapshot', () => {
@@ -83,7 +83,7 @@ describe('RoleRequestPage Component', () => {
 
   it('returns early and does not submit if auth.currentUser is null', async () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    auth.currentUser = null;
+    (auth as { currentUser: any }).currentUser = null;
 
     const { container } = render(<RoleRequestPage />);
     fireEvent.submit(container.querySelector('form')!);

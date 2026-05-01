@@ -21,6 +21,8 @@ class TournamentBase(BaseModel):
     start_date: datetime
     reg_start: datetime
     reg_end: datetime
+    min_people_in_team: int = Field(..., gt=1)
+    max_people_in_team: int = Field(..., gt=1)
     max_teams: int = Field(..., gt=1)
 
 

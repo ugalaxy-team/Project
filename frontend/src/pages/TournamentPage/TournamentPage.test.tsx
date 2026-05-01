@@ -23,9 +23,14 @@ const mockTournament = {
   title: "SLOVO JAM",
   description: "Тестовий опис завдання турніру",
   start_date: "2026-05-01T10:00:00Z",
+  end_date: "2026-05-03T10:00:00Z",
   reg_start: "2026-04-01T10:00:00Z",
   reg_end: "2026-04-20T10:00:00Z",
-  max_teams: 10
+  max_teams: 10,
+  status: {
+    name: "registration",
+    display_name: "Registration",
+  },
 };
 
 const placeholderTabs = ['Шукають команду', 'Команди (3)', 'Результати'];

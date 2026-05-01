@@ -7,6 +7,7 @@ from app.schemas import (
     TournamentCreate,
     TournamentUpdate,
 )
+from app.config import settings
 from app.models import Team, Tournament, User
 from app.dependencies import SessionDep
 from app.utils.routes.dates_logic import (
@@ -60,7 +61,7 @@ async def create_tournament(
     tournament: TournamentCreate,
     session: SessionDep,
 ):
-    initial_status = await get_status_by_name("draft", session)
+    initial_status = await get_status_by_name(settings.TOURNAMENT_STATUS_NAMES.DRAFT, session)
 
     validate_dates_on_create(
         start_date=tournament.start_date,

@@ -1,15 +1,21 @@
 import { useState, useRef, useEffect, useMemo, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import apiClient from "@/api/client";
+import { tournamentStatusByName } from "@/config/appConfig";
 import { Hero } from "../../components/Hero";
 
 interface TournamentData {
   title: string;
   description: string;
   start_date: string;
+  end_date?: string | null;
   reg_start: string;
   reg_end: string;
   max_teams: number;
+  status: {
+    name: string;
+    display_name: string;
+  };
 }
 
 const TABS = [
@@ -20,7 +26,7 @@ const TABS = [
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
-type TourneyStatus = "registration" | "active" | "waiting" | "finished";
+type TourneyStatus = "draft" | "registration" | "running" | "finished";
 
 const RegistrationIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><line x1="19" y1="8" x2="19" y2="14" /><line x1="22" y1="11" x2="16" y2="11" /></svg>
@@ -28,7 +34,7 @@ const RegistrationIcon = () => (
 const ActiveIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
 );
-const WaitingIcon = () => (
+const DraftIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
 );
 const FinishedIcon = () => (
@@ -51,23 +57,23 @@ const SpinnerIcon = () => (
 );
 
 const STATUS_CONFIG: Record<TourneyStatus, { label: string; className: string; icon: ReactNode }> = {
+  draft: {
+    label: tournamentStatusByName.draft.display_name,
+    className: "bg-accent/90 text-dark-theme shadow-[0_0_20px_rgba(250,204,21,0.4)]",
+    icon: <DraftIcon />,
+  },
   registration: {
-    label: "Реєстрація",
+    label: tournamentStatusByName.registration.display_name,
     className: "bg-blue-400/90 text-blue-950 shadow-[0_0_20px_rgba(96,165,250,0.4)]",
     icon: <RegistrationIcon />,
   },
-  active: {
-    label: "Активно",
+  running: {
+    label: tournamentStatusByName.running.display_name,
     className: "bg-emerald-400/90 text-emerald-950 shadow-[0_0_20px_rgba(52,211,153,0.4)]",
     icon: <ActiveIcon />,
   },
-  waiting: {
-    label: "Очікування результатів",
-    className: "bg-accent/90 text-dark-theme shadow-[0_0_20px_rgba(250,204,21,0.4)]",
-    icon: <WaitingIcon />,
-  },
   finished: {
-    label: "Завершено",
+    label: tournamentStatusByName.finished.display_name,
     className: "bg-white/20 text-white backdrop-blur-md border border-white/20",
     icon: <FinishedIcon />,
   },
@@ -123,49 +129,40 @@ export const TournamentPage = () => {
 
   const { currentStatus, deadlineValue, deadlineLabel } = useMemo(() => {
     if (!tournament) {
-      return { currentStatus: "waiting" as TourneyStatus, deadlineValue: "...", deadlineLabel: "Завантаження" };
+      return { currentStatus: "draft" as TourneyStatus, deadlineValue: "...", deadlineLabel: "Завантаження" };
     }
 
     const now = new Date();
     const regStart = new Date(tournament.reg_start);
     const regEnd = new Date(tournament.reg_end);
-    const eventStart = new Date(tournament.start_date);
+    const eventEnd = tournament.end_date ? new Date(tournament.end_date) : null;
 
-    const eventEnd = new Date(eventStart.getTime() + 48 * 60 * 60 * 1000);
-
-    if (now < regStart) {
+    if (tournament.status.name === "draft") {
       return {
-        currentStatus: "waiting" as TourneyStatus,
-        deadlineValue: getTimeLeftInfo(regStart),
-        deadlineLabel: "До початку реєстрації"
+        currentStatus: "draft" as TourneyStatus,
+        deadlineValue: getTimeLeftInfo(now < regStart ? regStart : regEnd),
+        deadlineLabel: now < regStart ? "До початку реєстрації" : "До завершення підготовки",
       };
     }
-    if (now >= regStart && now <= regEnd) {
+    if (tournament.status.name === "registration") {
       return {
         currentStatus: "registration" as TourneyStatus,
         deadlineValue: getTimeLeftInfo(regEnd),
-        deadlineLabel: "До кінця реєстрації"
+        deadlineLabel: "До кінця реєстрації",
       };
     }
-    if (now > regEnd && now < eventStart) {
+    if (tournament.status.name === "running") {
       return {
-        currentStatus: "waiting" as TourneyStatus,
-        deadlineValue: getTimeLeftInfo(eventStart),
-        deadlineLabel: "До старту турніру"
-      };
-    }
-    if (now >= eventStart && now <= eventEnd) {
-      return {
-        currentStatus: "active" as TourneyStatus,
-        deadlineValue: getTimeLeftInfo(eventEnd),
-        deadlineLabel: "До здачі роботи"
+        currentStatus: "running" as TourneyStatus,
+        deadlineValue: eventEnd ? getTimeLeftInfo(eventEnd) : "В процесі",
+        deadlineLabel: eventEnd ? "До завершення турніру" : "Турнір триває",
       };
     }
 
     return {
       currentStatus: "finished" as TourneyStatus,
       deadlineValue: "Завершено",
-      deadlineLabel: "Турнір"
+      deadlineLabel: "Турнір",
     };
   }, [tournament]);
 

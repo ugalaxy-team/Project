@@ -1,4 +1,4 @@
-export type TournamentStatus = "registration" | "active" | "completed";
+export type TournamentStatus = "draft" | "registration" | "running" | "finished";
 export type TagType = "accent" | "light" | "pink" | "primary";
 
 export interface Tag {
@@ -21,7 +21,7 @@ const RAW_DATA: Omit<Tournament, "id">[] = [
   {
     title: "Турнір бравл старс",
     desc: "Бла-бла-бла, леон бравл старс, мільйон гемів і т.д. БАГААААААААТО ТЕКСТУУУУУУУУУУУУУУУ",
-    status: "active",
+    status: "running",
     deadline: "20 Квітня",
     max: 30,
     teams: 15,
@@ -57,7 +57,7 @@ const RAW_DATA: Omit<Tournament, "id">[] = [
   {
     title: "Забіг синіх їжаків",
     desc: "Одягаємо колючі сині перуки, червоні кросівки і біжимо на впередки, збираючи розкидані металеві кільця. Головне правило - не врізатися в дерева на надзвуковій швидкості, на страховку грошей нема.",
-    status: "active",
+    status: "running",
     deadline: "10 Травня",
     max: 50,
     teams: 45,
@@ -69,7 +69,7 @@ const RAW_DATA: Omit<Tournament, "id">[] = [
   {
     title: "Екстремальний продаж",
     desc: "Ви на міському ярмарку. Ваша мета - продати багато плетених вушиків за дві години людям, які прийшли 'просто подивитися'. Дозволено використовувати будь-які методи переконання.",
-    status: "completed",
+    status: "finished",
     deadline: "15 Травня",
     max: 20,
     teams: 20,
@@ -93,7 +93,7 @@ const RAW_DATA: Omit<Tournament, "id">[] = [
   {
     title: "Ідей більше нема",
     desc: "Ех, мені лінь далі думати, просто текст на відчепись, аби було гарно і красиво, усьо",
-    status: "completed",
+    status: "finished",
     deadline: "30 Травня",
     max: 1,
     teams: 1,

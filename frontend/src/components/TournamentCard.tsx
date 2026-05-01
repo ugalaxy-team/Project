@@ -1,9 +1,20 @@
-import React from "react";
+import { tournamentStatusByName } from "@/config/appConfig";
 import { type Tournament } from "../data/mockTournaments";
 
 const STATUS_CFG = {
+  draft: {
+    label: tournamentStatusByName.draft.display_name,
+    badgeBg: "bg-amber-50",
+    badgeText: "text-amber-700",
+    dot: "bg-amber-400",
+    gradFrom: "#fbbf24",
+    gradTo: "#d97706",
+    icon: <path d="M12 6v6l4 2" />,
+    btnText: "Скоро відкриється",
+    btnClass: "bg-slate-100 text-slate-500 border border-slate-200 cursor-default",
+  },
   registration: {
-    label: "Реєстрація",
+    label: tournamentStatusByName.registration.display_name,
     badgeBg: "bg-[#dcfce7]",
     badgeText: "text-[#15803d]",
     dot: "bg-[#22c55e]",
@@ -13,8 +24,8 @@ const STATUS_CFG = {
     btnText: "Подати заявку",
     btnClass: "bg-primary text-white hover:bg-indigo-600 shadow-sm",
   },
-  active: {
-    label: "В процесі",
+  running: {
+    label: tournamentStatusByName.running.display_name,
     badgeBg: "bg-[#fdf2f8]",
     badgeText: "text-[#be185d]",
     dot: "bg-pink-400",
@@ -25,8 +36,8 @@ const STATUS_CFG = {
     btnClass:
       "bg-transparent border-2 border-primary text-primary hover:bg-indigo-50",
   },
-  completed: {
-    label: "Завершено",
+  finished: {
+    label: tournamentStatusByName.finished.display_name,
     badgeBg: "bg-slate-100",
     badgeText: "text-slate-500",
     dot: "bg-slate-400",
@@ -155,7 +166,7 @@ export const TournamentCard = ({
           </div>
 
           <button
-            disabled={status === "completed"}
+            disabled={status === "draft" || status === "finished"}
             className={`w-full py-3.5 rounded-xl font-quicksand text-[16px] font-extrabold transition-all duration-200 ${cfg.btnClass}`}
           >
             {cfg.btnText}

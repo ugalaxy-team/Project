@@ -11,9 +11,10 @@ RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 COPY backend ./backend
+COPY shared ./shared
 
 WORKDIR /app/backend
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app:socket_app --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "alembic upgrade head && python -m app.init_db && uvicorn app:socket_app --host 0.0.0.0 --port 8000"]

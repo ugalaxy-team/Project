@@ -31,8 +31,7 @@ exports[`RoleRequestPage Component > matches snapshot 1`] = `
         <h1
           class="text-[28px] font-extrabold text-white mt-0 mb-4 leading-[1.2]"
         >
-          Заявка на роль 
-          Організатора
+          Заявка на роль Організатора
         </h1>
         <p
           class="text-[15px] text-white/85 leading-[1.6] mb-6"

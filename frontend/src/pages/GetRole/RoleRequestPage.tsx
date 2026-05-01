@@ -7,16 +7,13 @@ import { requestRole } from '@/api/requests/requestRole';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { auth } from '@/firebase';
+import { roleByName } from '@/config/appConfig';
 
 const RoleRequestPage = () => {
     const user = useSelector((state: RootState) => state.user.user);
     const navigate = useNavigate();
 
-    const ORGANIZER_ROLE = {
-        name: 'organizer',
-        display_name: 'Організатора',
-        description: 'Заповніть форму нижче, щоб подати заявку. Ми розглядаємо кожну заявку вручну.'
-    };
+    const ORGANIZER_ROLE = roleByName.organizer;
 
     const createRequests = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -73,10 +70,10 @@ const RoleRequestPage = () => {
                     <p className="text-sm tracking-[2px] mt-1 mb-10 opacity-90 text-center">STAR FOR LIFE</p>
 
                     <h1 className="text-[28px] font-extrabold text-white mt-0 mb-4 leading-[1.2]">
-                        Заявка на роль {ORGANIZER_ROLE.display_name}
+                        Заявка на роль Організатора
                     </h1>
                     <p className="text-[15px] text-white/85 leading-[1.6] mb-6">
-                        {ORGANIZER_ROLE.description}
+                        Заповніть форму нижче, щоб подати заявку. Ми розглядаємо кожну заявку вручну.
                         <br /><br />
                         <b className="font-bold">Важливо:</b> відповідайте чесно та детально — це підвищує ваші шанси.
                     </p>

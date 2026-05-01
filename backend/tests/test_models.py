@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
+from app.config import settings
 from app.models import (
     User,
     Role,
@@ -65,28 +66,28 @@ async def test_create_user_duplicate_email(db_session, create):
 
 # ROLE TESTS
 async def test_create_role(create):
-    role = await create(RoleFactory, name="jury")
+    role = await create(RoleFactory, name=settings.ROLE_NAMES.ORGANIZER)
     assert role.name is not None
-    assert role.name == "jury"
+    assert role.name == settings.ROLE_NAMES.ORGANIZER
 
 
 async def test_role_name_unique_constraint(create):
-    await create(RoleFactory, name="jury")
+    await create(RoleFactory, name=settings.ROLE_NAMES.ORGANIZER)
 
     with pytest.raises(IntegrityError):
-        await create(RoleFactory, name="jury")
+        await create(RoleFactory, name=settings.ROLE_NAMES.ORGANIZER)
 
 
 async def test_user_roles_relationship(db_session, create):
     user = await create(UserFactory)
-    role_jury = await create(RoleFactory, name="jury")
+    role_organizer = await create(RoleFactory, name=settings.ROLE_NAMES.ORGANIZER)
     role_admin = await create(RoleFactory, name="admin")
 
     stmt = select(User).where(User.id == user.id).options(selectinload(User.roles))
     result = await db_session.execute(stmt)
     user = result.unique().scalar_one()
 
-    user.roles.extend([role_jury, role_admin])
+    user.roles.extend([role_organizer, role_admin])
     await db_session.commit()
 
     stmt_check = (
@@ -261,7 +262,7 @@ async def test_create_task(create):
     assert task.id is not None
     assert task.title is not None
     assert task.tournament_id is not None
-    assert task.status_id in ["draft", "active", "finished"]
+    assert task.status_id in [option["name"] for option in settings.TASK_STATUS_OPTIONS]
 
 
 async def test_task_requirements_relationship(db_session, create):
@@ -310,8 +311,8 @@ async def test_task_category_hierarchy(db_session, create):
 async def test_create_task_status_option(create):
     status = await create(TaskStatusOptionFactory)
 
-    assert status.name in ["draft", "active", "finished"]
-    assert status.display_name == status.name.upper()
+    assert status.name in [option["name"] for option in settings.TASK_STATUS_OPTIONS]
+    assert status.display_name in [option["display_name"] for option in settings.TASK_STATUS_OPTIONS]
 
 
 async def test_task_status_relationship(db_session, create):
@@ -364,9 +365,11 @@ async def test_tournament_end_time(create, db_session):
 
 async def test_tournament_active_task(create, db_session):
     tournament = await create(TournamentFactory)
-    active = await create(TaskStatusOptionFactory, name='active')
-    finished = await create(TaskStatusOptionFactory, name='finished')
-    draft = await create(TaskStatusOptionFactory, name='draft')
+    active = await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.ACTIVE)
+    submission_closed = await create(
+        TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED
+    )
+    draft = await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.DRAFT)
     t1 = await create(
         TaskFactory, 
         tournament=tournament, 
@@ -375,7 +378,7 @@ async def test_tournament_active_task(create, db_session):
     t2 = await create(
         TaskFactory, 
         tournament=tournament,
-        status_id=finished
+        status_id=submission_closed
     )
     t3 = await create(
         TaskFactory, 

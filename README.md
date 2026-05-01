@@ -17,5 +17,6 @@ Services:
 Notes:
 
 - The backend container runs `alembic upgrade head` before starting Uvicorn.
+- The backend also runs `python -m app.init_db` to seed shared roles and status options from `shared/app_config.json`.
 - The backend expects `backend/app/serviceAccountKey.json` to exist for Firebase initialization.
 - You can copy `.env.example` to `.env` and override any defaults before starting the stack.

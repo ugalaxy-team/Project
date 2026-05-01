@@ -8,6 +8,7 @@ import { createTournament } from "@/api/requests/createTournament";
 import { EditTournamentModal } from "./EditTournamentModal";
 import { CreateTournamentModal } from "./CreateTournamentModal";
 import { getAllUsers } from "@/api/requests/getAllUsers";
+import { tournamentStatuses } from "@/config/appConfig";
 
 interface Creator {
   id: number;
@@ -156,8 +157,10 @@ const OrganizerPanel = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-      case 'pending': return 'bg-amber-100 text-amber-700 border-amber-200';
+      case 'registration': return 'bg-blue-100 text-blue-700 border-blue-200';
+      case 'running': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+      case 'finished': return 'bg-slate-200 text-slate-700 border-slate-300';
+      case 'draft': return 'bg-amber-100 text-amber-700 border-amber-200';
       default: return 'bg-slate-100 text-slate-600 border-slate-200';
     }
   };
@@ -242,9 +245,11 @@ const OrganizerPanel = () => {
                       className="px-4 py-3.5 rounded-2xl border border-gray-200 text-sm bg-slate-50/50 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#6366f1]"
                     >
                       <option value="all">Усі статуси</option>
-                      <option value="active">Активні</option>
-                      <option value="pending">Очікуються</option>
-                      <option value="closed">Завершені</option>
+                      {tournamentStatuses.map((status) => (
+                        <option key={status.name} value={status.name}>
+                          {status.display_name}
+                        </option>
+                      ))}
                     </select>
                   </div>
 

@@ -1,0 +1,55 @@
+{
+  "roles": [
+    {
+      "name": "user",
+      "display_name": "User",
+      "description": "Default platform user."
+    },
+    {
+      "name": "admin",
+      "display_name": "Admin",
+      "description": "Platform administrator."
+    },
+    {
+      "name": "organizer",
+      "display_name": "Organizer",
+      "description": "Tournament organizer."
+    }
+  ],
+  "tournament_statuses": [
+    {
+      "name": "draft",
+      "display_name": "Draft"
+    },
+    {
+      "name": "registration",
+      "display_name": "Registration"
+    },
+    {
+      "name": "running",
+      "display_name": "Running"
+    },
+    {
+      "name": "finished",
+      "display_name": "Finished"
+    }
+  ],
+  "task_statuses": [
+    {
+      "name": "draft",
+      "display_name": "Draft"
+    },
+    {
+      "name": "active",
+      "display_name": "Active"
+    },
+    {
+      "name": "submission_closed",
+      "display_name": "SubmissionClosed"
+    },
+    {
+      "name": "evaluated",
+      "display_name": "Evaluated"
+    }
+  ]
+}
