@@ -60,11 +60,12 @@ async def tournament(tournament_id: int, session: SessionDep):
 async def create_tournament(
     tournament: TournamentCreate, session: SessionDep, user: CurrentUserDep
 ):
-    user_roles_names = [role.name for role in user.roles]
+    user_role_names = [role.name for role in user.roles]
 
-    if not any(role in user_roles_names for role in ["admin", "organizer"]):
+    if not any(role in user_role_names for role in settings.TOURNAMENT_CREATOR_ROLES):
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Do not have permision"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to create tournaments",
         )
     initial_status = await get_status_by_name("draft", session)
 
