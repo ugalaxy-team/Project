@@ -1,7 +1,9 @@
 from sqladmin import Admin, ModelView, action, Flash
 from fastapi import Request
 from fastapi.responses import RedirectResponse
-from app.db import engine, AsyncSessionLocal, get_session
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
+from app.db import engine, AsyncSessionLocal
 from app.utils.routes import reject_role_request, approve_role_request
 from app.models import (
     Notification,
@@ -39,6 +41,18 @@ class RoleAdmin(NamePrimaryKeyAdmin, model=Role):
 
 class RoleRequestAdmin(ModelView, model=RoleRequest):
     column_list = [RoleRequest.id, RoleRequest.user_id, RoleRequest.role_name]
+    list_template = 'role_request_list.html'
+
+    async def _get_role_request(self, session, pk: str) -> RoleRequest | None:
+        stmt = (
+            select(RoleRequest)
+            .options(
+                selectinload(RoleRequest.user).selectinload(User.roles),
+                selectinload(RoleRequest.role),
+            )
+            .where(RoleRequest.id == int(pk))
+        )
+        return (await session.execute(stmt)).scalar_one_or_none()
 
     @action(
         name="reject_request",
@@ -50,11 +64,11 @@ class RoleRequestAdmin(ModelView, model=RoleRequest):
     )
     async def reject_request(self, request: Request):
         pks = request.query_params.get("pks", "").split(",")
-        if pks:
-            for pk in pks:
-                req: RoleRequest = await self.get_object_for_edit(pk)
-                session = get_session()
-                await reject_role_request(req, session)
+        async with self.session_maker() as session:
+            for pk in filter(None, pks):
+                req = await self._get_role_request(session, pk)
+                if req is not None:
+                    await reject_role_request(req, session)
 
         referer = request.headers.get("Referer")
         Flash.success(request, "Role request rejected successfully")
@@ -73,11 +87,11 @@ class RoleRequestAdmin(ModelView, model=RoleRequest):
     )
     async def approve_request(self, request: Request):
         pks = request.query_params.get("pks", "").split(",")
-        if pks:
-            for pk in pks:
-                req: RoleRequest = await self.get_object_for_edit(pk)
-                session = get_session()
-                await approve_role_request(req, session)
+        async with self.session_maker() as session:
+            for pk in filter(None, pks):
+                req = await self._get_role_request(session, pk)
+                if req is not None:
+                    await approve_role_request(req, session)
 
         referer = request.headers.get("Referer")
         Flash.success(request, "Role request approved successfully")
@@ -175,7 +189,7 @@ class NotificationAdmin(ModelView, model=Notification):
 
 
 def setup_admin(app):
-    admin = Admin(app, engine, AsyncSessionLocal, title="Tournament Admin")
+    admin = Admin(app, engine, AsyncSessionLocal, title="Tournament Admin", templates_dir='app/admin/templates')
     admin.add_view(UserAdmin)
     admin.add_view(RoleAdmin)
     admin.add_view(RoleRequestAdmin)
