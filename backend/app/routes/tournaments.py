@@ -7,6 +7,7 @@ from app.schemas import (
     TournamentCreate,
     TournamentUpdate,
 )
+from app.config import settings
 from app.models import Team, Tournament, User
 from app.dependencies import SessionDep, CurrentUserDep
 from app.utils.routes.dates_logic import (

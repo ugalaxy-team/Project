@@ -2,15 +2,18 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 from statemachine import StateMachine, State
 
+from app.config import settings
 from app.models import Task
 from app.dependencies import SessionDep
 
 
 class TaskStatus(StateMachine):
-    draft = State("Draft", value="draft", initial=True)
-    active = State("Active", value="active")
-    submission_closed = State("SubmissionClosed", value="submissionclosed")
-    evaluated = State("Evaluated", value="evaluated", final=True)
+    draft = State("Draft", value=settings.TASK_STATUS_NAMES.DRAFT, initial=True)
+    active = State("Active", value=settings.TASK_STATUS_NAMES.ACTIVE)
+    submission_closed = State(
+        "SubmissionClosed", value=settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED
+    )
+    evaluated = State("Evaluated", value=settings.TASK_STATUS_NAMES.EVALUATED, final=True)
 
     start = draft.to(active)
     reset_to_draft = active.to(draft)
@@ -45,7 +48,7 @@ class TaskStatus(StateMachine):
 
 
 async def update_tasks_status(session: SessionDep):
-    statement = select(Task).where(Task.status_id != "evaluated")
+    statement = select(Task).where(Task.status_id != settings.TASK_STATUS_NAMES.EVALUATED)
     result = await session.execute(statement)
     tasks = result.scalars().all()
 

@@ -8,6 +8,7 @@ from app.models import RoleRequest, User, Role, RoleRequestInfo
 from app.schemas import RoleRequestPublic, RoleRequestCreate, UserPublic, NotificationCreate
 from app.config import settings
 from app.util import send_notification
+from app.utils.routes import approve_role_request, reject_role_request
 
 router = APIRouter(prefix='/role-requests', tags=['role requests'])
 
@@ -80,21 +81,13 @@ async def get_request(request_id: int, session: SessionDep, request: RoleRequest
 
 # TODO: implement role request dis/approval permission handling
 @router.post('/{request_id}/approve/', response_model=UserPublic)
-async def approve_request(request_id: int, request: RoleRequestDep, session: SessionDep):
-    request.user.roles.append(request.role)
-    await session.delete(request)
-    await session.commit()
-    await session.refresh(request.user)
-    notification = NotificationCreate(body=settings.ROLE_REQUEST_APPROVED_MESSAGE, user_id=request.user.id)
-    await send_notification(notification, session, role=request.role.name)
+async def approve_request(request: RoleRequestDep, session: SessionDep):
+    await approve_role_request(request, session)
     return request.user
 
 @router.post('/{request_id}/reject/', response_model=UserPublic)
-async def reject_request(request_id: int, request: RoleRequestDep, session: SessionDep):
-    await session.delete(request)
-    await session.commit()
-    notification = NotificationCreate(body=settings.ROLE_REQUEST_REJECTED_MESSAGE, user_id=request.user.id)
-    await send_notification(notification, session, role=request.role.name)
+async def reject_request(request: RoleRequestDep, session: SessionDep):
+    await reject_role_request(request, session)
     return request.user
 
 @router.delete('/{request_id}/', 

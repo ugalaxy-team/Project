@@ -1,7 +1,10 @@
-from sqlalchemy import create_engine
-from sqladmin import Admin, ModelView
+from sqladmin import Admin, ModelView, action, Flash
+from fastapi import Request
+from fastapi.responses import RedirectResponse
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.db import engine, AsyncSessionLocal
-
+from app.utils.routes import reject_role_request, approve_role_request
 from app.models import (
     Notification,
     RequirementEvaluation,
@@ -38,6 +41,66 @@ class RoleAdmin(NamePrimaryKeyAdmin, model=Role):
 
 class RoleRequestAdmin(ModelView, model=RoleRequest):
     column_list = [RoleRequest.id, RoleRequest.user_id, RoleRequest.role_name]
+    list_template = 'role_request_list.html'
+
+    async def _get_role_request(self, session, pk: str) -> RoleRequest | None:
+        stmt = (
+            select(RoleRequest)
+            .options(
+                selectinload(RoleRequest.user).selectinload(User.roles),
+                selectinload(RoleRequest.role),
+            )
+            .where(RoleRequest.id == int(pk))
+        )
+        return (await session.execute(stmt)).scalar_one_or_none()
+
+    @action(
+        name="reject_request",
+        label="Reject",
+        confirmation_message="Are you sure?",
+        add_in_detail=True,
+        add_in_list=True,
+        include_in_schema=True
+    )
+    async def reject_request(self, request: Request):
+        pks = request.query_params.get("pks", "").split(",")
+        async with self.session_maker() as session:
+            for pk in filter(None, pks):
+                req = await self._get_role_request(session, pk)
+                if req is not None:
+                    await reject_role_request(req, session)
+
+        referer = request.headers.get("Referer")
+        Flash.success(request, "Role request rejected successfully")
+        if referer:
+            return RedirectResponse(referer)
+        else:
+            return RedirectResponse(request.url_for("admin:list", identity=self.identity))
+
+    @action(
+        name="approve_request",
+        label="Approve",
+        confirmation_message="Are you sure?",
+        add_in_detail=True,
+        add_in_list=True,
+        include_in_schema=True
+    )
+    async def approve_request(self, request: Request):
+        pks = request.query_params.get("pks", "").split(",")
+        async with self.session_maker() as session:
+            for pk in filter(None, pks):
+                req = await self._get_role_request(session, pk)
+                if req is not None:
+                    await approve_role_request(req, session)
+
+        referer = request.headers.get("Referer")
+        Flash.success(request, "Role request approved successfully")
+        if referer:
+            return RedirectResponse(referer)
+        else:
+            return RedirectResponse(request.url_for("admin:list", identity=self.identity))
+        
+
 
 
 class TournamentAdmin(ModelView, model=Tournament):
@@ -126,7 +189,7 @@ class NotificationAdmin(ModelView, model=Notification):
 
 
 def setup_admin(app):
-    admin = Admin(app, engine, AsyncSessionLocal, title="Tournament Admin")
+    admin = Admin(app, engine, AsyncSessionLocal, title="Tournament Admin", templates_dir='app/admin/templates')
     admin.add_view(UserAdmin)
     admin.add_view(RoleAdmin)
     admin.add_view(RoleRequestAdmin)

@@ -3,7 +3,6 @@ export interface TournamentData {
     title: string;
     description: string;
     start_date: string;
-    end_date: string;
     reg_start: string;
     reg_end: string;
     max_teams: number;

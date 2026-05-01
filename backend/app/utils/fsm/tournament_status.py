@@ -3,23 +3,21 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 
 
+from app.config import settings
 from app.dependencies.session import SessionDep
 from app.models import Tournament, TournamentStatusOption
 from statemachine import StateMachine, State
 
 
 class TournamentStatus(StateMachine):
-    draft = State("Draft", value="draft", initial=True)
-    registration = State("Registration", value="registration")
-    running = State("Running", value="running")
-    finished = State("Finished", value="finished", final=True)
-    canceled = State("Canceled", value="canceled", final=True)
+    draft = State("Draft", value=settings.TOURNAMENT_STATUS_NAMES.DRAFT, initial=True)
+    registration = State("Registration", value=settings.TOURNAMENT_STATUS_NAMES.REGISTRATION)
+    running = State("Running", value=settings.TOURNAMENT_STATUS_NAMES.RUNNING)
+    finished = State("Finished", value=settings.TOURNAMENT_STATUS_NAMES.FINISHED, final=True)
 
     start_registration = draft.to(registration)
     start_tournament = registration.to(running)
     finish_tournament = running.to(finished)
-
-    cancel = draft.to(canceled) | registration.to(canceled) | running.to(canceled)
 
     def __init__(self, tournament: Tournament, session):
         self.tournament = tournament

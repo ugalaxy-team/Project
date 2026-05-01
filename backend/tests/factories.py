@@ -2,6 +2,7 @@ import factory
 from factory.faker import Faker
 from factory.alchemy import SQLAlchemyModelFactory
 
+from app.config import settings
 from app.models import (
     User,
     Role,
@@ -48,9 +49,21 @@ class RoleFactory(BaseFactory):
     class Meta:
         model = Role
 
-    name = factory.Iterator(["admin", "user", "jury"])
-    display_name = factory.Iterator(["Admin", "User", "Jury"])
-    description = factory.Iterator('Test role')
+    name = factory.Iterator([option["name"] for option in settings.ROLE_OPTIONS])
+    display_name = factory.LazyAttribute(
+        lambda role: next(
+            option["display_name"]
+            for option in settings.ROLE_OPTIONS
+            if option["name"] == role.name
+        )
+    )
+    description = factory.LazyAttribute(
+        lambda role: next(
+            option["description"]
+            for option in settings.ROLE_OPTIONS
+            if option["name"] == role.name
+        )
+    )
 
 
 class TournamentStatusOptionFactory(BaseOptionFactory):
@@ -110,7 +123,14 @@ class TaskStatusOptionFactory(BaseOptionFactory):
     class Meta:
         model = TaskStatusOption
 
-    name = factory.Iterator(["draft", "active", "finished"])
+    name = factory.Iterator([option["name"] for option in settings.TASK_STATUS_OPTIONS])
+    display_name = factory.LazyAttribute(
+        lambda status: next(
+            option["display_name"]
+            for option in settings.TASK_STATUS_OPTIONS
+            if option["name"] == status.name
+        )
+    )
 
 class TaskFactory(BaseFactory):
     class Meta:
@@ -121,7 +141,7 @@ class TaskFactory(BaseFactory):
     start_time = Faker("future_datetime")
     end_time = Faker("future_datetime")
     tournament = factory.SubFactory(TournamentFactory)
-    status_id = factory.Iterator(["draft", "active", "finished"])
+    status_id = factory.Iterator([option["name"] for option in settings.TASK_STATUS_OPTIONS])
 
     @classmethod
     def _adjust_kwargs(cls, **kwargs):

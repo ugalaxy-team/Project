@@ -45,3 +45,4 @@ export const userSlice = createSlice({
 })
 
 export const { setUser, setDisplayName } = userSlice.actions;
+export default userSlice.reducer;

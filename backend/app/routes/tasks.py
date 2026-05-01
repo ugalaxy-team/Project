@@ -2,6 +2,7 @@ from fastapi import status, HTTPException
 from fastapi.routing import APIRouter
 from sqlalchemy import select
 
+from app.config import settings
 from app.dependencies import SessionDep
 from app.models import Task
 from app.schemas import TaskCreate, TaskUpdate, TaskPublic
@@ -47,7 +48,11 @@ async def task(tournament_id: int, task_id: int, session: SessionDep):
 @router.post("/", response_model=TaskPublic, status_code=status.HTTP_201_CREATED)
 async def create_task(tournament_id: int, task_data: TaskCreate, session: SessionDep):
     task_dict = task_data.model_dump(exclude={"requirements"})
-    new_task = Task(**task_dict, tournament_id=tournament_id, status_id="draft")
+    new_task = Task(
+        **task_dict,
+        tournament_id=tournament_id,
+        status_id=settings.TASK_STATUS_NAMES.DRAFT,
+    )
     requirements = await get_requirements(task_data.requirements, session)
     new_task.requirements = requirements
 

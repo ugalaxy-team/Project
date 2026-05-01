@@ -1,42 +1,42 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.models import TournamentStatusOption, TaskStatusOption
 
-DEFAULT_TOURNAMENT_STATUSES = {
-    "draft": "Draft",
-    "registration": "Registration",
-    "running": "Running",
-    "finished": "Finished",
-    "canceled": "Canceled",
-}
 
-DEFAULT_TASK_STATUSES = {
-    "draft": "Draft",
-    "active": "Active",
-    "submission_closed": "SubmissionClosed",
-    "evaluated": "Evaluated",
-}
+async def _upsert_option(session: AsyncSession, model, *, name: str, display_name: str):
+    statement = select(model).where(model.name == name)
+    result = await session.execute(statement)
+    option = result.scalar_one_or_none()
+
+    if option is None:
+        session.add(model(name=name, display_name=display_name))
+        return
+
+    if option.display_name != display_name:
+        option.display_name = display_name
 
 
 async def init_tournament_statuses(session: AsyncSession):
-    for name, display in DEFAULT_TOURNAMENT_STATUSES.items():
-        statement = select(TournamentStatusOption).where(
-            TournamentStatusOption.name == name
+    for option in settings.TOURNAMENT_STATUS_OPTIONS:
+        await _upsert_option(
+            session,
+            TournamentStatusOption,
+            name=option["name"],
+            display_name=option["display_name"],
         )
-        result = await session.execute(statement)
-        if not result.scalar_one_or_none():
-            session.add(TournamentStatusOption(name=name, display_name=display))
 
     await session.commit()
 
 
 async def init_task_statuses(session: AsyncSession):
-    for name, display in DEFAULT_TASK_STATUSES.items():
-        statement = select(TaskStatusOption).where(TaskStatusOption.name == name)
-        result = await session.execute(statement)
-
-        if not result.scalar_one_or_none():
-            session.add(TaskStatusOption(name=name, display_name=display))
+    for option in settings.TASK_STATUS_OPTIONS:
+        await _upsert_option(
+            session,
+            TaskStatusOption,
+            name=option["name"],
+            display_name=option["display_name"],
+        )
 
     await session.commit()

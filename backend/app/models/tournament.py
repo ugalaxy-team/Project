@@ -3,6 +3,7 @@ from typing import List
 from sqlalchemy import ForeignKey, inspect
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.config import settings
 from .base import Base
 from .mixin import PKMixin, OptionMixin
 from .task import Task
@@ -57,7 +58,7 @@ class Tournament(Base, PKMixin, AsyncAttrs):
             ]
 
         for task in tasks:
-            if task.status_id == "active":
+            if task.status_id == settings.TASK_STATUS_NAMES.ACTIVE:
                 return task
 
         return None

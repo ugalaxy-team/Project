@@ -57,6 +57,11 @@ export const Footer = () => {
                     Контакти
                   </Link>
                 </li>
+                <li>
+                  <Link to="/news" className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors">
+                    Новини
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>

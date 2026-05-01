@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { roleByName } from "@/config/appConfig";
 
 interface ProfileDropdownProps {
   userRoles?: any[]; 
@@ -27,8 +28,8 @@ export const ProfileDropdown = ({ userRoles = [], isMobile = false }: ProfileDro
     });
   };
 
-  const isAdmin = hasRole("admin");
-  const isOrganizer = hasRole("organizer");
+  const isAdmin = hasRole(roleByName.admin.name);
+  const isOrganizer = hasRole(roleByName.organizer.name);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

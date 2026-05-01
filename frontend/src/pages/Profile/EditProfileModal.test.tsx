@@ -124,13 +124,15 @@ describe('EditProfileModal Component', () => {
 
   it('dispatches setUser to Redux and closes modal on mutation success', () => {
     render(<EditProfileModal isOpen={true} onClose={mockOnClose} />);
-    
-    mutationConfig.onSuccess({
-      full_name: 'Новий Хакер',
-      telegram: '@new',
-      github: 'new',
-      discord: 'new#1234'
-    });
+    mutationConfig.onSuccess(
+      { data: 'success' }, 
+      {
+        full_name: 'Новий Хакер',
+        telegram: '@new',
+        github: 'new',
+        discord: 'new#1234'
+      }
+    );
 
     expect(store.dispatch).toHaveBeenCalled();
     expect(mockOnClose).toHaveBeenCalled();
