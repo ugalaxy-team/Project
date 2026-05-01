@@ -14,7 +14,6 @@ async def send_notification(notification: NotificationCreate, session: SessionDe
     except ValueError:
         raise ValueError('Notification body placeholder was not provided!')
     notification = Notification(**notification.model_dump())
-    user_sid = app.state.user_websocket_sessions[notification.user_id]['sid']
     session.add(notification)
     await session.commit()
     await session.refresh(notification)
@@ -27,5 +26,10 @@ async def send_notification(notification: NotificationCreate, session: SessionDe
         'user_id': notification.user_id,
         'user': user,
     })
-    await sio.emit('notification', payload.model_dump(), user_sid)
+    try:
+        user_sid = app.state.user_websocket_sessions[notification.user_id]['sid']
+        await sio.emit('notification', payload.model_dump(), user_sid)
+    except KeyError:
+        # If the user is offline, don't send the event
+        pass
     return notification

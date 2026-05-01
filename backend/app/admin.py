@@ -1,7 +1,8 @@
-from sqlalchemy import create_engine
-from sqladmin import Admin, ModelView
-from app.db import engine, AsyncSessionLocal
-
+from sqladmin import Admin, ModelView, action, Flash
+from fastapi import Request
+from fastapi.responses import RedirectResponse
+from app.db import engine, AsyncSessionLocal, get_session
+from app.utils.routes import reject_role_request, approve_role_request
 from app.models import (
     Notification,
     RequirementEvaluation,
@@ -38,6 +39,54 @@ class RoleAdmin(NamePrimaryKeyAdmin, model=Role):
 
 class RoleRequestAdmin(ModelView, model=RoleRequest):
     column_list = [RoleRequest.id, RoleRequest.user_id, RoleRequest.role_name]
+
+    @action(
+        name="reject_request",
+        label="Reject",
+        confirmation_message="Are you sure?",
+        add_in_detail=True,
+        add_in_list=True,
+        include_in_schema=True
+    )
+    async def reject_request(self, request: Request):
+        pks = request.query_params.get("pks", "").split(",")
+        if pks:
+            for pk in pks:
+                req: RoleRequest = await self.get_object_for_edit(pk)
+                session = get_session()
+                await reject_role_request(req, session)
+
+        referer = request.headers.get("Referer")
+        Flash.success(request, "Role request rejected successfully")
+        if referer:
+            return RedirectResponse(referer)
+        else:
+            return RedirectResponse(request.url_for("admin:list", identity=self.identity))
+
+    @action(
+        name="approve_request",
+        label="Approve",
+        confirmation_message="Are you sure?",
+        add_in_detail=True,
+        add_in_list=True,
+        include_in_schema=True
+    )
+    async def approve_request(self, request: Request):
+        pks = request.query_params.get("pks", "").split(",")
+        if pks:
+            for pk in pks:
+                req: RoleRequest = await self.get_object_for_edit(pk)
+                session = get_session()
+                await approve_role_request(req, session)
+
+        referer = request.headers.get("Referer")
+        Flash.success(request, "Role request approved successfully")
+        if referer:
+            return RedirectResponse(referer)
+        else:
+            return RedirectResponse(request.url_for("admin:list", identity=self.identity))
+        
+
 
 
 class TournamentAdmin(ModelView, model=Tournament):
