@@ -14,6 +14,7 @@ export const Header = () => {
     { path: "/about-us", label: "Про нас" },
     { path: "/support", label: "Чим ви можете допомогти" },
     { path: "/contact", label: "Контакти" },
+    { path: "/news", label: "Новини"}
   ];
 
   const user = useSelector((s: RootState) => s.user.user);

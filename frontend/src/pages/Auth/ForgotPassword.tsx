@@ -5,6 +5,7 @@ import * as z from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, KeyRound, Mail, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { sendPasswordResetEmail } from "firebase/auth";
 import type { FirebaseError } from "firebase/app";
 
@@ -24,28 +25,33 @@ export const ForgotPassword = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ResetFormData>({
     resolver: zodResolver(resetSchema),
     defaultValues: { email: "" },
   });
 
-  const onSubmit = async (data: ResetFormData) => {
-    setFirebaseError(null);
-    try {
-      await sendPasswordResetEmail(auth, data.email);
+  const mutation = useMutation({
+    mutationFn: (email: string) => sendPasswordResetEmail(auth, email),
+    onSuccess: () => {
       setIsSuccess(true);
-    } catch (e) {
-      const err = e as FirebaseError;
-      setFirebaseError(err.code === "auth/user-not-found" 
-        ? "Користувача з таким email не знайдено." 
-        : "Сталася помилка. Спробуйте ще раз.");
+    },
+    onError: (e: FirebaseError) => {
+      setFirebaseError(
+        e.code === "auth/user-not-found" 
+          ? "Користувача з таким email не знайдено." 
+          : "Сталася помилка. Спробуйте ще раз."
+      );
     }
+  });
+
+  const onSubmit = (data: ResetFormData) => {
+    setFirebaseError(null);
+    mutation.mutate(data.email);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-slate-50 font-inter p-6 text-slate-900">
-
       <motion.div
         className="bg-white/80 backdrop-blur-xl w-full max-w-[440px] rounded-[32px] p-8 md:p-10 shadow-[0_20px_60px_-15px_rgba(15,23,42,0.1)] border border-white/20 relative z-10"
         initial={{ opacity: 0, y: 20 }}
@@ -125,7 +131,7 @@ export const ForgotPassword = () => {
                   type="submit"
                   size="lg"
                   className="w-full shadow-[0_10px_20px_-5px_rgba(79,70,229,0.4)] hover:shadow-[0_15px_25px_-5px_rgba(79,70,229,0.5)] transition-all active:scale-[0.98]"
-                  isLoading={isSubmitting}
+                  isLoading={mutation.isPending}
                 >
                   Надіслати посилання
                 </Button>

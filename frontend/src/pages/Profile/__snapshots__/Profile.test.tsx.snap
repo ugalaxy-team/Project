@@ -136,7 +136,7 @@ exports[`Profile Component > renders correctly and matches snapshot 1`] = `
         </div>
       </div>
       <div
-        class="grid grid-cols-1 md:grid-cols-2 gap-6"
+        class="grid grid-cols-1 mb-10"
       >
         <div
           class="bg-white border border-[#e5e7eb] rounded-[16px] p-6 shadow-sm"
@@ -206,59 +206,6 @@ exports[`Profile Component > renders correctly and matches snapshot 1`] = `
               >
                 ❯
               </span>
-            </div>
-          </div>
-        </div>
-        <div
-          class="bg-white border border-[#e5e7eb] rounded-[16px] p-6 shadow-sm"
-        >
-          <h2
-            class="flex items-center gap-2.5 text-lg font-bold mb-6"
-          >
-            <span
-              class="w-2 h-2 rounded-full bg-[#FBBF24]"
-            />
-             
-            Команди
-          </h2>
-          <div
-            class="space-y-3"
-          >
-            <div
-              class="flex items-center justify-between p-4 bg-[#f9fafb] border border-[#e5e7eb] rounded-xl hover:bg-[#f3f4f6] transition-colors cursor-pointer"
-            >
-              <div
-                class="flex items-center gap-3"
-              >
-                <div
-                  class="w-8 h-8 bg-[#e5e7eb] rounded-full flex items-center justify-center text-[#4b5563]"
-                >
-                  🤖
-                </div>
-                <span
-                  class="font-medium"
-                >
-                  Шалені програмісти
-                </span>
-              </div>
-            </div>
-            <div
-              class="flex items-center justify-between p-4 bg-[#f9fafb] border border-[#e5e7eb] rounded-xl hover:bg-[#f3f4f6] transition-colors cursor-pointer"
-            >
-              <div
-                class="flex items-center gap-3"
-              >
-                <div
-                  class="w-8 h-8 bg-[#e5e7eb] rounded-full flex items-center justify-center text-[#4b5563]"
-                >
-                  🤖
-                </div>
-                <span
-                  class="font-medium"
-                >
-                  Кодери мрії
-                </span>
-              </div>
             </div>
           </div>
         </div>

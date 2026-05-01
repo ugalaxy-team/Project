@@ -22,6 +22,7 @@ import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth"; 
 import { useEffect, useState } from "react";
 import { OrganizerPanel } from "./pages/OrganizerPanel/OrganizerPanel";
+import {NewsPage} from "./pages/NewsPage/NewsPage";
 
 export const App = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -88,6 +89,7 @@ export const App = () => {
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/rules" element={<RulesPage />} />
             <Route path="/organizer-panel" element={<OrganizerPanel/>} />
+            <Route path="/news" element={<NewsPage />} />
             <Route path="*" element={<Page404 />} />
           </Route>
           <Route path="/auth/">

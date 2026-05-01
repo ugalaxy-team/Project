@@ -3,10 +3,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RoleRequestPage } from './RoleRequestPage';
 import { requestRole } from '@/api/requests/requestRole';
 import { auth } from '@/firebase';
 
+// --- Mocks ---
 vi.mock('react-redux', () => ({
   useSelector: vi.fn(),
 }));
@@ -38,23 +40,40 @@ vi.mock('lottie-react', () => ({
 
 describe('RoleRequestPage Component', () => {
   const mockNavigate = vi.fn();
+  let queryClient: QueryClient;
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useNavigate).mockReturnValue(mockNavigate);
     (auth as { currentUser: any }).currentUser = { uid: 'mock-user-123' };
+
+    queryClient = new QueryClient({
+      defaultOptions: {
+        mutations: {
+          retry: false,
+        },
+      },
+    });
   });
+
+  const renderWithProviders = () => {
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <RoleRequestPage />
+      </QueryClientProvider>
+    );
+  };
 
   it('matches snapshot', () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    const { container } = render(<RoleRequestPage />);
-    
+    const { container } = renderWithProviders();
+
     expect(container).toMatchSnapshot();
   });
 
   it('renders correctly with hardcoded organizer role and warning message', () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    render(<RoleRequestPage />);
+    renderWithProviders();
 
     expect(screen.getByText('Заявка на роль Організатора')).toBeInTheDocument();
     expect(screen.getByText(/Наразі ви можете отримати лише роль Організатора/i)).toBeInTheDocument();
@@ -63,17 +82,17 @@ describe('RoleRequestPage Component', () => {
 
   it('allows user to type in form fields', () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    render(<RoleRequestPage />);
+    renderWithProviders();
 
     const nameInput = screen.getByLabelText(/ПІБ \*/i);
     fireEvent.change(nameInput, { target: { value: 'Ivan Franko' } });
-    
+
     expect((nameInput as HTMLInputElement).value).toBe('Ivan Franko');
   });
 
   it('shows error toast when user is not in redux store on submit', () => {
     vi.mocked(useSelector).mockReturnValue(null);
-    const { container } = render(<RoleRequestPage />);
+    const { container } = renderWithProviders();
 
     fireEvent.submit(container.querySelector('form')!);
 
@@ -85,7 +104,7 @@ describe('RoleRequestPage Component', () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
     (auth as { currentUser: any }).currentUser = null;
 
-    const { container } = render(<RoleRequestPage />);
+    const { container } = renderWithProviders();
     fireEvent.submit(container.querySelector('form')!);
 
     await waitFor(() => {
@@ -97,7 +116,7 @@ describe('RoleRequestPage Component', () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
     vi.mocked(requestRole).mockResolvedValue(200 as any);
 
-    const { container } = render(<RoleRequestPage />);
+    const { container } = renderWithProviders();
 
     fireEvent.change(screen.getByLabelText(/ПІБ \*/i), { target: { value: 'Tolka' } });
     fireEvent.change(screen.getByLabelText(/Email \/ Telegram \*/i), { target: { value: '@tolka' } });
@@ -129,7 +148,7 @@ describe('RoleRequestPage Component', () => {
       response: { status: 400, data: { detail: 'Role requests already exists!' } }
     });
 
-    const { container } = render(<RoleRequestPage />);
+    const { container } = renderWithProviders();
 
     fireEvent.submit(container.querySelector('form')!);
 
@@ -143,7 +162,7 @@ describe('RoleRequestPage Component', () => {
     vi.mocked(useSelector).mockReturnValue({ id: '123' });
     vi.mocked(requestRole).mockRejectedValue(new Error('Internal Server Error'));
 
-    const { container } = render(<RoleRequestPage />);
+    const { container } = renderWithProviders();
 
     fireEvent.submit(container.querySelector('form')!);
 
