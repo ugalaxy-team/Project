@@ -1,3 +1,5 @@
+import asyncio
+
 from app.models import User
 from firebase_admin import auth
 from app.dependencies import SessionDep
@@ -6,7 +8,7 @@ from app.routes.users import get_user
 from app.config import settings
 
 async def get_or_create_user_from_token(token: dict, session: SessionDep) -> User:
-    u: auth.UserRecord = auth.get_user_by_email(token['email'])
+    u: auth.UserRecord = await asyncio.to_thread(auth.get_user_by_email, token['email'])
     try:
         user = await get_user(u.uid, session)
         return user
