@@ -1,6 +1,5 @@
-from datetime import timedelta
-
 from sqladmin import Admin, ModelView, action, Flash
+from sqladmin import _menu
 from sqladmin.authentication import AuthenticationBackend
 from fastapi import Request
 from fastapi.responses import RedirectResponse
@@ -254,7 +253,13 @@ class AdminAuth(AuthenticationBackend):
             request.state.admin_user = user
             return True
 
+class FrontendItemMenu(_menu.ItemMenu):
+    @property
+    def type_(self) -> str:
+        return "View"
 
+    def url(self, request: Request):
+        return settings.FRONTEND_URL
 
 
 def setup_admin(app):
@@ -267,6 +272,7 @@ def setup_admin(app):
         templates_dir='app/admin/templates',
         authentication_backend=authentication_backend
     )
+    admin._menu.add(FrontendItemMenu("Back to frontend", icon="fa-solid fa-house"))
     admin.templates.env.globals["firebase_config"] = {
         "apiKey": settings.VITE_FIREBASE_API_KEY,
         "authDomain": settings.FIREBASE_AUTH_DOMAIN,

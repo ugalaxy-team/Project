@@ -44,6 +44,7 @@ class Settings(BaseSettings):
 
     SECRET_KEY: str = os.getenv("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI: str = os.getenv("SQLALCHEMY_DATABASE_URI")
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL")
     FIREBASE_CERT_PATH: str = str(Path(BACKEND_DIR, 'app', 'serviceAccountKey.json'))
     VITE_FIREBASE_API_KEY: str = Field(validation_alias="VITE_FIREBASE_API_KEY")
     FIREBASE_AUTH_DOMAIN: str = Field(
