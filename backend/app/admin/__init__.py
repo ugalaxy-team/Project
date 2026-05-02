@@ -208,11 +208,10 @@ class AdminAuth(AuthenticationBackend):
                 expires_in=settings.ADMIN_SESSION_EXPIRES,
                 app=firebase,
             )
-        except Exception as e:
+        except Exception:
             return False
-        async for session in get_session():
+        async with AsyncSessionLocal() as session:
             user = await get_or_create_user_from_token(decoded_token, session)
-            print(user)
             if not has_admin_role(user):
                 return False
 
@@ -244,7 +243,7 @@ class AdminAuth(AuthenticationBackend):
         except Exception:
             request.session.clear()
             return False
-        async for session in get_session():
+        async with AsyncSessionLocal() as session:
             user = await get_or_create_user_from_token(decoded_claims, session)
             if not has_admin_role(user):
                 request.session.clear()
