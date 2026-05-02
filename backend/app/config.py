@@ -50,6 +50,7 @@ class Settings(BaseSettings):
     CORS_ORIGINS: list[str] = [
         "http://localhost",
         "http://localhost:5173",
+        "http://127.0.0.1:5173",
     ]
     ROLE_REQUEST_NOTIFICATION_MESSAGE: str = """
     A user $user requested a role $role. Do you approve this request?

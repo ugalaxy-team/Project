@@ -12,7 +12,12 @@ import app.routes.team_members as team_members
 import app.routes.teams as teams
 import app.routes.tournaments as tournaments
 import app.routes.users as users
-from app.core.seeds import init_tournament_statuses, init_task_statuses, init_categories, init_roles
+from app.core.seeds import (
+    init_tournament_statuses,
+    init_task_statuses,
+    init_categories,
+    init_roles,
+)
 from app.db import AsyncSessionLocal
 from .config import settings
 from .admin import setup_admin
@@ -31,12 +36,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-app.state.user_websocket_sessions = {}
-
-from .websockets import *
-
-socket_app = socketio.ASGIApp(sio, other_asgi_app=app)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -44,6 +43,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.state.user_websocket_sessions = {}
+
 
 app.include_router(profile.router)
 app.include_router(role_requests.router)
@@ -54,5 +55,9 @@ app.include_router(team_members.router)
 app.include_router(teams.router)
 app.include_router(tournaments.router)
 app.include_router(users.router)
+
+from .websockets import *
+
+socket_app = socketio.ASGIApp(sio, other_asgi_app=app)
 
 setup_admin(app)
