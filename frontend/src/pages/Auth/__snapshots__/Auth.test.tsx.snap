@@ -104,12 +104,12 @@ exports[`AuthPage Component > matches snapshot 1`] = `
           <h2
             class="font-quicksand font-extrabold text-[34px] text-slate-900 leading-[1.1] mb-1.5"
           >
-            Створити акаунт
+            З поверненням!
           </h2>
           <p
             class="text-[15px] font-medium text-slate-600"
           >
-            Готовий до нових челенджів?
+            Продовжуйте свій шлях в UGalaxy
           </p>
         </div>
         <div
@@ -119,38 +119,19 @@ exports[`AuthPage Component > matches snapshot 1`] = `
             class="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-full shadow-sm z-0"
           />
           <button
-            class="flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 text-slate-900"
-            type="button"
-          >
-            Реєстрація
-          </button>
-          <button
-            class="flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 text-slate-500"
+            class="flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 cursor-pointer transition-colors text-slate-900"
             type="button"
           >
             Вхід
           </button>
+          <button
+            class="flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 cursor-pointer transition-colors text-slate-500"
+            type="button"
+          >
+            Реєстрація
+          </button>
         </div>
         <form>
-          <div
-            style="overflow: hidden; height: auto; opacity: 1;"
-          >
-            <div
-              class="mb-4"
-            >
-              <label
-                class="font-quicksand font-bold text-[14px] text-slate-900 block mb-2"
-              >
-                Нікнейм
-              </label>
-              <input
-                class="w-full px-5 py-3.5 bg-slate-50 border-2 rounded-full outline-none transition-all border-slate-200 focus:border-indigo-500"
-                name="displayName"
-                placeholder="Наприклад, izachoc"
-                type="text"
-              />
-            </div>
-          </div>
           <div
             class="mb-4"
           >
@@ -178,7 +159,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
                 Пароль
               </label>
               <a
-                class="text-[13px] font-semibold text-indigo-500 opacity-0 pointer-events-none"
+                class="text-[13px] font-semibold text-indigo-500 cursor-pointer hover:underline opacity-100"
                 data-discover="true"
                 href="/auth/forgot-password"
               >
@@ -195,7 +176,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
                 type="password"
               />
               <button
-                class="absolute right-4 text-slate-400 p-1"
+                class="absolute right-4 text-slate-400 p-1 cursor-pointer"
                 type="button"
               >
                 <svg
@@ -224,11 +205,11 @@ exports[`AuthPage Component > matches snapshot 1`] = `
             </div>
           </div>
           <button
-            class="w-full mt-2"
+            class="w-full mt-2 cursor-pointer"
             data-testid="custom-button"
             type="submit"
           >
-            Зареєструватись
+            Увійти
           </button>
           <div
             class="flex items-center gap-3.5 my-5"
@@ -246,7 +227,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
             />
           </div>
           <button
-            class="w-full"
+            class="w-full cursor-pointer"
             data-testid="custom-button"
             type="button"
             variant="outline"
@@ -261,11 +242,11 @@ exports[`AuthPage Component > matches snapshot 1`] = `
           <p
             class="text-center text-[12px] text-slate-400 font-medium mt-5"
           >
-            Реєструючись
+            Входячи
             , ти погоджуєшся з 
             <br />
             <a
-              class="text-indigo-500 font-semibold hover:underline"
+              class="text-indigo-500 font-semibold hover:underline cursor-pointer"
               href="#"
             >
               Умовами використання
@@ -274,7 +255,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
             та
              
             <a
-              class="text-indigo-500 font-semibold hover:underline"
+              class="text-indigo-500 font-semibold hover:underline cursor-pointer"
               href="#"
             >
               Політикою конфіденційності
