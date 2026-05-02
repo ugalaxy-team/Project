@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from sqladmin import Admin, ModelView, action, Flash
+from sqladmin.authentication import AuthenticationBackend
 from fastapi import Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy import select
@@ -23,7 +26,11 @@ from app.models import (
     TournamentStatusOption,
     User,
 )
-
+from app.config import settings
+from firebase_admin import auth
+from app.firebase import firebase
+from app.utils import get_or_create_user_from_token, has_admin_role
+from app.db import get_session
 
 class NamePrimaryKeyAdmin(ModelView):
     form_include_pk = True
@@ -188,8 +195,87 @@ class NotificationAdmin(ModelView, model=Notification):
     column_list = [Notification.id, Notification.user_id, Notification.body]
 
 
+class AdminAuth(AuthenticationBackend):
+    async def login(self, request: Request) -> bool:
+        form = await request.form()
+        id_token = str(form.get("id_token", "")).strip()
+        if not id_token:
+            return False
+
+        try:
+            decoded_token = auth.verify_id_token(id_token, firebase, clock_skew_seconds=10)
+            session_cookie = auth.create_session_cookie(
+                id_token,
+                expires_in=settings.ADMIN_SESSION_EXPIRES,
+                app=firebase,
+            )
+        except Exception as e:
+            return False
+        async for session in get_session():
+            user = await get_or_create_user_from_token(decoded_token, session)
+            print(user)
+            if not has_admin_role(user):
+                return False
+
+            request.session.update(
+                {
+                    settings.ADMIN_SESSION_COOKIE_KEY: session_cookie,
+                    "admin_user_id": user.id,
+                    "admin_user_email": user.email,
+                }
+            )
+            return True
+
+    async def logout(self, request: Request) -> bool:
+        request.session.clear()
+        return True
+
+    async def authenticate(self, request: Request) -> bool:
+        session_cookie = request.session.get(settings.ADMIN_SESSION_COOKIE_KEY)
+        if not session_cookie:
+            return False
+    
+        try:
+            decoded_claims = auth.verify_session_cookie(
+                session_cookie,
+                check_revoked=True,
+                app=firebase,
+                clock_skew_seconds=10,
+            )
+        except Exception:
+            request.session.clear()
+            return False
+        async for session in get_session():
+            user = await get_or_create_user_from_token(decoded_claims, session)
+            if not has_admin_role(user):
+                request.session.clear()
+                return False
+
+            request.state.admin_user = user
+            return True
+
+
+
+
 def setup_admin(app):
-    admin = Admin(app, engine, AsyncSessionLocal, title="Tournament Admin", templates_dir='app/admin/templates')
+    authentication_backend = AdminAuth(secret_key=settings.SECRET_KEY)
+    admin = Admin(
+        app, 
+        engine, 
+        AsyncSessionLocal, 
+        title="Tournament Admin", 
+        templates_dir='app/admin/templates',
+        authentication_backend=authentication_backend
+    )
+    admin.templates.env.globals["firebase_config"] = {
+        "apiKey": settings.VITE_FIREBASE_API_KEY,
+        "authDomain": settings.FIREBASE_AUTH_DOMAIN,
+        "projectId": settings.FIREBASE_PROJECT_ID,
+        "storageBucket": settings.FIREBASE_STORAGE_BUCKET,
+        "messagingSenderId": settings.FIREBASE_MESSAGING_SENDER_ID,
+        "appId": settings.FIREBASE_APP_ID,
+        "measurementId": settings.FIREBASE_MEASUREMENT_ID,
+    }
     admin.add_view(UserAdmin)
     admin.add_view(RoleAdmin)
     admin.add_view(RoleRequestAdmin)
