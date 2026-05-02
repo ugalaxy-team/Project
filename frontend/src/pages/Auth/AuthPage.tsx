@@ -69,7 +69,7 @@ type AuthFormData = z.infer<typeof authSchema>;
 
 export const AuthPage = () => {
   const navigate = useNavigate();
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
 
@@ -82,7 +82,7 @@ export const AuthPage = () => {
   } = useForm<AuthFormData>({
     resolver: zodResolver(authSchema),
     defaultValues: {
-      mode: "register",
+      mode: "login",
       displayName: "",
       email: "",
       password: "",
@@ -193,7 +193,6 @@ export const AuthPage = () => {
             </p>
           </div>
 
-          {/* Легка, м'яка хвилька */}
           <div className="absolute top-0 -right-[1px] w-[6vw] h-full z-10 text-slate-50 pointer-events-none">
             <svg
               viewBox="0 0 100 1440"
@@ -229,21 +228,21 @@ export const AuthPage = () => {
             <div className="flex bg-slate-100 rounded-full p-1.5 relative mb-7">
               <motion.div
                 className="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-full shadow-sm z-0"
-                animate={{ x: isLogin ? "100%" : "0%" }}
+                animate={{ x: isLogin ? "0%" : "100%" }}
               />
               <button
                 type="button"
-                className={`flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 ${!isLogin ? "text-slate-900" : "text-slate-500"}`}
-                onClick={() => toggleMode("register")}
-              >
-                Реєстрація
-              </button>
-              <button
-                type="button"
-                className={`flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 ${isLogin ? "text-slate-900" : "text-slate-500"}`}
+                className={`flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 cursor-pointer transition-colors ${isLogin ? "text-slate-900" : "text-slate-500"}`}
                 onClick={() => toggleMode("login")}
               >
                 Вхід
+              </button>
+              <button
+                type="button"
+                className={`flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 cursor-pointer transition-colors ${!isLogin ? "text-slate-900" : "text-slate-500"}`}
+                onClick={() => toggleMode("register")}
+              >
+                Реєстрація
               </button>
             </div>
 
@@ -300,7 +299,7 @@ export const AuthPage = () => {
                   </label>
                   <Link
                     to="/auth/forgot-password"
-                    className={`text-[13px] font-semibold text-indigo-500 ${isLogin ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+                    className={`text-[13px] font-semibold text-indigo-500 cursor-pointer hover:underline ${isLogin ? "opacity-100" : "opacity-0 pointer-events-none"}`}
                   >
                     Забули пароль?
                   </Link>
@@ -314,7 +313,7 @@ export const AuthPage = () => {
                   />
                   <button
                     type="button"
-                    className="absolute right-4 text-slate-400 p-1"
+                    className="absolute right-4 text-slate-400 p-1 cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -336,7 +335,7 @@ export const AuthPage = () => {
               <Button
                 type="submit"
                 size="lg"
-                className="w-full mt-2"
+                className="w-full mt-2 cursor-pointer"
                 isLoading={isSubmitting}
               >
                 {isLogin ? "Увійти" : "Зареєструватись"}
@@ -353,7 +352,7 @@ export const AuthPage = () => {
               <Button
                 variant="outline"
                 type="button"
-                className="w-full"
+                className="w-full cursor-pointer"
                 leftIcon={<GoogleIcon />}
                 onClick={handleGoogleSignIn}
               >
@@ -364,14 +363,14 @@ export const AuthPage = () => {
                 {isLogin ? "Входячи" : "Реєструючись"}, ти погоджуєшся з <br />
                 <a
                   href="#"
-                  className="text-indigo-500 font-semibold hover:underline"
+                  className="text-indigo-500 font-semibold hover:underline cursor-pointer"
                 >
                   Умовами використання
                 </a>{" "}
                 та{" "}
                 <a
                   href="#"
-                  className="text-indigo-500 font-semibold hover:underline"
+                  className="text-indigo-500 font-semibold hover:underline cursor-pointer"
                 >
                   Політикою конфіденційності
                 </a>
