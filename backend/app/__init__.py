@@ -12,12 +12,7 @@ import app.routes.team_members as team_members
 import app.routes.teams as teams
 import app.routes.tournaments as tournaments
 import app.routes.users as users
-from app.core.seeds import (
-    init_tournament_statuses,
-    init_task_statuses,
-    init_categories,
-    init_roles,
-)
+from app.core.seeds import init_static_data
 from app.db import AsyncSessionLocal
 from .config import settings
 from .admin import setup_admin
@@ -27,11 +22,7 @@ from .admin import setup_admin
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with AsyncSessionLocal() as session:
-        await init_tournament_statuses(session)
-        await init_task_statuses(session)
-
-        await init_categories(session)
-        await init_roles(session)
+        await init_static_data(session)
     yield
 
 

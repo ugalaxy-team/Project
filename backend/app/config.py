@@ -24,10 +24,17 @@ class OptionConfig(BaseModel):
     display_name: str
 
 
+class CategoryConfig(BaseModel):
+    name: str
+    main_id: str | None = None
+
+
 class SharedAppConfig(BaseModel):
     roles: list[RoleConfig]
     tournament_statuses: list[OptionConfig]
     task_statuses: list[OptionConfig]
+    categories: list[CategoryConfig]
+    role_request_options: list[OptionConfig]
 
 
 def load_shared_app_config() -> SharedAppConfig:
@@ -35,8 +42,10 @@ def load_shared_app_config() -> SharedAppConfig:
         return SharedAppConfig.model_validate(json.load(config_file))
 
 
-def option_names(options: list[RoleConfig] | list[OptionConfig]) -> SimpleNamespace:
-    return SimpleNamespace(**{option.name.upper(): option.name for option in options})
+def option_names(options: list[Any]) -> SimpleNamespace:
+    return SimpleNamespace(
+        **{option.name.upper().replace("&", "AND"): option.name for option in options}
+    )
 
 
 class Settings(BaseSettings):
@@ -92,6 +101,22 @@ class Settings(BaseSettings):
     @property
     def TOURNAMENT_CREATOR_ROLES(self) -> list[str]:
         return [self.ROLE_NAMES.ADMIN, self.ROLE_NAMES.ORGANIZER]
+
+    @property
+    def ROLE_REQUEST_OPTION_NAMES(self) -> SimpleNamespace:
+        return option_names(self.SHARED_APP_CONFIG.role_request_options)
+
+    @property
+    def ROLE_REQUEST_INFO_OPTIONS(self) -> list[dict[str, Any]]:
+        return [opt.model_dump() for opt in self.SHARED_APP_CONFIG.role_request_options]
+
+    @property
+    def TASK_CATEGORIES(self) -> SimpleNamespace:
+        return option_names(self.SHARED_APP_CONFIG.categories)
+
+    @property
+    def CATEGORY_LIST(self) -> list[dict[str, Any]]:
+        return [cat.model_dump() for cat in self.SHARED_APP_CONFIG.categories]
 
 
 settings = Settings()
