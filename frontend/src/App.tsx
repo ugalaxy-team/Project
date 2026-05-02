@@ -1,31 +1,17 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { MainLayout } from "./components/MainLayout";
-import { Home } from "./pages/Home/Home";
-import { Profile } from "./pages/Profile/Profile";
-import { TournamentsPage } from "./pages/TournamentsPage/TournamentsPage";
-import { TournamentPage } from "./pages/TournamentPage/TournamentPage";
-import { Page404 } from "./pages/Page404/Page404";
-import { ContactPage } from "./pages/Contact/Contact";
-import { AboutUs } from "./pages/AboutUs/AboutUs";
-import { SupportPage } from "./pages/SupportPage/SupportPage";
-import { FaqPage } from "./pages/FaqPage/FaqPage";
-import { RulesPage } from "./pages/Rules/Rules";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import ForgotPassword from "./pages/Auth/ForgotPassword";
-import { RoleRequestPage } from "./pages/GetRole/RoleRequestPage";
-import { Toaster, toast } from 'react-hot-toast'; 
-import { AuthPage } from "./pages/Auth/AuthPage";
-import SignOut from "./pages/Auth/SignOut";
+import { Toaster, toast } from 'sonner';
 import { useNotificationsSocket } from "./hooks/useNotificationsSocket";
 import { io, Socket } from 'socket.io-client';
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth"; 
-import { useEffect, useState } from "react";
-import { OrganizerPanel } from "./pages/OrganizerPanel/OrganizerPanel";
-import {NewsPage} from "./pages/NewsPage/NewsPage";
+import { useEffect, useState, useRef } from "react";
+import { Router } from "./routers/Router";
 
+const COOLDOWN_TIME = 3 * 60 * 1000; 
 export const App = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
+
+  const lastErrorTime = useRef<number>(0);
+  const wasError = useRef<boolean>(false);
 
   useEffect(() => {
     let currentSocket: Socket | null = null;
@@ -34,13 +20,31 @@ export const App = () => {
       if (user) {
         const token = await user.getIdToken();
         currentSocket = io(import.meta.env.VITE_SOCKETIO_SERVER_URL, {
-          auth: { token }
+          auth: { token },
+          reconnectionDelay: 5000,
         });
+
         currentSocket.on("connect_error", () => {
-          toast.error("Проблеми з сервером :(. Сповіщення тимчасово не працюють", { id: "socket-error" });
+          const now = Date.now();
+
+          if (now - lastErrorTime.current > COOLDOWN_TIME || !wasError.current) {
+            toast.error("Проблеми з сервером :(", {
+              id: "socket-error",
+              description: "Сповіщення тимчасово не працюють",
+              duration: 5000, 
+            });
+            
+            lastErrorTime.current = now;
+            wasError.current = true;
+          }
         });
+
         currentSocket.on("connect", () => {
-          toast.dismiss("socket-error");
+          if (wasError.current) {
+            toast.success("Зв'язок відновлено!", { id: "socket-error" });
+            wasError.current = false;
+            lastErrorTime.current = 0;
+          }
         });
 
         setSocket(currentSocket);
@@ -51,54 +55,19 @@ export const App = () => {
         }
       }
     });
+
     return () => {
       unsubscribeAuth();
-      if (currentSocket) {
-        currentSocket.disconnect();
-      }
+      if (currentSocket) currentSocket.disconnect();
     };
   }, []);
+
   useNotificationsSocket(socket);
 
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
-      <BrowserRouter>
-        <Routes>
-          {/* Сторінки з Хедером та Футером */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/tournaments" element={<TournamentsPage />} />
-            <Route path="/tournament/:id" element={<TournamentPage />} />
-            <Route path="/role-request-form" element={
-              <ProtectedRoute>
-                <RoleRequestPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/support" element={<SupportPage />} />
-            <Route path="/faq" element={<FaqPage />} />
-            <Route path="/rules" element={<RulesPage />} />
-            <Route path="/organizer-panel" element={<OrganizerPanel/>} />
-            <Route path="/news" element={<NewsPage />} />
-            <Route path="*" element={<Page404 />} />
-          </Route>
-          <Route path="/auth/">
-            <Route index element={<AuthPage />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="sign-out" element={<SignOut />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <Toaster position="top-center" richColors expand={false} />
+      <Router />
     </>
   );
 };
