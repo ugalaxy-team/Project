@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { requestRole } from '@/api/requests/requestRole';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { auth } from '@/firebase';
 import { roleByName } from '@/config/appConfig';
 import { useMutation } from '@tanstack/react-query';
@@ -34,17 +34,17 @@ const RoleRequestPage = () => {
         mutationFn: ({ role, currentUser, userId, info }: MutationParams) =>
             requestRole(role, currentUser, userId, info),
         onSuccess: () => {
-            toast.success("Заявку відправлено! Очікуйте на відповідь");
+            toast.success("Заявку відправлено! Очікуйте на відповідь", { id: "role-submit" });
             navigate("/");
         },
         onError: (error: any) => {
             if (error.response && error.response.status === 400) {
                 if (error.response.data?.detail === "Role requests already exists!") {
-                    toast.error("Ви вже подавали заявку на цю роль! Очікуйте на рішення.");
+                    toast.error("Ви вже подавали заявку на цю роль! Очікуйте на рішення.", { id: "role-error" });
                     return;
                 }
             }
-            toast.error("Щось пішло не так. Спробуйте пізніше.");
+            toast.error("Щось пішло не так. Спробуйте пізніше.", { id: "role-error" });
         }
     });
 
@@ -52,7 +52,7 @@ const RoleRequestPage = () => {
         e.preventDefault();
 
         if (!user) {
-            toast.error("Користувач не знайдений або не авторизований!");
+            toast.error("Користувач не знайдений або не авторизований!", { id: "auth-error" });
             return;
         }
 
