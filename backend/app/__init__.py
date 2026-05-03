@@ -12,6 +12,7 @@ import app.routes.team_members as team_members
 import app.routes.teams as teams
 import app.routes.tournaments as tournaments
 import app.routes.users as users
+
 from app.core.seeds import init_static_data
 from app.db import AsyncSessionLocal
 from .config import settings

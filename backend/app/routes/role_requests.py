@@ -17,8 +17,11 @@ from app.schemas import (
     NotificationCreate,
 )
 from app.config import settings
-from app.util import send_notification
-from app.utils.routes import approve_role_request, reject_role_request
+from app.utils.routes import (
+    approve_role_request,
+    reject_role_request,
+    send_notification,
+)
 
 router = APIRouter(prefix="/role-requests", tags=["role-requests"])
 

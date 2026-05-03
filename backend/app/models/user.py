@@ -6,6 +6,7 @@ from .base import Base
 from .mixin import PKMixin
 from .team import Team, TeamMember
 from .tournament import Tournament
+from app.config import settings
 
 user_roles = Table(
     "user_roles",
@@ -53,7 +54,7 @@ class User(Base, PKMixin):
 
     @property
     def is_admin(self) -> bool:
-        return any(role.name == "admin" for role in self.roles)
+        return any(role.name == settings.ROLE_NAMES.ADMIN for role in self.roles)
 
     def __repr__(self):
         return f"<User(id={self.id}, full_name={self.full_name}, email={self.email})>"

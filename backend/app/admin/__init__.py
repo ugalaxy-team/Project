@@ -3,8 +3,10 @@ from sqladmin import _menu
 from sqladmin.authentication import AuthenticationBackend
 from fastapi import Request
 from fastapi.responses import RedirectResponse
+from firebase_admin import auth
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+
 from app.db import engine, AsyncSessionLocal
 from app.utils.routes import reject_role_request, approve_role_request
 from app.models import (
@@ -26,9 +28,8 @@ from app.models import (
     User,
 )
 from app.config import settings
-from firebase_admin import auth
 from app.firebase import firebase
-from app.utils import get_or_create_user_from_token, has_admin_role
+from app.dependencies import get_or_create_user_from_token
 from app.db import get_session
 
 class NamePrimaryKeyAdmin(ModelView):
@@ -245,7 +246,7 @@ class AdminAuth(AuthenticationBackend):
             return False
         async with AsyncSessionLocal() as session:
             user = await get_or_create_user_from_token(decoded_claims, session)
-            if not has_admin_role(user):
+            if not user.is_admin:
                 request.session.clear()
                 return False
 
