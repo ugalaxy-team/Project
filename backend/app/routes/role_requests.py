@@ -1,11 +1,14 @@
-from fastapi import APIRouter, status, HTTPException, Depends
-from fastapi.encoders import jsonable_encoder
-from typing import Annotated
-from app.dependencies import SessionDep, CurrentUserDep, get_current_user
+from fastapi import APIRouter, status, HTTPException
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
-from app.models import RoleRequest, User, Role, RoleRequestInfo
+from app.dependencies import (
+    AdminUserDep,
+    CurrentUserDep,
+    RoleRequestDep,
+    SessionDep,
+    get_current_user,
+)
+from app.models import RoleRequest, RoleRequestInfo
 from app.schemas import (
     RoleRequestPublic,
     RoleRequestCreate,
@@ -17,41 +20,6 @@ from app.util import send_notification
 from app.utils.routes import approve_role_request, reject_role_request
 
 router = APIRouter(prefix="/role-requests", tags=["role-requests"])
-
-
-async def get_role_request(request_id: int, session: SessionDep) -> RoleRequest:
-    statement = (
-        select(RoleRequest)
-        .options(
-            selectinload(RoleRequest.info).selectinload(RoleRequestInfo.option),
-            selectinload(RoleRequest.role),
-            selectinload(RoleRequest.user),
-        )
-        .where(RoleRequest.id == request_id)
-    )
-    result = await session.execute(statement)
-    request = result.scalar()
-    if not request:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Role request not found!")
-
-    return request
-
-
-async def get_admin_user(current_user: CurrentUserDep, session: SessionDep) -> User:
-    statement = (
-        select(User)
-        .join(User.roles)
-        .where(User.id == current_user.id, Role.name == "admin")
-    )
-    user = (await session.execute(statement)).scalar()
-    if not user:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Permission denied!")
-    return user
-
-
-RoleRequestDep = Annotated[RoleRequest, Depends(get_role_request)]
-
-AdminUserDep = Annotated[User, Depends(get_admin_user)]
 
 
 @router.get("/", response_model=list[RoleRequestPublic])
