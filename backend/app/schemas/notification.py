@@ -6,7 +6,6 @@ class NotificationBase(BaseModel):
     
     body: str = Field(..., description="Notification body")
     user_id: int | None = Field(None, description="Notification receiver id")
-    is_global: bool = Field(..., description='Is notification global?')
 
 from .user import UserPublic
 class NotificationPublic(NotificationBase):

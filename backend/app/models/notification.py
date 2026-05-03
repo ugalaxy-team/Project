@@ -11,7 +11,6 @@ class Notification(Base, PKMixin):
 
     body: Mapped[str] = mapped_column(String(4096))
     user_id: Mapped[Optional[int]] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
-    is_global: Mapped[bool] = mapped_column(default=False)
 
     user: Mapped[Optional["User"]] = relationship(
         back_populates="notifications", lazy="selectin"

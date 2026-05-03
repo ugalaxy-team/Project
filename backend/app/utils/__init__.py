@@ -28,7 +28,6 @@ async def send_notification(notification: NotificationCreate, session: SessionDe
     notification_dict = {
         'body': notification.body,
         'user_id': notification.user_id,
-        'is_global': notification.is_global,
     }
     if notification.user_id:
         user = await get_user(notification.user_id, session)

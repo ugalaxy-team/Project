@@ -38,5 +38,5 @@ def receive_after_insert(mapper, connection, target: News):
     from .notification import Notification
     if target.is_important:
         connection.execute(
-            insert(Notification).values(body=target.excerpt, is_global=True, user_id=None)
+            insert(Notification).values(body=target.excerpt, user_id=None)
         )
