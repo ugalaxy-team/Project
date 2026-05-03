@@ -4,6 +4,7 @@ from typing import Annotated
 from app.dependencies import SessionDep, CurrentUserDep, get_current_user
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+
 from app.models import RoleRequest, User, Role, RoleRequestInfo
 from app.schemas import (
     RoleRequestPublic,
@@ -39,8 +40,8 @@ async def get_role_request(request_id: int, session: SessionDep) -> RoleRequest:
 async def get_admin_user(current_user: CurrentUserDep, session: SessionDep) -> User:
     statement = (
         select(User)
-        .where(User.id == current_user.id)
-        .filter(User.roles.contains(Role.name == "admin"))
+        .join(User.roles)
+        .where(User.id == current_user.id, Role.name == "admin")
     )
     user = (await session.execute(statement)).scalar()
     if not user:
@@ -54,14 +55,18 @@ AdminUserDep = Annotated[User, Depends(get_admin_user)]
 
 
 @router.get("/", response_model=list[RoleRequestPublic])
-async def role_requests(session: SessionDep):
-    statement = select(RoleRequest).options(
-        selectinload(RoleRequest.info).selectinload(RoleRequestInfo.option),
-        selectinload(RoleRequest.role),
-        selectinload(RoleRequest.user),
-    )
-    requests = await session.execute(statement)
-    return requests.scalars().all()
+async def role_requests(
+    session: SessionDep,
+    current_user: CurrentUserDep,
+):
+    is_admin = any(role.name == "admin" for role in current_user.roles)
+    statement = select(RoleRequest)
+
+    if not is_admin:
+        statement = statement.where(RoleRequest.user_id == current_user.id)
+
+    result = await session.execute(statement)
+    return result.scalars().all()
 
 
 @router.post("/", response_model=RoleRequestPublic, status_code=status.HTTP_201_CREATED)
@@ -99,29 +104,52 @@ async def get_request(request_id: int, session: SessionDep, request: RoleRequest
     return request
 
 
-# TODO: implement role request dis/approval permission handling
 @router.post("/{request_id}/approve/", response_model=UserPublic)
-async def approve_request(request: RoleRequestDep, session: SessionDep):
+async def approve_request(
+    request: RoleRequestDep, session: SessionDep, admin: AdminUserDep
+):
     await approve_role_request(request, session)
+    await session.commit()
+
+    message = settings.ROLE_REQUEST_APPROVED_MESSAGE.replace("$role", request.role_name)
+
+    notification_data = NotificationCreate(
+        user_id=request.user_id, message=message.strip()
+    )
+    await send_notification(notification_data, session)
+
     return request.user
 
 
 @router.post("/{request_id}/reject/", response_model=UserPublic)
-async def reject_request(request: RoleRequestDep, session: SessionDep):
+async def reject_request(
+    request: RoleRequestDep, session: SessionDep, admin: AdminUserDep
+):
+
     await reject_role_request(request, session)
+    await session.commit()
+
+    message = settings.ROLE_REQUEST_REJECTED_MESSAGE.replace("$role", request.role_name)
+    notification_data = NotificationCreate(
+        user_id=request.user_id, message=message.strip()
+    )
+
+    await send_notification(notification_data, session)
+
     return request.user
 
 
-@router.delete(
-    "/{request_id}/",
-    status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(get_current_user)],
-)
+@router.delete("/{request_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_request(
-    request_id: int,
     request: RoleRequestDep,
     session: SessionDep,
     current_user: CurrentUserDep,
 ):
+    if request.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only delete your own requests",
+        )
+
     await session.delete(request)
     await session.commit()
