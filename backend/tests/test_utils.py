@@ -10,7 +10,7 @@ from app.websockets import sio
 async def test_send_role_request_notification(db_session, create, mocker):
     user = await create(UserFactory)
     role = await create(RoleFactory)
-    notification = NotificationCreate(body=settings.ROLE_REQUEST_NOTIFICATION_MESSAGE, user_id=user.id)
+    notification = NotificationCreate(body=settings.ROLE_REQUEST_NOTIFICATION_MESSAGE, user_id=user.id, is_global=False)
     app.state.user_websocket_sessions[user.id] = {
         'sid': 'test'
     }

@@ -24,18 +24,22 @@ from app.models import (
     Tournament,
     TournamentStatusOption,
     User,
+    News,
+    NewsCattegory
 )
 from app.config import settings
 from firebase_admin import auth
 from app.firebase import firebase
 from app.utils import get_or_create_user_from_token, has_admin_role
-from app.db import get_session
 
-class NamePrimaryKeyAdmin(ModelView):
+class BaseModelView(ModelView):
+    form_excluded_columns = ('created_at', 'updated_at')
+
+class NamePrimaryKeyAdmin(BaseModelView):
     form_include_pk = True
 
 
-class UserAdmin(ModelView, model=User):
+class UserAdmin(BaseModelView, model=User):
     column_list = [User.id, User.full_name, User.email, User.firebase_uid, User.created_at]
     column_searchable_list = [User.full_name, User.email, User.firebase_uid]
 
@@ -45,7 +49,7 @@ class RoleAdmin(NamePrimaryKeyAdmin, model=Role):
     column_searchable_list = [Role.name]
 
 
-class RoleRequestAdmin(ModelView, model=RoleRequest):
+class RoleRequestAdmin(BaseModelView, model=RoleRequest):
     column_list = [RoleRequest.id, RoleRequest.user_id, RoleRequest.role_name]
     list_template = 'role_request_list.html'
 
@@ -109,7 +113,7 @@ class RoleRequestAdmin(ModelView, model=RoleRequest):
 
 
 
-class TournamentAdmin(ModelView, model=Tournament):
+class TournamentAdmin(BaseModelView, model=Tournament):
     column_list = [
         Tournament.id,
         Tournament.title,
@@ -127,7 +131,7 @@ class TournamentStatusOptionAdmin(NamePrimaryKeyAdmin, model=TournamentStatusOpt
     column_list = [TournamentStatusOption.name, TournamentStatusOption.display_name]
 
 
-class TaskAdmin(ModelView, model=Task):
+class TaskAdmin(BaseModelView, model=Task):
     column_list = [
         Task.id,
         Task.title,
@@ -151,7 +155,7 @@ class TaskRequirementOptionAdmin(NamePrimaryKeyAdmin, model=TaskRequirementOptio
     pass
 
 
-class TeamAdmin(ModelView, model=Team):
+class TeamAdmin(BaseModelView, model=Team):
     column_list = [
         Team.id,
         Team.name,
@@ -162,7 +166,7 @@ class TeamAdmin(ModelView, model=Team):
     column_searchable_list = [Team.name, Team.team_email]
 
 
-class TeamMemberAdmin(ModelView, model=TeamMember):
+class TeamMemberAdmin(BaseModelView, model=TeamMember):
     column_list = [
         TeamMember.id,
         TeamMember.full_name,
@@ -174,7 +178,7 @@ class TeamMemberAdmin(ModelView, model=TeamMember):
     column_searchable_list = [TeamMember.full_name, TeamMember.email, TeamMember.telegram]
 
 
-class SubmissionAdmin(ModelView, model=Submission):
+class SubmissionAdmin(BaseModelView, model=Submission):
     pass
 
 
@@ -182,17 +186,22 @@ class SubmissionUrlOptionAdmin(NamePrimaryKeyAdmin, model=SubmissionUrlOption):
     pass
 
 
-class SubmissionEvaluationAdmin(ModelView, model=SubmissionEvaluation):
+class SubmissionEvaluationAdmin(BaseModelView, model=SubmissionEvaluation):
     pass
 
 
-class RequirementEvaluationAdmin(ModelView, model=RequirementEvaluation):
+class RequirementEvaluationAdmin(BaseModelView, model=RequirementEvaluation):
     pass
 
 
-class NotificationAdmin(ModelView, model=Notification):
+class NotificationAdmin(BaseModelView, model=Notification):
     column_list = [Notification.id, Notification.user_id, Notification.body]
 
+class NewsCategoryAdmin(NamePrimaryKeyAdmin, model=NewsCattegory):
+    pass
+
+class NewsAdmin(BaseModelView, model=News):
+    column_list = [News.id, News.is_important, News.body]
 
 class AdminAuth(AuthenticationBackend):
     async def login(self, request: Request) -> bool:
@@ -297,3 +306,5 @@ def setup_admin(app):
     admin.add_view(SubmissionEvaluationAdmin)
     admin.add_view(RequirementEvaluationAdmin)
     admin.add_view(NotificationAdmin)
+    admin.add_view(NewsAdmin)
+    admin.add_view(NewsCategoryAdmin)

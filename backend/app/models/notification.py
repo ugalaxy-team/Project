@@ -4,15 +4,16 @@ from sqlalchemy import String, ForeignKey
 from .base import Base
 from .mixin import PKMixin
 from .user import User
-
+from typing import Optional
 
 class Notification(Base, PKMixin):
     __tablename__ = "notifications"
 
     body: Mapped[str] = mapped_column(String(4096))
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
+    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
+    is_global: Mapped[bool] = mapped_column(default=False)
 
-    user: Mapped["User"] = relationship(
+    user: Mapped[Optional["User"]] = relationship(
         back_populates="notifications", lazy="selectin"
     )
 

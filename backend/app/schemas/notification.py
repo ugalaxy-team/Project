@@ -5,11 +5,12 @@ class NotificationBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     
     body: str = Field(..., description="Notification body")
-    user_id: int = Field(..., description="Notification receiver")
+    user_id: int | None = Field(None, description="Notification receiver id")
+    is_global: bool = Field(..., description='Is notification global?')
 
 from .user import UserPublic
 class NotificationPublic(NotificationBase):
-    user: UserPublic
+    user: UserPublic | None = Field(None, description='Notification receiver')
 
 class NotificationCreate(NotificationBase):
     @field_validator("body")

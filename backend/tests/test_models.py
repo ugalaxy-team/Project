@@ -1,4 +1,5 @@
 import pytest
+import asyncio
 from datetime import datetime, timedelta
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -7,6 +8,8 @@ from app.config import settings
 from app.models import (
     User,
     Role,
+    NewsCattegory,
+    News,
     TeamMember,
     Team,
     Task,
@@ -25,6 +28,8 @@ from app.models import (
 from .factories import (
     UserFactory,
     RoleFactory,
+    NewsFactory,
+    NewsCattegoryFactory,
     TournamentStatusOptionFactory,
     TournamentFactory,
     TeamFactory,
@@ -699,3 +704,26 @@ async def test_role_requests_relationship(db_session, create):
     db_role = result.scalar_one()
 
     assert len(db_role.requests) == 2
+
+# NEWS
+async def test_create_news(create):
+    news = await create(NewsFactory)
+
+    assert news.id is not None
+    assert news.body
+
+async def test_create_news_important(db_session, create):
+    news = await create(NewsFactory, is_important=True)
+    notification = (await db_session.execute(select(Notification).where(Notification.body==news.excerpt))).scalar_one_or_none()
+    assert notification
+    assert notification.id
+    assert notification.body
+    assert not notification.user_id
+
+async def test_create_news_category(create):
+    category = await create(NewsCattegoryFactory)
+
+    assert category.name in [option["name"] for option in settings.NEWS_CATEGORY_OPTIONS]
+    assert category.display_name in [
+        option["display_name"] for option in settings.NEWS_CATEGORY_OPTIONS
+    ]

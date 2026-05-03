@@ -1,3 +1,5 @@
+import { newsCategoryByName } from '@/config/appConfig';
+
 export interface NewsArticle {
   id: string;
   title: string;
@@ -9,7 +11,11 @@ export interface NewsArticle {
   readTime: string;
 }
 
-export const MOCK_NEWS: NewsArticle[] = [
+interface RawNewsArticle extends Omit<NewsArticle, 'category' | 'categoryColor'> {
+  categoryName: keyof typeof newsCategoryByName;
+}
+
+const RAW_MOCK_NEWS: RawNewsArticle[] = [
   {
     id: '1',
     title: 'Ера нових можливостей: Велике оновлення платформи UGalaxy 2.0',
@@ -24,8 +30,7 @@ export const MOCK_NEWS: NewsArticle[] = [
         <li><strong>Кастомні обкладинки:</strong> можливість персоналізувати свій простір.</li>
       </ul>
     `,
-    category: 'Оновлення',
-    categoryColor: 'bg-blue-100 text-blue-700',
+    categoryName: 'updates',
     date: '29 Травня 2026',
     readTime: '6 хв',
   },
@@ -50,8 +55,7 @@ export const MOCK_NEWS: NewsArticle[] = [
       
       <p>Трамп лише пирхнув, бурмочучи щось про 'fake news' та погані рейтинги, і вийшов геть, залишивши чемпіонів наодинці. Ендшпіль був за Магнусом, але головний приз — серце Макса — вже давно належав йому без жодних гамбітів.</p>
     `,
-    "category": "Фанфік",
-    "categoryColor": "bg-purple-100 text-purple-700",
+    "categoryName": "fanfic",
     "date": "28 Травня 2026",
     "readTime": "6 хв"
   },
@@ -62,8 +66,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     content: `
       <p>Спільното, ви неймовірні! Завдяки благодійним внескам ми закупили 45 ноутбуків та 10 наборів робототехніки.</p>
     `,
-    category: 'Волонтерство',
-    categoryColor: 'bg-green-100 text-green-700',
+    categoryName: 'volunteering',
     date: '25 Травня 2026',
     readTime: '5 хв',
   },
@@ -74,8 +77,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     content: `
       <p>Ми інтегрували передову мовну модель, щоб кожен учасник міг отримати пораду щодо свого коду 24/7. AI-ментор не просто пише код за вас, а пояснює помилки та пропонує кращі практики.</p>
     `,
-    category: 'Оновлення',
-    categoryColor: 'bg-blue-100 text-blue-700',
+    categoryName: 'updates',
     date: '22 Травня 2026',
     readTime: '3 хв',
   },
@@ -86,8 +88,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     content: `
       <p>Готові перевірити свої навички у Figma? Цього разу завдання буде максимально практичним: спроєктувати модуль "Соціальні активності" для UGalaxy App.</p>
     `,
-    category: 'Турніри',
-    categoryColor: 'bg-purple-100 text-purple-700',
+    categoryName: 'tournaments',
     date: '20 Травня 2026',
     readTime: '5 хв',
   },
@@ -99,8 +100,7 @@ export const MOCK_NEWS: NewsArticle[] = [
       <blockquote>"Досвід роботи в команді UGalaxy дав мені більше розуміння процесів, ніж будь-які курси", — ділиться Максим.</blockquote>
       <p>В інтерв'ю ми розберемо, які саме софт-скіли стали вирішальними на співбесіді.</p>
     `,
-    category: 'Волонтерство',
-    categoryColor: 'bg-green-100 text-green-700',
+    categoryName: 'volunteering',
     date: '18 Травня 2026',
     readTime: '8 хв',
   },
@@ -111,8 +111,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     content: `
       <p>Це партнерство дозволить нам використовувати потужності Azure для наших хакатонів та надавати учасникам безкоштовні ліцензії на софт.</p>
     `,
-    category: 'Спільнота',
-    categoryColor: 'bg-orange-100 text-orange-700',
+    categoryName: 'community',
     date: '15 Травня 2026',
     readTime: '4 хв',
   },
@@ -123,8 +122,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     content: `
       <p>Ми підготували детальний розбір інструментів, які ми рекомендуємо використовувати на наших ігрових хакатонах цього року.</p>
     `,
-    category: 'Освіта',
-    categoryColor: 'bg-teal-100 text-teal-700',
+    categoryName: 'education',
     date: '12 Травня 2026',
     readTime: '10 хв',
   },
@@ -135,8 +133,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     content: `
       <p>Фінальна гра тривала майже 3 години. Це був найнапруженіший матч сезону з неймовірними клатчами та стратегічними ходами.</p>
     `,
-    category: 'Турніри',
-    categoryColor: 'bg-purple-100 text-purple-700',
+    categoryName: 'tournaments',
     date: '10 Травня 2026',
     readTime: '4 хв',
   },
@@ -147,8 +144,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     content: `
       <p>Ми запускаємо тестування для Android та iOS. Перші 100 тестувальників отримають унікальний бейдж у профіль та доступ до секретного чату.</p>
     `,
-    category: 'Оновлення',
-    categoryColor: 'bg-blue-100 text-blue-700',
+    categoryName: 'updates',
     date: '08 Травня 2026',
     readTime: '2 хв',
   },
@@ -159,8 +155,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     content: `
       <p>Двофакторна автентифікація — це мастхев. У цій статті ми показуємо, як налаштувати безпеку за 2 хвилини.</p>
     `,
-    category: 'Освіта',
-    categoryColor: 'bg-teal-100 text-teal-700',
+    categoryName: 'education',
     date: '05 Травня 2026',
     readTime: '6 хв',
   },
@@ -171,9 +166,14 @@ export const MOCK_NEWS: NewsArticle[] = [
     content: `
       <p>Чекаємо на всіх активних учасників 20 червня. Реєстрація обов'язкова, оскільки кількість місць у хабі обмежена.</p>
     `,
-    category: 'Спільнота',
-    categoryColor: 'bg-orange-100 text-orange-700',
+    categoryName: 'community',
     date: '01 Травня 2026',
     readTime: '3 хв',
   }
 ];
+
+export const MOCK_NEWS: NewsArticle[] = RAW_MOCK_NEWS.map(({ categoryName, ...article }) => ({
+  ...article,
+  category: newsCategoryByName[categoryName].display_name,
+  categoryColor: newsCategoryByName[categoryName].categoryColor,
+}));

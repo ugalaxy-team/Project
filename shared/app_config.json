@@ -51,5 +51,37 @@
       "name": "evaluated",
       "display_name": "Evaluated"
     }
+  ],
+  "news_categories": [
+    {
+      "name": "updates",
+      "display_name": "Оновлення",
+      "categoryColor": "bg-blue-100 text-blue-700"
+    },
+    {
+      "name": "fanfic",
+      "display_name": "Фанфік",
+      "categoryColor": "bg-purple-100 text-purple-700"
+    },
+    {
+      "name": "volunteering",
+      "display_name": "Волонтерство",
+      "categoryColor": "bg-green-100 text-green-700"
+    },
+    {
+      "name": "tournaments",
+      "display_name": "Турніри",
+      "categoryColor": "bg-purple-100 text-purple-700"
+    },
+    {
+      "name": "community",
+      "display_name": "Спільнота",
+      "categoryColor": "bg-orange-100 text-orange-700"
+    },
+    {
+      "name": "education",
+      "display_name": "Освіта",
+      "categoryColor": "bg-teal-100 text-teal-700"
+    }
   ]
 }

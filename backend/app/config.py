@@ -24,10 +24,15 @@ class OptionConfig(BaseModel):
     display_name: str
 
 
+class NewsCategoryConfig(OptionConfig):
+    categoryColor: str
+
+
 class SharedAppConfig(BaseModel):
     roles: list[RoleConfig]
     tournament_statuses: list[OptionConfig]
     task_statuses: list[OptionConfig]
+    news_categories: list[NewsCategoryConfig]
 
 
 def load_shared_app_config() -> SharedAppConfig:
@@ -68,6 +73,7 @@ class Settings(BaseSettings):
 
     ADMIN_SESSION_COOKIE_KEY: str = "admin_session_cookie"
     ADMIN_SESSION_EXPIRES: timedelta = timedelta(days=5)
+    CHARACTERS_PER_MINUTE: int = 200
     
     # TODO: Move this to a config file
     CORS_ORIGINS: list[str] = [
@@ -98,6 +104,16 @@ class Settings(BaseSettings):
         return [status.model_dump() for status in self.SHARED_APP_CONFIG.task_statuses]
 
     @property
+    def NEWS_CATEGORY_OPTIONS(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "name": category.name,
+                "display_name": category.display_name,
+            }
+            for category in self.SHARED_APP_CONFIG.news_categories
+        ]
+
+    @property
     def ROLE_NAMES(self) -> SimpleNamespace:
         return option_names(self.SHARED_APP_CONFIG.roles)
 
@@ -108,6 +124,10 @@ class Settings(BaseSettings):
     @property
     def TASK_STATUS_NAMES(self) -> SimpleNamespace:
         return option_names(self.SHARED_APP_CONFIG.task_statuses)
+
+    @property
+    def NEWS_CATEGORY_NAMES(self) -> SimpleNamespace:
+        return option_names(self.SHARED_APP_CONFIG.news_categories)
 
 
 settings = Settings()

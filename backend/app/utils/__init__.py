@@ -25,18 +25,15 @@ async def send_notification(notification: NotificationCreate, session: SessionDe
     session.add(notification)
     await session.commit()
     await session.refresh(notification)
-
-    user_result = await session.execute(
-        select(User).options(selectinload(User.roles)).where(User.id == notification.user_id)
-    )
-    user = user_result.scalar_one()
-    payload = NotificationPublic.model_validate(
-        {
-            'body': notification.body,
-            'user_id': notification.user_id,
-            'user': user,
-        }
-    )
+    notification_dict = {
+        'body': notification.body,
+        'user_id': notification.user_id,
+        'is_global': notification.is_global,
+    }
+    if notification.user_id:
+        user = await get_user(notification.user_id, session)
+        notification_dict['user'] = user
+    payload = NotificationPublic.model_validate(notification_dict)
 
     try:
         user_sid = app.state.user_websocket_sessions[notification.user_id]['sid']
