@@ -6,6 +6,7 @@ from app.dependencies import (
     CurrentUserDep,
     RoleRequestDep,
     SessionDep,
+    get_role_request,
     get_current_user,
 )
 from app.models import RoleRequest, RoleRequestInfo
