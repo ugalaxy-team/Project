@@ -28,10 +28,10 @@ async def role_requests(
     session: SessionDep,
     current_user: CurrentUserDep,
 ):
-    is_admin = any(role.name == "admin" for role in current_user.roles)
+
     statement = select(RoleRequest)
 
-    if not is_admin:
+    if not current_user.is_admin:
         statement = statement.where(RoleRequest.user_id == current_user.id)
 
     result = await session.execute(statement)

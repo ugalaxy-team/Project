@@ -36,17 +36,24 @@ class User(Base, PKMixin):
         back_populates="user", lazy="selectin", cascade="all, delete-orphan"
     )
     created_tournaments: Mapped[list["Tournament"]] = relationship(
-        back_populates="creator", lazy="selectin",
+        back_populates="creator",
+        lazy="selectin",
         cascade="all, delete-orphan",
     )
     participates_in: Mapped[list["Tournament"]] = relationship(
         "Tournament",
-        secondary=lambda: join(TeamMember.__table__, Team.__table__, TeamMember.team_id == Team.id),
+        secondary=lambda: join(
+            TeamMember.__table__, Team.__table__, TeamMember.team_id == Team.id
+        ),
         primaryjoin=lambda: User.email == foreign(TeamMember.email),
         secondaryjoin=lambda: Tournament.id == foreign(Team.tournament_id),
         viewonly=True,
         lazy="selectin",
     )
+
+    @property
+    def is_admin(self) -> bool:
+        return any(role.name == "admin" for role in self.roles)
 
     def __repr__(self):
         return f"<User(id={self.id}, full_name={self.full_name}, email={self.email})>"
