@@ -4,8 +4,9 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from datetime import timedelta
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = BACKEND_DIR.parent
@@ -53,8 +54,31 @@ class Settings(BaseSettings):
 
     SECRET_KEY: str = os.getenv("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI: str = os.getenv("SQLALCHEMY_DATABASE_URI")
-    FIREBASE_CERT_PATH: str = str(Path(BACKEND_DIR, "app", "serviceAccountKey.json"))
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL")
+    FIREBASE_CERT_PATH: str = str(Path(BACKEND_DIR, 'app', 'serviceAccountKey.json'))
+    VITE_FIREBASE_API_KEY: str = Field(validation_alias="VITE_FIREBASE_API_KEY")
+    FIREBASE_AUTH_DOMAIN: str = Field(
+        validation_alias=AliasChoices("FIREBASE_AUTH_DOMAIN", "VITE_FIREBASE_AUTH_DOMAIN"),
+    )
+    FIREBASE_PROJECT_ID: str = Field(
+        validation_alias=AliasChoices("FIREBASE_PROJECT_ID", "VITE_FIREBASE_PROJECT_ID"),
+    )
+    FIREBASE_STORAGE_BUCKET: str = Field(
+        validation_alias=AliasChoices("FIREBASE_STORAGE_BUCKET", "VITE_FIREBASE_STORAGE_BUCKET"),
+    )
+    FIREBASE_MESSAGING_SENDER_ID: str = Field(
+        validation_alias=AliasChoices("FIREBASE_MESSAGING_SENDER_ID", "VITE_FIREBASE_MESSAGING_SENDER_ID"),
+    )
+    FIREBASE_APP_ID: str = Field(
+        validation_alias=AliasChoices("FIREBASE_APP_ID", "VITE_FIREBASE_APP_ID"),
+    )
+    FIREBASE_MEASUREMENT_ID: str = Field(
+        validation_alias=AliasChoices("FIREBASE_MEASUREMENT_ID", "VITE_FIREBASE_MEASUREMENT_ID"),
+    )
 
+    ADMIN_SESSION_COOKIE_KEY: str = "admin_session_cookie"
+    ADMIN_SESSION_EXPIRES: timedelta = timedelta(days=5)
+    
     # TODO: Move this to a config file
     CORS_ORIGINS: list[str] = [
         "http://localhost",

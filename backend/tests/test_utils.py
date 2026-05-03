@@ -1,5 +1,5 @@
 import pytest
-from app.util import send_notification
+from app.utils import send_notification
 from app.schemas import NotificationCreate
 from .factories import UserFactory, RoleFactory
 from app.config import settings

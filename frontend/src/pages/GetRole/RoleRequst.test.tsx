@@ -2,13 +2,12 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RoleRequestPage } from './RoleRequestPage';
 import { requestRole } from '@/api/requests/requestRole';
 import { auth } from '@/firebase';
 
-// --- Mocks ---
 vi.mock('react-redux', () => ({
   useSelector: vi.fn(),
 }));
@@ -17,8 +16,8 @@ vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
 }));
 
-vi.mock('react-hot-toast', () => ({
-  default: {
+vi.mock('sonner', () => ({
+  toast: {
     success: vi.fn(),
     error: vi.fn(),
   },
@@ -96,7 +95,7 @@ describe('RoleRequestPage Component', () => {
 
     fireEvent.submit(container.querySelector('form')!);
 
-    expect(toast.error).toHaveBeenCalledWith('Користувач не знайдений або не авторизований!');
+    expect(toast.error).toHaveBeenCalledWith('Користувач не знайдений або не авторизований!', { id: 'auth-error' });
     expect(requestRole).not.toHaveBeenCalled();
   });
 
@@ -138,7 +137,7 @@ describe('RoleRequestPage Component', () => {
       ]);
     });
 
-    expect(toast.success).toHaveBeenCalledWith('Заявку відправлено! Очікуйте на відповідь');
+    expect(toast.success).toHaveBeenCalledWith('Заявку відправлено! Очікуйте на відповідь', { id: 'role-submit' });
     expect(mockNavigate).toHaveBeenCalledWith('/');
   });
 
@@ -153,7 +152,7 @@ describe('RoleRequestPage Component', () => {
     fireEvent.submit(container.querySelector('form')!);
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Ви вже подавали заявку на цю роль! Очікуйте на рішення.');
+      expect(toast.error).toHaveBeenCalledWith('Ви вже подавали заявку на цю роль! Очікуйте на рішення.', { id: 'role-error' });
       expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
@@ -167,7 +166,7 @@ describe('RoleRequestPage Component', () => {
     fireEvent.submit(container.querySelector('form')!);
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Щось пішло не так. Спробуйте пізніше.');
+      expect(toast.error).toHaveBeenCalledWith('Щось пішло не так. Спробуйте пізніше.', { id: 'role-error' });
       expect(mockNavigate).not.toHaveBeenCalled();
     });
   });

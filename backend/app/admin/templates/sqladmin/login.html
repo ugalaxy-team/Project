@@ -1,0 +1,89 @@
+{% extends "sqladmin/base.html" %}
+{% block body %}
+<div class="d-flex align-items-center justify-content-center vh-100 px-3">
+  <div class="col-lg-5 col-md-7 col-sm-10">
+    <form id="firebase-admin-login-form" class="card card-md" action="{{ url_for('admin:login') }}" method="POST"
+      autocomplete="off">
+      <div class="card-body">
+        <h2 class="card-title text-center mb-4">Login to {{ admin.title if admin else 'Admin' }}</h2>
+        <p class="text-secondary text-center mb-4">Use your Firebase account. Only users with the backend
+          <code>admin</code> role can continue.
+        </p>
+
+        <div class="mb-3">
+          <label class="form-label" for="admin-email">Email</label>
+          <input id="admin-email" name="email" type="email" class="form-control{% if error %} is-invalid{% endif %}"
+            placeholder="you@example.com" autocomplete="username" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="admin-password">Password</label>
+          <input id="admin-password" type="password" class="form-control{% if error %} is-invalid{% endif %}"
+            placeholder="Password" autocomplete="current-password" required>
+          {% if error %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endif %}
+        </div>
+
+        <input id="admin-id-token" name="id_token" type="hidden">
+
+        <div id="firebase-login-error" class="alert alert-danger d-none" role="alert"></div>
+
+        <div class="form-footer">
+          <button id="firebase-login-submit" type="submit" class="btn btn-primary w-100">Sign in with Firebase</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+  const firebaseConfig = {{ firebase_config | tojson }};
+  const form = document.getElementById("firebase-admin-login-form");
+  const submitButton = document.getElementById("firebase-login-submit");
+  const errorBox = document.getElementById("firebase-login-error");
+  const emailInput = document.getElementById("admin-email");
+  const passwordInput = document.getElementById("admin-password");
+  const idTokenInput = document.getElementById("admin-id-token");
+
+  const showError = (message) => {
+    errorBox.textContent = message;
+    errorBox.classList.remove("d-none");
+  };
+
+  if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId || !firebaseConfig.appId) {
+    showError("Firebase admin login is not configured on the backend.");
+    submitButton.disabled = true;
+  } else {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      errorBox.classList.add("d-none");
+      submitButton.disabled = true;
+      submitButton.textContent = "Signing in...";
+
+      try {
+        const credentials = await signInWithEmailAndPassword(
+          auth,
+          emailInput.value.trim(),
+          passwordInput.value,
+        );
+        idTokenInput.value = await credentials.user.getIdToken();
+        form.submit();
+      } catch (error) {
+        const message = error && typeof error === "object" && "message" in error
+          ? error.message
+          : "Firebase sign-in failed.";
+        showError(message);
+        submitButton.disabled = false;
+        submitButton.textContent = "Sign in with Firebase";
+      }
+    });
+  }
+</script>
+{% endblock %}

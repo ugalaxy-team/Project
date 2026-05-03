@@ -1,7 +1,7 @@
 from app.models import RoleRequest
 from app.schemas import NotificationCreate
 from app.config import settings
-from app.util import send_notification
+from app.utils import send_notification
 from app.dependencies import SessionDep
 
 
@@ -23,3 +23,4 @@ async def reject_role_request(request: RoleRequest, session: SessionDep) -> None
         body=settings.ROLE_REQUEST_REJECTED_MESSAGE, user_id=request.user.id
     )
     await send_notification(notification, session, role=request.role.name)
+
