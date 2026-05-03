@@ -1,11 +1,11 @@
 from datetime import datetime
-from sqlalchemy import ForeignKey, Table, Column, func, join
+from sqlalchemy import ForeignKey, Table, Column, func, join, or_
 from sqlalchemy.orm import Mapped, foreign, mapped_column, relationship
-
 from .base import Base
 from .mixin import PKMixin
 from .team import Team, TeamMember
 from .tournament import Tournament
+from .notification import Notification
 
 user_roles = Table(
     "user_roles",
@@ -30,7 +30,14 @@ class User(Base, PKMixin):
         secondary=user_roles, back_populates="users", lazy="selectin"
     )
     notifications: Mapped[list["Notification"]] = relationship(
-        back_populates="user", lazy="selectin", cascade="all, delete-orphan"
+        back_populates="user", 
+        lazy="selectin", 
+        cascade="all, delete-orphan",
+        primaryjoin= lambda: or_(
+            User.id == foreign(Notification.user_id),
+            Notification.user_id == None
+        ),
+        viewonly=True
     )
     role_requests: Mapped[list["RoleRequest"]] = relationship(
         back_populates="user", lazy="selectin", cascade="all, delete-orphan"

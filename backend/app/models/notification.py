@@ -3,7 +3,6 @@ from sqlalchemy import String, ForeignKey
 
 from .base import Base
 from .mixin import PKMixin
-from .user import User
 from typing import Optional
 
 class Notification(Base, PKMixin):
