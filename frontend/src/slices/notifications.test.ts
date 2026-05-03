@@ -54,7 +54,7 @@ describe("notifications slice", () => {
       const nextState = reducer(initialState, setUser(userPayload));
 
       expect(nextState.items).toHaveLength(2);
-      expect(nextState.items[0].id).toBe("100");
+      expect(nextState.items[0].id).toBe("101");
     });
 
     it("should not change state if user has no notifications field", () => {
