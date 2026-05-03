@@ -72,15 +72,6 @@ class TournamentStatusOptionFactory(BaseOptionFactory):
     class Meta:
         model = TournamentStatusOption
 
-class NewsFactory(BaseFactory):
-    class Meta:
-        model = News
-
-    title = factory.Sequence(lambda n: f"news_{n} title")
-    excerpt = factory.Sequence(lambda n: f"news_{n} excerpt")
-    body = factory.Sequence(lambda n: f"news_{n} body")
-    is_important = False
-
 class NewsCattegoryFactory(BaseOptionFactory):
     class Meta:
         model = NewsCattegory
@@ -93,6 +84,17 @@ class NewsCattegoryFactory(BaseOptionFactory):
             if option["name"] == category.name
         )
     )
+
+class NewsFactory(BaseFactory):
+    class Meta:
+        model = News
+
+    title = factory.Sequence(lambda n: f"news_{n} title")
+    excerpt = factory.Sequence(lambda n: f"news_{n} excerpt")
+    body = factory.Sequence(lambda n: f"news_{n} body")
+    category = factory.SubFactory(NewsCattegoryFactory)
+    is_important = False
+
 
 
 class TournamentFactory(BaseFactory):

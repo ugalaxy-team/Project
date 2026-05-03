@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+import app.routes.news as news
 import app.routes.profile as profile
 import app.routes.role_requests as role_requests
 import app.routes.roles as roles
@@ -29,6 +30,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(news.router)
 app.include_router(profile.router)
 app.include_router(role_requests.router)
 app.include_router(roles.router)

@@ -1,27 +1,35 @@
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, event, insert
+from sqlalchemy import ForeignKey, String, event, insert
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 from .mixin import PKMixin, DatetimeMixin, OptionMixin
 from app.config import settings
-from app.db import AsyncSessionLocal
-from app.schemas import NotificationCreate
+
 
 class NewsCattegory(Base, OptionMixin):
     __tablename__ = "news_categories"
 
     name: Mapped[str] = mapped_column(primary_key=True, index=True)
 
+    news: Mapped[list["News"]] = relationship(back_populates="category")
+
     def __repr__(self):
         return f"<NewsCattegory(name={self.name}, display_name={self.display_name})>"
+
 
 class News(Base, PKMixin, DatetimeMixin):
     __tablename__ = "news"
     title: Mapped[str] = mapped_column(String(512))
     excerpt: Mapped[str] = mapped_column(String(512))
     body: Mapped[str] = mapped_column(String(8192))
-    # If the news is important, display it as a notification for every user
     is_important: Mapped[bool]
+    category_name: Mapped[str] = mapped_column(
+        ForeignKey("news_categories.name", ondelete="CASCADE")
+    )
+
+    category: Mapped["NewsCattegory"] = relationship(
+        back_populates="news", lazy="selectin"
+    )
 
     @property
     def read_time(self):
