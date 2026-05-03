@@ -1,7 +1,7 @@
 from app.models import RoleRequest
 from app.schemas import NotificationCreate
 from app.config import settings
-from app.util import send_notification
+from app.utils import send_notification
 from app.dependencies import SessionDep
 
 async def approve_role_request(request: RoleRequest, session: SessionDep) -> None:

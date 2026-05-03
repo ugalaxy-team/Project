@@ -1,13 +1,10 @@
 from fastapi import APIRouter, status, HTTPException, Depends
-from fastapi.encoders import jsonable_encoder
 from typing import Annotated
 from app.dependencies import SessionDep, CurrentUserDep, get_current_user
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.models import RoleRequest, User, Role, RoleRequestInfo
-from app.schemas import RoleRequestPublic, RoleRequestCreate, UserPublic, NotificationCreate
-from app.config import settings
-from app.util import send_notification
+from app.schemas import RoleRequestPublic, RoleRequestCreate, UserPublic
 from app.utils.routes import approve_role_request, reject_role_request
 
 router = APIRouter(prefix='/role-requests', tags=['role requests'])
