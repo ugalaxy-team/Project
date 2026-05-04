@@ -91,7 +91,16 @@ async def get_user(identifier: str | int, session: SessionDep):
     return user
 
 
-UserDep = Annotated[User, Depends(get_user)]
+async def get_user_by_id(identifier: str, session: SessionDep) -> User:
+    try:
+        ident = int(identifier)
+    except ValueError:
+        ident = identifier
+
+    return await get_user(ident, session)
+
+
+UserDep = Annotated[User, Depends(get_user_by_id)]
 CurrentUserDep = Annotated[User, Depends(get_current_user)]
 
 # It may be possible to rename the file in the future
