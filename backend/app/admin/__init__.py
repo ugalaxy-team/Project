@@ -32,12 +32,19 @@ from app.firebase import firebase
 from app.dependencies import get_or_create_user_from_token
 from app.db import get_session
 
+
 class NamePrimaryKeyAdmin(ModelView):
     form_include_pk = True
 
 
 class UserAdmin(ModelView, model=User):
-    column_list = [User.id, User.full_name, User.email, User.firebase_uid, User.created_at]
+    column_list = [
+        User.id,
+        User.full_name,
+        User.email,
+        User.firebase_uid,
+        User.created_at,
+    ]
     column_searchable_list = [User.full_name, User.email, User.firebase_uid]
 
 
@@ -48,7 +55,7 @@ class RoleAdmin(NamePrimaryKeyAdmin, model=Role):
 
 class RoleRequestAdmin(ModelView, model=RoleRequest):
     column_list = [RoleRequest.id, RoleRequest.user_id, RoleRequest.role_name]
-    list_template = 'role_request_list.html'
+    list_template = "role_request_list.html"
 
     async def _get_role_request(self, session, pk: str) -> RoleRequest | None:
         stmt = (
@@ -67,7 +74,7 @@ class RoleRequestAdmin(ModelView, model=RoleRequest):
         confirmation_message="Are you sure?",
         add_in_detail=True,
         add_in_list=True,
-        include_in_schema=True
+        include_in_schema=True,
     )
     async def reject_request(self, request: Request):
         pks = request.query_params.get("pks", "").split(",")
@@ -82,7 +89,9 @@ class RoleRequestAdmin(ModelView, model=RoleRequest):
         if referer:
             return RedirectResponse(referer)
         else:
-            return RedirectResponse(request.url_for("admin:list", identity=self.identity))
+            return RedirectResponse(
+                request.url_for("admin:list", identity=self.identity)
+            )
 
     @action(
         name="approve_request",
@@ -90,7 +99,7 @@ class RoleRequestAdmin(ModelView, model=RoleRequest):
         confirmation_message="Are you sure?",
         add_in_detail=True,
         add_in_list=True,
-        include_in_schema=True
+        include_in_schema=True,
     )
     async def approve_request(self, request: Request):
         pks = request.query_params.get("pks", "").split(",")
@@ -105,9 +114,9 @@ class RoleRequestAdmin(ModelView, model=RoleRequest):
         if referer:
             return RedirectResponse(referer)
         else:
-            return RedirectResponse(request.url_for("admin:list", identity=self.identity))
-        
-
+            return RedirectResponse(
+                request.url_for("admin:list", identity=self.identity)
+            )
 
 
 class TournamentAdmin(ModelView, model=Tournament):
@@ -172,7 +181,11 @@ class TeamMemberAdmin(ModelView, model=TeamMember):
         TeamMember.educational_institution,
         TeamMember.team_id,
     ]
-    column_searchable_list = [TeamMember.full_name, TeamMember.email, TeamMember.telegram]
+    column_searchable_list = [
+        TeamMember.full_name,
+        TeamMember.email,
+        TeamMember.telegram,
+    ]
 
 
 class SubmissionAdmin(ModelView, model=Submission):
@@ -203,7 +216,9 @@ class AdminAuth(AuthenticationBackend):
             return False
 
         try:
-            decoded_token = auth.verify_id_token(id_token, firebase, clock_skew_seconds=10)
+            decoded_token = auth.verify_id_token(
+                id_token, firebase, clock_skew_seconds=10
+            )
             session_cookie = auth.create_session_cookie(
                 id_token,
                 expires_in=settings.ADMIN_SESSION_EXPIRES,
@@ -213,7 +228,7 @@ class AdminAuth(AuthenticationBackend):
             return False
         async with AsyncSessionLocal() as session:
             user = await get_or_create_user_from_token(decoded_token, session)
-            if not has_admin_role(user):
+            if not user.is_admin:
                 return False
 
             request.session.update(
@@ -233,7 +248,7 @@ class AdminAuth(AuthenticationBackend):
         session_cookie = request.session.get(settings.ADMIN_SESSION_COOKIE_KEY)
         if not session_cookie:
             return False
-    
+
         try:
             decoded_claims = auth.verify_session_cookie(
                 session_cookie,
@@ -253,6 +268,7 @@ class AdminAuth(AuthenticationBackend):
             request.state.admin_user = user
             return True
 
+
 class FrontendItemMenu(_menu.ItemMenu):
     @property
     def type_(self) -> str:
@@ -265,12 +281,12 @@ class FrontendItemMenu(_menu.ItemMenu):
 def setup_admin(app):
     authentication_backend = AdminAuth(secret_key=settings.SECRET_KEY)
     admin = Admin(
-        app, 
-        engine, 
-        AsyncSessionLocal, 
-        title="Tournament Admin", 
-        templates_dir='app/admin/templates',
-        authentication_backend=authentication_backend
+        app,
+        engine,
+        AsyncSessionLocal,
+        title="Tournament Admin",
+        templates_dir="app/admin/templates",
+        authentication_backend=authentication_backend,
     )
     admin._menu.add(FrontendItemMenu("Back to frontend", icon="fa-solid fa-house"))
     admin.templates.env.globals["firebase_config"] = {

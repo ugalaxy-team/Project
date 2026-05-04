@@ -16,8 +16,10 @@ async def send_notification(
     notification = NotificationCreate.model_validate(notification)
     try:
         notification.body = str(Template(notification.body).substitute(**kwargs))
-    except ValueError:
-        raise ValueError("Notification body placeholder was not provided!")
+    except KeyError as e:
+        raise ValueError("Notification body placeholder was not provided!") from e
+    except ValueError as err:
+        raise ValueError("Notification body template is invalid!") from err
 
     notification = Notification(**notification.model_dump())
     session.add(notification)

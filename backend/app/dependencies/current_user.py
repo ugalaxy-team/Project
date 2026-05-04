@@ -18,7 +18,20 @@ from app.firebase import firebase
 
 
 async def get_or_create_user_from_token(token: dict, session: SessionDep) -> User:
-    u: auth.UserRecord = await asyncio.to_thread(auth.get_user_by_email, token["email"])
+    try:
+        u: auth.UserRecord = await asyncio.to_thread(
+            auth.get_user_by_email, token["email"]
+        )
+    except auth.UserNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Firebase user not found"
+        ) from e
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Authentication service error",
+        ) from e
+
     try:
         user = await get_user(u.uid, session)
         return user

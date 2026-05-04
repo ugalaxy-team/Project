@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, AliasPath
 
 from .option import OptionPublic
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 def make_naive(value: datetime) -> datetime:
     if value.tzinfo is not None:
-        return value.replace(tzinfo=None)
+        return value.astimezone(timezone.utc).replace(tzinfo=None)
     return value
 
 
@@ -29,8 +29,8 @@ class TournamentBase(BaseModel):
     start_date: NaiveDatetime
     reg_start: NaiveDatetime
     reg_end: NaiveDatetime
-    min_people_in_team: int
-    max_people_in_team: int
+    min_people_in_team: int = Field(..., gt=1)
+    max_people_in_team: int = Field(..., gt=1)
     max_teams: int = Field(..., gt=1)
 
 
@@ -44,8 +44,8 @@ class TournamentUpdate(BaseModel):
     start_date: NaiveDatetime | None = None
     reg_start: NaiveDatetime | None = None
     reg_end: NaiveDatetime | None = None
-    min_people_in_team: int | None = None
-    max_people_in_team: int | None = None
+    min_people_in_team: int | None = Field(..., gt=1)
+    max_people_in_team: int | None = Field(..., gt=1)
     max_teams: int | None = Field(None, gt=1)
 
 
