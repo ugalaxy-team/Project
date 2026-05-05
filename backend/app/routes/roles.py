@@ -1,17 +1,11 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter
 from app.schemas import RolePublic
 from app.models import Role
 from app.dependencies import SessionDep
 from sqlalchemy import select
+from app.utils import get_role
 
 router = APIRouter(prefix='/roles', tags=['roles'])
-
-async def get_role(name: str, session: SessionDep):
-    statement = select(Role).where(Role.name==name)
-    role = (await session.execute(statement)).scalar()
-    if not role:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Role not found!')
-    return role
 
 @router.get('/', response_model=list[RolePublic])
 async def roles(session: SessionDep):
