@@ -6,14 +6,13 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.exc import IntegrityError
 
 from app.dependencies import SessionDep
-from app.models import Team
+from app.models import Team, TeamMember
 from app.schemas import TeamModel, TeamUpdate
 from app.utils import (
     get_tournament,
     check_registration_open,
     get_team,
     validate_team_registration,
-    create_team_record,
 )
 
 router = APIRouter(prefix="/tournaments/{tournament_id}/teams", tags=["teams"])
@@ -47,8 +46,29 @@ async def create_team(tournament_id: int, team_data: TeamModel, session: Session
     await validate_team_registration(tournament, team_data, session)
 
     try:
-        new_team = await create_team_record(tournament_id, team_data, session)
+        new_team = Team(
+            name=team_data.name,
+            team_email=team_data.team_email,
+            contact_info=str(team_data.contact_info),
+            tournament_id=tournament_id,
+        )
+        session.add(new_team)
+        await session.flush()
+
+        captain = TeamMember(
+            **team_data.captain.model_dump(),
+            team_id=new_team.id,
+        )
+        session.add(captain)
+        await session.flush()
+
+        members = [
+            TeamMember(**m.model_dump(), team_id=new_team.id) for m in team_data.members
+        ]
+        session.add_all(members)
+        new_team.captain_id = captain.id
         await session.commit()
+
     except IntegrityError as e:
         await session.rollback()
         raise HTTPException(
