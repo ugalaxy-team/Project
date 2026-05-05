@@ -1,11 +1,12 @@
 import pytest
 from app import app
 from app.dependencies import get_current_user
-from tests.factories import TournamentFactory, UserFactory, TournamentStatusOptionFactory
+from tests.factories import TournamentFactory, UserFactory, TournamentStatusOptionFactory, RoleFactory
 from app.config import settings
 
 async def test_create_tournament(create, client, db_session):
-    user = await create(UserFactory)
+    adm = await create(RoleFactory, name=settings.ROLE_NAMES.ADMIN)
+    user = await create(UserFactory, roles=[adm])
     u1 = await create(UserFactory)
     u2 = await create(UserFactory)
     await create(TournamentStatusOptionFactory, name=settings.TOURNAMENT_STATUS_NAMES.DRAFT)

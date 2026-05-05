@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, AliasPath
 
 from .option import OptionPublic
@@ -12,6 +12,14 @@ if TYPE_CHECKING:
     from .team import TeamPublic
     from .user import UserPublic
 
+
+def make_naive(value: datetime) -> datetime:
+    if value.tzinfo is not None:
+        return value.astimezone(timezone.utc).replace(tzinfo=None)
+    return value
+
+
+NaiveDatetime = Annotated[datetime, AfterValidator(make_naive)]
 StrippedStr = Annotated[str, AfterValidator(lambda v: v.strip())]
 
 
@@ -51,7 +59,7 @@ class TournamentPublic(TournamentBase):
 
     id: int
     end_date: datetime | None
-    creator: 'UserPublic'
+    creator: "UserPublic"
     status: OptionPublic
     tasks: list[TaskPublic]
     active_task: TaskPublic | None

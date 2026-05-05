@@ -74,7 +74,6 @@ class Tournament(Base, PKMixin, AsyncAttrs):
 
         return None
 
-
     @property
     def end_date(self) -> datetime | None:
         tasks = self.__dict__.get("tasks")

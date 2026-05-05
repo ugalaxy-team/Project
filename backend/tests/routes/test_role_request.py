@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app import app
 from app.dependencies import get_current_user
-from app.routes.role_requests import get_admin_user
+from app.dependencies.admin_user import get_admin_user
 from app.models import RoleRequest, User
 from tests.factories import UserFactory, RoleFactory
 from app.websockets import sio
@@ -21,7 +21,7 @@ async def test_role_request_and_approval(create, client, db_session, mocker):
         'role_name': role.name,
         'user_id': user.id,
     })
-    assert resp.status_code == 200
+    assert resp.status_code == 201
     assert resp.json()['role_name'] == role.name
     assert resp.json()['user_id'] == user.id
     req_id = resp.json()['id']
@@ -67,6 +67,7 @@ async def test_role_request_disapproval(create, client, db_session, mocker):
     user = (await db_session.execute(stmt)).unique().scalar_one()
     role = await create(RoleFactory)
     app.dependency_overrides[get_current_user] = lambda: user
+    app.dependency_overrides[get_admin_user] = lambda: user
     r = RoleRequest(role_name=role.name, user_id=user.id)
     db_session.add(r)
     await db_session.commit()
@@ -82,6 +83,7 @@ async def test_role_request_disapproval(create, client, db_session, mocker):
     s = select(RoleRequest)
     assert len((await db_session.execute(s)).scalars().all()) == 0
     app.dependency_overrides.pop(get_current_user)
+    app.dependency_overrides.pop(get_admin_user)
 
 @pytest.mark.asyncio
 async def test_get_role_request(create, client, db_session):

@@ -2,21 +2,8 @@ from datetime import datetime, timezone
 from fastapi import HTTPException, status
 
 
-def to_utc(datetime):
-    if datetime is None:
-        return None
-
-    if datetime.tzinfo is None:
-        return datetime.replace(tzinfo=timezone.utc)
-
-    return datetime.astimezone(timezone.utc)
-
-
 def validate_dates_on_create(start_date, reg_start, reg_end):
-    now = datetime.now(timezone.utc)
-    reg_start = to_utc(reg_start)
-    reg_end = to_utc(reg_end)
-    start_date = to_utc(start_date)
+    now = datetime.now()
 
     if reg_start < now:
         raise HTTPException(
@@ -43,10 +30,7 @@ def validate_dates_on_update(
     reg_start,
     reg_end,
 ):
-    now = datetime.now(timezone.utc)
-    start_date = to_utc(start_date)
-    reg_start = to_utc(reg_start)
-    reg_end = to_utc(reg_end)
+    now = datetime.now()
 
     if reg_start < now:
         raise HTTPException(

@@ -52,6 +52,98 @@
       "display_name": "Evaluated"
     }
   ],
+  "categories": [
+    {
+      "name": "Languages",
+      "main_id": null
+    },
+    {
+      "name": "Backend",
+      "main_id": null
+    },
+    {
+      "name": "Frontend",
+      "main_id": null
+    },
+    {
+      "name": "Databases",
+      "main_id": null
+    },
+    {
+      "name": "Infrastructure",
+      "main_id": null
+    },
+    {
+      "name": "Mobile",
+      "main_id": null
+    },
+    {
+      "name": "Design & UI/UX",
+      "main_id": null
+    },
+    {
+      "name": "SQL",
+      "main_id": "Databases"
+    },
+    {
+      "name": "NoSQL",
+      "main_id": "Databases"
+    },
+    {
+      "name": "Vector DB",
+      "main_id": "Databases"
+    },
+    {
+      "name": "Frameworks",
+      "main_id": "Backend"
+    },
+    {
+      "name": "JS Frameworks",
+      "main_id": "Frontend"
+    },
+    {
+      "name": "State Management",
+      "main_id": "Frontend"
+    },
+    {
+      "name": "DevOps",
+      "main_id": "Infrastructure"
+    },
+    {
+      "name": "Cloud",
+      "main_id": "Infrastructure"
+    },
+    {
+      "name": "Monitoring",
+      "main_id": "Infrastructure"
+    }
+  ],
+  "role_request_options": [
+    {
+      "name": "fullName",
+      "display_name": "Full Name"
+    },
+    {
+      "name": "contact",
+      "display_name": "Contact Information"
+    },
+    {
+      "name": "age",
+      "display_name": "Age"
+    },
+    {
+      "name": "experience",
+      "display_name": "Experience"
+    },
+    {
+      "name": "reason",
+      "display_name": "Reason for Request"
+    },
+    {
+      "name": "plans",
+      "display_name": "Future Plans"
+    }
+  ],
   "news_categories": [
     {
       "name": "updates",
