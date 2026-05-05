@@ -7,7 +7,7 @@ from .user import User, user_roles
 
 class Role(Base, OptionMixin):
     __tablename__ = "roles"
-    description: Mapped[str] = mapped_column(String(4096))
+    description: Mapped[str] = mapped_column()
 
     users: Mapped[list["User"]] = relationship(
         secondary=user_roles, back_populates="roles", lazy="selectin"

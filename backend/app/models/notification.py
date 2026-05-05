@@ -8,7 +8,7 @@ from typing import Optional
 class Notification(Base, PKMixin):
     __tablename__ = "notifications"
 
-    body: Mapped[str] = mapped_column(String(4096))
+    body: Mapped[str] = mapped_column()
     user_id: Mapped[Optional[int]] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
 
     user: Mapped[Optional["User"]] = relationship(

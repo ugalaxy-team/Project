@@ -21,7 +21,7 @@ class News(Base, PKMixin, DatetimeMixin):
     __tablename__ = "news"
     title: Mapped[str] = mapped_column(String(512))
     excerpt: Mapped[str] = mapped_column(String(512))
-    body: Mapped[str] = mapped_column(String(8192))
+    body: Mapped[str] = mapped_column()
     is_important: Mapped[bool]
     category_name: Mapped[str] = mapped_column(
         ForeignKey("news_categories.name", ondelete="CASCADE")
