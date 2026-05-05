@@ -27,7 +27,6 @@ export const Home = () => {
         badges={[
           {
             text: t("hero.badges.express", "🔥 Прояви себе!"),
-            // Тільки позиція та колір. Анімація тепер вшита в Hero
             className:
               "bottom-[35%] left-[2vw] xl:left-[10vw] bg-dark-theme text-white -rotate-6",
           },
@@ -58,7 +57,7 @@ export const Home = () => {
             "★ЗНАЙДИ КОМАНДУ ★ ПРОЯВИ СЕБЕ ",
           ),
           lottieSrc: "/star.json",
-          buttonText: t("hero.mascot.button", "Долучитись"),
+          buttonText: t("hero.mascot.button", "Всі турніри"),
           buttonLink: "/tournaments",
         }}
       />
@@ -71,7 +70,6 @@ export const Home = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          // ЗМІНЕНО: тепер градієнт береться з hero-from/to
           className="w-full bg-gradient-to-r from-hero-from to-hero-to rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-12 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-8 relative overflow-hidden group transition-colors duration-500"
         >
           <div className="absolute -left-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl transition-transform duration-700 group-hover:scale-150"></div>
@@ -95,7 +93,7 @@ export const Home = () => {
           <div className="relative z-10 shrink-0 mt-2 md:mt-0 w-full sm:w-auto">
             <Link
               to="/role-request-form"
-              className="flex sm:inline-flex items-center justify-center w-full sm:w-auto bg-bg-card text-primary font-quicksand font-bold text-base md:text-lg px-6 py-3 md:px-8 md:py-4 rounded-xl hover:bg-bg-body hover:-translate-y-1 shadow-lg hover:shadow-xl transition-all duration-300"
+              className="flex sm:inline-flex items-center justify-center w-full sm:w-auto bg-bg-card text-primary font-quicksand font-bold text-base md:text-lg px-6 py-3 md:px-8 md:py-4 rounded-xl hover:bg-bg-body hover:-translate-y-1 shadow-lg hover:shadow-xl transition-all duration-300 dark:border dark:border-white/5"
             >
               {t("cta.button", "Отримати роль")}
               <svg

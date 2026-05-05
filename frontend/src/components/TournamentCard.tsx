@@ -2,7 +2,6 @@ import React from "react";
 import { type Tournament } from "../data/mockTournaments";
 import { cn } from "../utils/cn";
 
-// Переведено на прозорі фони (/10) та семантичні кольори Tailwind
 const STATUS_CFG = {
   registration: {
     label: "Реєстрація",
@@ -13,7 +12,8 @@ const STATUS_CFG = {
     gradTo: "#059669",
     icon: <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />,
     btnText: "Подати заявку",
-    btnClass: "bg-primary text-white hover:opacity-90 shadow-sm",
+    btnClass:
+      "bg-primary text-white hover:bg-primary/90 shadow-md cursor-pointer",
   },
   active: {
     label: "В процесі",
@@ -25,7 +25,7 @@ const STATUS_CFG = {
     icon: <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />,
     btnText: "Спостерігати",
     btnClass:
-      "bg-transparent border-2 border-primary text-primary hover:bg-primary/10",
+      "bg-transparent border-2 border-primary text-primary hover:bg-primary/5 cursor-pointer",
   },
   completed: {
     label: "Завершено",
@@ -39,11 +39,10 @@ const STATUS_CFG = {
     ),
     btnText: "Переглянути результати",
     btnClass:
-      "bg-border/50 text-text-muted border border-border cursor-default",
+      "bg-transparent border-2 border-border text-text-muted hover:bg-border/30 hover:text-text-main cursor-pointer",
   },
 } as const;
 
-// Теги адаптовано для обох тем через прозорість
 const TAG_COLORS: Record<string, string> = {
   accent: "bg-accent/10 text-amber-600 dark:text-accent",
   primary: "bg-primary/10 text-primary",
@@ -127,7 +126,6 @@ export const TournamentCard = ({
                 <span className="text-[13px] text-text-muted">/ {max}</span>
               </span>
             </div>
-            {/* Трек прогрес-бару тепер бере колір бордера */}
             <div className="h-1.5 bg-border rounded-full overflow-hidden shadow-inner transition-colors duration-300">
               <div
                 className={cn(
@@ -151,7 +149,7 @@ export const TournamentCard = ({
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z"
                 />
               </svg>
               До {deadline}
@@ -169,7 +167,6 @@ export const TournamentCard = ({
           </div>
 
           <button
-            disabled={status === "completed"}
             className={cn(
               "w-full py-3.5 rounded-xl font-quicksand text-[16px] font-extrabold transition-all duration-300",
               cfg.btnClass,
