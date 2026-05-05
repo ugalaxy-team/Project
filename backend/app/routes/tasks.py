@@ -7,7 +7,7 @@ from app.dependencies import SessionDep
 from app.models import Task
 from app.schemas import TaskCreate, TaskUpdate, TaskPublic
 from app.utils import TaskStatus, update_tasks_status
-from app.utils import get_requirements
+from app.utils import get_requirements, get_task
 
 router = APIRouter(prefix="/tournaments/{tournament_id}/tasks", tags=["tasks"])
 
