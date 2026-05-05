@@ -27,4 +27,6 @@ from .user import UserModel, UserPublic, UserUpdate, UserCreate, CurrentUser
 UserPublic.model_rebuild()
 CurrentUser.model_rebuild()
 TeamPublic.model_rebuild()
+TournamentCreate.model_rebuild()
+TournamentUpdate.model_rebuild()
 TournamentPublic.model_rebuild()

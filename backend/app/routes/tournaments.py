@@ -9,12 +9,13 @@ from app.schemas import (
 )
 from app.config import settings
 from app.models import Team, Tournament, User
-from app.dependencies import SessionDep
+from app.dependencies import SessionDep, CurrentUserDep
 from app.utils.routes.dates_logic import (
     validate_dates_on_create,
     validate_dates_on_update,
 )
 from app.utils.fsm import auto_update_tournament_status, get_status_by_name
+from app.routes.users import get_user
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 
@@ -23,6 +24,7 @@ tournament_load_options = (
     selectinload(Tournament.creator).selectinload(User.roles),
     selectinload(Tournament.tasks),
     selectinload(Tournament.teams).selectinload(Team.members),
+    selectinload(Tournament.juries),
 )
 
 
@@ -58,27 +60,36 @@ async def tournament(tournament_id: int, session: SessionDep):
 
 @router.post("/", response_model=TournamentPublic, status_code=status.HTTP_201_CREATED)
 async def create_tournament(
-    tournament: TournamentCreate,
+    tournament_data: TournamentCreate,
+    current_user: CurrentUserDep,
     session: SessionDep,
 ):
     initial_status = await get_status_by_name(settings.TOURNAMENT_STATUS_NAMES.DRAFT, session)
 
     validate_dates_on_create(
-        start_date=tournament.start_date,
-        reg_start=tournament.reg_start,
-        reg_end=tournament.reg_end,
+        start_date=tournament_data.start_date,
+        reg_start=tournament_data.reg_start,
+        reg_end=tournament_data.reg_end,
     )
-
-    new_tournament = Tournament(
-        **tournament.model_dump(),
-        creator_id=1,
+    tournament_data = tournament_data.model_dump()
+    juries_ids = tournament_data.pop('juries')
+    
+    tournament = Tournament(
+        **tournament_data,
+        creator_id=current_user.id,
         status_id=initial_status.name,
     )
-    session.add(new_tournament)
+    session.add(tournament)
+    await session.flush()
+    await session.refresh(tournament, ['juries'])
+    for jury_id in juries_ids:
+        jury = await get_user(jury_id, session)
+        tournament.juries.append(jury)
+    
     await session.commit()
-    await session.refresh(new_tournament)
+    tournament = await get_tournament(tournament.id, session)
 
-    return new_tournament
+    return tournament
 
 
 @router.patch(
@@ -90,39 +101,48 @@ async def update_tournament(
     session: SessionDep,
 ):
     update_data = tournament_data.model_dump(exclude_unset=True)
+    
     if not update_data:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No fields provided for update",
         )
-
     tournament = await get_tournament(tournament_id, session)
+    await session.refresh(tournament, ['juries'])
 
-    start_date = update_data.get("start_date", tournament.start_date)
-    reg_start = update_data.get("reg_start", tournament.reg_start)
-    reg_end = update_data.get("reg_end", tournament.reg_end)
+    juries_ids = update_data.pop('juries', [])
+    for jury_id in juries_ids:
+        jury = await get_user(jury_id, session)
+        tournament.juries.append(jury)
 
-    validate_dates_on_update(
-        start_date=start_date,
-        reg_start=reg_start,
-        reg_end=reg_end,
-    )
+    if update_data:
+        start_date = update_data.get("start_date", tournament.start_date)
+        reg_start = update_data.get("reg_start", tournament.reg_start)
+        reg_end = update_data.get("reg_end", tournament.reg_end)
 
-    result = await session.execute(
-        update(Tournament)
-        .where(Tournament.id == tournament_id)
-        .values(**update_data)
-        .returning(Tournament)
-    )
-    updated_tournament = result.scalar_one_or_none()
+        validate_dates_on_update(
+            start_date=start_date,
+            reg_start=reg_start,
+            reg_end=reg_end,
+        )
 
-    if not updated_tournament:
+        result = await session.execute(
+            update(Tournament)
+            .where(Tournament.id == tournament_id)
+            .values(**update_data)
+            .returning(Tournament)
+        )
+        tournament = result.scalar_one_or_none()
+
+    if not tournament:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Tournament not found"
         )
 
     await session.commit()
-    return updated_tournament
+    await session.refresh(tournament)
+    
+    return tournament
 
 
 @router.delete("/{tournament_id}/", status_code=status.HTTP_204_NO_CONTENT)

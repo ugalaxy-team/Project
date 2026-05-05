@@ -14,6 +14,9 @@ def to_utc(datetime):
 
 def validate_dates_on_create(start_date, reg_start, reg_end):
     now = datetime.now(timezone.utc)
+    reg_start = to_utc(reg_start)
+    reg_end = to_utc(reg_end)
+    start_date = to_utc(start_date)
 
     if reg_start < now:
         raise HTTPException(

@@ -69,6 +69,6 @@ async def get_status_by_name(name: str, session: SessionDep) -> TournamentStatus
     status_ = (await session.execute(statement)).scalar_one_or_none()
 
     if not status_:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Status not found!')
 
     return status_

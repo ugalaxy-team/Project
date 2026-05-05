@@ -1,4 +1,5 @@
 import factory
+import factory.fuzzy
 from factory.faker import Faker
 from factory.alchemy import SQLAlchemyModelFactory
 
@@ -24,7 +25,7 @@ from app.models import (
     Notification,
     RoleRequest,
 )
-
+import datetime
 
 class BaseFactory(SQLAlchemyModelFactory):
     class Meta:
@@ -72,6 +73,8 @@ class TournamentStatusOptionFactory(BaseOptionFactory):
     class Meta:
         model = TournamentStatusOption
 
+    name = factory.Iterator(list(settings.TOURNAMENT_STATUS_NAMES.__dict__.values()))
+
 class NewsCattegoryFactory(BaseOptionFactory):
     class Meta:
         model = NewsCattegory
@@ -103,9 +106,13 @@ class TournamentFactory(BaseFactory):
 
     title = Faker("catch_phrase")
     description = Faker("paragraph")
-    start_date = Faker("future_datetime")
-    reg_start = Faker("past_datetime")
-    reg_end = Faker("future_datetime")
+    start_date = factory.LazyAttribute(
+        lambda o: o.reg_end + datetime.timedelta(days=factory.fuzzy.FuzzyInteger(1, 10).fuzz())
+    )
+    reg_start = Faker("future_datetime", end_date="+30d")
+    reg_end = factory.LazyAttribute(
+        lambda o: o.reg_start + datetime.timedelta(days=factory.fuzzy.FuzzyInteger(1, 10).fuzz())
+    )
     max_teams = Faker("pyint", min_value=10, max_value=100)
     min_people_in_team = Faker("pyint", min_value=1, max_value=100)
     max_people_in_team = Faker("pyint", min_value=1, max_value=100)

@@ -21,13 +21,13 @@ class TournamentBase(BaseModel):
     start_date: datetime
     reg_start: datetime
     reg_end: datetime
-    min_people_in_team: int = Field(..., gt=1)
-    max_people_in_team: int = Field(..., gt=1)
-    max_teams: int = Field(..., gt=1)
+    min_people_in_team: int = Field(..., gt=0)
+    max_people_in_team: int = Field(..., gt=0)
+    max_teams: int = Field(..., gt=0)
 
 
 class TournamentCreate(TournamentBase):
-    pass
+    juries: list[int | str] = Field(..., description='Jury ids')
 
 
 class TournamentUpdate(BaseModel):
@@ -36,7 +36,8 @@ class TournamentUpdate(BaseModel):
     start_date: datetime | None = None
     reg_start: datetime | None = None
     reg_end: datetime | None = None
-    max_teams: int | None = Field(None, gt=1)
+    max_teams: int | None = Field(None, gt=0)
+    juries: list[int | str] | None = Field(None, description='Jury ids')
 
 
 class TournamentStatusOptionModel(BaseModel):
@@ -55,4 +56,5 @@ class TournamentPublic(TournamentBase):
     tasks: list[TaskPublic]
     active_task: TaskPublic | None
     teams: list[TeamPublic]
+    juries: list['UserPublic']
     status_name: str = Field(validation_alias=AliasPath("status", "display_name"))

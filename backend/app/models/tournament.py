@@ -1,12 +1,19 @@
 from datetime import datetime
 from typing import List
-from sqlalchemy import ForeignKey, inspect
+from sqlalchemy import ForeignKey, inspect, Column, Table
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.config import settings
 from .base import Base
 from .mixin import PKMixin, OptionMixin
 from .task import Task
+
+tournament_juries = Table(
+    "tournament_juries",
+    Base.metadata,
+    Column("jury_id", ForeignKey("users.id", ondelete="CASCADE"), primary_key=True),
+    Column("tournament_id", ForeignKey("tournaments.id", ondelete="CASCADE"), primary_key=True),
+)
 
 class Tournament(Base, PKMixin, AsyncAttrs):
     __tablename__ = "tournaments"
@@ -35,6 +42,11 @@ class Tournament(Base, PKMixin, AsyncAttrs):
         foreign_keys="Task.tournament_id",
         lazy="selectin",
         cascade="all, delete-orphan",
+    )
+    juries: Mapped[list["User"]] = relationship(
+        back_populates="evaluates_in", 
+        lazy="selectin",
+        secondary=tournament_juries
     )
     status: Mapped["TournamentStatusOption"] = relationship(
         back_populates="tournaments", lazy="selectin"

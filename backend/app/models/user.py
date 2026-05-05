@@ -6,6 +6,7 @@ from .mixin import PKMixin
 from .team import Team, TeamMember
 from .tournament import Tournament
 from .notification import Notification
+from .tournament import tournament_juries
 
 user_roles = Table(
     "user_roles",
@@ -45,6 +46,11 @@ class User(Base, PKMixin):
     created_tournaments: Mapped[list["Tournament"]] = relationship(
         back_populates="creator", lazy="selectin",
         cascade="all, delete-orphan",
+    )
+    evaluates_in: Mapped[list["Tournament"]] = relationship(
+        back_populates="juries", 
+        lazy="selectin",
+        secondary=tournament_juries
     )
     participates_in: Mapped[list["Tournament"]] = relationship(
         "Tournament",
