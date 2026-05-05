@@ -1,0 +1,119 @@
+{
+  "brand": "UGalaxy",
+  "buttons": {
+    "back": "Back"
+  },
+  "breadcrumbs": {
+    "tournaments": "Tournaments",
+    "registration": "Registration"
+  },
+  "nav": {
+    "step1": "General",
+    "step2": "Members",
+    "step3": "Confirmation"
+  },
+  "validation": {
+    "requiredCustom": "Field \"{{label}}\" is required",
+    "nameRequired": "Enter full name or nickname",
+    "invalidEmail": "Invalid email format",
+    "teamNameRequired": "Enter a team name"
+  },
+  "ticket": {
+    "label": {
+      "event": "Event",
+      "format": "Format",
+      "player": "Nickname / Player",
+      "team": "Team",
+      "participant": "Participant",
+      "roster": "Roster"
+    },
+    "value": {
+      "solo": "Solo",
+      "team": "Team",
+      "empty": "Not filled",
+      "waiting": "Waiting..."
+    },
+    "badge": {
+      "solo": "Solo",
+      "captain": "Captain",
+      "member": "Member"
+    }
+  },
+  "step1": {
+    "title": "Your Team",
+    "subtitle": "to participate in the tournament:",
+    "format": {
+      "label": "Participation Format",
+      "team": "Team",
+      "solo": "Solo"
+    },
+    "teamName": {
+      "label": "Team Name",
+      "labelSolo": "Your Nickname / Name",
+      "placeholder": "e.g., Space Cats",
+      "placeholderSolo": "e.g., T-Rex Destroyer"
+    },
+    "captain": {
+      "label": "Captain",
+      "info": "Data is imported from your Google account. You can update it in settings for automatic completion in the future.",
+      "badge": "Captain",
+      "fullNameLabel": "Full Name",
+      "ifDifferent": "(if different)",
+      "fullNamePlaceholder": "John Doe"
+    },
+    "additional": {
+      "title": "Additional Information",
+      "optional": "(optional)"
+    },
+    "next": {
+      "confirm": "Next — Confirmation",
+      "members": "Next — Members"
+    }
+  },
+  "step2": {
+    "title": "Team Roster",
+    "subtitle1": "Add from",
+    "subtitle2": "to",
+    "subtitle3": "members (excluding captain).",
+    "counter": {
+      "label": "Teammates",
+      "min": "Min:",
+      "max": "Max:"
+    },
+    "emptyTitle": "You are alone for now",
+    "emptyState": "Add your first teammate to build a team.",
+    "participantLabel": "Teammate",
+    "addBtn": "Add Teammate",
+    "removeBtn": "Remove",
+    "nextBtn": "Review Application",
+    "labels": {
+      "name": "Name",
+      "email": "Email"
+    },
+    "placeholders": {
+      "name": "Nickname or Full Name",
+      "email": "example@gmail.com"
+    },
+    "errors": {
+      "minMembers": "Add at least {{count}} teammate(s)",
+      "duplicateEmail": "Duplicate emails found: {{emails}}"
+    }
+  },
+  "step3": {
+    "title": "Confirmation",
+    "subtitle": "Review your data before registering.",
+    "labels": {
+      "player": "Player",
+      "captain": "Captain",
+      "members": "Team Members"
+    },
+    "warning": "Check your data carefully. After submission, changing the roster will only be possible via an admin.",
+    "submitBtn": "Confirm"
+  },
+  "success": {
+    "title": "Team Registered!",
+    "titleSolo": "You're Registered!",
+    "desc": "Your application has been sent successfully. Wait for confirmation via email or check the tournament status in your profile.",
+    "homeBtn": "Back to Home"
+  }
+}

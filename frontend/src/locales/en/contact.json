@@ -1,0 +1,19 @@
+{
+  "hero": {
+    "bg_text": "CONTACTS",
+    "title": "Stay in touch",
+    "description": "Have questions, ideas, or just want to say hi? We are always open to communication. Choose a convenient way!"
+  },
+  "org": {
+    "badge": "Organization",
+    "title": "Our details",
+    "email_label": "Email",
+    "id_label": "EDRPOU / Registration",
+    "date_label": "Date of foundation"
+  },
+  "social": {
+    "badge": "Community",
+    "title": "We're on social media",
+    "description": "Subscribe so you don't miss new tournaments, challenges, and useful content for your development."
+  }
+}

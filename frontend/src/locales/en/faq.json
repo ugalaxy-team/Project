@@ -1,0 +1,27 @@
+{
+  "hero": {
+    "bg_text": "FAQ",
+    "title": "Frequently Asked Questions",
+    "description": "We've collected answers to the most popular questions. Can't find yours? Contact our support team!"
+  },
+  "q1": "Who are we and what is this platform?",
+  "a1": "This is a platform by the Star for Life Ukraine charitable foundation. We help youth develop through education, mentoring, and practice. Here you can participate in tournaments, meet like-minded people, and improve your skills.",
+  "q2": "Why is everything free?",
+  "a2": "No catch 🙂 Participation is free because the platform is supported by partners and donors. Our goal is to provide equal opportunities to everyone.",
+  "q3": "What kind of tournaments are here?",
+  "a3": "There are IT tournaments, esports, design, math, creative contests, and other fields. Everyone will find something for themselves.",
+  "q4": "How do I participate in a tournament?",
+  "a4": "It's simple: register, choose a tournament in the 'Tournaments' section, and click 'Participate'. Some tournaments require a team — you can create one or join an existing one.",
+  "q5": "What will I get from participating?",
+  "a5": "Practical experience, skill development, teamwork, and new connections. There is also a chance to win prizes: gadgets, courses, mentorship, or merch.",
+  "q6": "How can I change my role on the platform?",
+  "a6": "Initially, everyone has the 'User' role. To get a different role, submit an application on the 'Role Request' page — we will review it.",
+  "q7": "What should I do if I have a problem?",
+  "a7": "If something isn't working (registration, team, etc.), contact support via the 'Contacts' section. We will definitely help.",
+  "q8": "Are there any age restrictions?",
+  "a8": "Most tournaments are aimed at teenagers and students, but conditions may vary. Check the description of the specific tournament.",
+  "q9": "Can I participate alone (without a team)?",
+  "a9": "Yes. In many tournaments, you can participate individually or find a team directly on the platform.",
+  "q10": "Can I participate in several tournaments at the same time?",
+  "a10": "Yes, as long as the schedules don't overlap and you have enough time to fully participate in all selected competitions."
+}

@@ -1,4 +1,4 @@
-import { StrictMode, Suspense } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { ui } from "./firebase";
@@ -16,15 +16,7 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <FirebaseUIProvider ui={ui}>
         <Provider store={store}>
-          <Suspense
-            fallback={
-              <div className="flex h-screen w-screen items-center justify-center">
-                Завантаження мови...
-              </div>
-            }
-          >
-            <App />
-          </Suspense>
+          <App />
         </Provider>
       </FirebaseUIProvider>
     </QueryClientProvider>

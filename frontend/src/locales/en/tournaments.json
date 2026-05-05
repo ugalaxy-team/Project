@@ -1,0 +1,33 @@
+{
+  "hero": {
+    "bgText": "TOURNAMENTS",
+    "title": "tournaments",
+    "description": "Find the event that suits you. From code to design — gather your team and win."
+  },
+  "search": {
+    "placeholder": "Search tournaments…"
+  },
+  "filters": {
+    "all": "All events",
+    "registration": "Registration",
+    "active": "Active",
+    "completed": "Archive"
+  },
+  "results": {
+    "found": "Found:",
+    "tournaments_zero": "tournaments",
+    "tournaments_one": "tournament",
+    "tournaments_few": "tournaments",
+    "tournaments_many": "tournaments"
+  },
+  "empty": {
+    "title": "Nothing found",
+    "subtitle": "Try changing the filter or query"
+  },
+  "pagination": {
+    "prev": "Prev",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
+  }
+}
