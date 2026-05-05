@@ -7,19 +7,16 @@ from app.dependencies import (
     RoleRequestDep,
     SessionDep,
     get_role_request,
-    get_current_user,
 )
 from app.models import RoleRequest, RoleRequestInfo
 from app.schemas import (
     RoleRequestPublic,
     RoleRequestCreate,
     UserPublic,
-    NotificationCreate,
 )
-from app.config import settings
-from app.utils.routes import (
-    approve_role_request,
-    reject_role_request,
+from app.utils import (
+    approve_role_request_with_notification,
+    reject_role_request_with_notification,
 )
 
 router = APIRouter(prefix="/role-requests", tags=["role-requests"])
@@ -79,8 +76,7 @@ async def get_request(request_id: int, session: SessionDep, request: RoleRequest
 async def approve_request(
     request: RoleRequestDep, session: SessionDep, admin: AdminUserDep
 ):
-    await approve_role_request(request, session)
-    await session.commit()
+    await approve_role_request_with_notification(request, session)
 
     return request.user
 
@@ -90,8 +86,7 @@ async def reject_request(
     request: RoleRequestDep, session: SessionDep, admin: AdminUserDep
 ):
 
-    await reject_role_request(request, session)
-    await session.commit()
+    await reject_role_request_with_notification(request, session)
 
     return request.user
 

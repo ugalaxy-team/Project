@@ -10,18 +10,6 @@ from app.models import Team, TeamMember, Tournament
 from app.schemas import TeamModel
 
 
-async def get_tournament(tournament_id: int, session: SessionDep) -> Tournament:
-    tournament = await session.get(Tournament, tournament_id)
-
-    if not tournament:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Tournament not found",
-        )
-
-    return tournament
-
-
 def check_registration_open(tournament: Tournament):
     now = datetime.now(timezone.utc)
 

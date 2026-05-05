@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from app.dependencies import SessionDep
 from app.models import Team
 from app.schemas import TeamModel, TeamUpdate
-from app.utils.routes import (
+from app.utils import (
     get_tournament,
     check_registration_open,
     get_team,

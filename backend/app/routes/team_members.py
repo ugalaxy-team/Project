@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from app.dependencies import SessionDep
 from app.models import TeamMember
 from app.schemas import TeamMemberCreate, TeamMemberPublic, TeamMemberUpdate
-from app.utils.routes import get_team, check_registration_open, get_tournament
+from app.utils import get_team, check_registration_open, get_tournament
 
 router = APIRouter(
     prefix="/tournaments/{tournament_id}/teams/{team_id}/members", tags=["team-members"]

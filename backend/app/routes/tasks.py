@@ -6,18 +6,10 @@ from app.config import settings
 from app.dependencies import SessionDep
 from app.models import Task
 from app.schemas import TaskCreate, TaskUpdate, TaskPublic
-from app.utils.fsm import TaskStatus, update_tasks_status
-from app.utils.routes import get_requirements
+from app.utils import TaskStatus, update_tasks_status
+from app.utils import get_requirements
 
 router = APIRouter(prefix="/tournaments/{tournament_id}/tasks", tags=["tasks"])
-
-
-async def get_task(task_id: int, session: SessionDep) -> Task:
-    statement = select(Task).where(Task.id == task_id)
-    task = (await session.execute(statement)).scalar()
-    if not task:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Task not found!")
-    return task
 
 
 @router.get("/", response_model=list[TaskPublic], status_code=status.HTTP_200_OK)

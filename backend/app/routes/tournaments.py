@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, status
-from sqlalchemy.orm import selectinload
 from sqlalchemy import select, update
 
 from app.schemas import (
@@ -8,40 +7,17 @@ from app.schemas import (
     TournamentUpdate,
 )
 from app.config import settings
-from app.models import Team, Tournament, User
+from app.models import Tournament
 from app.dependencies import SessionDep, CurrentUserDep
-from app.utils.routes.dates_logic import (
+from app.utils import (
     validate_dates_on_create,
     validate_dates_on_update,
 )
-from app.utils.fsm import auto_update_tournament_status, get_status_by_name
+from app.utils import get_status_by_name
+from app.utils import get_tournament, tournament_load_options
 from app.routes.users import get_user
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
-
-tournament_load_options = (
-    selectinload(Tournament.status),
-    selectinload(Tournament.creator).selectinload(User.roles),
-    selectinload(Tournament.tasks),
-    selectinload(Tournament.teams).selectinload(Team.members),
-    selectinload(Tournament.juries),
-)
-
-
-# for future , move to a separate file: get_tournament, get_status_by_name
-async def get_tournament(tournament_id: int, session: SessionDep) -> Tournament:
-    statement = (
-        select(Tournament)
-        .where(Tournament.id == tournament_id)
-        .options(*tournament_load_options)
-    )
-    tournament = (await session.execute(statement)).scalar_one_or_none()
-    if not tournament:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Tournament not found!")
-
-    await auto_update_tournament_status(tournament, session)
-
-    return tournament
 
 
 @router.get("/", response_model=list[TournamentPublic], status_code=status.HTTP_200_OK)

@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.db import engine, AsyncSessionLocal
-from app.utils.routes import reject_role_request, approve_role_request
+from app.utils import reject_role_request, approve_role_request
 from app.models import (
     Notification,
     RequirementEvaluation,

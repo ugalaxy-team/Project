@@ -1,12 +1,17 @@
-from fastapi import status, HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.dependencies.session import SessionDep
+from app.models import Task, TaskRequirementOption
 
-from app.models import TaskRequirementOption
-
+async def get_task(task_id: int, session: SessionDep) -> Task:
+    statement = select(Task).where(Task.id == task_id)
+    task = (await session.execute(statement)).scalar()
+    if not task:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Task not found!")
+    return task
 
 async def get_requirements(
-    requirement_names: list[str], session: AsyncSession
+    requirement_names: list[str], session: SessionDep
 ) -> list[TaskRequirementOption]:
 
     if not requirement_names:

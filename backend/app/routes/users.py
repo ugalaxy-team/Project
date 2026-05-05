@@ -8,39 +8,6 @@ from app.dependencies import CurrentUserDep, SessionDep, get_user
 
 router = APIRouter(prefix="/users", tags=["users"])
 
-
-async def get_user_by_email(email: str, session: SessionDep):
-    statement = select(User).where(User.email == email)
-
-    user = (await session.execute(statement)).scalar()
-    if not user:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User not found!")
-    return user
-
-
-async def get_user_by_firebase_uid(firebase_uid: str, session: SessionDep):
-    statement = select(User).where(User.firebase_uid == firebase_uid)
-
-    user = (await session.execute(statement)).scalar()
-    if not user:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User not found!")
-    return user
-
-
-async def get_user_by_id(id: int, session: SessionDep):
-    statement = select(User).where(User.id == id)
-
-    user = (await session.execute(statement)).scalar()
-    if not user:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User not found!")
-    return user
-
-
-# We don't use the functions defined above, because if i.e. user by email is not found and
-# the function is called first, the error will be thrown.
-# TODO?: Possible refactoring required because of this
-
-
 @router.get("/", response_model=list[UserPublic])
 async def users(session: SessionDep):
     statement = select(User)
