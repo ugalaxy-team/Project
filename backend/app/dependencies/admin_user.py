@@ -5,13 +5,14 @@ from sqlalchemy import select
 from .current_user import CurrentUserDep
 from .session import SessionDep
 from app.models import User, Role
+from app.config import settings
 
 
 async def get_admin_user(current_user: CurrentUserDep, session: SessionDep) -> User:
     statement = (
         select(User)
         .join(User.roles)
-        .where(User.id == current_user.id, Role.name == "admin")
+        .where(User.id == current_user.id, Role.name == settings.ROLE_NAMES.ADMIN)
     )
     user = (await session.execute(statement)).scalar()
     if not user:
