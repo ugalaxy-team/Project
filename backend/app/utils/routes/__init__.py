@@ -1,4 +1,5 @@
 from .dates_logic import validate_dates_on_create, validate_dates_on_update
+from .notification import send_notification
 from .task import get_requirements
 from .teams import (
     get_tournament,

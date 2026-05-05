@@ -2,30 +2,14 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import TaskRequirementCategory
-
-CATEGORIES = [
-    {"name": "Languages", "main_id": None},
-    {"name": "Backend", "main_id": None},
-    {"name": "Frontend", "main_id": None},
-    {"name": "Databases", "main_id": None},
-    {"name": "Infrastructure", "main_id": None},
-    {"name": "Mobile", "main_id": None},
-    {"name": "Design & UI/UX", "main_id": None},
-    {"name": "SQL", "main_id": "Databases"},
-    {"name": "NoSQL", "main_id": "Databases"},
-    {"name": "Vector DB", "main_id": "Databases"},
-    {"name": "Frameworks", "main_id": "Backend"},
-    {"name": "JS Frameworks", "main_id": "Frontend"},
-    {"name": "State Management", "main_id": "Frontend"},
-    {"name": "DevOps", "main_id": "Infrastructure"},
-    {"name": "Cloud", "main_id": "Infrastructure"},
-    {"name": "Monitoring", "main_id": "Infrastructure"},
-]
+from app.config import settings
 
 
 async def init_categories(session: AsyncSession):
-    parents = [p for p in CATEGORIES if p["main_id"] is None]
-    children = [c for c in CATEGORIES if c["main_id"] is not None]
+    all_categories = settings.CATEGORY_LIST
+
+    parents = [p for p in all_categories if p["main_id"] is None]
+    children = [c for c in all_categories if c["main_id"] is not None]
 
     for item in parents:
         stmt = select(TaskRequirementCategory).where(
