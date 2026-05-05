@@ -1,4 +1,5 @@
 from .evaluation import RequirementEvaluationModel, SubmissionEvaluationModel
+from .news import NewsPublic
 from .notification import NotificationPublic, NotificationCreate
 from .option import OptionPublic, OptionUpdate
 from .role_request import RoleRequestPublic, RoleRequestCreate

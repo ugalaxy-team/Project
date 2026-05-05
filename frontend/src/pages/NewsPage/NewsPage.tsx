@@ -1,5 +1,5 @@
 import { type FC, useState, useEffect, useMemo } from 'react';
-import { MOCK_NEWS, type NewsArticle } from './newsData';
+import { getNews, type NewsArticle } from '@/api/requests/getNews';
 
 interface ArticleReaderProps {
   article: NewsArticle;
@@ -176,7 +176,19 @@ export const NewsCard: FC<NewsCardProps> = ({ article, onClick }) => {
 
 export const NewsPage: FC = () => {
   const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
-  const activeArticle = MOCK_NEWS.find(a => a.id === selectedArticleId);
+  const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getNews()
+      .then(setNewsArticles)
+      .catch(() => {
+        // Fallback to mock data on error
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const activeArticle = newsArticles.find(a => a.id === selectedArticleId);
 
   return (
     <div className="min-h-screen bg-[#F4F7FF] font-sans pb-24 relative overflow-x-hidden">
@@ -192,11 +204,17 @@ export const NewsPage: FC = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {MOCK_NEWS.map((article) => (
-            <NewsCard key={article.id} article={article} onClick={setSelectedArticleId} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-20 text-gray-500">Завантаження...</div>
+        ) : newsArticles.length === 0 ? (
+          <div className="text-center py-20 text-gray-500">Новин поки що немає</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {newsArticles.map((article) => (
+              <NewsCard key={article.id} article={article} onClick={setSelectedArticleId} />
+            ))}
+          </div>
+        )}
       </main>
 
       {activeArticle && <ArticleReader article={activeArticle} onClose={() => setSelectedArticleId(null)} />}

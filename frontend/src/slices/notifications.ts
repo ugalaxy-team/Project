@@ -31,7 +31,7 @@ const notificationsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(setUser, (state, action) => {
       if (action.payload && action.payload.notifications) {
-        state.items = action.payload.notifications;
+        state.items = [...action.payload.notifications].reverse();
       }
     });
   },

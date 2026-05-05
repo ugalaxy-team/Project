@@ -6,6 +6,8 @@ from app.config import settings
 from app.models import (
     User,
     Role,
+    News,
+    NewsCattegory,
     TeamMember,
     Team,
     Tournament,
@@ -69,6 +71,30 @@ class RoleFactory(BaseFactory):
 class TournamentStatusOptionFactory(BaseOptionFactory):
     class Meta:
         model = TournamentStatusOption
+
+class NewsCattegoryFactory(BaseOptionFactory):
+    class Meta:
+        model = NewsCattegory
+
+    name = factory.Iterator([option["name"] for option in settings.NEWS_CATEGORY_OPTIONS])
+    display_name = factory.LazyAttribute(
+        lambda category: next(
+            option["display_name"]
+            for option in settings.NEWS_CATEGORY_OPTIONS
+            if option["name"] == category.name
+        )
+    )
+
+class NewsFactory(BaseFactory):
+    class Meta:
+        model = News
+
+    title = factory.Sequence(lambda n: f"news_{n} title")
+    excerpt = factory.Sequence(lambda n: f"news_{n} excerpt")
+    body = factory.Sequence(lambda n: f"news_{n} body")
+    category = factory.SubFactory(NewsCattegoryFactory)
+    is_important = False
+
 
 
 class TournamentFactory(BaseFactory):

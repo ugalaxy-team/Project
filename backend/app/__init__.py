@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+import app.routes.news as news
 import app.routes.profile as profile
 import app.routes.role_requests as role_requests
 import app.routes.roles as roles
@@ -38,6 +39,7 @@ app.add_middleware(
 app.state.user_websocket_sessions = {}
 
 
+app.include_router(news.router)
 app.include_router(profile.router)
 app.include_router(role_requests.router)
 app.include_router(roles.router)

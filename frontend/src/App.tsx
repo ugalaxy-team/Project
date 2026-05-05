@@ -7,6 +7,7 @@ import { useEffect, useState, useRef } from "react";
 import { Router } from "./routers/Router";
 
 const COOLDOWN_TIME = 3 * 60 * 1000; 
+
 export const App = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -41,7 +42,10 @@ export const App = () => {
 
         currentSocket.on("connect", () => {
           if (wasError.current) {
-            toast.success("Зв'язок відновлено!", { id: "socket-error" });
+            toast.success("Зв'язок відновлено!", { 
+              id: "socket-error",
+              description: ""
+            });
             wasError.current = false;
             lastErrorTime.current = 0;
           }
@@ -66,7 +70,7 @@ export const App = () => {
 
   return (
     <>
-      <Toaster position="top-center" richColors expand={false} />
+      <Toaster position="top-center" richColors expand={false} closeButton />
       <Router />
     </>
   );
