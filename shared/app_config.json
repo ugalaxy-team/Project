@@ -142,6 +142,8 @@
     {
       "name": "plans",
       "display_name": "Future Plans"
+    }
+  ],
   "news_categories": [
     {
       "name": "updates",
