@@ -11,9 +11,13 @@ from statemachine import StateMachine, State
 
 class TournamentStatus(StateMachine):
     draft = State("Draft", value=settings.TOURNAMENT_STATUS_NAMES.DRAFT, initial=True)
-    registration = State("Registration", value=settings.TOURNAMENT_STATUS_NAMES.REGISTRATION)
+    registration = State(
+        "Registration", value=settings.TOURNAMENT_STATUS_NAMES.REGISTRATION
+    )
     running = State("Running", value=settings.TOURNAMENT_STATUS_NAMES.RUNNING)
-    finished = State("Finished", value=settings.TOURNAMENT_STATUS_NAMES.FINISHED, final=True)
+    finished = State(
+        "Finished", value=settings.TOURNAMENT_STATUS_NAMES.FINISHED, final=True
+    )
 
     start_registration = draft.to(registration)
     start_tournament = registration.to(running)
@@ -28,7 +32,7 @@ class TournamentStatus(StateMachine):
 
     async def update_db_status(self):
 
-        new_status_name = self.current_state.value
+        new_status_name = self.current_state_value
 
         statement = select(TournamentStatusOption).where(
             TournamentStatusOption.name == new_status_name
@@ -46,17 +50,17 @@ async def auto_update_tournament_status(tournament: Tournament, session):
     now = datetime.now(timezone.utc).replace(tzinfo=None)
 
     fsm = TournamentStatus(tournament, session)
-    initial_state_value = fsm.current_state.value
+    initial_state_value = fsm.current_state_value
 
-    if fsm.current_state == TournamentStatus.draft:
+    if fsm.configuration == TournamentStatus.draft:
         if tournament.reg_start <= now:
             fsm.start_registration()
 
-    if fsm.current_state == TournamentStatus.registration:
+    if fsm.configuration == TournamentStatus.registration:
         if tournament.reg_end <= now:
             fsm.start_tournament()
 
-    if fsm.current_state.value != initial_state_value:
+    if fsm.current_state_value != initial_state_value:
         await fsm.update_db_status()
 
         await session.refresh(tournament, ["status"])
@@ -69,6 +73,8 @@ async def get_status_by_name(name: str, session: SessionDep) -> TournamentStatus
     status_ = (await session.execute(statement)).scalar_one_or_none()
 
     if not status_:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Status not found!')
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Status not found!"
+        )
 
     return status_
