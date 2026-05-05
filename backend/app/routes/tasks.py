@@ -8,6 +8,7 @@ from app.models import Task
 from app.schemas import TaskCreate, TaskUpdate, TaskPublic
 from app.utils import TaskStatus, update_tasks_status
 from app.utils import get_requirements, get_task
+from app.dependencies import current_user_dependency
 
 router = APIRouter(prefix="/tournaments/{tournament_id}/tasks", tags=["tasks"])
 
@@ -37,7 +38,12 @@ async def task(tournament_id: int, task_id: int, session: SessionDep):
     return task
 
 
-@router.post("/", response_model=TaskPublic, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", 
+    response_model=TaskPublic, 
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[current_user_dependency]
+)
 async def create_task(tournament_id: int, task_data: TaskCreate, session: SessionDep):
     task_dict = task_data.model_dump(exclude={"requirements"})
     new_task = Task(
@@ -54,7 +60,12 @@ async def create_task(tournament_id: int, task_data: TaskCreate, session: Sessio
     return new_task
 
 
-@router.patch("/{task_id}/", response_model=TaskPublic, status_code=status.HTTP_200_OK)
+@router.patch(
+    "/{task_id}/", 
+    response_model=TaskPublic, 
+    status_code=status.HTTP_200_OK,
+    dependencies=[current_user_dependency]
+)
 async def update_task(
     tournament_id: int, task_id: int, task_data: TaskUpdate, session: SessionDep
 ):
@@ -87,7 +98,11 @@ async def update_task(
     return task
 
 
-@router.delete("/{task_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{task_id}/", 
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[current_user_dependency]
+)
 async def delete_task(task_id: int, session: SessionDep):
     task = await get_task(task_id, session)
 

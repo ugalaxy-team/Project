@@ -13,9 +13,8 @@ from app.utils import (
     validate_dates_on_create,
     validate_dates_on_update,
 )
-from app.utils import get_status_by_name
-from app.utils import get_tournament, tournament_load_options
-from app.routes.users import get_user
+from app.utils import get_tournament, tournament_load_options, get_status_by_name
+from app.dependencies import get_user, current_user_dependency
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 
@@ -77,7 +76,10 @@ async def create_tournament(
 
 
 @router.patch(
-    "/{tournament_id}/", response_model=TournamentPublic, status_code=status.HTTP_200_OK
+    "/{tournament_id}/", 
+    response_model=TournamentPublic, 
+    status_code=status.HTTP_200_OK,
+    dependencies=[current_user_dependency]
 )
 async def update_tournament(
     tournament_id: int,
@@ -129,7 +131,11 @@ async def update_tournament(
     return tournament
 
 
-@router.delete("/{tournament_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{tournament_id}/", 
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[current_user_dependency]
+)
 async def delete_tournament(tournament_id: int, session: SessionDep):
     tournament = await get_tournament(tournament_id, session)
 

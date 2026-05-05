@@ -99,8 +99,8 @@ async def get_user_by_id(identifier: str, session: SessionDep) -> User:
 
     return await get_user(ident, session)
 
-
+current_user_dependency = Depends(get_current_user)
 UserDep = Annotated[User, Depends(get_user_by_id)]
-CurrentUserDep = Annotated[User, Depends(get_current_user)]
+CurrentUserDep = Annotated[User, current_user_dependency]
 
 # It may be possible to rename the file in the future

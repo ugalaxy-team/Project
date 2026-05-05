@@ -4,7 +4,7 @@ from sqlalchemy import select, or_, update
 
 from app.schemas import UserPublic, UserUpdate, UserCreate
 from app.models import User
-from app.dependencies import CurrentUserDep, SessionDep, get_user
+from app.dependencies import CurrentUserDep, SessionDep, get_user, current_user_dependency
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -20,7 +20,10 @@ async def user(identifier: int | str, session: SessionDep):
     return await get_user(identifier, session)
 
 
-@router.post("/", response_model=UserPublic)
+@router.post("/", 
+    response_model=UserPublic,
+    dependencies=[current_user_dependency]
+)
 async def create_user(session: SessionDep, user_create: UserCreate):
     statement = select(User).where(
         or_(
@@ -39,7 +42,10 @@ async def create_user(session: SessionDep, user_create: UserCreate):
 
 
 @router.patch(
-    "/{identifier}/", response_model=UserPublic, status_code=status.HTTP_200_OK
+    "/{identifier}/", 
+    response_model=UserPublic, 
+    status_code=status.HTTP_200_OK,
+    dependencies=[current_user_dependency]
 )
 async def edit_user(
     identifier: int | str,
@@ -73,7 +79,11 @@ async def edit_user(
     return updated_user
 
 
-@router.delete("/{identifier}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{identifier}/", 
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[current_user_dependency]
+)
 async def delete_user(identifier: int | str, session: SessionDep):
     user = await get_user(identifier, session)
     await session.delete(user)

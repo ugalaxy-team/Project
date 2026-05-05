@@ -28,12 +28,15 @@ async def test_create_tournament(create, client, db_session):
     assert u1.id in juries_ids
     assert u2.id in juries_ids
     assert len(resp.json()['juries']) == 2
+    app.dependency_overrides.pop(get_current_user)
 
 
 async def test_update_tournament_juries(create, client):
+    user = await create(UserFactory)
     u1 = await create(UserFactory)
     u2 = await create(UserFactory)
     t = await create(TournamentFactory)
+    app.dependency_overrides[get_current_user] = lambda: user
     resp = await client.patch(f'/tournaments/{t.id}/', json={
         'juries': [u1.id, u2.id],
     })
@@ -42,3 +45,4 @@ async def test_update_tournament_juries(create, client):
     assert u1.id in juries_ids
     assert u2.id in juries_ids
     assert len(resp.json()['juries']) == 2
+    app.dependency_overrides.pop(get_current_user)

@@ -18,6 +18,7 @@ from app.utils import (
     approve_role_request_with_notification,
     reject_role_request_with_notification,
 )
+from app.dependencies import current_user_dependency
 
 router = APIRouter(prefix="/role-requests", tags=["role-requests"])
 
@@ -67,8 +68,8 @@ async def create_request(
     return await get_role_request(role_request.id, session)
 
 
-@router.get("/{request_id}/", response_model=RoleRequestPublic)
-async def get_request(request_id: int, session: SessionDep, request: RoleRequestDep):
+@router.get("/{request_id}/", response_model=RoleRequestPublic, dependencies=[current_user_dependency])
+async def get_request(request: RoleRequestDep):
     return request
 
 
