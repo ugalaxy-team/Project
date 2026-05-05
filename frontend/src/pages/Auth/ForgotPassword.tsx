@@ -58,7 +58,6 @@ export const ForgotPassword = () => {
             exit={{ opacity: 0, x: 10 }}
             transition={{ duration: 0.3 }}
           >
-            {/* Кнопка повернення тепер на своєму місці в потоці */}
             <Link
               to="/auth"
               className="inline-flex items-center gap-2 text-[14px] font-semibold text-slate-400 hover:text-indigo-500 transition-colors mb-6 group"

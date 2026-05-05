@@ -26,7 +26,6 @@ export const ProfileDropdown = () => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Кнопка профілю у хідері: залишається з білими акцентами */}
       <button
         onClick={toggleMenu}
         aria-expanded={isOpen}
@@ -67,7 +66,6 @@ export const ProfileDropdown = () => {
         </svg>
       </button>
 
-      {/* Меню, що випадає: переведено на дизайн-систему */}
       {isOpen && (
         <div className="absolute right-0 mt-3 w-56 bg-bg-card rounded-xl shadow-xl py-2 flex flex-col border border-border overflow-hidden z-50 transition-colors duration-300">
           <Link
@@ -96,7 +94,6 @@ export const ProfileDropdown = () => {
           <Link
             to="/auth/sign-out"
             onClick={closeMenu}
-            // Кнопка "Вийти" - адаптивний прозоро-червоний фон
             className="px-5 py-3 text-red-500 font-semibold hover:bg-red-500/10 transition-colors flex items-center gap-3 group"
           >
             <svg

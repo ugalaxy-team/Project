@@ -15,7 +15,6 @@ export const NotificationsDropdown = () => {
 
   return (
     <div className="relative flex items-center" ref={dropdownRef}>
-      {/* Тригер залишається білим, бо знаходиться в Primary Хідері */}
       <button
         onClick={toggleMenu}
         aria-label="Notifications"

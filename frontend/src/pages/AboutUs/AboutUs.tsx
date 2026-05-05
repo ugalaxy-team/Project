@@ -34,7 +34,6 @@ export const AboutUs: React.FC = () => {
       />
 
       <div className="flex-grow w-full max-w-[1320px] mx-auto px-6 -mt-[90px] relative z-20 space-y-10">
-        {/* Світла картка (адаптується) */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -65,7 +64,6 @@ export const AboutUs: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Темна секція (Залишається темною в обох темах, бо це акцентний блок) */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

@@ -13,7 +13,6 @@ import { cn } from "../../utils/cn";
 
 const PER_PAGE = 15;
 
-// Точки для фільтрів переведено на кольори дизайн-системи
 const FILTER_IDS: { id: TournamentStatus | "all"; dotColor?: string }[] = [
   { id: "all" },
   { id: "registration", dotColor: "bg-green-500" },
@@ -68,7 +67,6 @@ export const TournamentsPage = () => {
   };
 
   return (
-    // Змінено font-nunito на font-inter (стандарт системи) та додано адаптивні кольори
     <div className="w-full flex flex-col min-h-screen bg-bg-body font-inter text-text-main transition-colors duration-300">
       <Hero
         bgText={t("hero.bgText", "ТУРНІРИ")}
@@ -79,52 +77,50 @@ export const TournamentsPage = () => {
         )}
       />
 
-      <div className="flex-grow w-full max-w-[1320px] mx-auto px-6 -mt-[90px] mb-20 relative z-10">
-        {/* Панель пошуку та фільтрів */}
+      <div className="flex-grow w-full max-w-[1320px] mx-auto px-4 md:px-6 -mt-[50px] md:-mt-[70px] mb-20 relative z-30">
         <div className="mb-7 relative z-40">
-          <div className="bg-bg-card border-[1.5px] border-border rounded-2xl p-3.5 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 shadow-[0_4px_24px_rgba(0,0,0,0.03)] transition-colors duration-300">
-            {/* Пошук */}
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none transition-colors duration-300" />
+          <div className="bg-bg-card border-[1.5px] border-border rounded-2xl p-3 sm:p-4 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 shadow-[0_4px_24px_rgba(0,0,0,0.03)] transition-colors duration-300">
+            <div className="relative shrink-0 w-full md:w-auto">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted pointer-events-none transition-colors duration-300" />
               <input
                 type="text"
                 value={query}
                 onChange={handleSearch}
                 placeholder={t("search.placeholder", "Пошук турнірів...")}
-                className="w-full md:w-[240px] pl-[38px] pr-4 py-2.5 bg-bg-body border-[1.5px] border-border rounded-xl text-[14px] text-text-main font-bold outline-none focus:border-primary focus:bg-bg-card transition-all placeholder:text-text-muted/60 placeholder:font-semibold"
+                className="w-full md:w-[260px] pl-[44px] pr-4 py-3 bg-bg-body border-[1.5px] border-border rounded-xl text-[15px] text-text-main font-bold outline-none focus:border-primary focus:bg-bg-card transition-all placeholder:text-text-muted/60 placeholder:font-semibold"
               />
             </div>
 
-            {/* Фільтри */}
-            <div className="flex gap-1 flex-wrap">
+            <div className="flex gap-2 flex-wrap w-full md:w-auto">
               {FILTER_IDS.map((option) => (
                 <button
                   key={option.id}
                   onClick={() => handleFilterChange(option.id)}
                   className={cn(
-                    "px-4 py-2 rounded-xl text-[14px] font-bold transition-all duration-300 flex items-center gap-2",
+                    "px-4 py-2.5 rounded-xl text-[14px] font-bold transition-all duration-300 flex items-center justify-center gap-2 grow sm:grow-0",
                     filter === option.id
                       ? "bg-primary text-white shadow-md shadow-primary/20"
-                      : "text-text-muted hover:bg-bg-body hover:text-text-main",
+                      : "bg-bg-body text-text-muted hover:bg-bg-card hover:text-text-main border-[1px] border-border",
                   )}
                 >
                   {option.dotColor && (
                     <span
                       className={cn(
-                        "w-1.5 h-1.5 rounded-full transition-colors duration-300",
+                        "w-2 h-2 rounded-full transition-colors duration-300 shrink-0",
                         option.dotColor,
                       )}
                     />
                   )}
-                  {t(`filters.${option.id}`)}
+                  <span className="whitespace-nowrap">
+                    {t(`filters.${option.id}`)}
+                  </span>
                 </button>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Лічильник результатів */}
-        <div className="mb-5 text-[14px] font-bold text-text-muted transition-colors duration-300">
+        <div className="mb-6 text-[15px] font-bold text-text-muted transition-colors duration-300 px-1">
           {t("results.found", "Знайдено:")}{" "}
           <strong className="text-primary">{filteredData.length}</strong>{" "}
           {filteredData.length === 1
@@ -132,7 +128,6 @@ export const TournamentsPage = () => {
             : t("results.tournaments_many", "турнірів")}
         </div>
 
-        {/* Сітка турнірів */}
         <AnimatePresence mode="wait">
           {currentData.length > 0 ? (
             <motion.div
@@ -160,13 +155,13 @@ export const TournamentsPage = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className="py-24 text-center col-span-full bg-bg-card rounded-3xl border border-border transition-colors duration-300"
+              className="py-24 text-center col-span-full bg-bg-card rounded-3xl border border-border transition-colors duration-300 mx-2 md:mx-0"
             >
               <span className="text-[52px] block mb-4 opacity-50">🔍</span>
               <h3 className="font-quicksand text-[24px] text-text-main font-extrabold mb-2 transition-colors duration-300">
                 {t("empty.title", "Нічого не знайдено")}
               </h3>
-              <p className="text-[16px] font-semibold text-text-muted transition-colors duration-300">
+              <p className="text-[16px] font-semibold text-text-muted transition-colors duration-300 px-4">
                 {t(
                   "empty.subtitle",
                   "Спробуйте змінити фільтри або пошуковий запит.",
@@ -176,7 +171,6 @@ export const TournamentsPage = () => {
           )}
         </AnimatePresence>
 
-        {/* Пагінація */}
         {totalPages > 1 && (
           <div className="mt-14 flex flex-col items-center gap-5">
             <div className="flex items-center gap-4 sm:gap-6">

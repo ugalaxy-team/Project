@@ -11,7 +11,10 @@ interface EditProfileModalProps {
   onClose: () => void;
 }
 
-export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) => {
+export const EditProfileModal: React.FC<EditProfileModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
   const user = useSelector((s: RootState) => s.user.user);
   // Email should be updated elsewhere, because this process requires confirmation that the new email belongs to user
   const [formData, setFormData] = useState({
@@ -33,8 +36,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
         setUser({
           ...user,
           displayName: variables.full_name,
-          ...variables
-        })
+          ...variables,
+        }),
       );
       onClose();
     },
@@ -60,7 +63,9 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
       <div className="modal-card card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Редагувати профіль</h2>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <button className="close-btn" onClick={onClose}>
+            ×
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="modal-form">
@@ -81,21 +86,41 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
 
           <div className="form-group">
             <label>Telegram</label>
-            <input type="text" name="telegram" value={formData.telegram} onChange={handleChange} className="form-input" />
+            <input
+              type="text"
+              name="telegram"
+              value={formData.telegram}
+              onChange={handleChange}
+              className="form-input"
+            />
           </div>
 
           <div className="form-group">
             <label>GitHub</label>
-            <input type="text" name="github" value={formData.github} onChange={handleChange} className="form-input" />
+            <input
+              type="text"
+              name="github"
+              value={formData.github}
+              onChange={handleChange}
+              className="form-input"
+            />
           </div>
 
           <div className="form-group">
             <label>Discord</label>
-            <input type="text" name="discord" value={formData.discord} onChange={handleChange} className="form-input" />
+            <input
+              type="text"
+              name="discord"
+              value={formData.discord}
+              onChange={handleChange}
+              className="form-input"
+            />
           </div>
 
           <div className="modal-actions">
-            <button type="button" className="btn-secondary" onClick={onClose}>Скасувати</button>
+            <button type="button" className="btn-secondary" onClick={onClose}>
+              Скасувати
+            </button>
             <button
               type="submit"
               className="btn-primary"

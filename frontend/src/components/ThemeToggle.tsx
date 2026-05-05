@@ -22,7 +22,7 @@ export const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={() => setIsDark(!isDark)}
-      className="relative flex items-center justify-center w-9 h-9 rounded-full bg-white/10 border border-white/10 text-white/90 hover:text-white hover:bg-white/20 transition-all duration-200 outline-none overflow-hidden"
+      className="group relative flex items-center justify-center w-[42px] h-[42px] rounded-full bg-bg-card text-text-main shadow-sm hover:shadow-md transition-all duration-300 outline-none overflow-hidden border-none cursor-pointer"
       aria-label="Toggle theme"
     >
       <AnimatePresence mode="wait" initial={false}>
@@ -35,9 +35,17 @@ export const ThemeToggle: React.FC = () => {
           className="flex items-center justify-center"
         >
           {isDark ? (
-            <Sun size={18} strokeWidth={2.5} />
+            <Sun
+              size={20}
+              strokeWidth={2.5}
+              className="transition-transform duration-300 group-hover:text-accent"
+            />
           ) : (
-            <Moon size={18} strokeWidth={2.5} />
+            <Moon
+              size={20}
+              strokeWidth={2.5}
+              className="transition-transform duration-300 group-hover:text-accent"
+            />
           )}
         </motion.div>
       </AnimatePresence>

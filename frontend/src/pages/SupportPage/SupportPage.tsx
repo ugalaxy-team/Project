@@ -15,7 +15,7 @@ export const SupportPage: React.FC = () => {
       description: t("options.donate.description"),
       buttonText: t("options.donate.button"),
       link: "https://www.sflua.org/uk/donate-1",
-      icon: <Heart className="w-7 h-7" strokeWidth={2.5} />,
+      icon: <Heart className="w-6 h-6" strokeWidth={2.5} />,
     },
     {
       badge: t("options.partnership.badge"),
@@ -23,7 +23,7 @@ export const SupportPage: React.FC = () => {
       description: t("options.partnership.description"),
       buttonText: t("options.partnership.button"),
       link: "mailto:team@starforlife.org.ua?subject=Potential%20partnership",
-      icon: <Handshake className="w-7 h-7" strokeWidth={2.5} />,
+      icon: <Handshake className="w-6 h-6" strokeWidth={2.5} />,
     },
     {
       badge: t("options.volunteer.badge"),
@@ -31,7 +31,7 @@ export const SupportPage: React.FC = () => {
       description: t("options.volunteer.description"),
       buttonText: t("options.volunteer.button"),
       link: "https://www.sflua.org/uk/volunteer",
-      icon: <Users2 className="w-7 h-7" strokeWidth={2.5} />,
+      icon: <Users2 className="w-6 h-6" strokeWidth={2.5} />,
     },
   ];
 
@@ -44,8 +44,7 @@ export const SupportPage: React.FC = () => {
       />
 
       <div className="flex-grow w-full max-w-[1320px] mx-auto px-6 -mt-[90px] relative z-20 space-y-10">
-        {/* Сітка карток (Адаптивна) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {supportOptions.map((option, index) => (
             <motion.div
               key={index}
@@ -56,24 +55,31 @@ export const SupportPage: React.FC = () => {
               className="bg-bg-card rounded-[32px] p-8 shadow-sm border border-border flex flex-col justify-between transition-colors duration-300"
             >
               <div>
-                <span className="inline-block bg-primary/10 text-primary font-bold px-4 py-1.5 rounded-full mb-6 text-[13px] uppercase tracking-wide">
-                  {option.badge}
-                </span>
+                <div className="flex justify-between items-start mb-6">
+                  <span className="inline-block bg-primary/10 text-primary font-bold px-4 py-1.5 rounded-full text-[13px] uppercase tracking-wide">
+                    {option.badge}
+                  </span>
 
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6">
-                  {option.icon}
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                    {option.icon}
+                  </div>
                 </div>
 
-                <h3 className="text-[24px] font-extrabold text-text-main mb-4 leading-tight">
+                <h3 className="text-[24px] lg:text-[26px] font-extrabold text-text-main mb-3 leading-tight">
                   {option.title}
                 </h3>
 
-                <p className="text-text-muted text-[16px] leading-relaxed mb-8 font-medium italic">
+                <p className="text-text-muted text-[15px] leading-relaxed mb-8 font-medium">
                   {option.description}
                 </p>
               </div>
 
-              <a href={option.link} target="_blank" rel="noopener noreferrer">
+              <a
+                href={option.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-auto"
+              >
                 <Button
                   variant="primary"
                   className="w-full py-4 text-[16px] font-bold"
@@ -85,14 +91,13 @@ export const SupportPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Фінальна плашка (Адаптивна) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-primary/5 rounded-[32px] p-8 md:p-12 border border-primary/20 text-center transition-colors duration-300"
+          className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-[32px] p-8 md:p-10 border border-primary/10 text-center transition-colors duration-300"
         >
-          <p className="text-text-muted font-bold text-lg md:text-xl leading-relaxed max-w-4xl mx-auto">
+          <p className="text-text-main font-bold text-lg md:text-xl leading-relaxed max-w-4xl mx-auto">
             {t("footer_note")}
           </p>
         </motion.div>

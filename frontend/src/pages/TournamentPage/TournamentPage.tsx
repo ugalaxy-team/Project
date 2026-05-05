@@ -13,7 +13,6 @@ interface TournamentData {
   max_teams: number;
 }
 
-// 1. Оновлено TABS: додано ключі перекладу
 const TABS = [
   { id: "desc", i18nKey: "tabs.description", fallback: "Опис завдання" },
   { id: "looking", i18nKey: "tabs.looking", fallback: "Шукають команду" },
@@ -24,7 +23,6 @@ const TABS = [
 type TabId = (typeof TABS)[number]["id"];
 type TourneyStatus = "registration" | "active" | "waiting" | "finished";
 
-// Іконки (без змін, згорнуті для читабельності)
 const RegistrationIcon = () => (
   <svg
     width="18"
@@ -170,7 +168,6 @@ const SpinnerIcon = () => (
   </svg>
 );
 
-// 2. Оновлено конфіг статусів (замінено жорсткі тексти на ключі перекладу)
 const STATUS_CONFIG: Record<
   TourneyStatus,
   { i18nKey: string; fallback: string; className: string; icon: ReactNode }
@@ -204,7 +201,6 @@ const STATUS_CONFIG: Record<
   },
 };
 
-// 3. Передаємо функцію t() для перекладу динамічних часів
 const getTimeLeftInfo = (targetDate: Date, t: any) => {
   const now = new Date();
   const diffMs = targetDate.getTime() - now.getTime();
@@ -220,7 +216,7 @@ const getTimeLeftInfo = (targetDate: Date, t: any) => {
 
 export const TournamentPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { t } = useTranslation("tournament"); // Підключаємо переклади
+  const { t } = useTranslation("tournament");
   const navigate = useNavigate();
 
   const [tournament, setTournament] = useState<TournamentData | null>(null);
@@ -228,7 +224,6 @@ export const TournamentPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Імітація затримки мережі
     setTimeout(() => {
       setTournament({
         title: "SLOVO JAM",

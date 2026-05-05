@@ -73,13 +73,13 @@ export const ContactPage: React.FC = () => {
       name: "Telegram",
       url: "https://t.me/starforlifeukraine",
       color: "bg-[#229ED9]",
-      icon: <Send size={24} />, // Це стандартна іконка повідомлення, вона залишається в lucide
+      icon: <Send size={24} />,
     },
     {
       name: "Discord",
       url: "https://discord.gg/JQ9B7NgCM7",
       color: "bg-[#5865F2]",
-      icon: <MessageCircle size={24} />, // Це також стандартна іконка чату
+      icon: <MessageCircle size={24} />,
     },
     {
       name: "Facebook",
@@ -111,7 +111,6 @@ export const ContactPage: React.FC = () => {
 
       <div className="flex-grow w-full max-w-[1320px] mx-auto px-6 -mt-[90px] relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-          {/* Картка 1: Організація (Адаптивна) */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -131,7 +130,6 @@ export const ContactPage: React.FC = () => {
               </h2>
 
               <div className="space-y-8">
-                {/* Email */}
                 <div className="flex items-center gap-5 group">
                   <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center transition-transform group-hover:scale-110">
                     <Mail size={24} strokeWidth={2.5} />
@@ -149,7 +147,6 @@ export const ContactPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* ЄДРПОУ */}
                 <div className="flex items-center gap-5 group">
                   <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center transition-transform group-hover:scale-110">
                     <FileText size={24} strokeWidth={2.5} />
@@ -164,7 +161,6 @@ export const ContactPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Дата */}
                 <div className="flex items-center gap-5 group">
                   <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center transition-transform group-hover:scale-110">
                     <Calendar size={24} strokeWidth={2.5} />
@@ -182,14 +178,12 @@ export const ContactPage: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Картка 2: Соцмережі (Темна, акцентна) */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="bg-dark-theme rounded-[32px] p-8 md:p-12 shadow-xl flex flex-col justify-between relative overflow-hidden text-white transition-colors duration-300"
           >
-            {/* Блюр */}
             <div className="absolute -right-10 -top-10 w-48 h-48 bg-primary/20 rounded-full blur-[80px]"></div>
 
             <div className="relative z-10">

@@ -31,9 +31,16 @@ export const Hero = ({
   mascot,
 }: HeroProps) => {
   return (
-    <section className="relative bg-gradient-to-br from-hero-from to-hero-to pt-[140px] md:pt-[200px] pb-[120px] md:pb-[160px] mb-[80px] md:mb-[150px] flex flex-col items-center justify-center text-center px-5 overflow-x-clip min-h-[400px] transition-all duration-500">
+    <section
+      className={cn(
+        "relative bg-gradient-to-br from-hero-from to-hero-to flex flex-col items-center justify-center text-center px-5 transition-all duration-500",
+        mascot
+          ? "pt-[140px] md:pt-[200px] pb-[180px] md:pb-[160px] mb-[80px] md:mb-[150px] min-h-[400px] overflow-x-clip"
+          : "pt-[110px] md:pt-[150px] pb-[70px] md:pb-[100px] mb-[40px] md:mb-[80px] min-h-[260px] overflow-hidden",
+      )}
+    >
       {bgText && (
-        <div className="absolute top-1/2 -translate-y-1/2 left-0 flex gap-4 md:gap-8 text-[25vw] md:text-[22vw] font-quicksand font-extrabold whitespace-nowrap pointer-events-none text-white/5 z-0 leading-[0.8] animate-marquee select-none">
+        <div className="absolute top-1/2 -translate-y-1/2 left-0 flex gap-4 md:gap-8 text-[40vw] sm:text-[35vw] md:text-[25vw] lg:text-[22vw] font-quicksand font-extrabold whitespace-nowrap pointer-events-none text-white/5 z-0 leading-[0.8] animate-marquee select-none">
           <span>
             {bgText} ★ {bgText} ★&nbsp;
           </span>
@@ -46,9 +53,7 @@ export const Hero = ({
         </div>
       )}
 
-      {/* РОЗУМНІ БЕДЖІ */}
       {badges.map((badge, index) => {
-        // Розділяємо класи: координати залишаємо на обгортці, стиль — на плашці
         const posClasses = badge.className
           .split(" ")
           .filter((c) => c.match(/^(top|bottom|left|right|xl:|lg:)/))
@@ -70,7 +75,7 @@ export const Hero = ({
               className={cn(
                 "px-7 py-3.5 rounded-[22px] font-quicksand font-extrabold text-[26px] whitespace-nowrap shadow-[0_15px_30px_rgba(0,0,0,0.15)] transition-all duration-300 ease-out",
                 "group-hover:scale-110 group-hover:-translate-y-5 group-hover:rotate-0 group-hover:shadow-[0_25px_50px_rgba(0,0,0,0.2)]",
-                styleClasses, // Тут тепер лежать кольори та початковий rotate
+                styleClasses,
               )}
             >
               {badge.text}
@@ -79,17 +84,17 @@ export const Hero = ({
         );
       })}
 
-      <div className="relative w-full max-w-[1320px] mx-auto px-2 md:px-5 flex flex-col items-center">
-        <h1 className="relative z-10 leading-[1.1] md:leading-[1] uppercase tracking-[-0.04em] font-quicksand font-extrabold text-[clamp(42px,10vw,140px)] text-white drop-shadow-sm transition-all duration-500">
+      <div className="relative w-full max-w-[1320px] mx-auto px-2 md:px-5 flex flex-col items-center z-10">
+        <h1 className="leading-[1.1] md:leading-[1] uppercase tracking-[-0.04em] font-quicksand font-extrabold text-[clamp(42px,10vw,140px)] text-white drop-shadow-sm transition-all duration-500">
           {title}
         </h1>
-        <p className="relative z-10 text-[16px] md:text-[22px] font-medium max-w-[800px] mx-auto my-6 md:my-10 opacity-90 text-white font-inter px-2 transition-all duration-500">
+        <p className="text-[16px] md:text-[22px] font-medium max-w-[800px] mx-auto mt-6 mb-10 md:mb-12 opacity-90 text-white font-inter px-2 transition-all duration-500">
           {description}
         </p>
       </div>
 
       {mascot && (
-        <div className="absolute -bottom-[60px] md:-bottom-[80px] left-1/2 -translate-x-1/2 w-[220px] h-[220px] md:w-[280px] md:h-[280px] bg-accent rounded-full flex flex-col items-center justify-center z-20 shadow-[0_20px_40px_rgba(0,0,0,0.15)] border-[6px] md:border-[8px] border-hero-from transition-all duration-500">
+        <div className="absolute -bottom-[70px] md:-bottom-[80px] left-1/2 -translate-x-1/2 w-[220px] h-[220px] md:w-[280px] md:h-[280px] bg-accent rounded-full flex flex-col items-center justify-center z-30 shadow-[0_20px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.25)] border-[6px] md:border-[8px] border-hero-from transition-all duration-500 group">
           <div className="absolute w-full h-full animate-[spin_15s_linear_infinite] select-none pointer-events-none">
             <svg viewBox="0 0 100 100" className="w-full h-full">
               <path
@@ -102,7 +107,7 @@ export const Hero = ({
               </text>
             </svg>
           </div>
-          <div className="w-[100px] h-[100px] md:w-[140px] md:h-[140px] z-10 mb-2 md:mb-3 pointer-events-none">
+          <div className="w-[100px] h-[100px] md:w-[140px] md:h-[140px] z-10 mb-2 md:mb-3 pointer-events-none transition-transform duration-500 ease-out group-hover:scale-110">
             <Player
               autoplay
               loop
@@ -112,14 +117,14 @@ export const Hero = ({
           </div>
           <Link
             to={mascot.buttonLink}
-            className="absolute -bottom-5 md:-bottom-6 px-6 py-2.5 md:px-8 md:py-3 text-sm md:text-base shadow-xl bg-primary text-white rounded-full font-quicksand font-bold hover:-translate-y-1 active:scale-95 transition-all duration-300 whitespace-nowrap z-30"
+            className="absolute -bottom-5 md:-bottom-6 px-6 py-2.5 md:px-8 md:py-3 text-sm md:text-base shadow-xl hover:shadow-primary/40 bg-primary text-white rounded-full font-quicksand font-bold hover:-translate-y-1 hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap z-40"
           >
             {mascot.buttonText}
           </Link>
         </div>
       )}
 
-      <div className="absolute -bottom-[1px] left-0 w-full leading-[0] z-0 pointer-events-none">
+      <div className="absolute -bottom-[1px] left-0 w-full leading-[0] z-20 pointer-events-none">
         <svg
           viewBox="0 0 1440 100"
           preserveAspectRatio="none"

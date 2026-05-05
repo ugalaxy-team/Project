@@ -86,8 +86,7 @@ export const FaqPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col min-h-screen bg-[#F8FAFC] font-inter pb-24">
-      {/* 1. Наш ідеальний Hero */}
+    <div className="w-full flex flex-col min-h-screen bg-bg-body text-text-main pb-20 font-inter transition-colors duration-300">
       <Hero
         bgText={t("hero.bg_text", "FAQ")}
         title={t("hero.title", "Часті Питання")}
@@ -97,78 +96,71 @@ export const FaqPage: React.FC = () => {
         )}
       />
 
-      {/* 2. Контейнер контенту (звужений до max-w-3xl для зручного читання) */}
-      <div className="flex-grow w-full max-w-3xl mx-auto px-6 -mt-[80px] relative z-20">
-        <div className="space-y-4">
-          {faqs.map((faq, index) => {
-            const isOpen = openIndex === index;
+      <div className="flex-grow w-full max-w-[900px] mx-auto px-6 -mt-[90px] relative z-20 space-y-6">
+        {faqs.map((faq, index) => {
+          const isOpen = openIndex === index;
 
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                // Дизайн карток чітко за вашою дизайн-системою
-                className={`bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.03)] border transition-all duration-300 overflow-hidden ${
-                  isOpen
-                    ? "border-[#6366F1]/30 shadow-[0_8px_30px_rgba(99,102,241,0.08)]"
-                    : "border-slate-100 hover:border-slate-200 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
-                }`}
+          return (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.05 }}
+              className={`bg-bg-card rounded-[32px] shadow-sm border transition-colors duration-300 overflow-hidden ${
+                isOpen
+                  ? "border-primary"
+                  : "border-border hover:border-primary/30"
+              }`}
+            >
+              <button
+                onClick={() => toggleFaq(index)}
+                className="w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group"
               >
-                <button
-                  onClick={() => toggleFaq(index)}
-                  className="w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group"
+                <span
+                  className={`font-quicksand font-extrabold text-[20px] md:text-[24px] pr-6 transition-colors duration-300 leading-[1.2] ${
+                    isOpen
+                      ? "text-primary"
+                      : "text-text-main group-hover:text-primary"
+                  }`}
                 >
-                  <span
-                    className={`font-quicksand font-bold text-[18px] md:text-[20px] pr-6 transition-colors duration-300 ${
-                      isOpen
-                        ? "text-[#6366F1]"
-                        : "text-slate-900 group-hover:text-[#6366F1]"
-                    }`}
-                  >
-                    {faq.question}
-                  </span>
+                  {faq.question}
+                </span>
 
-                  {/* Кнопка розгортання з іконками */}
-                  <div
-                    className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
-                      isOpen
-                        ? "bg-[#6366F1] text-white rotate-180"
-                        : "bg-slate-50 text-slate-400 group-hover:bg-[#6366F1]/10 group-hover:text-[#6366F1]"
-                    }`}
-                  >
-                    {isOpen ? (
-                      <Minus size={20} strokeWidth={2.5} />
-                    ) : (
-                      <Plus size={20} strokeWidth={2.5} />
-                    )}
-                  </div>
-                </button>
-
-                {/* Плавна анімація відкриття через Framer Motion */}
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                    >
-                      <div className="px-6 md:px-8 pb-6 md:pb-8 pt-0">
-                        <div className="w-full h-[1px] bg-slate-100 mb-6"></div>
-                        <p className="text-slate-500 text-[16px] leading-relaxed font-medium">
-                          {faq.answer}
-                        </p>
-                      </div>
-                    </motion.div>
+                <div
+                  className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center transition-colors duration-300 ${
+                    isOpen
+                      ? "bg-primary text-white"
+                      : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white"
+                  }`}
+                >
+                  {isOpen ? (
+                    <Minus size={24} strokeWidth={2.5} />
+                  ) : (
+                    <Plus size={24} strokeWidth={2.5} />
                   )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
-        </div>
+                </div>
+              </button>
+
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    <div className="px-6 md:px-8 pb-6 md:pb-8 pt-0">
+                      <p className="text-text-muted text-[17px] leading-relaxed font-medium">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );

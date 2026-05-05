@@ -13,7 +13,6 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
   const { t } = useTranslation("auth");
 
   return (
-    // bg-slate-50 -> bg-bg-body, text-slate-900 -> text-text-main
     <div className="flex h-screen overflow-hidden bg-bg-body text-text-main font-inter transition-colors duration-300">
       <BrandingPanel position="left">
         <Player
@@ -30,7 +29,6 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
           <div className="font-quicksand font-extrabold text-[64px] text-white leading-none tracking-tight">
             UGalaxy
           </div>
-          {/* text-yellow-400 замінено на нашу змінну text-accent */}
           <div className="text-accent font-extrabold text-[24px] leading-none">
             ×
           </div>
@@ -45,7 +43,6 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
 
       <div className="flex-1 flex items-center justify-center p-6 md:p-8 overflow-y-auto">
         <motion.div
-          // bg-white -> bg-bg-card, додано border-border та легку тінь
           className="bg-bg-card w-full max-w-[460px] rounded-[32px] p-8 md:p-11 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-border transition-colors duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

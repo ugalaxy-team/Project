@@ -131,22 +131,18 @@ export const AuthPage = () => {
   return (
     <AuthLayout>
       <div className="mb-4 min-h-[76px]">
-        {/* text-text-main замість text-slate-900 */}
         <h2 className="font-quicksand font-extrabold text-[34px] text-text-main leading-[1.1] mb-1.5 transition-colors">
           {isLogin ? t("title_login") : t("title_register")}
         </h2>
-        {/* text-text-muted замість text-slate-600 */}
         <p className="text-[15px] font-medium text-text-muted transition-colors">
           {isLogin ? t("subtitle_login") : t("subtitle_register")}
         </p>
       </div>
 
-      {/* bg-border/50 замість bg-slate-100 */}
       <div
         role="tablist"
         className="flex bg-border/50 rounded-full p-1.5 relative mb-3 transition-colors"
       >
-        {/* bg-bg-card замість bg-white */}
         <motion.div
           className="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-bg-card rounded-full shadow-sm z-0"
           animate={{ x: isLogin ? "100%" : "0%" }}
@@ -195,7 +191,6 @@ export const AuthPage = () => {
                 </label>
                 <input
                   id="displayName"
-                  // Додано text-text-main, bg-bg-body, placeholder:text-text-muted/50
                   className={cn(
                     "w-full px-5 py-3.5 bg-bg-body text-text-main placeholder:text-text-muted/50 border-2 rounded-full outline-none transition-all",
                     errors.displayName
@@ -289,7 +284,6 @@ export const AuthPage = () => {
         </div>
 
         {firebaseError && (
-          // bg-red-500/10 border-red-500/20 ідеально виглядає і в світлій, і в темній темі
           <div className="text-red-500 text-[13px] text-center mb-4 font-medium bg-red-500/10 p-2.5 rounded-xl border border-red-500/20">
             {firebaseError}
           </div>

@@ -2,64 +2,50 @@
 @import "@firebase-oss/ui-styles/tailwind";
 
 @layer base {
-    /* ☀️ СВІТЛА ТЕМА (за замовчуванням) */
+    /* СВІТЛА ТЕМА */
     :root {
-        /* Акцентні кольори (Кнопки, іконки, беджі) */
-        --color-primary: #6366f1; /* Indigo 500 */
-        --color-accent: #fbbf24; /* Amber 400 */
-        --color-pink-accent: #ec4899; /* Pink 500 */
+        /* Акценти */
+        --color-primary: #6366f1;
+        --color-accent: #fbbf24;
+        --color-pink-accent: #ec4899;
 
-        /* Масивні блоки (Hero, Банери, Хідер) */
-        --color-hero-from: #6b73ff; /* Яскравий фіолетово-синій старт */
-        --color-hero-to: #4c51bf; /* Темніший фіолетовий фініш */
-        --color-header-bg: rgba(
-            107,
-            115,
-            255,
-            0.95
-        ); /* Напівпрозорий колір хідера при скролі */
+        /* Блоки та фони */
+        --color-hero-from: #6b73ff;
+        --color-hero-to: #4c51bf;
+        --color-header-bg: rgba(107, 115, 255, 0.95);
+        --color-bg-body: #f8fafc;
+        --color-bg-card: #ffffff;
+        --color-dark-theme: #0f172a;
 
-        /* Фони сторінки та карток */
-        --color-bg-body: #f8fafc; /* Slate 50 - загальний фон */
-        --color-bg-card: #ffffff; /* Білі картки */
-        --color-dark-theme: #0f172a; /* Футер та найтемніші блоки */
-
-        /* Тексти та бордери */
-        --color-text-main: #0f172a; /* Slate 900 - заголовки */
-        --color-text-muted: #64748b; /* Slate 500 - звичайний текст */
-        --color-border: #f1f5f9; /* Slate 100 - легкі рамки карток */
+        /* Текст та рамки */
+        --color-text-main: #0f172a;
+        --color-text-muted: #64748b;
+        --color-border: #f1f5f9;
     }
 
-    /* 🌙 ТЕМНА ТЕМА */
+    /* ТЕМНА ТЕМА */
     .dark {
-        /* Акценти залишаються яскравими для "неонового" контрасту */
-        --color-primary: #818cf8; /* Indigo 400 */
-        --color-accent: #fbbf24; /* Amber 400 */
-        --color-pink-accent: #f472b6; /* Pink 400 */
+        /* Акценти (неонові відтінки) */
+        --color-primary: #818cf8;
+        --color-accent: #fbbf24;
+        --color-pink-accent: #f472b6;
 
-        /* Масивні блоки (Hero, Банери) зливаються з глибоким нічним фоном */
-        --color-hero-from: #1e1b4b; /* Deep Indigo 950 - дає легкий магічний відтінок */
-        --color-hero-to: #0f172a; /* Slate 900 - ідеально розчиняється у фоні сторінки */
-        --color-header-bg: rgba(
-            15,
-            23,
-            42,
-            0.95
-        ); /* Slate 900 з прозорістю для блюру */
+        /* Блоки та фони (інвертовані для глибини) */
+        --color-hero-from: #1e1b4b;
+        --color-hero-to: #0f172a;
+        --color-header-bg: rgba(15, 23, 42, 0.95);
+        --color-bg-body: #0f172a;
+        --color-bg-card: #1e293b;
+        --color-dark-theme: #020617;
 
-        /* Фони (Elevation) */
-        --color-bg-body: #0f172a; /* Slate 900 - глибокий темний фон */
-        --color-bg-card: #1e293b; /* Slate 800 - картки трохи ближче до користувача */
-        --color-dark-theme: #020617; /* Slate 950 - футер/найтемніші блоки */
-
-        /* Тексти та бордери інвертуються */
-        --color-text-main: #f8fafc; /* Slate 50 - м'який білий для тексту */
-        --color-text-muted: #94a3b8; /* Slate 400 - приглушений текст */
-        --color-border: #334155; /* Slate 700 - ледь помітні рамки */
+        /* Текст та рамки (м'який контраст) */
+        --color-text-main: #f8fafc;
+        --color-text-muted: #94a3b8;
+        --color-border: #334155;
     }
 
+    /* Глобальні стилі типографіки та плавні переходи */
     body {
-        /* Боді автоматично братиме колір фону і тексту залежно від теми + плавний перехід */
         @apply font-inter bg-bg-body text-text-main overflow-x-hidden leading-[1.5] transition-colors duration-500;
     }
 
@@ -75,17 +61,12 @@
     --font-inter: "Inter", sans-serif;
     --font-quicksand: "Quicksand", sans-serif;
 
-    /* Реєструємо Акценти */
     --color-primary: var(--color-primary);
     --color-accent: var(--color-accent);
     --color-pink-accent: var(--color-pink-accent);
-
-    /* Реєструємо Масивні блоки */
     --color-hero-from: var(--color-hero-from);
     --color-hero-to: var(--color-hero-to);
     --color-header-bg: var(--color-header-bg);
-
-    /* Реєструємо Фони та Тексти */
     --color-bg-body: var(--color-bg-body);
     --color-bg-card: var(--color-bg-card);
     --color-dark-theme: var(--color-dark-theme);
@@ -93,8 +74,19 @@
     --color-text-muted: var(--color-text-muted);
     --color-border: var(--color-border);
 
+    /* Анімації */
     --animate-marquee: marquee 40s linear infinite;
     --animate-marquee-reverse: marquee-reverse 65s linear infinite;
+    --animate-shimmer: shimmer 2s infinite linear;
+
+    @keyframes shimmer {
+        0% {
+            transform: translateX(-150%) skewX(-12deg);
+        }
+        100% {
+            transform: translateX(200%) skewX(-12deg);
+        }
+    }
 
     @keyframes marquee {
         0% {
@@ -104,6 +96,7 @@
             transform: translateX(-50%);
         }
     }
+
     @keyframes marquee-reverse {
         0% {
             transform: translateX(-50%);

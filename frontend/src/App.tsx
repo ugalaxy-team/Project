@@ -21,11 +21,8 @@ import { io, Socket } from "socket.io-client";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
+import { RegistrationPage } from "./pages/RegistrationPage/RegistrationPage";
 
-// Імпорт нашої нової сторінки
-import { RegPage } from "./pages/RegistrationPage/RegCommand";
-
-// Утиліта для скролу нагору при кожній зміні URL
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -36,6 +33,19 @@ const ScrollToTop = () => {
 
 export const App = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
 
   useEffect(() => {
     let currentSocket: Socket | null = null;
@@ -79,7 +89,6 @@ export const App = () => {
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          {/* Сторінки з Хедером та Футером */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
             <Route
@@ -108,19 +117,17 @@ export const App = () => {
             <Route path="*" element={<Page404 />} />
           </Route>
 
-          {/* Самостійні сторінки без MainLayout (на весь екран) */}
           <Route path="/auth/">
             <Route index element={<AuthPage />} />
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="sign-out" element={<SignOut />} />
           </Route>
 
-          {/* СТОРІНКА РЕЄСТРАЦІЇ НА ТУРНІР */}
           <Route
             path="/tournament/:id/register"
             element={
               <ProtectedRoute>
-                <RegPage />
+                <RegistrationPage />
               </ProtectedRoute>
             }
           />

@@ -40,7 +40,6 @@ export const Header = () => {
       )}
     >
       <header className="max-w-[1320px] mx-auto flex justify-between items-center px-5">
-        {/* Логотип */}
         <Link
           to="/"
           className="font-quicksand text-[22px] md:text-[28px] font-extrabold text-white no-underline flex items-center gap-1.5 hover:opacity-90 transition-opacity duration-300"
@@ -50,7 +49,6 @@ export const Header = () => {
           Star for Life
         </Link>
 
-        {/* Навігація (Desktop) */}
         <nav className="hidden lg:flex items-center gap-7 xl:gap-10 relative">
           {NAV_ITEMS.map(({ path, key }) => (
             <NavLink
@@ -85,7 +83,6 @@ export const Header = () => {
           ))}
         </nav>
 
-        {/* Права частина: Світчер мови, Тема, Профіль/Вхід */}
         <div className="flex items-center gap-3 md:gap-5">
           <div className="hidden sm:flex items-center gap-3">
             <LanguageSwitcher />
@@ -107,14 +104,13 @@ export const Header = () => {
             >
               <Link
                 to="/auth"
-                className="relative flex items-center justify-center font-quicksand font-bold rounded-full transition-all duration-300 py-2.5 px-6 text-[14px] bg-bg-card text-text-main shadow-sm border border-transparent hover:bg-accent hover:text-slate-900 hover:shadow-lg hover:shadow-accent/20 dark:border-white/5"
+                className="relative flex items-center justify-center h-[42px] px-7 font-quicksand font-bold text-[15px] rounded-full transition-all duration-300 bg-bg-card text-text-main shadow-sm border border-transparent hover:bg-accent hover:text-slate-900 hover:shadow-lg hover:shadow-accent/20 dark:border-white/5"
               >
                 {t("auth.login")}
               </Link>
             </motion.div>
           )}
 
-          {/* Кнопка мобільного меню */}
           <button
             className="lg:hidden text-white p-1.5 focus:outline-none hover:text-accent transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -141,7 +137,6 @@ export const Header = () => {
         </div>
       </header>
 
-      {/* Мобільне меню */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
