@@ -1,17 +1,27 @@
 import React, { useRef, useState } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useTransform,
+  useSpring,
+} from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { cn } from "../../utils/cn";
 
-interface TicketProps {
+interface Ticket3DProps {
   eventTitle: string;
-  format: string;
+  format: "team" | "solo";
   teamName: string;
   captainName: string;
-  members: { firstName: string }[];
+  members: { name: string }[];
 }
 
-export const Ticket3D: React.FC<TicketProps> = ({
+const QR_PATTERN = [
+  1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0,
+  0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+];
+
+export const Ticket3D: React.FC<Ticket3DProps> = ({
   eventTitle,
   format,
   teamName,
@@ -25,20 +35,18 @@ export const Ticket3D: React.FC<TicketProps> = ({
   const mouseX = useMotionValue(0.5);
   const mouseY = useMotionValue(0.5);
 
-  const springConfig = { damping: 25, stiffness: 300 };
-  const smoothMouseX = useSpring(mouseX, springConfig);
-  const smoothMouseY = useSpring(mouseY, springConfig);
+  const springCfg = { damping: 20, stiffness: 250 };
+  const smoothX = useSpring(mouseX, springCfg);
+  const smoothY = useSpring(mouseY, springCfg);
 
-  const rotateX = useTransform(smoothMouseY, [0, 1], [10, -10]);
-  const rotateY = useTransform(smoothMouseX, [0, 1], [-12, 12]);
+  const rotateX = useTransform(smoothY, [0, 1], [10, -10]);
+  const rotateY = useTransform(smoothX, [0, 1], [-12, 12]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    mouseX.set(x);
-    mouseY.set(y);
+    mouseX.set((e.clientX - rect.left) / rect.width);
+    mouseY.set((e.clientY - rect.top) / rect.height);
   };
 
   const handleMouseLeave = () => {
@@ -47,99 +55,173 @@ export const Ticket3D: React.FC<TicketProps> = ({
     mouseY.set(0.5);
   };
 
+  const isEmpty = !teamName;
+  const isSolo = format === "solo";
+
   return (
     <div
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onMouseEnter={() => setIsHovered(true)}
-      className="relative z-10 w-[88%] max-w-[390px] [perspective:900px]"
+      className="relative z-10 w-[88%] max-w-[390px]"
+      style={{ perspective: 900 }}
     >
       <motion.div
         style={{
           rotateX: isHovered ? rotateX : 0,
           rotateY: isHovered ? rotateY : 0,
+          transformStyle: "preserve-3d",
+          filter:
+            "drop-shadow(0 0 1px var(--color-border)) drop-shadow(0 20px 30px rgba(0,0,0,0.2)) drop-shadow(0 4px 10px rgba(0,0,0,0.1))",
         }}
-        className={cn(
-          // bg-bg-card замість bg-white
-          "bg-bg-card rounded-[28px] shadow-2xl [transform-style:preserve-3d] transition-colors duration-300",
-          !isHovered && "animate-[float_5s_ease-in-out_infinite]",
-        )}
+        animate={isHovered ? {} : { y: [0, -10, 0] }}
+        transition={
+          isHovered
+            ? { type: "spring", damping: 20, stiffness: 250 }
+            : { duration: 5, repeat: Infinity, ease: "easeInOut" }
+        }
       >
-        <div className="p-7 pb-5 bg-bg-card rounded-t-[28px] transition-colors duration-300">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-text-muted transition-colors duration-300">
-                {t("ticket.event")}
-              </div>
-              <div className="text-primary font-bold text-[13px] transition-colors duration-300">
-                {eventTitle}
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-text-muted transition-colors duration-300">
-                {t("ticket.format")}
-              </div>
-              <div className="text-text-main font-bold text-[13px] transition-colors duration-300">
-                {format === "team"
-                  ? t("step1.formats.team")
-                  : t("step1.formats.solo")}
-              </div>
-            </div>
-          </div>
-          <div className="text-[10px] font-bold uppercase tracking-wider text-text-muted mb-1 transition-colors duration-300">
-            {t("ticket.team")}
-          </div>
+        <div className="rounded-[28px] relative overflow-hidden flex flex-col bg-transparent">
           <div
-            className={cn(
-              "text-[22px] font-extrabold leading-tight transition-colors duration-300",
-              !teamName ? "text-text-muted/50" : "text-text-main",
-            )}
-          >
-            {teamName || t("ticket.empty_team")}
-          </div>
-        </div>
+            aria-hidden
+            className="absolute inset-0 pointer-events-none z-30"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+              backgroundSize: "128px",
+              opacity: 0.04,
+            }}
+          />
 
-        <div className="relative h-0.5 border-t border-dashed border-border mx-7 transition-colors duration-300">
-          {/* bg-bg-body для дірок робить ефект "прозорості" */}
-          <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-6 h-6 bg-bg-body rounded-full transition-colors duration-300" />
-          <div className="absolute -right-10 top-1/2 -translate-y-1/2 w-6 h-6 bg-bg-body rounded-full transition-colors duration-300" />
-        </div>
-
-        <div className="p-7 py-5 bg-bg-body transition-colors duration-300">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-text-muted mb-3 transition-colors duration-300">
-            {t("ticket.composition")}
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 p-2 px-3 bg-bg-card border border-border rounded-xl transition-colors duration-300">
-              {/* Прозорі фони для беджів */}
-              <span className="text-[10px] font-bold px-2 py-0.5 bg-accent/10 text-amber-600 dark:text-accent rounded-full transition-colors duration-300">
-                {t("ticket.captain")}
-              </span>
-              <span className="text-[13px] font-bold text-text-main truncate transition-colors duration-300">
-                {captainName}
-              </span>
+          <div className="px-7 pt-7 pb-[10px] bg-bg-card relative z-10 transition-colors duration-500">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-[3px] font-quicksand transition-colors">
+                  {t("ticket.label.event", "Подія")}
+                </div>
+                <div className="font-bold text-[13px] text-primary font-quicksand leading-snug max-w-[160px] transition-colors">
+                  {eventTitle || "—"}
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-[3px] font-quicksand transition-colors">
+                  {t("ticket.label.format", "Формат")}
+                </div>
+                <div className="font-bold text-[13px] text-text-main font-quicksand transition-colors">
+                  {isSolo
+                    ? t("ticket.value.solo", "Соло")
+                    : t("ticket.value.team", "Командний")}
+                </div>
+              </div>
             </div>
-            {members.map((m, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-2 p-2 px-3 bg-bg-card border border-border rounded-xl animate-in fade-in zoom-in-95 duration-300 transition-colors"
-              >
-                <span className="text-[10px] font-bold px-2 py-0.5 bg-primary/10 text-primary rounded-full transition-colors duration-300">
-                  {t("ticket.member")}
+
+            <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-1 font-quicksand transition-colors">
+              {isSolo
+                ? t("ticket.label.player", "Нікнейм")
+                : t("ticket.label.team", "Команда")}
+            </div>
+            <div
+              className={`font-quicksand font-extrabold text-[22px] leading-tight tracking-[-0.02em] break-words min-h-[28px] transition-colors duration-300 ${
+                isEmpty ? "text-text-muted/50" : "text-text-main"
+              }`}
+            >
+              {teamName || t("ticket.value.empty", "Не заповнено")}
+            </div>
+          </div>
+
+          <div className="relative h-[26px] w-full z-0">
+            <div className="absolute left-0 top-0 bottom-0 w-[51%] overflow-hidden">
+              <div className="absolute left-[-13px] top-0 w-[26px] h-[26px] rounded-full bg-transparent shadow-[0_0_0_999px_var(--color-bg-card)] transition-shadow duration-500" />
+            </div>
+            <div className="absolute right-0 top-0 bottom-0 w-[51%] overflow-hidden">
+              <div className="absolute right-[-13px] top-0 w-[26px] h-[26px] rounded-full bg-transparent shadow-[0_0_0_999px_var(--color-bg-card)] transition-shadow duration-500" />
+            </div>
+            <div className="absolute top-1/2 -translate-y-1/2 left-7 right-7 border-t-[2px] border-dashed border-border/80 z-20 transition-colors duration-500" />
+          </div>
+
+          <div className="px-7 pt-[10px] pb-[18px] bg-bg-card relative z-10 transition-colors duration-500">
+            <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-2.5 font-quicksand transition-colors">
+              {isSolo
+                ? t("ticket.label.participant", "Учасник")
+                : t("ticket.label.roster", "Склад")}
+            </div>
+            <div className="flex flex-col gap-[7px]">
+              <div className="flex items-center gap-2.5 bg-bg-body border border-border rounded-xl py-[9px] px-[13px] transition-colors duration-500">
+                <span
+                  className={`text-[10px] font-bold px-2 py-[3px] rounded-full font-quicksand tracking-[0.06em] shrink-0 transition-colors ${
+                    isSolo
+                      ? "bg-primary/10 text-primary"
+                      : "bg-accent/10 text-accent"
+                  }`}
+                >
+                  {isSolo
+                    ? t("ticket.badge.solo", "Соло")
+                    : t("ticket.badge.captain", "Капітан")}
                 </span>
-                <span className="text-[13px] font-bold text-text-main truncate transition-colors duration-300">
-                  {m.firstName || "..."}
+                <span className="font-quicksand font-bold text-[13px] text-text-main truncate transition-colors">
+                  {captainName || "—"}
                 </span>
               </div>
-            ))}
-          </div>
-        </div>
 
-        <div className="p-7 py-4 bg-bg-card border-t border-border rounded-b-[28px] flex justify-between items-center transition-colors duration-300">
-          <div className="w-12 h-12 bg-text-main/10 rounded-sm transition-colors duration-300" />
-          <div className="font-quicksand font-extrabold text-text-main transition-colors duration-300">
-            UGalaxy
+              {!isSolo && (
+                <AnimatePresence>
+                  {members.map((m, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3 }}
+                      className="flex items-center gap-2.5 bg-bg-body border border-border rounded-xl py-[9px] px-[13px] transition-colors duration-500"
+                    >
+                      <span className="text-[10px] font-bold px-2 py-[3px] rounded-full bg-primary/10 text-primary font-quicksand tracking-[0.06em] shrink-0 transition-colors">
+                        {t("ticket.badge.member", "Учасник")}
+                      </span>
+                      <span
+                        className={`font-quicksand font-bold text-[13px] truncate transition-colors ${
+                          m.name ? "text-text-main" : "text-text-muted/60"
+                        }`}
+                      >
+                        {m.name || t("ticket.value.waiting", "Очікування...")}
+                      </span>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              )}
+            </div>
+          </div>
+
+          <div className="px-7 py-[14px] bg-bg-card relative z-10 transition-colors duration-500">
+            <div className="absolute inset-0 bg-primary/5 pointer-events-none transition-colors duration-500" />
+            <div className="absolute top-0 left-0 right-0 border-t border-border/50 transition-colors duration-500" />
+
+            <div className="relative z-10 flex justify-between items-center w-full">
+              <div
+                className="text-text-main transition-colors duration-500"
+                style={{
+                  width: 52,
+                  height: 52,
+                  display: "grid",
+                  gridTemplateColumns: "repeat(7, 1fr)",
+                  gridTemplateRows: "repeat(7, 1fr)",
+                  gap: "1.5px",
+                  opacity: 0.75,
+                }}
+              >
+                {QR_PATTERN.map((on, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      borderRadius: 1,
+                      background: on ? "currentColor" : "transparent",
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="font-quicksand font-extrabold text-[15px] text-text-main tracking-[-0.01em] transition-colors duration-500">
+                {t("brand", "UGalaxy")}
+              </div>
+            </div>
           </div>
         </div>
       </motion.div>

@@ -1,48 +1,33 @@
 import React from "react";
-import { cn } from "../../utils/cn";
 
 interface BrandingPanelProps {
-  position?: "left" | "right";
-  width?: "half" | "44%";
   children?: React.ReactNode;
+  className?: string;
 }
 
 export const BrandingPanel: React.FC<BrandingPanelProps> = ({
-  position = "left",
-  width = "half",
   children,
+  className = "",
 }) => {
-  const isRight = position === "right";
-
   return (
     <div
-      className={cn(
-        "hidden md:flex flex-col items-center justify-center relative overflow-hidden transition-all duration-500",
-        "bg-gradient-to-br from-hero-from to-hero-to",
-        width === "44%" ? "md:w-[44%]" : "md:w-1/2",
-      )}
+      className={`w-[44%] hidden md:flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-hero-from to-hero-to transition-colors duration-500 ${className}`}
     >
-      <div className="absolute top-[15%] left-0 right-0 overflow-hidden pointer-events-none">
-        <div className="flex w-max font-quicksand font-extrabold text-[17vw] leading-[0.88] text-white/5 whitespace-nowrap select-none animate-marquee">
+      <div className="absolute top-[8%] left-0 right-0 pointer-events-none overflow-hidden">
+        <div className="flex w-max font-quicksand font-extrabold text-[130px] leading-[0.88] text-white/[0.05] whitespace-nowrap animate-marquee tracking-[-0.04em] select-none">
           <span>UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★&nbsp;</span>
           <span>UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★&nbsp;</span>
         </div>
       </div>
 
-      <div className="absolute bottom-[15%] left-0 right-0 overflow-hidden pointer-events-none">
-        <div className="flex w-max font-quicksand font-extrabold text-[17vw] leading-[0.88] text-white/5 whitespace-nowrap select-none animate-marquee-reverse">
+      <div className="absolute bottom-[8%] left-0 right-0 pointer-events-none overflow-hidden">
+        <div className="flex w-max font-quicksand font-extrabold text-[130px] leading-[0.88] text-white/[0.05] whitespace-nowrap animate-marquee-reverse tracking-[-0.04em] select-none">
           <span>STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★&nbsp;</span>
           <span>STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★&nbsp;</span>
         </div>
       </div>
-      <div className="relative z-10 flex flex-col items-center">{children}</div>
 
-      <div
-        className={cn(
-          "absolute top-0 w-[6vw] h-full z-10 text-bg-body pointer-events-none transition-colors duration-500",
-          isRight ? "-left-[1px] rotate-180" : "-right-[1px]",
-        )}
-      >
+      <div className="absolute top-0 -left-[1px] w-[5vw] h-full z-10 pointer-events-none text-bg-body transition-colors duration-500">
         <svg
           viewBox="0 0 100 1440"
           preserveAspectRatio="none"
@@ -50,9 +35,13 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
         >
           <path
             fill="currentColor"
-            d="M80,0 C65,320 65,420 80,720 C95,1020 95,1120 80,1440 L100,1440 L100,0 Z"
+            d="M50,0 C70,320 70,420 50,720 C30,1020 30,1120 50,1440 L0,1440 L0,0 Z"
           />
         </svg>
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center w-full">
+        {children}
       </div>
     </div>
   );

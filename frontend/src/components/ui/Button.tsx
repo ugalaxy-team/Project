@@ -14,12 +14,11 @@ interface ButtonProps extends Omit<HTMLMotionProps<"button">, "ref"> {
   rightIcon?: ReactNode;
 }
 
-// Повністю переписано на дизайн-змінні
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
     "bg-primary text-white shadow-lg shadow-primary/30 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/40 border-2 border-transparent",
   accent:
-    "bg-accent text-slate-900 shadow-lg shadow-accent/30 hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/40 border-2 border-transparent", // Жовта кнопка завжди має чорний текст для контрасту
+    "bg-accent text-slate-900 shadow-lg shadow-accent/30 hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/40 border-2 border-transparent",
   outline:
     "bg-transparent border-2 border-border text-text-main hover:border-primary hover:text-primary hover:shadow-lg hover:shadow-primary/15",
   ghost:
@@ -52,7 +51,7 @@ export const Button = ({
       transition={{ duration: 0.2 }}
       disabled={isDisabled}
       className={cn(
-        "relative flex items-center justify-center gap-2.5 font-quicksand font-bold rounded-full transition-all duration-300 outline-none focus-visible:ring-4 focus-visible:ring-primary/20 disabled:opacity-70 disabled:pointer-events-none",
+        "relative flex items-center justify-center gap-2.5 font-quicksand font-bold rounded-full transition-all duration-300 outline-none focus-visible:ring-4 focus-visible:ring-primary/20 disabled:opacity-70 disabled:pointer-events-none cursor-pointer",
         variantStyles[variant],
         sizeStyles[size],
         className,
