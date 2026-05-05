@@ -6,7 +6,7 @@ from sqlalchemy.orm import selectinload
 
 
 from app.dependencies import SessionDep
-from app.models import Team, TeamMember, Tournament
+from app.models import Team, Tournament
 from app.schemas import TeamModel
 
 
@@ -62,33 +62,3 @@ async def validate_team_registration(
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST, "Emails must be unique inside team"
         )
-
-
-async def create_team_record(
-    tournament_id: int, team_data: TeamModel, session: AsyncSession
-) -> Team:
-
-    new_team = Team(
-        name=team_data.name,
-        team_email=team_data.team_email,
-        contact_info=str(team_data.contact_info),
-        tournament_id=tournament_id,
-    )
-    session.add(new_team)
-    await session.flush()
-
-    captain = TeamMember(
-        **team_data.captain.model_dump(),
-        team_id=new_team.id,
-    )
-    session.add(captain)
-    await session.flush()
-
-    members = [
-        TeamMember(**m.model_dump(), team_id=new_team.id) for m in team_data.members
-    ]
-    session.add_all(members)
-
-    new_team.captain_id = captain.id
-
-    return new_team
