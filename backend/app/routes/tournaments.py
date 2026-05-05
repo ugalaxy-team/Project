@@ -9,10 +9,6 @@ from app.schemas import (
 from app.config import settings
 from app.models import Tournament
 from app.dependencies import SessionDep, CurrentUserDep
-from app.utils import (
-    validate_dates_on_create,
-    validate_dates_on_update,
-)
 from app.utils import get_tournament, tournament_load_options, get_status_by_name
 from app.dependencies import get_user, current_user_dependency
 
@@ -39,7 +35,7 @@ async def create_tournament(
     current_user: CurrentUserDep,
     session: SessionDep,
 ):
-    await session.refresh(current_user, ['roles'])
+    await session.refresh(current_user, ["roles"])
     user_role_names = [role.name for role in current_user.roles]
 
     if not any(role in user_role_names for role in settings.TOURNAMENT_CREATOR_ROLES):
@@ -49,14 +45,9 @@ async def create_tournament(
         )
     initial_status = await get_status_by_name("draft", session)
 
-    validate_dates_on_create(
-        start_date=tournament_data.start_date,
-        reg_start=tournament_data.reg_start,
-        reg_end=tournament_data.reg_end,
-    )
     tournament_data = tournament_data.model_dump()
-    juries_ids = tournament_data.pop('juries')
-    
+    juries_ids = tournament_data.pop("juries")
+
     tournament = Tournament(
         **tournament_data,
         creator_id=current_user.id,
@@ -64,11 +55,11 @@ async def create_tournament(
     )
     session.add(tournament)
     await session.flush()
-    await session.refresh(tournament, ['juries'])
+    await session.refresh(tournament, ["juries"])
     for jury_id in juries_ids:
         jury = await get_user(jury_id, session)
         tournament.juries.append(jury)
-    
+
     await session.commit()
     tournament = await get_tournament(tournament.id, session)
 
@@ -76,10 +67,10 @@ async def create_tournament(
 
 
 @router.patch(
-    "/{tournament_id}/", 
-    response_model=TournamentPublic, 
+    "/{tournament_id}/",
+    response_model=TournamentPublic,
     status_code=status.HTTP_200_OK,
-    dependencies=[current_user_dependency]
+    dependencies=[current_user_dependency],
 )
 async def update_tournament(
     tournament_id: int,
@@ -87,30 +78,19 @@ async def update_tournament(
     session: SessionDep,
 ):
     update_data = tournament_data.model_dump(exclude_unset=True)
-    
+
     if not update_data:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No fields provided for update",
         )
     tournament = await get_tournament(tournament_id, session)
-    await session.refresh(tournament, ['juries'])
+    await session.refresh(tournament, ["juries"])
 
-    juries_ids = update_data.pop('juries', [])
+    juries_ids = update_data.pop("juries", [])
     for jury_id in juries_ids:
         jury = await get_user(jury_id, session)
         tournament.juries.append(jury)
-
-    if update_data:
-        start_date = update_data.get("start_date", tournament.start_date)
-        reg_start = update_data.get("reg_start", tournament.reg_start)
-        reg_end = update_data.get("reg_end", tournament.reg_end)
-
-        validate_dates_on_update(
-            start_date=start_date,
-            reg_start=reg_start,
-            reg_end=reg_end,
-        )
 
         result = await session.execute(
             update(Tournament)
@@ -127,14 +107,14 @@ async def update_tournament(
 
     await session.commit()
     await session.refresh(tournament)
-    
+
     return tournament
 
 
 @router.delete(
-    "/{tournament_id}/", 
+    "/{tournament_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[current_user_dependency]
+    dependencies=[current_user_dependency],
 )
 async def delete_tournament(tournament_id: int, session: SessionDep):
     tournament = await get_tournament(tournament_id, session)
