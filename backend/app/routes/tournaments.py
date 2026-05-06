@@ -91,7 +91,7 @@ async def update_tournament(
     for jury_id in juries_ids:
         jury = await get_user(jury_id, session)
         tournament.juries.append(jury)
-
+    if update_data:
         result = await session.execute(
             update(Tournament)
             .where(Tournament.id == tournament_id)
