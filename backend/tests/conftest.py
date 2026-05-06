@@ -1,10 +1,15 @@
+import sys
 import pytest
+from unittest.mock import MagicMock, patch
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from app.models import Base
-from app import app
-from app.db import get_session
+# Mock Firebase before importing app modules
+firebase_mock = MagicMock()
+with patch.dict('sys.modules', {'firebase_admin': MagicMock(), 'firebase_admin.credentials': MagicMock()}):
+    from app.models import Base
+    from app import app
+    from app.db import get_session
 
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
