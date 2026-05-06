@@ -60,6 +60,7 @@ jobs:
       VITE_FIREBASE_APP_ID: "1:123456789:web:abcdef123456"
       VITE_FIREBASE_MEASUREMENT_ID: "G-TEST123456"
     steps:
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
