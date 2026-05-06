@@ -11,7 +11,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "prepare": "husky && husky install"
+    "prepare": "cd .. && husky frontend/.husky"
   },
   "dependencies": {
     "@firebase-oss/ui-react": "^7.0.2-beta",

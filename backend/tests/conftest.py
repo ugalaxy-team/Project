@@ -16,7 +16,8 @@ engine = create_async_engine(
 AsyncTestingSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(
+        autouse=True)
 async def setup_database():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -28,6 +29,8 @@ async def setup_database():
 @pytest.fixture()
 async def db_session():
     async with AsyncTestingSessionLocal() as session:
+
+        
         yield session
 
 
