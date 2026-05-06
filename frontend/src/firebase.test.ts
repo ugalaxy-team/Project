@@ -36,7 +36,10 @@ describe("syncUser logic", () => {
 
   it("should dispatch null if user is null (logout)", async () => {
     await syncUser(null);
-    expect(store.dispatch).toHaveBeenCalledWith({ type: "setUser", payload: null });
+    expect(store.dispatch).toHaveBeenCalledWith({
+      type: "setUser",
+      payload: null,
+    });
   });
 
   it("should sync combined Firebase and API data on success", async () => {
@@ -65,7 +68,7 @@ describe("syncUser logic", () => {
       type: "setUser",
       payload: expect.objectContaining({
         uid: "123",
-        id: -1, 
+        id: -1,
       }),
     });
     expect(consoleSpy).toHaveBeenCalled();
@@ -73,7 +76,11 @@ describe("syncUser logic", () => {
   });
 
   it("should use email as displayName if displayName is missing", async () => {
-    const userNoName = { ...mockFirebaseUser, displayName: null, email: "fallback@mail.com" };
+    const userNoName = {
+      ...mockFirebaseUser,
+      displayName: null,
+      email: "fallback@mail.com",
+    };
     (queryClient.fetchQuery as any).mockResolvedValue({});
 
     await syncUser(userNoName);
@@ -87,8 +94,10 @@ describe("syncUser logic", () => {
   });
 
   it("should call getProfile with correct user object", async () => {
-    (queryClient.fetchQuery as any).mockImplementation(({ queryFn }: any) => queryFn());
-    
+    (queryClient.fetchQuery as any).mockImplementation(({ queryFn }: any) =>
+      queryFn(),
+    );
+
     await syncUser(mockFirebaseUser);
 
     expect(getProfile).toHaveBeenCalledWith(mockFirebaseUser);

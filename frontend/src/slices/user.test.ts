@@ -26,7 +26,7 @@ describe("user slice", () => {
 
   it("should handle setUser with a user object", () => {
     const nextState = reducer(initialState, setUser(mockUserData));
-    
+
     expect(nextState.user).toEqual(mockUserData);
     expect(nextState.user?.uid).toBe("abc-123");
   });
@@ -34,36 +34,35 @@ describe("user slice", () => {
   it("should handle setUser with null (logout)", () => {
     const stateWithUser = { user: mockUserData };
     const nextState = reducer(stateWithUser, setUser(null));
-    
+
     expect(nextState.user).toBeNull();
   });
-
 
   it("should update displayName if user exists", () => {
     const stateWithUser = { user: { ...mockUserData } };
     const nextState = reducer(stateWithUser, setDisplayName("New Cool Name"));
-    
+
     expect(nextState.user?.displayName).toBe("New Cool Name");
     expect(nextState.user?.uid).toBe("abc-123");
   });
 
   it("should do nothing on setDisplayName if user is undefined", () => {
     const nextState = reducer(initialState, setDisplayName("New Name"));
-    
+
     expect(nextState.user).toBeUndefined();
   });
 
   it("should do nothing on setDisplayName if user is null", () => {
     const stateNullUser = { user: null };
     const nextState = reducer(stateNullUser, setDisplayName("New Name"));
-    
+
     expect(nextState.user).toBeNull();
   });
 
   it("should not mutate the original state object", () => {
     const state = { user: mockUserData };
     reducer(state, setDisplayName("Changed"));
-    
+
     expect(state.user.displayName).toBe("Original Name");
   });
 });

@@ -16,45 +16,48 @@ import { RoleRequestPage } from "@/pages/GetRole/RoleRequestPage";
 import { AuthPage } from "@/pages/Auth/AuthPage";
 import SignOut from "@/pages/Auth/SignOut";
 import { OrganizerPanel } from "@/pages/OrganizerPanel/OrganizerPanel";
-import {NewsPage} from "@/pages/NewsPage/NewsPage";
+import { NewsPage } from "@/pages/NewsPage/NewsPage";
 
 export const Router = () => {
-    return(
-        <BrowserRouter>
-        <Routes>
-          {/* Сторінки з Хедером та Футером */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/tournaments" element={<TournamentsPage />} />
-            <Route path="/tournament/:id" element={<TournamentPage />} />
-            <Route path="/role-request-form" element={
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Сторінки з Хедером та Футером */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/tournaments" element={<TournamentsPage />} />
+          <Route path="/tournament/:id" element={<TournamentPage />} />
+          <Route
+            path="/role-request-form"
+            element={
               <ProtectedRoute>
                 <RoleRequestPage />
               </ProtectedRoute>
-            } />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/support" element={<SupportPage />} />
-            <Route path="/faq" element={<FaqPage />} />
-            <Route path="/rules" element={<RulesPage />} />
-            <Route path="/organizer-panel" element={<OrganizerPanel/>} />
-            <Route path="/news" element={<NewsPage />} />
-            <Route path="*" element={<Page404 />} />
-          </Route>
-          <Route path="/auth/">
-            <Route index element={<AuthPage />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="sign-out" element={<SignOut />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    )
-}
+            }
+          />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/support" element={<SupportPage />} />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/rules" element={<RulesPage />} />
+          <Route path="/organizer-panel" element={<OrganizerPanel />} />
+          <Route path="/news" element={<NewsPage />} />
+          <Route path="*" element={<Page404 />} />
+        </Route>
+        <Route path="/auth/">
+          <Route index element={<AuthPage />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="sign-out" element={<SignOut />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+};

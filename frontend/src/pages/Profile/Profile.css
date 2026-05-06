@@ -1,11 +1,11 @@
 /* Базові стилі та змінні дизайн-системи */
 :root {
   /* Ваша палітра */
-  --primary: #6366F1;
-  --accent: #FBBF24;
-  --background: #F8FAFC;
-  --success: #22C55E;
-  --deadline: #F97316;
+  --primary: #6366f1;
+  --accent: #fbbf24;
+  --background: #f8fafc;
+  --success: #22c55e;
+  --deadline: #f97316;
 
   /* Допоміжні кольори для тексту та карток */
   --card-bg: #ffffff;
@@ -16,7 +16,9 @@
 
 body {
   background-color: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -34,7 +36,9 @@ body {
   background-color: var(--card-bg);
   border-radius: 16px;
   padding: 32px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
   border: 1px solid var(--border-color);
 }
 
@@ -156,11 +160,21 @@ body {
   color: var(--text-muted);
 }
 
-.blue-chip { background-color: #eff6ff; border-color: #bfdbfe; }
-.blue-chip .contact-value { color: #2563eb; }
+.blue-chip {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+}
+.blue-chip .contact-value {
+  color: #2563eb;
+}
 
-.purple-chip { background-color: #f5f3ff; border-color: #ddd6fe; }
-.purple-chip .contact-value { color: #7c3aed; }
+.purple-chip {
+  background-color: #f5f3ff;
+  border-color: #ddd6fe;
+}
+.purple-chip .contact-value {
+  color: #7c3aed;
+}
 
 /* Нижня сітка */
 .content-grid {
@@ -189,8 +203,12 @@ body {
   border-radius: 50%;
 }
 
-.blue-dot { background-color: var(--primary); } /* Синхронізували з Primary */
-.yellow-dot { background-color: var(--accent); } /* Синхронізували з Accent */
+.blue-dot {
+  background-color: var(--primary);
+} /* Синхронізували з Primary */
+.yellow-dot {
+  background-color: var(--accent);
+} /* Синхронізували з Accent */
 
 .list-container {
   display: flex;
@@ -271,8 +289,14 @@ body {
 }
 
 @keyframes modalFadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-header {
@@ -328,7 +352,7 @@ body {
   background-color: #f9fafb;
   transition: all 0.2s ease;
   font-family: inherit;
-  color: var(--text-main)
+  color: var(--text-main);
 }
 
 .form-input:focus {
@@ -366,8 +390,13 @@ body {
   cursor: pointer;
 }
 
-.btn-primary:hover { background-color: #4f46e5; }
-.btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+.btn-primary:hover {
+  background-color: #4f46e5;
+}
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
 
 /* Додатково: червона кнопка для видалення */
 .delete-btn {
@@ -375,7 +404,10 @@ body {
   color: #ef4444;
   margin-left: 12px;
 }
-.delete-btn:hover { background-color: #fecaca; opacity: 1; }
+.delete-btn:hover {
+  background-color: #fecaca;
+  opacity: 1;
+}
 
 /* Адаптивність для мобільних пристроїв */
 @media (max-width: 768px) {
@@ -383,7 +415,7 @@ body {
     flex-direction: column;
     gap: 20px;
   }
-  
+
   .content-grid {
     grid-template-columns: 1fr;
   }

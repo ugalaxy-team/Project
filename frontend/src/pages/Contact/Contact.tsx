@@ -1,13 +1,19 @@
-import React from 'react';
+import React from "react";
 
 const ContactPage: React.FC = () => {
   const socials = [
     {
-      name: 'Instagram',
-      url: 'https://www.instagram.com/starforlifeukraine',
-      color: 'bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-500',
+      name: "Instagram",
+      url: "https://www.instagram.com/starforlifeukraine",
+      color: "bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-500",
       icon: (
-        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <svg
+          className="w-6 h-6 text-white"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
           <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
           <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
@@ -15,41 +21,57 @@ const ContactPage: React.FC = () => {
       ),
     },
     {
-      name: 'Telegram',
-      url: 'https://t.me/starforlifeukraine',
-      color: 'bg-[#229ED9]',
+      name: "Telegram",
+      url: "https://t.me/starforlifeukraine",
+      color: "bg-[#229ED9]",
       icon: (
-        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-6 h-6 text-white"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12.11 12.11 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.233-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.432.893-.645 3.505-1.524 5.84-2.529 7.005-3.013 3.33-1.386 4.02-1.627 4.476-1.635z" />
         </svg>
       ),
     },
     {
-      name: 'Discord',
-      url: 'https://discord.gg/JQ9B7NgCM7',
-      color: 'bg-[#5865F2]',
+      name: "Discord",
+      url: "https://discord.gg/JQ9B7NgCM7",
+      color: "bg-[#5865F2]",
       icon: (
-        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-6 h-6 text-white"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2498-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8745-.617-1.2498a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
         </svg>
       ),
     },
     {
-      name: 'Facebook',
-      url: 'https://www.facebook.com/starforlifeua',
-      color: 'bg-blue-600',
+      name: "Facebook",
+      url: "https://www.facebook.com/starforlifeua",
+      color: "bg-blue-600",
       icon: (
-        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-6 h-6 text-white"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
         </svg>
       ),
     },
     {
-      name: 'LinkedIn',
-      url: 'https://www.linkedin.com/company/starforlifeua',
-      color: 'bg-blue-800',
+      name: "LinkedIn",
+      url: "https://www.linkedin.com/company/starforlifeua",
+      color: "bg-blue-800",
       icon: (
-        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-6 h-6 text-white"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
           <rect x="2" y="9" width="4" height="12"></rect>
           <circle cx="4" cy="4" r="2"></circle>
@@ -57,11 +79,15 @@ const ContactPage: React.FC = () => {
       ),
     },
     {
-      name: 'YouTube',
-      url: 'https://www.youtube.com/@starforlifeua',
-      color: 'bg-red-600',
+      name: "YouTube",
+      url: "https://www.youtube.com/@starforlifeua",
+      color: "bg-red-600",
       icon: (
-        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-6 h-6 text-white"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path>
           <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
         </svg>
@@ -76,7 +102,8 @@ const ContactPage: React.FC = () => {
           КОНТАКТИ
         </h1>
         <p className="text-white/80 text-lg md:text-xl text-center max-w-2xl relative z-10">
-          Маєш питання, ідеї або просто хочеш привітатись? Ми завжди відкриті до спілкування. Обирай зручний спосіб!
+          Маєш питання, ідеї або просто хочеш привітатись? Ми завжди відкриті до
+          спілкування. Обирай зручний спосіб!
         </p>
       </div>
       <div className="max-w-5xl mx-auto px-6 -mt-24 relative z-20">
@@ -86,18 +113,35 @@ const ContactPage: React.FC = () => {
               <span className="inline-block bg-slate-100 text-slate-600 text-sm font-semibold px-4 py-1 rounded-full mb-6">
                 Організація
               </span>
-              <h2 className="text-3xl font-bold text-slate-800 mb-8">Наші дані</h2>
-              
+              <h2 className="text-3xl font-bold text-slate-800 mb-8">
+                Наші дані
+              </h2>
+
               <div className="space-y-6">
                 <div className="flex items-center gap-5 group">
                   <div className="w-14 h-14 rounded-2xl bg-[#eff1ff] flex items-center justify-center text-[#5c68ff] group-hover:scale-110 transition-transform">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      ></path>
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-500 mb-1">Електронна пошта</p>
-                    <a href="mailto:team@starforlife.org.ua" className="text-lg md:text-xl font-bold text-slate-800 hover:text-[#5c68ff] transition-colors">
+                    <p className="text-sm font-medium text-slate-500 mb-1">
+                      Електронна пошта
+                    </p>
+                    <a
+                      href="mailto:team@starforlife.org.ua"
+                      className="text-lg md:text-xl font-bold text-slate-800 hover:text-[#5c68ff] transition-colors"
+                    >
                       team@starforlife.org.ua
                     </a>
                   </div>
@@ -105,25 +149,53 @@ const ContactPage: React.FC = () => {
 
                 <div className="flex items-center gap-5 group">
                   <div className="w-14 h-14 rounded-2xl bg-[#eff1ff] flex items-center justify-center text-[#5c68ff] group-hover:scale-110 transition-transform">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      ></path>
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-500 mb-1">ЄДРПОУ / Реєстрація</p>
-                    <p className="text-lg md:text-xl font-bold text-slate-800">44977372</p>
+                    <p className="text-sm font-medium text-slate-500 mb-1">
+                      ЄДРПОУ / Реєстрація
+                    </p>
+                    <p className="text-lg md:text-xl font-bold text-slate-800">
+                      44977372
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-5 group">
                   <div className="w-14 h-14 rounded-2xl bg-[#eff1ff] flex items-center justify-center text-[#5c68ff] group-hover:scale-110 transition-transform">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      ></path>
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-500 mb-1">Дата заснування</p>
-                    <p className="text-lg md:text-xl font-bold text-slate-800">30.01.2023</p>
+                    <p className="text-sm font-medium text-slate-500 mb-1">
+                      Дата заснування
+                    </p>
+                    <p className="text-lg md:text-xl font-bold text-slate-800">
+                      30.01.2023
+                    </p>
                   </div>
                 </div>
               </div>
@@ -132,14 +204,17 @@ const ContactPage: React.FC = () => {
 
           <div className="bg-[#1e293b] rounded-[2rem] p-8 md:p-10 shadow-xl flex flex-col hover:shadow-2xl transition-shadow relative overflow-hidden">
             <div className="absolute -right-10 -top-10 w-40 h-40 bg-[#334155] rounded-full blur-3xl opacity-50"></div>
-            
+
             <div className="relative z-10">
               <span className="inline-block bg-[#334155] text-white text-sm font-semibold px-4 py-1 rounded-full mb-6">
                 Ком'юніті
               </span>
-              <h2 className="text-3xl font-bold text-white mb-8">Ми в соцмережах</h2>
+              <h2 className="text-3xl font-bold text-white mb-8">
+                Ми в соцмережах
+              </h2>
               <p className="text-slate-300 mb-8">
-                Підписуйся, щоб не пропустити нові турніри, челенджі та корисний контент для твого розвитку.
+                Підписуйся, щоб не пропустити нові турніри, челенджі та корисний
+                контент для твого розвитку.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -160,7 +235,6 @@ const ContactPage: React.FC = () => {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

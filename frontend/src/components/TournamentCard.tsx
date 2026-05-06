@@ -11,7 +11,8 @@ const STATUS_CFG = {
     gradTo: "#d97706",
     icon: <path d="M12 6v6l4 2" />,
     btnText: "Скоро відкриється",
-    btnClass: "bg-slate-100 text-slate-500 border border-slate-200 cursor-default",
+    btnClass:
+      "bg-slate-100 text-slate-500 border border-slate-200 cursor-default",
   },
   registration: {
     label: tournamentStatusByName.registration.display_name,

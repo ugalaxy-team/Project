@@ -9,8 +9,8 @@ import { useMutation } from "@tanstack/react-query";
 import { sendPasswordResetEmail } from "firebase/auth";
 import type { FirebaseError } from "firebase/app";
 
-import { auth } from "../../firebase"; 
-import { Button } from "../../components/ui"; 
+import { auth } from "../../firebase";
+import { Button } from "../../components/ui";
 
 const resetSchema = z.object({
   email: z.string().email("Некоректний формат email"),
@@ -38,11 +38,11 @@ export const ForgotPassword = () => {
     },
     onError: (e: FirebaseError) => {
       setFirebaseError(
-        e.code === "auth/user-not-found" 
-          ? "Користувача з таким email не знайдено." 
-          : "Сталася помилка. Спробуйте ще раз."
+        e.code === "auth/user-not-found"
+          ? "Користувача з таким email не знайдено."
+          : "Сталася помилка. Спробуйте ще раз.",
       );
-    }
+    },
   });
 
   const onSubmit = (data: ResetFormData) => {
@@ -62,7 +62,10 @@ export const ForgotPassword = () => {
           to="/auth"
           className="inline-flex items-center gap-2 text-[14px] font-semibold text-slate-400 hover:text-indigo-500 transition-colors mb-8 group"
         >
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+          <ArrowLeft
+            size={18}
+            className="group-hover:-translate-x-1 transition-transform"
+          />
           Повернутися до входу
         </Link>
 
@@ -95,7 +98,9 @@ export const ForgotPassword = () => {
                   <div className="relative group">
                     <Mail
                       className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${
-                        errors.email ? "text-red-400" : "text-slate-400 group-focus-within:text-indigo-500"
+                        errors.email
+                          ? "text-red-400"
+                          : "text-slate-400 group-focus-within:text-indigo-500"
                       }`}
                       size={20}
                     />
@@ -118,7 +123,7 @@ export const ForgotPassword = () => {
                 </div>
 
                 {firebaseError && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-red-500 text-[14px] text-center font-medium bg-red-50 p-3 rounded-2xl border border-red-100"
@@ -145,7 +150,7 @@ export const ForgotPassword = () => {
               className="text-center py-4"
             >
               <div className="relative w-20 h-20 mx-auto mb-6">
-                <motion.div 
+                <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1.2, opacity: 0 }}
                   transition={{ duration: 1, repeat: Infinity }}
@@ -160,11 +165,16 @@ export const ForgotPassword = () => {
                 Лист відправлено!
               </h2>
               <p className="text-[15px] font-medium text-slate-500 mb-8 leading-relaxed">
-                Перевірте пошту (і папку "Спам" про всяк випадок). Ми вже все надіслали!
+                Перевірте пошту (і папку "Спам" про всяк випадок). Ми вже все
+                надіслали!
               </p>
 
               <Link to="/auth" className="block w-full">
-                <Button variant="outline" size="lg" className="w-full rounded-full border-slate-200 hover:bg-slate-50">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full rounded-full border-slate-200 hover:bg-slate-50"
+                >
                   Повернутися до входу
                 </Button>
               </Link>

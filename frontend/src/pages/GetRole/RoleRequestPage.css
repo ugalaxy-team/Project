@@ -1,192 +1,194 @@
 /* --- Layout --- */
 .page-layout {
-    display: flex;
-    min-height: 100vh;
-    font-family: 'Inter', 'Roboto', sans-serif;
-    background-color: #f7f8fc;
+  display: flex;
+  min-height: 100vh;
+  font-family: "Inter", "Roboto", sans-serif;
+  background-color: #f7f8fc;
 }
 
 /* --- Brand Panel --- */
 .brand-panel {
-    flex: 1;
-    background-color: #7b00ff; 
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
+  flex: 1;
+  background-color: #7b00ff;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
 }
 
 .brand-content {
-    max-width: 480px;
-    text-align: left;
+  max-width: 480px;
+  text-align: left;
 }
 
 .logo-placeholder {
-    font-size: 64px;
-    margin-bottom: 10px;
-    text-align: center;
+  font-size: 64px;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 .brand-content h2 {
-    font-size: 32px;
-    margin: 0;
-    font-weight: 800;
-    text-align: center;
+  font-size: 32px;
+  margin: 0;
+  font-weight: 800;
+  text-align: center;
 }
 
 .brand-subtitle {
-    font-size: 14px;
-    letter-spacing: 2px;
-    margin: 5px 0 40px 0;
-    opacity: 0.9;
-    text-align: center;
+  font-size: 14px;
+  letter-spacing: 2px;
+  margin: 5px 0 40px 0;
+  opacity: 0.9;
+  text-align: center;
 }
 
 /* --- Form Panel & Typography --- */
 .form-panel {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
 }
 
 .form-card {
-    background: #ffffff;
-    width: 100%;
-    max-width: 420px;
-    padding: 40px;
-    border-radius: 24px;
-    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.04);
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.04);
 }
 
 .form-title {
-    font-size: 28px;
-    font-weight: 800;
-    color: #ffffff; 
-    margin-top: 0;
-    margin-bottom: 16px;
-    line-height: 1.2;
+  font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 0;
+  margin-bottom: 16px;
+  line-height: 1.2;
 }
 
 .form-description {
-    font-size: 15px;
-    color: rgba(255, 255, 255, 0.85);
-    line-height: 1.6;
-    margin-bottom: 24px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.6;
+  margin-bottom: 24px;
 }
 
 .form-note {
-    font-size: 13px;
-    color: #7b00ff; 
-    margin-bottom: 0;
+  font-size: 13px;
+  color: #7b00ff;
+  margin-bottom: 0;
 }
 
 /* --- Form Elements (Floating Labels Version) --- */
 .role-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .input-group {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .role-form input,
 .role-form textarea {
-    width: 100%;
-    padding: 24px 18px 8px 18px; 
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    background-color: #fafafa;
-    font-size: 14px;
-    color: #333;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-    font-family: inherit;
+  width: 100%;
+  padding: 24px 18px 8px 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: #fafafa;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  font-family: inherit;
 }
 
 .role-form textarea {
-    resize: vertical;
-    min-height: 80px;
+  resize: vertical;
+  min-height: 80px;
 }
 
 .role-form input:focus,
 .role-form textarea:focus {
-    outline: none;
-    border-color: #7b00ff;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(123, 0, 255, 0.1);
+  outline: none;
+  border-color: #7b00ff;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(123, 0, 255, 0.1);
 }
 
 .role-form input::placeholder,
 .role-form textarea::placeholder {
-    color: #9ca3af;
+  color: #9ca3af;
 }
 
 /* --- Floating Label Animations --- */
 .input-group label {
-    position: absolute;
-    top: 18px;
-    left: 18px;
-    font-size: 14px;
-    color: #9ca3af;
-    pointer-events: none;
-    transition: all 0.2s ease;
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  font-size: 14px;
+  color: #9ca3af;
+  pointer-events: none;
+  transition: all 0.2s ease;
 }
 
 .role-form input:focus ~ label,
 .role-form input:not(:placeholder-shown) ~ label,
 .role-form textarea:focus ~ label,
 .role-form textarea:not(:placeholder-shown) ~ label {
-    top: 6px; 
-    font-size: 11px; 
-    color: #7b00ff;
-    font-weight: 500;
+  top: 6px;
+  font-size: 11px;
+  color: #7b00ff;
+  font-weight: 500;
 }
 
 .role-form input:not(:focus):not(:placeholder-shown) ~ label,
 .role-form textarea:not(:focus):not(:placeholder-shown) ~ label {
-    color: #6b7280; 
+  color: #6b7280;
 }
 
 /* --- Submit Button --- */
 .submit-button {
-    margin-top: 10px;
-    padding: 16px;
-    background-color: #7b00ff;
-    color: #ffffff;
-    border: none;
-    border-radius: 100px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-top: 10px;
+  padding: 16px;
+  background-color: #7b00ff;
+  color: #ffffff;
+  border: none;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
 }
 
 .submit-button:hover {
-    background-color: #6a00e0;
+  background-color: #6a00e0;
 }
 
 .submit-button:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 }
 
 /* --- Media Queries --- */
 @media (max-width: 900px) {
-    .page-layout {
-        flex-direction: column;
-    }
-    
-    .brand-panel {
-        padding: 40px 20px;
-    }
+  .page-layout {
+    flex-direction: column;
+  }
 
-    .brand-content {
-        text-align: center;
-    }
+  .brand-panel {
+    padding: 40px 20px;
+  }
+
+  .brand-content {
+    text-align: center;
+  }
 }

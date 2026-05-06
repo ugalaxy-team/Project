@@ -33,13 +33,19 @@ describe("useNotificationsSocket", () => {
 
   it("should subscribe to 'notification' event when socket is provided", () => {
     renderHook(() => useNotificationsSocket(mockSocket));
-    expect(mockSocket.on).toHaveBeenCalledWith("notification", expect.any(Function));
+    expect(mockSocket.on).toHaveBeenCalledWith(
+      "notification",
+      expect.any(Function),
+    );
   });
 
   it("should unsubscribe (off) when unmounting", () => {
     const { unmount } = renderHook(() => useNotificationsSocket(mockSocket));
     unmount();
-    expect(mockSocket.off).toHaveBeenCalledWith("notification", expect.any(Function));
+    expect(mockSocket.off).toHaveBeenCalledWith(
+      "notification",
+      expect.any(Function),
+    );
   });
 
   it("should dispatch addNotification when a socket event is received", () => {
@@ -51,7 +57,7 @@ describe("useNotificationsSocket", () => {
     handleNewNotification(mockData);
 
     expect(mockDispatch).toHaveBeenCalledWith({
-      type: "notifications/addNotification", 
+      type: "notifications/addNotification",
       payload: {
         id: "123",
         body: "Тестове повідомлення",
@@ -61,31 +67,41 @@ describe("useNotificationsSocket", () => {
   });
 
   it("should generate a random UUID if id is missing in data", () => {
-    const uuidSpy = vi.spyOn(crypto, 'randomUUID').mockReturnValue('mocked-uuid');
-    
+    const uuidSpy = vi
+      .spyOn(crypto, "randomUUID")
+      .mockReturnValue("mocked-uuid");
+
     renderHook(() => useNotificationsSocket(mockSocket));
     const handleNewNotification = mockSocket.on.mock.calls[0][1];
 
     handleNewNotification({ body: "Без ID" });
 
-    expect(mockDispatch).toHaveBeenCalledWith(expect.objectContaining({
-      payload: expect.objectContaining({
-        id: 'mocked-uuid',
-        body: "Без ID"
-      })
-    }));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        payload: expect.objectContaining({
+          id: "mocked-uuid",
+          body: "Без ID",
+        }),
+      }),
+    );
 
     uuidSpy.mockRestore();
   });
 
   it("should resubscribe if socket instance changes", () => {
-    const { rerender } = renderHook(({ socket }) => useNotificationsSocket(socket), {
-      initialProps: { socket: mockSocket }
-    });
+    const { rerender } = renderHook(
+      ({ socket }) => useNotificationsSocket(socket),
+      {
+        initialProps: { socket: mockSocket },
+      },
+    );
 
     const newMockSocket = { on: vi.fn(), off: vi.fn() };
     rerender({ socket: newMockSocket });
     expect(mockSocket.off).toHaveBeenCalled();
-    expect(newMockSocket.on).toHaveBeenCalledWith("notification", expect.any(Function));
+    expect(newMockSocket.on).toHaveBeenCalledWith(
+      "notification",
+      expect.any(Function),
+    );
   });
 });

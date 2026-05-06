@@ -67,7 +67,8 @@ export const Home = () => {
               Хочеш більше впливу на платформі?
             </h3>
             <p className="text-white/90 font-medium text-base md:text-lg max-w-2xl mx-auto lg:mx-0">
-              Подай заявку на отримання нової ролі та розблокуй додатковий функціонал для себе та своєї команди.
+              Подай заявку на отримання нової ролі та розблокуй додатковий
+              функціонал для себе та своєї команди.
             </p>
           </div>
 
@@ -77,8 +78,18 @@ export const Home = () => {
               className="flex sm:inline-flex items-center justify-center w-full sm:w-auto bg-white text-[#5c68ff] font-bold text-base md:text-lg px-6 py-3 md:px-8 md:py-4 rounded-xl hover:bg-slate-50 hover:-translate-y-1 shadow-lg hover:shadow-xl transition-all duration-300"
             >
               Отримати роль
-              <svg className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              <svg
+                className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                />
               </svg>
             </Link>
           </div>

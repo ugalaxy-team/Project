@@ -58,7 +58,7 @@ export const Hero = ({
           {description}
         </p>
       </div>
-      
+
       {mascot && (
         <div className="absolute -bottom-[60px] md:-bottom-[80px] left-1/2 -translate-x-1/2 w-[220px] h-[220px] md:w-[280px] md:h-[280px] bg-accent rounded-full flex flex-col items-center justify-center z-20 shadow-[0_20px_40px_rgba(0,0,0,0.15)] border-[6px] md:border-[8px] border-primary">
           <div className="absolute w-full h-full animate-[spin_15s_linear_infinite]">
@@ -94,7 +94,7 @@ export const Hero = ({
           </Link>
         </div>
       )}
-      
+
       <div className="absolute -bottom-[1px] left-0 w-full leading-[0] z-0">
         <svg
           viewBox="0 0 1440 100"

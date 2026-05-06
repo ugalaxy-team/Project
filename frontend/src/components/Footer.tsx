@@ -25,17 +25,26 @@ export const Footer = () => {
               </h4>
               <ul className="list-none space-y-2">
                 <li>
-                  <Link to="/tournaments" className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors">
+                  <Link
+                    to="/tournaments"
+                    className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors"
+                  >
                     Всі турніри
                   </Link>
                 </li>
                 <li>
-                  <Link to="/rules" className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors">
+                  <Link
+                    to="/rules"
+                    className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors"
+                  >
                     Правила
                   </Link>
                 </li>
                 <li>
-                  <Link to="/faq" className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors">
+                  <Link
+                    to="/faq"
+                    className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors"
+                  >
                     FAQ
                   </Link>
                 </li>
@@ -48,17 +57,26 @@ export const Footer = () => {
               </h4>
               <ul className="list-none space-y-2">
                 <li>
-                  <Link to="/about-us" className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors">
+                  <Link
+                    to="/about-us"
+                    className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors"
+                  >
                     Про нас
                   </Link>
                 </li>
                 <li>
-                  <Link to="/contact" className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors">
+                  <Link
+                    to="/contact"
+                    className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors"
+                  >
                     Контакти
                   </Link>
                 </li>
                 <li>
-                  <Link to="/news" className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors">
+                  <Link
+                    to="/news"
+                    className="text-white hover:text-accent text-sm md:text-base font-medium transition-colors"
+                  >
                     Новини
                   </Link>
                 </li>

@@ -18,10 +18,26 @@ const FILTER_OPTIONS: {
   dotColor?: string;
 }[] = [
   { id: "all", label: "Всі події" },
-  { id: "draft", label: tournamentStatusByName.draft.display_name, dotColor: "bg-amber-500" },
-  { id: "registration", label: tournamentStatusByName.registration.display_name, dotColor: "bg-green-500" },
-  { id: "running", label: tournamentStatusByName.running.display_name, dotColor: "bg-pink-500" },
-  { id: "finished", label: tournamentStatusByName.finished.display_name, dotColor: "bg-slate-400" },
+  {
+    id: "draft",
+    label: tournamentStatusByName.draft.display_name,
+    dotColor: "bg-amber-500",
+  },
+  {
+    id: "registration",
+    label: tournamentStatusByName.registration.display_name,
+    dotColor: "bg-green-500",
+  },
+  {
+    id: "running",
+    label: tournamentStatusByName.running.display_name,
+    dotColor: "bg-pink-500",
+  },
+  {
+    id: "finished",
+    label: tournamentStatusByName.finished.display_name,
+    dotColor: "bg-slate-400",
+  },
 ];
 
 export const TournamentsPage = () => {

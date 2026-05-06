@@ -1,4 +1,8 @@
-export type TournamentStatus = "draft" | "registration" | "running" | "finished";
+export type TournamentStatus =
+  | "draft"
+  | "registration"
+  | "running"
+  | "finished";
 export type TagType = "accent" | "light" | "pink" | "primary";
 
 export interface Tag {

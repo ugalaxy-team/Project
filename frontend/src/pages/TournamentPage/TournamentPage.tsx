@@ -28,52 +28,176 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]["id"];
 
-const [draftStatus, registrationStatus, runningStatus, finishedStatus] = tournamentStatuses;
+const [draftStatus, registrationStatus, runningStatus, finishedStatus] =
+  tournamentStatuses;
 
 type TourneyStatus = string;
 
 const RegistrationIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><line x1="19" y1="8" x2="19" y2="14" /><line x1="22" y1="11" x2="16" y2="11" /></svg>
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <line x1="19" y1="8" x2="19" y2="14" />
+    <line x1="22" y1="11" x2="16" y2="11" />
+  </svg>
 );
 const ActiveIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </svg>
 );
 const DraftIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
 );
 const FinishedIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" /><line x1="4" y1="22" x2="4" y2="15" /></svg>
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+    <line x1="4" y1="22" x2="4" y2="15" />
+  </svg>
 );
 const GameDevIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="12" rx="2" /><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01" /></svg>
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="2" y="6" width="20" height="12" rx="2" />
+    <path d="M6 12h4M8 10v4M15 13h.01M18 11h.01" />
+  </svg>
 );
 const ClockIcon = () => (
-  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+  <svg
+    width="36"
+    height="36"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
 );
 const CheckCircleIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+  <svg
+    width="28"
+    height="28"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="var(--color-primary)"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+    <polyline points="22 4 12 14.01 9 11.01" />
+  </svg>
 );
 const AlertIcon = () => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+  <svg
+    width="48"
+    height="48"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </svg>
 );
 const SpinnerIcon = () => (
-  <svg className="animate-spin -ml-1 mr-3 h-8 w-8 text-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+  <svg
+    className="animate-spin -ml-1 mr-3 h-8 w-8 text-accent"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+  >
+    <circle
+      className="opacity-25"
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="currentColor"
+      strokeWidth="4"
+    ></circle>
+    <path
+      className="opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+    ></path>
+  </svg>
 );
 
-const STATUS_CONFIG: Record<TourneyStatus, { label: string; className: string; icon: ReactNode }> = {
+const STATUS_CONFIG: Record<
+  TourneyStatus,
+  { label: string; className: string; icon: ReactNode }
+> = {
   [draftStatus.name]: {
     label: draftStatus.display_name,
-    className: "bg-accent/90 text-dark-theme shadow-[0_0_20px_rgba(250,204,21,0.4)]",
+    className:
+      "bg-accent/90 text-dark-theme shadow-[0_0_20px_rgba(250,204,21,0.4)]",
     icon: <DraftIcon />,
   },
   [registrationStatus.name]: {
     label: registrationStatus.display_name,
-    className: "bg-blue-400/90 text-blue-950 shadow-[0_0_20px_rgba(96,165,250,0.4)]",
+    className:
+      "bg-blue-400/90 text-blue-950 shadow-[0_0_20px_rgba(96,165,250,0.4)]",
     icon: <RegistrationIcon />,
   },
   [runningStatus.name]: {
     label: runningStatus.display_name,
-    className: "bg-emerald-400/90 text-emerald-950 shadow-[0_0_20px_rgba(52,211,153,0.4)]",
+    className:
+      "bg-emerald-400/90 text-emerald-950 shadow-[0_0_20px_rgba(52,211,153,0.4)]",
     icon: <ActiveIcon />,
   },
   [finishedStatus.name]: {
@@ -99,20 +223,31 @@ const getTimeLeftInfo = (targetDate: Date) => {
 export const TournamentPage = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { data: tournament, isLoading, error, refetch } = useQuery({
-    queryKey: ['tournament', id],
+  const {
+    data: tournament,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["tournament", id],
     queryFn: async () => {
       if (!id) throw new Error("ID турніру не знайдено");
-      const response = await apiClient.get<TournamentData>(`/tournaments/${id}`);
+      const response = await apiClient.get<TournamentData>(
+        `/tournaments/${id}`,
+      );
       return response.data;
     },
     enabled: !!id,
-    retry: 1
+    retry: 1,
   });
 
   const { currentStatus, deadlineValue, deadlineLabel } = useMemo(() => {
     if (!tournament) {
-      return { currentStatus: draftStatus.name, deadlineValue: "...", deadlineLabel: "Завантаження" };
+      return {
+        currentStatus: draftStatus.name,
+        deadlineValue: "...",
+        deadlineLabel: "Завантаження",
+      };
     }
 
     const now = new Date();
@@ -132,7 +267,10 @@ export const TournamentPage = () => {
       };
     }
 
-    if ((statusName === registrationStatus.name || now < regEnd) && now < eventStart) {
+    if (
+      (statusName === registrationStatus.name || now < regEnd) &&
+      now < eventStart
+    ) {
       return {
         currentStatus: registrationStatus.name,
         deadlineValue: getTimeLeftInfo(regEnd),
@@ -140,7 +278,10 @@ export const TournamentPage = () => {
       };
     }
 
-    if ((statusName === draftStatus.name || now < eventStart) && now < eventStart) {
+    if (
+      (statusName === draftStatus.name || now < eventStart) &&
+      now < eventStart
+    ) {
       return {
         currentStatus: draftStatus.name,
         deadlineValue: getTimeLeftInfo(eventStart),
@@ -148,7 +289,10 @@ export const TournamentPage = () => {
       };
     }
 
-    if ((statusName === runningStatus.name || now < eventEnd) && statusName !== finishedStatus.name) {
+    if (
+      (statusName === runningStatus.name || now < eventEnd) &&
+      statusName !== finishedStatus.name
+    ) {
       return {
         currentStatus: runningStatus.name,
         deadlineValue: getTimeLeftInfo(eventEnd),
@@ -175,7 +319,8 @@ export const TournamentPage = () => {
   }
 
   if (error || !tournament) {
-    const errorMessage = (error as any)?.response?.data?.detail?.[0]?.msg ||
+    const errorMessage =
+      (error as any)?.response?.data?.detail?.[0]?.msg ||
       (error as any)?.response?.data?.message ||
       (error as Error)?.message ||
       "Не вдалося завантажити інформацію про турнір.";
@@ -190,7 +335,8 @@ export const TournamentPage = () => {
             Ой, халепа!
           </h2>
           <p className="text-slate-600 text-[17px] mb-3 font-medium leading-relaxed">
-            Проблемки. Турнір трохи загубився в мережі або щось пішло не так. Але не хвилюйтесь, ми вже намагаємося його знайти!
+            Проблемки. Турнір трохи загубився в мережі або щось пішло не так.
+            Але не хвилюйтесь, ми вже намагаємося його знайти!
           </p>
           <div className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 mb-8 w-full">
             <p className="text-sm text-red-400 font-mono truncate">
@@ -218,7 +364,9 @@ export const TournamentPage = () => {
         title={
           <div className="flex flex-col items-center w-full mt-8 animate-[fadeIn_0.6s_ease-out_forwards]">
             <div className="flex gap-3 mb-6 flex-wrap justify-center text-base normal-case tracking-normal">
-              <div className={`px-5 py-2 rounded-full font-quicksand font-bold text-sm flex items-center gap-2 transition-transform hover:scale-105 cursor-default ${statusInfo.className}`}>
+              <div
+                className={`px-5 py-2 rounded-full font-quicksand font-bold text-sm flex items-center gap-2 transition-transform hover:scale-105 cursor-default ${statusInfo.className}`}
+              >
                 {statusInfo.icon} {statusInfo.label}
               </div>
               <div className="bg-white/10 border border-white/20 text-white backdrop-blur-md px-5 py-2 rounded-full font-quicksand font-bold text-sm flex items-center gap-2 transition-transform hover:scale-105 cursor-default">
@@ -233,7 +381,10 @@ export const TournamentPage = () => {
             <div className="flex flex-wrap items-center justify-center w-full gap-8 md:gap-12 mb-12 text-base normal-case bg-white/5 hover:bg-white/10 transition-colors px-6 md:px-12 py-8 rounded-[32px] backdrop-blur-xl border border-white/10 shadow-2xl">
               <StatItem value={deadlineValue} label={deadlineLabel} />
               <div className="hidden md:block w-[1px] h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent self-center"></div>
-              <StatItem value={`До ${tournament.max_teams}`} label="Учасників у команді" />
+              <StatItem
+                value={`До ${tournament.max_teams}`}
+                label="Учасників у команді"
+              />
               <div className="hidden md:block w-[1px] h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent self-center"></div>
               <StatItem value="Top 3" label="Призові місця" />
             </div>
@@ -266,7 +417,11 @@ const StatItem = ({ value, label }: { value: string; label: string }) => (
   </div>
 );
 
-const TournamentMainContent = ({ tournament }: { tournament: TournamentData }) => {
+const TournamentMainContent = ({
+  tournament,
+}: {
+  tournament: TournamentData;
+}) => {
   const [activeTab, setActiveTab] = useState<TabId>("desc");
   const [lineStyle, setLineStyle] = useState({ left: 0, width: 0 });
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
@@ -294,10 +449,11 @@ const TournamentMainContent = ({ tournament }: { tournament: TournamentData }) =
                 tabsRef.current[index] = el;
               }}
               onClick={() => setActiveTab(tab.id)}
-              className={`font-quicksand font-bold text-[20px] md:text-[22px] cursor-pointer relative z-10 transition-colors duration-300 px-2 py-1 ${activeTab === tab.id
-                ? "text-primary"
-                : "text-slate-400 hover:text-primary/70"
-                }`}
+              className={`font-quicksand font-bold text-[20px] md:text-[22px] cursor-pointer relative z-10 transition-colors duration-300 px-2 py-1 ${
+                activeTab === tab.id
+                  ? "text-primary"
+                  : "text-slate-400 hover:text-primary/70"
+              }`}
             >
               {tab.label}
             </button>
@@ -313,7 +469,9 @@ const TournamentMainContent = ({ tournament }: { tournament: TournamentData }) =
       </div>
 
       <div className="bg-bg-card rounded-[32px] p-6 md:p-[60px] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.1)] border border-slate-100 min-h-[400px] transition-all">
-        {activeTab === "desc" && <DescriptionTab description={tournament.description} />}
+        {activeTab === "desc" && (
+          <DescriptionTab description={tournament.description} />
+        )}
         {activeTab !== "desc" && <PlaceholderTab />}
       </div>
     </main>
@@ -341,7 +499,9 @@ const DescriptionTab = ({ description }: { description: string }) => (
       <ul className="flex flex-col gap-5 text-[17px] text-slate-600 pl-2">
         <li className="flex gap-4 items-start bg-slate-50/50 p-4 rounded-2xl hover:bg-slate-50 transition-colors">
           <div className="w-2.5 h-2.5 rounded-full bg-primary mt-2 shrink-0 shadow-[0_0_8px_rgba(var(--color-primary),0.6)]"></div>
-          <p className="leading-relaxed">Створити інноваційний проект з використанням GameDev підходів.</p>
+          <p className="leading-relaxed">
+            Створити інноваційний проект з використанням GameDev підходів.
+          </p>
         </li>
       </ul>
     </section>
@@ -357,7 +517,8 @@ const PlaceholderTab = () => (
       В розробці...
     </h2>
     <p className="max-w-[420px] text-slate-500 text-[17px] leading-relaxed">
-      Інформація для цього розділу наразі готується. Повертайтеся трохи згодом, ми вже працюємо над цим!
+      Інформація для цього розділу наразі готується. Повертайтеся трохи згодом,
+      ми вже працюємо над цим!
     </p>
   </div>
 );

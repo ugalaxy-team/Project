@@ -46,7 +46,9 @@ vi.mock("./EditTournamentModal", () => ({
   EditTournamentModal: ({ isOpen, onSave }: any) =>
     isOpen ? (
       <div data-testid="edit-modal">
-        <button onClick={() => onSave(1, { title: "Updated" })}>Save Edit</button>
+        <button onClick={() => onSave(1, { title: "Updated" })}>
+          Save Edit
+        </button>
       </div>
     ) : null,
 }));
@@ -117,15 +119,17 @@ describe("OrganizerPanel", () => {
       return { data: [], isLoading: false } as any;
     });
 
-    vi.mocked(reactQuery.useMutation).mockImplementation(({ mutationFn }: any) => {
-      if (mutationFn === deleteTournament) {
-        return { mutateAsync: mutateAsyncDeleteMock } as any;
-      }
-      if (mutationFn === createTournament) {
-        return { mutateAsync: mutateAsyncCreateMock } as any;
-      }
-      return { mutateAsync: mutateAsyncUpdateMock } as any;
-    });
+    vi.mocked(reactQuery.useMutation).mockImplementation(
+      ({ mutationFn }: any) => {
+        if (mutationFn === deleteTournament) {
+          return { mutateAsync: mutateAsyncDeleteMock } as any;
+        }
+        if (mutationFn === createTournament) {
+          return { mutateAsync: mutateAsyncCreateMock } as any;
+        }
+        return { mutateAsync: mutateAsyncUpdateMock } as any;
+      },
+    );
   });
 
   // --- Rendering ---
@@ -145,7 +149,8 @@ describe("OrganizerPanel", () => {
 
   it("renders global loading state when tournaments are loading", () => {
     vi.mocked(reactQuery.useQuery).mockImplementation(({ queryKey }: any) => {
-      if (queryKey[0] === "tournaments") return { isLoading: true, data: [] } as any;
+      if (queryKey[0] === "tournaments")
+        return { isLoading: true, data: [] } as any;
       return { isLoading: false, data: [] } as any;
     });
     render(<OrganizerPanel />);
@@ -172,7 +177,9 @@ describe("OrganizerPanel", () => {
   it("filters tournaments by status", () => {
     render(<OrganizerPanel />);
     const statusSelect = screen.getByRole("combobox");
-    fireEvent.change(statusSelect, { target: { value: registrationStatus.name } });
+    fireEvent.change(statusSelect, {
+      target: { value: registrationStatus.name },
+    });
 
     expect(screen.queryByText("Alpha Tournament")).not.toBeInTheDocument();
     expect(screen.getByText("Beta Championship")).toBeInTheDocument();
@@ -221,9 +228,9 @@ describe("OrganizerPanel", () => {
   it("calls create mutation from modal", async () => {
     render(<OrganizerPanel />);
     fireEvent.click(screen.getByText(/\+ Створити турнір/i));
-    
+
     fireEvent.click(screen.getByText("Save Create"));
-    
+
     await waitFor(() => {
       expect(mutateAsyncCreateMock).toHaveBeenCalledWith({ title: "New" });
     });
@@ -240,11 +247,14 @@ describe("OrganizerPanel", () => {
   it("calls update mutation from edit modal", async () => {
     render(<OrganizerPanel />);
     fireEvent.click(screen.getAllByText(/Редагувати/i)[0]);
-    
+
     fireEvent.click(screen.getByText("Save Edit"));
-    
+
     await waitFor(() => {
-      expect(mutateAsyncUpdateMock).toHaveBeenCalledWith({ id: 1, data: { title: "Updated" } });
+      expect(mutateAsyncUpdateMock).toHaveBeenCalledWith({
+        id: 1,
+        data: { title: "Updated" },
+      });
     });
   });
 
@@ -252,7 +262,9 @@ describe("OrganizerPanel", () => {
 
   it("opens and displays info modal data", () => {
     render(<OrganizerPanel />);
-    const infoButtons = screen.getAllByRole("button").filter(b => b.innerHTML.includes("svg"));
+    const infoButtons = screen
+      .getAllByRole("button")
+      .filter((b) => b.innerHTML.includes("svg"));
     fireEvent.click(infoButtons[0]);
 
     expect(screen.getByText(/Alpha Desc/i)).toBeInTheDocument();
@@ -261,7 +273,9 @@ describe("OrganizerPanel", () => {
 
   it("closes info modal", () => {
     render(<OrganizerPanel />);
-    const infoButtons = screen.getAllByRole("button").filter(b => b.innerHTML.includes("svg"));
+    const infoButtons = screen
+      .getAllByRole("button")
+      .filter((b) => b.innerHTML.includes("svg"));
     fireEvent.click(infoButtons[0]);
 
     const closeBtn = screen.getByText(/Закрити/i);
@@ -282,7 +296,8 @@ describe("OrganizerPanel", () => {
 
   it("shows empty state in jury tab if no tournaments exist", () => {
     vi.mocked(reactQuery.useQuery).mockImplementation(({ queryKey }: any) => {
-      if (queryKey[0] === "tournaments") return { data: [], isLoading: false } as any;
+      if (queryKey[0] === "tournaments")
+        return { data: [], isLoading: false } as any;
       return { data: mockAllUsers, isLoading: false } as any;
     });
     render(<OrganizerPanel />);
@@ -294,7 +309,7 @@ describe("OrganizerPanel", () => {
   it("opens jury modal and lists users", () => {
     render(<OrganizerPanel />);
     fireEvent.click(screen.getByText(/КЕРУВАННЯ ЖУРІ/i));
-    
+
     const addJuryButtons = screen.getAllByText("+");
     fireEvent.click(addJuryButtons[0]);
 

@@ -19,10 +19,10 @@ vi.mock("../../firebase", () => ({
 
 vi.mock("../../components/ui", () => ({
   Button: ({ children, isLoading, type, ...props }: any) => (
-    <button 
-      data-testid="custom-button" 
+    <button
+      data-testid="custom-button"
       type={type || "button"}
-      disabled={isLoading} 
+      disabled={isLoading}
       {...props}
     >
       {isLoading ? "Loading..." : children}
@@ -51,7 +51,7 @@ describe("ForgotPassword Component", () => {
         <MemoryRouter>
           <ForgotPassword />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
     return { user, ...view };
   };
@@ -80,15 +80,17 @@ describe("ForgotPassword Component", () => {
     it("updates email input value when user types", async () => {
       const { user } = renderForgotPassword();
       const emailInput = screen.getByPlaceholderText("name@example.com");
-      
+
       await user.type(emailInput, "test@example.com");
-      
+
       expect(emailInput).toHaveValue("test@example.com");
     });
 
     it("renders the submit button", () => {
       renderForgotPassword();
-      const button = screen.getByRole("button", { name: "Надіслати посилання" });
+      const button = screen.getByRole("button", {
+        name: "Надіслати посилання",
+      });
       expect(button).toBeInTheDocument();
       expect(button).toHaveAttribute("type", "submit");
     });
@@ -105,24 +107,29 @@ describe("ForgotPassword Component", () => {
   describe("Form Validation", () => {
     it("shows an error when submitting empty email", async () => {
       const { user } = renderForgotPassword();
-      const submitButton = screen.getByRole("button", { name: "Надіслати посилання" });
-      
+      const submitButton = screen.getByRole("button", {
+        name: "Надіслати посилання",
+      });
+
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByText("Некоректний формат email")).toBeInTheDocument();
+        expect(
+          screen.getByText("Некоректний формат email"),
+        ).toBeInTheDocument();
       });
       expect(sendPasswordResetEmail).not.toHaveBeenCalled();
     });
 
-
     it("applies error styling to the input field on validation failure", async () => {
       const { user } = renderForgotPassword();
       const emailInput = screen.getByPlaceholderText("name@example.com");
-      const submitButton = screen.getByRole("button", { name: "Надіслати посилання" });
-      
+      const submitButton = screen.getByRole("button", {
+        name: "Надіслати посилання",
+      });
+
       await user.click(submitButton);
-      
+
       await waitFor(() => {
         expect(emailInput).toHaveClass("border-red-500");
       });
@@ -131,18 +138,24 @@ describe("ForgotPassword Component", () => {
     it("clears validation error when user starts typing a valid email", async () => {
       const { user } = renderForgotPassword();
       const emailInput = screen.getByPlaceholderText("name@example.com");
-      const submitButton = screen.getByRole("button", { name: "Надіслати посилання" });
+      const submitButton = screen.getByRole("button", {
+        name: "Надіслати посилання",
+      });
 
       await user.click(submitButton);
       await waitFor(() => {
-        expect(screen.getByText("Некоректний формат email")).toBeInTheDocument();
+        expect(
+          screen.getByText("Некоректний формат email"),
+        ).toBeInTheDocument();
       });
 
       await user.type(emailInput, "valid@example.com");
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.queryByText("Некоректний формат email")).not.toBeInTheDocument();
+        expect(
+          screen.queryByText("Некоректний формат email"),
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -153,19 +166,28 @@ describe("ForgotPassword Component", () => {
       vi.mocked(sendPasswordResetEmail).mockResolvedValue(undefined);
       const { user } = renderForgotPassword();
       const emailInput = screen.getByPlaceholderText("name@example.com");
-      const submitButton = screen.getByRole("button", { name: "Надіслати посилання" });
-      
+      const submitButton = screen.getByRole("button", {
+        name: "Надіслати посилання",
+      });
+
       await user.type(emailInput, "user@example.com");
       await user.click(submitButton);
-      
+
       await waitFor(() => {
-        expect(sendPasswordResetEmail).toHaveBeenCalledWith(auth, "user@example.com");
+        expect(sendPasswordResetEmail).toHaveBeenCalledWith(
+          auth,
+          "user@example.com",
+        );
       });
 
       expect(await screen.findByText("Лист відправлено!")).toBeInTheDocument();
       expect(screen.getByText(/Перевірте пошту/i)).toBeInTheDocument();
-      expect(screen.queryByPlaceholderText("name@example.com")).not.toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Повернутися до входу" })).toBeInTheDocument();
+      expect(
+        screen.queryByPlaceholderText("name@example.com"),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Повернутися до входу" }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -173,21 +195,25 @@ describe("ForgotPassword Component", () => {
   describe("Loading States", () => {
     it("disables submit button and shows loading state during submission", async () => {
       let resolvePromise: (value: any) => void;
-      const pendingPromise = new Promise((resolve) => { resolvePromise = resolve; });
+      const pendingPromise = new Promise((resolve) => {
+        resolvePromise = resolve;
+      });
       vi.mocked(sendPasswordResetEmail).mockReturnValue(pendingPromise as any);
-      
+
       const { user } = renderForgotPassword();
       const emailInput = screen.getByPlaceholderText("name@example.com");
-      const submitBtn = screen.getByRole("button", { name: "Надіслати посилання" });
-      
+      const submitBtn = screen.getByRole("button", {
+        name: "Надіслати посилання",
+      });
+
       await user.type(emailInput, "test@example.com");
       await user.click(submitBtn);
 
       expect(await screen.findByText("Loading...")).toBeInTheDocument();
       expect(submitBtn).toBeDisabled();
-      
+
       resolvePromise!(undefined);
-      
+
       await waitFor(() => {
         expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
       });
@@ -197,48 +223,72 @@ describe("ForgotPassword Component", () => {
   // --- Error Handling ---
   describe("Firebase Error Handling", () => {
     it("displays error message for auth/user-not-found", async () => {
-      vi.mocked(sendPasswordResetEmail).mockRejectedValue({ code: "auth/user-not-found" });
+      vi.mocked(sendPasswordResetEmail).mockRejectedValue({
+        code: "auth/user-not-found",
+      });
       const { user } = renderForgotPassword();
       const emailInput = screen.getByPlaceholderText("name@example.com");
-      const submitButton = screen.getByRole("button", { name: "Надіслати посилання" });
-      
+      const submitButton = screen.getByRole("button", {
+        name: "Надіслати посилання",
+      });
+
       await user.type(emailInput, "ghost@example.com");
       await user.click(submitButton);
-      
-      expect(await screen.findByText("Користувача з таким email не знайдено.")).toBeInTheDocument();
+
+      expect(
+        await screen.findByText("Користувача з таким email не знайдено."),
+      ).toBeInTheDocument();
     });
 
     it("displays generic error message for other Firebase errors", async () => {
-      vi.mocked(sendPasswordResetEmail).mockRejectedValue({ code: "auth/too-many-requests" });
+      vi.mocked(sendPasswordResetEmail).mockRejectedValue({
+        code: "auth/too-many-requests",
+      });
       const { user } = renderForgotPassword();
       const emailInput = screen.getByPlaceholderText("name@example.com");
-      const submitButton = screen.getByRole("button", { name: "Надіслати посилання" });
-      
+      const submitButton = screen.getByRole("button", {
+        name: "Надіслати посилання",
+      });
+
       await user.type(emailInput, "network@example.com");
       await user.click(submitButton);
-      
-      expect(await screen.findByText("Сталася помилка. Спробуйте ще раз.")).toBeInTheDocument();
+
+      expect(
+        await screen.findByText("Сталася помилка. Спробуйте ще раз."),
+      ).toBeInTheDocument();
     });
 
     it("clears previous firebase error when submitting again", async () => {
-      vi.mocked(sendPasswordResetEmail).mockRejectedValueOnce({ code: "auth/user-not-found" });
+      vi.mocked(sendPasswordResetEmail).mockRejectedValueOnce({
+        code: "auth/user-not-found",
+      });
       const { user } = renderForgotPassword();
       const emailInput = screen.getByPlaceholderText("name@example.com");
-      const submitButton = screen.getByRole("button", { name: "Надіслати посилання" });
-      
+      const submitButton = screen.getByRole("button", {
+        name: "Надіслати посилання",
+      });
+
       await user.type(emailInput, "fail@example.com");
       await user.click(submitButton);
-      
-      expect(await screen.findByText("Користувача з таким email не знайдено.")).toBeInTheDocument();
-      
+
+      expect(
+        await screen.findByText("Користувача з таким email не знайдено."),
+      ).toBeInTheDocument();
+
       let resolvePromise: (value: any) => void;
-      const pendingPromise = new Promise((resolve) => { resolvePromise = resolve; });
-      vi.mocked(sendPasswordResetEmail).mockReturnValueOnce(pendingPromise as any);
+      const pendingPromise = new Promise((resolve) => {
+        resolvePromise = resolve;
+      });
+      vi.mocked(sendPasswordResetEmail).mockReturnValueOnce(
+        pendingPromise as any,
+      );
 
       await user.click(submitButton);
-      
+
       await waitFor(() => {
-        expect(screen.queryByText("Користувача з таким email не знайдено.")).not.toBeInTheDocument();
+        expect(
+          screen.queryByText("Користувача з таким email не знайдено."),
+        ).not.toBeInTheDocument();
       });
 
       resolvePromise!(undefined);

@@ -30,14 +30,24 @@ describe("EditTournamentModal", () => {
   describe("Rendering & Initialization", () => {
     it("returns null and does not render when isOpen is false", () => {
       const { container } = render(
-        <EditTournamentModal isOpen={false} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={false}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
       expect(container.firstChild).toBeNull();
     });
 
     it("renders the modal and displays the tournament ID when isOpen is true", () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
       expect(screen.getByText("РЕДАГУВАТИ")).toBeInTheDocument();
       expect(screen.getByText("ТУРНІР #123")).toBeInTheDocument();
@@ -45,18 +55,29 @@ describe("EditTournamentModal", () => {
 
     it("populates the form fields with the provided tournament data", () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
-      const titleInput = screen.getByPlaceholderText("Наприклад: Хакатон 2026...");
+      const titleInput = screen.getByPlaceholderText(
+        "Наприклад: Хакатон 2026...",
+      );
       const descInput = screen.getByPlaceholderText("Короткий опис турніру...");
-      const maxTeamsInput = document.querySelector('input[name="max_teams"]') as HTMLInputElement;
-      const dateInputs = document.querySelectorAll('input[type="datetime-local"]') as NodeListOf<HTMLInputElement>;
+      const maxTeamsInput = document.querySelector(
+        'input[name="max_teams"]',
+      ) as HTMLInputElement;
+      const dateInputs = document.querySelectorAll(
+        'input[type="datetime-local"]',
+      ) as NodeListOf<HTMLInputElement>;
 
       expect(titleInput).toHaveValue("Initial Tournament Title");
       expect(descInput).toHaveValue("Initial Description");
       expect(maxTeamsInput.value).toBe("16");
-      
+
       expect(dateInputs[0]).toHaveValue("2026-05-01T09:00");
       expect(dateInputs[1]).toHaveValue("2026-05-20T23:59");
       expect(dateInputs[2]).toHaveValue("2026-06-01T10:00");
@@ -64,12 +85,23 @@ describe("EditTournamentModal", () => {
 
     it("handles missing tournament data properties gracefully", () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={emptyTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={emptyTournament}
+          onSave={mockOnSave}
+        />,
       );
 
-      const titleInput = screen.getByPlaceholderText("Наприклад: Хакатон 2026...");
-      const maxTeamsInput = document.querySelector('input[name="max_teams"]') as HTMLInputElement;
-      const dateInputs = document.querySelectorAll('input[type="datetime-local"]') as NodeListOf<HTMLInputElement>;
+      const titleInput = screen.getByPlaceholderText(
+        "Наприклад: Хакатон 2026...",
+      );
+      const maxTeamsInput = document.querySelector(
+        'input[name="max_teams"]',
+      ) as HTMLInputElement;
+      const dateInputs = document.querySelectorAll(
+        'input[type="datetime-local"]',
+      ) as NodeListOf<HTMLInputElement>;
 
       expect(titleInput).toHaveValue("");
       expect(maxTeamsInput.value).toBe("2");
@@ -84,14 +116,28 @@ describe("EditTournamentModal", () => {
   describe("User Interactions", () => {
     it("updates text and textarea state on user input", () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
-      const titleInput = screen.getByPlaceholderText("Наприклад: Хакатон 2026...");
+      const titleInput = screen.getByPlaceholderText(
+        "Наприклад: Хакатон 2026...",
+      );
       const descInput = screen.getByPlaceholderText("Короткий опис турніру...");
 
-      fireEvent.change(titleInput, { target: { name: "title", value: "Updated Title" } });
-      fireEvent.change(descInput, { target: { name: "description", value: "Updated Description\nSecond Line" } });
+      fireEvent.change(titleInput, {
+        target: { name: "title", value: "Updated Title" },
+      });
+      fireEvent.change(descInput, {
+        target: {
+          name: "description",
+          value: "Updated Description\nSecond Line",
+        },
+      });
 
       expect(titleInput).toHaveValue("Updated Title");
       expect(descInput).toHaveValue("Updated Description\nSecond Line");
@@ -99,24 +145,42 @@ describe("EditTournamentModal", () => {
 
     it("updates max_teams state as a number type", () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
-      const maxTeamsInput = document.querySelector('input[name="max_teams"]') as HTMLInputElement;
-      fireEvent.change(maxTeamsInput, { target: { name: "max_teams", value: "32" } });
+      const maxTeamsInput = document.querySelector(
+        'input[name="max_teams"]',
+      ) as HTMLInputElement;
+      fireEvent.change(maxTeamsInput, {
+        target: { name: "max_teams", value: "32" },
+      });
 
       expect(maxTeamsInput.value).toBe("32");
     });
 
     it("updates date state on user input", () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
-      const dateInputs = document.querySelectorAll('input[type="datetime-local"]');
+      const dateInputs = document.querySelectorAll(
+        'input[type="datetime-local"]',
+      );
       const startRegInput = dateInputs[0];
 
-      fireEvent.change(startRegInput, { target: { name: "reg_start", value: "2026-07-15T12:30" } });
+      fireEvent.change(startRegInput, {
+        target: { name: "reg_start", value: "2026-07-15T12:30" },
+      });
 
       expect(startRegInput).toHaveValue("2026-07-15T12:30");
     });
@@ -127,7 +191,12 @@ describe("EditTournamentModal", () => {
   describe("Closing Mechanisms", () => {
     it("triggers onClose when the close icon is clicked", () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
       const closeIcon = screen.getByText("✕");
@@ -138,7 +207,12 @@ describe("EditTournamentModal", () => {
 
     it("triggers onClose when the cancel button is clicked", () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
       const cancelButton = screen.getByText("СКАСУВАТИ");
@@ -149,10 +223,17 @@ describe("EditTournamentModal", () => {
 
     it("triggers onClose when clicking on the backdrop", () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
-      const backdrop = document.querySelector(".backdrop-blur-sm") as HTMLElement;
+      const backdrop = document.querySelector(
+        ".backdrop-blur-sm",
+      ) as HTMLElement;
       fireEvent.click(backdrop);
 
       expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -164,7 +245,12 @@ describe("EditTournamentModal", () => {
   describe("Form Submission", () => {
     it("submits original data if no fields were manually changed", async () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
       const submitButton = screen.getByText("ЗБЕРЕГТИ");
@@ -184,30 +270,47 @@ describe("EditTournamentModal", () => {
 
     it("calls onSave with correct formatted data on submit after changes", async () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
-      const titleInput = screen.getByPlaceholderText("Наприклад: Хакатон 2026...");
-      fireEvent.change(titleInput, { target: { name: "title", value: "New Title 2026" } });
+      const titleInput = screen.getByPlaceholderText(
+        "Наприклад: Хакатон 2026...",
+      );
+      fireEvent.change(titleInput, {
+        target: { name: "title", value: "New Title 2026" },
+      });
 
       const submitButton = screen.getByText("ЗБЕРЕГТИ");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnSave).toHaveBeenCalledWith(123, expect.objectContaining({
-          title: "New Title 2026"
-        }));
+        expect(mockOnSave).toHaveBeenCalledWith(
+          123,
+          expect.objectContaining({
+            title: "New Title 2026",
+          }),
+        );
       });
     });
 
     it("converts empty date fields to null on submit", async () => {
       const tournamentWithEmptyDates = {
         id: 999,
-        title: "Valid Title To Pass Required", 
+        title: "Valid Title To Pass Required",
       };
 
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={tournamentWithEmptyDates} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={tournamentWithEmptyDates}
+          onSave={mockOnSave}
+        />,
       );
 
       const submitButton = screen.getByText("ЗБЕРЕГТИ");
@@ -229,7 +332,12 @@ describe("EditTournamentModal", () => {
       mockOnSave.mockResolvedValueOnce(undefined);
 
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
       const submitButton = screen.getByText("ЗБЕРЕГТИ");
@@ -242,12 +350,20 @@ describe("EditTournamentModal", () => {
 
     it("sets loading state and disables buttons during submission", async () => {
       let resolvePromise: any;
-      mockOnSave.mockImplementation(() => new Promise(resolve => {
-        resolvePromise = resolve;
-      }));
+      mockOnSave.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolvePromise = resolve;
+          }),
+      );
 
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
       const submitButton = screen.getByText("ЗБЕРЕГТИ");
@@ -271,14 +387,22 @@ describe("EditTournamentModal", () => {
       mockOnSave.mockRejectedValueOnce(new Error("Network Error"));
 
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={mockTournament} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={mockTournament}
+          onSave={mockOnSave}
+        />,
       );
 
       const submitButton = screen.getByText("ЗБЕРЕГТИ");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(errorSpy).toHaveBeenCalledWith("Помилка при збереженні", expect.any(Error));
+        expect(errorSpy).toHaveBeenCalledWith(
+          "Помилка при збереженні",
+          expect.any(Error),
+        );
       });
 
       expect(mockOnClose).not.toHaveBeenCalled();
@@ -290,11 +414,20 @@ describe("EditTournamentModal", () => {
 
     it("does nothing on submit if tournament object is missing", async () => {
       render(
-        <EditTournamentModal isOpen={true} onClose={mockOnClose} tournament={null} onSave={mockOnSave} />
+        <EditTournamentModal
+          isOpen={true}
+          onClose={mockOnClose}
+          tournament={null}
+          onSave={mockOnSave}
+        />,
       );
 
-      const titleInput = screen.getByPlaceholderText("Наприклад: Хакатон 2026...");
-      fireEvent.change(titleInput, { target: { name: "title", value: "Some Title" } });
+      const titleInput = screen.getByPlaceholderText(
+        "Наприклад: Хакатон 2026...",
+      );
+      fireEvent.change(titleInput, {
+        target: { name: "title", value: "Some Title" },
+      });
 
       const submitButton = screen.getByText("ЗБЕРЕГТИ");
       fireEvent.click(submitButton);

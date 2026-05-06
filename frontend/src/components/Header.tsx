@@ -14,7 +14,7 @@ export const Header = () => {
     { path: "/about-us", label: "Про нас" },
     { path: "/support", label: "Чим ви можете допомогти" },
     { path: "/contact", label: "Контакти" },
-    { path: "/news", label: "Новини"}
+    { path: "/news", label: "Новини" },
   ];
 
   const user = useSelector((s: RootState) => s.user.user);
@@ -35,7 +35,8 @@ export const Header = () => {
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `group relative font-semibold text-[16px] py-2 transition-colors duration-300 ${isActive ? "text-accent" : "text-white hover:text-accent"
+                `group relative font-semibold text-[16px] py-2 transition-colors duration-300 ${
+                  isActive ? "text-accent" : "text-white hover:text-accent"
                 }`
               }
             >
@@ -43,8 +44,9 @@ export const Header = () => {
                 <>
                   {item.label}
                   <span
-                    className={`absolute bottom-0 left-0 h-[2px] bg-accent transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"
-                      }`}
+                    className={`absolute bottom-0 left-0 h-[2px] bg-accent transition-all duration-300 ${
+                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
                   ></span>
                 </>
               )}
@@ -61,7 +63,10 @@ export const Header = () => {
               </div>
             </div>
           ) : (
-            <Link to="/auth" className="btn btn-outline py-2 px-5 md:py-2.5 md:px-7 text-sm md:text-base hidden sm:flex">
+            <Link
+              to="/auth"
+              className="btn btn-outline py-2 px-5 md:py-2.5 md:px-7 text-sm md:text-base hidden sm:flex"
+            >
               Увійти
             </Link>
           )}
@@ -70,11 +75,26 @@ export const Header = () => {
             className="lg:hidden text-white p-2 focus:outline-none"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-7 h-7"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               {isMobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               )}
             </svg>
           </button>
@@ -89,7 +109,8 @@ export const Header = () => {
               to={item.path}
               onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) =>
-                `block font-semibold text-[18px] py-2 transition-colors duration-300 ${isActive ? "text-accent" : "text-white hover:text-accent"
+                `block font-semibold text-[18px] py-2 transition-colors duration-300 ${
+                  isActive ? "text-accent" : "text-white hover:text-accent"
                 }`
               }
             >

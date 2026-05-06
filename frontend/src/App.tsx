@@ -1,12 +1,12 @@
-import { Toaster, toast } from 'sonner';
+import { Toaster, toast } from "sonner";
 import { useNotificationsSocket } from "./hooks/useNotificationsSocket";
-import { io, Socket } from 'socket.io-client';
+import { io, Socket } from "socket.io-client";
 import { auth } from "./firebase";
-import { onAuthStateChanged } from "firebase/auth"; 
+import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState, useRef } from "react";
 import { Router } from "./routers/Router";
 
-const COOLDOWN_TIME = 3 * 60 * 1000; 
+const COOLDOWN_TIME = 3 * 60 * 1000;
 
 export const App = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -28,13 +28,16 @@ export const App = () => {
         currentSocket.on("connect_error", () => {
           const now = Date.now();
 
-          if (now - lastErrorTime.current > COOLDOWN_TIME || !wasError.current) {
+          if (
+            now - lastErrorTime.current > COOLDOWN_TIME ||
+            !wasError.current
+          ) {
             toast.error("Проблеми з сервером :(", {
               id: "socket-error",
               description: "Сповіщення тимчасово не працюють",
-              duration: 5000, 
+              duration: 5000,
             });
-            
+
             lastErrorTime.current = now;
             wasError.current = true;
           }
@@ -42,9 +45,9 @@ export const App = () => {
 
         currentSocket.on("connect", () => {
           if (wasError.current) {
-            toast.success("Зв'язок відновлено!", { 
+            toast.success("Зв'язок відновлено!", {
               id: "socket-error",
-              description: ""
+              description: "",
             });
             wasError.current = false;
             lastErrorTime.current = 0;

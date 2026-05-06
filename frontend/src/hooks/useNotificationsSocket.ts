@@ -14,8 +14,8 @@ export const useNotificationsSocket = (socket: Socket | null) => {
         addNotification({
           id: data.id || crypto.randomUUID(),
           body: data.body,
-          isRead: false
-        })
+          isRead: false,
+        }),
       );
     };
 
