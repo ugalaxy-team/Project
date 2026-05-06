@@ -5,29 +5,58 @@ import { store, type RootState } from "../../store";
 import { deleteUser } from "@/api/requests";
 import { useMutation } from "@tanstack/react-query";
 import { setUser } from "@/slices/user";
-import { useState } from "react";
+import { useState, type FC } from "react";
 import { EditProfileModal } from "./EditProfileModal";
 
-const Profile = () => {
-  const user = useSelector((s: RootState) => s.user.user);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+interface UserRole {
+  name: string;
+  display_name?: string;
+}
+
+interface UserData {
+  id: string;
+  displayName?: string;
+  full_name?: string;
+  email: string;
+  telegram?: string;
+  github?: string;
+  discord?: string;
+  roles?: UserRole[];
+}
+
+interface ContactChipProps {
+  label: string;
+  value?: string | null;
+  colorClass?: string;
+}
+
+interface ListCardProps {
+  title: string;
+  dotColor: string;
+  items: string[];
+  isTeams?: boolean;
+}
+
+const Profile: FC = () => {
+  const user = useSelector((s: RootState) => s.user.user as UserData | null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
 
   const deleteUserMutation = useMutation({
     mutationKey: ["delete user"],
     mutationFn: async () => {
-      if (!auth.currentUser) return;
+      if (!auth.currentUser) throw new Error("Користувач не авторизований");
       await deleteUser(auth.currentUser);
     },
     onSuccess: async () => {
       await auth.updateCurrentUser(null);
       store.dispatch(setUser(null));
     },
-    onError: (e: any) => {
-      console.log("An error occured", e.message);
+    onError: (e: Error) => {
+      console.error("An error occurred:", e.message);
     },
   });
 
-  if (!user) return <div className="p-10 text-center">Loading...</div>;
+  if (!user) return <div className="p-10 text-center">Завантаження...</div>;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-10 font-sans text-[#111827]">
@@ -49,13 +78,13 @@ const Profile = () => {
               </div>
               <div className="flex flex-col items-center sm:items-start gap-2">
                 <h1 className="text-2xl font-bold">
-                  {user?.displayName || user?.full_name}
+                  {user.displayName || user.full_name || "Без імені"}
                 </h1>
                 <span className="bg-[#6366F1] text-white px-4 py-1.5 rounded-full text-sm font-medium">
                   Роль:{" "}
-                  {user?.roles?.length > 0
+                  {user.roles && user.roles.length > 0
                     ? user.roles
-                        .map((r: any) => r.display_name || r.name)
+                        .map((r) => r.display_name || r.name)
                         .join(", ")
                     : "Немає ролей"}
                 </span>
@@ -70,10 +99,13 @@ const Profile = () => {
                 Редагувати профіль
               </button>
               <button
-                onClick={() => deleteUserMutation.mutate()}
-                className="bg-[#fee2e2] hover:bg-[#fecaca] text-[#ef4444] px-6 py-2.5 rounded-full font-bold text-sm transition-all"
+                disabled={deleteUserMutation.isPending}
+                onClick={() => {
+                  if (confirm("Ви впевнені?")) deleteUserMutation.mutate();
+                }}
+                className="bg-[#fee2e2] hover:bg-[#fecaca] text-[#ef4444] px-6 py-2.5 rounded-full font-bold text-sm transition-all disabled:opacity-50"
               >
-                Видалити
+                {deleteUserMutation.isPending ? "Видалення..." : "Видалити"}
               </button>
             </div>
           </div>
@@ -122,7 +154,7 @@ const Profile = () => {
   );
 };
 
-const ContactChip = ({
+const ContactChip: FC<ContactChipProps> = ({
   label,
   value,
   colorClass = "bg-[#f3f4f6] border-[#e5e7eb] text-[#111827]",
@@ -135,7 +167,7 @@ const ContactChip = ({
   </div>
 );
 
-const ListCard = ({ title, dotColor, items, isTeams = false }) => (
+const ListCard: FC<ListCardProps> = ({ title, dotColor, items, isTeams = false }) => (
   <div className="bg-white border border-[#e5e7eb] rounded-[16px] p-6 shadow-sm">
     <h2 className="flex items-center gap-2.5 text-lg font-bold mb-6">
       <span className={`w-2 h-2 rounded-full ${dotColor}`}></span> {title}

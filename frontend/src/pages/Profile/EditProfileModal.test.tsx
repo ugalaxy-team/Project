@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
 import { EditProfileModal } from "./EditProfileModal";
 import { store } from "../../store";
+import { updateProfile } from "@/api/requests/updateProfile";
+import { auth } from "@/firebase";
 
 vi.mock("react-redux", () => ({
   useSelector: vi.fn(),
@@ -15,6 +17,10 @@ vi.mock("../../store", () => ({
 
 vi.mock("@/firebase", () => ({
   auth: { currentUser: { uid: "user-123" } },
+}));
+
+vi.mock("@/api/requests/updateProfile", () => ({
+  updateProfile: vi.fn(),
 }));
 
 vi.mock("@tanstack/react-query", () => ({
@@ -47,6 +53,7 @@ describe("EditProfileModal Component", () => {
     });
 
     vi.mocked(useSelector).mockReturnValue(mockUser);
+    auth.currentUser = { uid: "user-123" } as any; 
   });
 
   it("does not render anything when isOpen is false", () => {
@@ -65,7 +72,22 @@ describe("EditProfileModal Component", () => {
     expect(screen.getByDisplayValue("hacker#7777")).toBeInTheDocument();
   });
 
-  it("updates local state when user types in inputs", () => {
+  it("uses empty strings as fallbacks if user fields are missing", () => {
+    vi.mocked(useSelector).mockReturnValue({ uid: "user-without-data" });
+    render(<EditProfileModal isOpen={true} onClose={mockOnClose} />);
+
+    const inputs = screen.getAllByRole("textbox");
+    inputs.forEach((input) => expect(input).toHaveValue(""));
+  });
+
+  it("ensures the full_name input has the required attribute", () => {
+    render(<EditProfileModal isOpen={true} onClose={mockOnClose} />);
+    const nameInput = screen.getByDisplayValue("Супер Хакер");
+    
+    expect(nameInput).toBeRequired();
+  });
+
+  it("updates local state when user types in full_name input", () => {
     render(<EditProfileModal isOpen={true} onClose={mockOnClose} />);
 
     const nameInput = screen.getByDisplayValue("Супер Хакер");
@@ -74,6 +96,19 @@ describe("EditProfileModal Component", () => {
     });
 
     expect(nameInput).toHaveValue("Нове Ім'я");
+  });
+
+  it("updates multiple fields correctly", () => {
+    render(<EditProfileModal isOpen={true} onClose={mockOnClose} />);
+
+    const tgInput = screen.getByDisplayValue("@hacker");
+    const ghInput = screen.getByDisplayValue("hacker777");
+
+    fireEvent.change(tgInput, { target: { value: "@new_tg", name: "telegram" } });
+    fireEvent.change(ghInput, { target: { value: "new_gh", name: "github" } });
+
+    expect(tgInput).toHaveValue("@new_tg");
+    expect(ghInput).toHaveValue("new_gh");
   });
 
   it("calls onClose when close button (x) or cancel button is clicked", () => {
@@ -120,7 +155,7 @@ describe("EditProfileModal Component", () => {
     });
   });
 
-  it("disables submit button and shows loading text while pending", () => {
+  it("disables cancel and submit buttons and shows loading text while pending", () => {
     vi.mocked(useMutation).mockReturnValue({
       mutate: mockMutate,
       isPending: true,
@@ -129,7 +164,36 @@ describe("EditProfileModal Component", () => {
     render(<EditProfileModal isOpen={true} onClose={mockOnClose} />);
 
     const submitBtn = screen.getByRole("button", { name: /збереження\.\.\./i });
+    const cancelBtn = screen.getByRole("button", { name: /скасувати/i });
+
     expect(submitBtn).toBeDisabled();
+    expect(cancelBtn).toBeDisabled();
+  });
+
+  it("executes mutationFn with current user and form data", async () => {
+    render(<EditProfileModal isOpen={true} onClose={mockOnClose} />);
+    const formData = {
+      full_name: "Оновлений Користувач",
+      telegram: "@test",
+      github: "test",
+      discord: "test#0000",
+    };
+
+    await mutationConfig.mutationFn(formData);
+    expect(updateProfile).toHaveBeenCalledWith(auth.currentUser, formData);
+  });
+
+  it("throws an error in mutationFn if user is not authenticated", async () => {
+    auth.currentUser = null;
+    render(<EditProfileModal isOpen={true} onClose={mockOnClose} />);
+    const formData = {
+      full_name: "Оновлений Користувач",
+      telegram: "",
+      github: "",
+      discord: "",
+    };
+
+    await expect(mutationConfig.mutationFn(formData)).rejects.toThrow("User not authenticated");
   });
 
   it("dispatches setUser to Redux and closes modal on mutation success", () => {
@@ -146,5 +210,15 @@ describe("EditProfileModal Component", () => {
 
     expect(store.dispatch).toHaveBeenCalled();
     expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it("logs error message to console on mutation error", () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(<EditProfileModal isOpen={true} onClose={mockOnClose} />);
+
+    mutationConfig.onError(new Error("Помилка оновлення бази даних"));
+    
+    expect(consoleSpy).toHaveBeenCalledWith("Помилка оновлення бази даних");
+    consoleSpy.mockRestore();
   });
 });
