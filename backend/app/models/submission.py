@@ -10,7 +10,9 @@ class Submission(Base):
         ForeignKey("teams.id", ondelete="CASCADE"), primary_key=True
     )
 
-    team: Mapped["Team"] = relationship(back_populates="submission", single_parent=True, lazy="selectin")
+    team: Mapped["Team"] = relationship(
+        back_populates="submission", single_parent=True, lazy="selectin"
+    )
     urls: Mapped[list["SubmissionUrl"]] = relationship(
         back_populates="submission", lazy="selectin", cascade="all, delete-orphan"
     )

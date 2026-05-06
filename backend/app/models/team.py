@@ -8,7 +8,7 @@ from .mixin import PKMixin
 class Team(Base, PKMixin):
     __tablename__ = "teams"
     __table_args__ = (UniqueConstraint("contact_info", "tournament_id"),)
-    
+
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
     team_email: Mapped[str] = mapped_column(nullable=False, unique=True)
     contact_info: Mapped[str] = mapped_column(nullable=False, unique=True)
@@ -19,9 +19,7 @@ class Team(Base, PKMixin):
         ForeignKey("team_members.id", ondelete="CASCADE"), nullable=True
     )
 
-    tournament: Mapped["Tournament"] = relationship(
-        back_populates="teams", lazy="selectin"
-    )
+    tournament: Mapped["Tournament"] = relationship(back_populates="teams", lazy="selectin")
     members: Mapped[list["TeamMember"]] = relationship(
         back_populates="team",
         foreign_keys="TeamMember.team_id",
@@ -47,15 +45,13 @@ class TeamMember(Base, PKMixin):
     telegram: Mapped[str] = mapped_column(nullable=False)
     educational_institution: Mapped[Optional[str]] = mapped_column(nullable=True)
     team_id: Mapped[int] = mapped_column(
-        ForeignKey(
-            "teams.id", use_alter=True, name="fk_teammember_team", ondelete="CASCADE"
-        )
+        ForeignKey("teams.id", use_alter=True, name="fk_teammember_team", ondelete="CASCADE")
     )
     # This field exists so we can impose contraints related to it
     tournament_id: Mapped[int] = mapped_column(
         ForeignKey("tournaments.id", ondelete="CASCADE")
     )
-    
+
     __table_args__ = (
         UniqueConstraint("tournament_id", "email", name="uq_tournament_member_email"),
         UniqueConstraint("tournament_id", "telegram", name="uq_tournament_member_telegram"),
@@ -72,6 +68,4 @@ class TeamMember(Base, PKMixin):
     )
 
     def __repr__(self):
-        return (
-            f"<TeamMember(id={self.id}, full_name={self.full_name}, email={self.email}, team_id={self.team_id})>"
-        )
+        return f"<TeamMember(id={self.id}, full_name={self.full_name}, email={self.email}, team_id={self.team_id})>"

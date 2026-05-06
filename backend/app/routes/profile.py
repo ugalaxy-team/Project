@@ -13,9 +13,7 @@ async def get_profile(current_user: CurrentUserDep):
 
 
 @router.patch("/", response_model=CurrentUser)
-async def edit_profile(
-    session: SessionDep, current_user: CurrentUserDep, user: UserUpdate
-):
+async def edit_profile(session: SessionDep, current_user: CurrentUserDep, user: UserUpdate):
     user_data = user.model_dump(exclude_unset=True)
     if "full_name" in user_data:
         current_user.full_name = user_data["full_name"]

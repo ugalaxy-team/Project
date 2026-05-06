@@ -1,7 +1,8 @@
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from app.dependencies.session import SessionDep
-from app.models import User 
+from app.models import User
+
 
 async def get_user_by_email(email: str, session: SessionDep):
     statement = select(User).where(User.email == email)

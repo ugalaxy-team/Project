@@ -27,26 +27,30 @@ from app.models import (
 )
 import datetime
 
+
 class BaseFactory(SQLAlchemyModelFactory):
     class Meta:
         abstract = True
         sqlalchemy_session = None
         sqlalchemy_session_persistence = None
 
+
 class BaseOptionFactory(BaseFactory):
     class Meta:
         abstract = True
 
-    name = Faker('name')
+    name = Faker("name")
     display_name = factory.LazyAttribute(lambda f: f.name.upper())
+
 
 class UserFactory(BaseFactory):
     class Meta:
         model = User
 
-    firebase_uid = Faker('uuid4')
+    firebase_uid = Faker("uuid4")
     full_name = Faker("name")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
+
 
 class RoleFactory(BaseFactory):
     class Meta:
@@ -75,6 +79,7 @@ class TournamentStatusOptionFactory(BaseOptionFactory):
 
     name = factory.Iterator(list(settings.TOURNAMENT_STATUS_NAMES.__dict__.values()))
 
+
 class NewsCattegoryFactory(BaseOptionFactory):
     class Meta:
         model = NewsCattegory
@@ -88,6 +93,7 @@ class NewsCattegoryFactory(BaseOptionFactory):
         )
     )
 
+
 class NewsFactory(BaseFactory):
     class Meta:
         model = News
@@ -97,7 +103,6 @@ class NewsFactory(BaseFactory):
     body = factory.Sequence(lambda n: f"news_{n} body")
     category = factory.SubFactory(NewsCattegoryFactory)
     is_important = False
-
 
 
 class TournamentFactory(BaseFactory):
@@ -111,7 +116,9 @@ class TournamentFactory(BaseFactory):
     )
     reg_start = Faker("future_datetime", end_date="+30d")
     reg_end = factory.LazyAttribute(
-        lambda o: o.reg_start + datetime.timedelta(days=factory.fuzzy.FuzzyInteger(1, 10).fuzz())
+        lambda o: (
+            o.reg_start + datetime.timedelta(days=factory.fuzzy.FuzzyInteger(1, 10).fuzz())
+        )
     )
     max_teams = Faker("pyint", min_value=10, max_value=100)
     min_people_in_team = Faker("pyint", min_value=1, max_value=100)
@@ -164,6 +171,7 @@ class TaskStatusOptionFactory(BaseOptionFactory):
             if option["name"] == status.name
         )
     )
+
 
 class TaskFactory(BaseFactory):
     class Meta:

@@ -28,7 +28,8 @@ class OptionConfig(BaseModel):
 class CategoryConfig(BaseModel):
     name: str
     main_id: str | None = None
-      
+
+
 class NewsCategoryConfig(OptionConfig):
     categoryColor: str
 
@@ -59,7 +60,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = os.getenv("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI: str = os.getenv("SQLALCHEMY_DATABASE_URI")
     FRONTEND_URL: str = os.getenv("FRONTEND_URL")
-    FIREBASE_CERT_PATH: str = str(Path(BACKEND_DIR, 'app', 'serviceAccountKey.json'))
+    FIREBASE_CERT_PATH: str = str(Path(BACKEND_DIR, "app", "serviceAccountKey.json"))
     VITE_FIREBASE_API_KEY: str = Field(validation_alias="VITE_FIREBASE_API_KEY")
     FIREBASE_AUTH_DOMAIN: str = Field(
         validation_alias=AliasChoices("FIREBASE_AUTH_DOMAIN", "VITE_FIREBASE_AUTH_DOMAIN"),
@@ -68,22 +69,28 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("FIREBASE_PROJECT_ID", "VITE_FIREBASE_PROJECT_ID"),
     )
     FIREBASE_STORAGE_BUCKET: str = Field(
-        validation_alias=AliasChoices("FIREBASE_STORAGE_BUCKET", "VITE_FIREBASE_STORAGE_BUCKET"),
+        validation_alias=AliasChoices(
+            "FIREBASE_STORAGE_BUCKET", "VITE_FIREBASE_STORAGE_BUCKET"
+        ),
     )
     FIREBASE_MESSAGING_SENDER_ID: str = Field(
-        validation_alias=AliasChoices("FIREBASE_MESSAGING_SENDER_ID", "VITE_FIREBASE_MESSAGING_SENDER_ID"),
+        validation_alias=AliasChoices(
+            "FIREBASE_MESSAGING_SENDER_ID", "VITE_FIREBASE_MESSAGING_SENDER_ID"
+        ),
     )
     FIREBASE_APP_ID: str = Field(
         validation_alias=AliasChoices("FIREBASE_APP_ID", "VITE_FIREBASE_APP_ID"),
     )
     FIREBASE_MEASUREMENT_ID: str = Field(
-        validation_alias=AliasChoices("FIREBASE_MEASUREMENT_ID", "VITE_FIREBASE_MEASUREMENT_ID"),
+        validation_alias=AliasChoices(
+            "FIREBASE_MEASUREMENT_ID", "VITE_FIREBASE_MEASUREMENT_ID"
+        ),
     )
 
     ADMIN_SESSION_COOKIE_KEY: str = "admin_session_cookie"
     ADMIN_SESSION_EXPIRES: timedelta = timedelta(days=5)
     CHARACTERS_PER_MINUTE: int = 200
-    
+
     # TODO: Move this to a config file
     CORS_ORIGINS: list[str] = [
         "http://localhost",
@@ -107,9 +114,7 @@ class Settings(BaseSettings):
 
     @property
     def TOURNAMENT_STATUS_OPTIONS(self) -> list[dict[str, Any]]:
-        return [
-            status.model_dump() for status in self.SHARED_APP_CONFIG.tournament_statuses
-        ]
+        return [status.model_dump() for status in self.SHARED_APP_CONFIG.tournament_statuses]
 
     @property
     def TASK_STATUS_OPTIONS(self) -> list[dict[str, Any]]:
@@ -156,6 +161,7 @@ class Settings(BaseSettings):
     @property
     def CATEGORY_LIST(self) -> list[dict[str, Any]]:
         return [cat.model_dump() for cat in self.SHARED_APP_CONFIG.categories]
+
     def NEWS_CATEGORY_NAMES(self) -> SimpleNamespace:
         return option_names(self.SHARED_APP_CONFIG.news_categories)
 

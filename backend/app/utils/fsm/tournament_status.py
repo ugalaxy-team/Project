@@ -11,13 +11,9 @@ from statemachine import StateMachine, State
 
 class TournamentStatus(StateMachine):
     draft = State("Draft", value=settings.TOURNAMENT_STATUS_NAMES.DRAFT, initial=True)
-    registration = State(
-        "Registration", value=settings.TOURNAMENT_STATUS_NAMES.REGISTRATION
-    )
+    registration = State("Registration", value=settings.TOURNAMENT_STATUS_NAMES.REGISTRATION)
     running = State("Running", value=settings.TOURNAMENT_STATUS_NAMES.RUNNING)
-    finished = State(
-        "Finished", value=settings.TOURNAMENT_STATUS_NAMES.FINISHED, final=True
-    )
+    finished = State("Finished", value=settings.TOURNAMENT_STATUS_NAMES.FINISHED, final=True)
 
     start_registration = draft.to(registration)
     start_tournament = registration.to(running)
@@ -67,9 +63,7 @@ async def auto_update_tournament_status(tournament: Tournament, session):
 
 
 async def get_status_by_name(name: str, session: SessionDep) -> TournamentStatusOption:
-    statement = select(TournamentStatusOption).where(
-        TournamentStatusOption.name == name
-    )
+    statement = select(TournamentStatusOption).where(TournamentStatusOption.name == name)
     status_ = (await session.execute(statement)).scalar_one_or_none()
 
     if not status_:

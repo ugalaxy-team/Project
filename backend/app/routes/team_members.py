@@ -13,9 +13,7 @@ router = APIRouter(
 )
 
 
-async def get_team_member(
-    member_id: int, team_id: int, session: SessionDep
-) -> TeamMember:
+async def get_team_member(member_id: int, team_id: int, session: SessionDep) -> TeamMember:
     statement = select(TeamMember).where(
         TeamMember.id == member_id, TeamMember.team_id == team_id
     )
@@ -40,12 +38,8 @@ async def team_members(tournament_id: int, team_id: int, session: SessionDep):
     return result.scalars().all()
 
 
-@router.get(
-    "/{member_id}/", response_model=TeamMemberPublic, status_code=status.HTTP_200_OK
-)
-async def team_member(
-    tournament_id: int, team_id: int, member_id: int, session: SessionDep
-):
+@router.get("/{member_id}/", response_model=TeamMemberPublic, status_code=status.HTTP_200_OK)
+async def team_member(tournament_id: int, team_id: int, member_id: int, session: SessionDep):
     await get_team(team_id, tournament_id, session)
 
     return await get_team_member(member_id, team_id, session)
@@ -78,9 +72,7 @@ async def create_team_member(
     return new_member
 
 
-@router.patch(
-    "/{member_id}/", response_model=TeamMemberPublic, status_code=status.HTTP_200_OK
-)
+@router.patch("/{member_id}/", response_model=TeamMemberPublic, status_code=status.HTTP_200_OK)
 async def update_team_member(
     tournament_id: int,
     team_id: int,

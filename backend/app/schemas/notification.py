@@ -12,7 +12,7 @@ from .user import UserPublic
 
 
 class NotificationPublic(NotificationBase):
-    user: UserPublic | None = Field(None, description='Notification receiver')
+    user: UserPublic | None = Field(None, description="Notification receiver")
 
 
 class NotificationCreate(NotificationBase):

@@ -13,6 +13,7 @@ tournament_load_options = (
     selectinload(Tournament.juries),
 )
 
+
 async def get_tournament(tournament_id: int, session: SessionDep) -> Tournament:
     statement = (
         select(Tournament)

@@ -41,15 +41,14 @@ class Task(Base, PKMixin):
     status_id: Mapped[str] = mapped_column(
         ForeignKey("task_statuses.name", ondelete="CASCADE")
     )
-    status: Mapped["TaskStatusOption"] = relationship(
-        back_populates="tasks", lazy="selectin"
-    )
+    status: Mapped["TaskStatusOption"] = relationship(back_populates="tasks", lazy="selectin")
     requirements: Mapped[list["TaskRequirementOption"]] = relationship(
         secondary=task_requirements, lazy="selectin"
     )
 
     def __repr__(self):
         return f"<Task(id={self.id}, title={self.title}, status_id={self.status_id}, tournament_id={self.tournament_id})>"
+
 
 class TaskStatusOption(Base, OptionMixin):
     __tablename__ = "task_statuses"

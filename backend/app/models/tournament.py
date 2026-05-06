@@ -12,8 +12,13 @@ tournament_juries = Table(
     "tournament_juries",
     Base.metadata,
     Column("jury_id", ForeignKey("users.id", ondelete="CASCADE"), primary_key=True),
-    Column("tournament_id", ForeignKey("tournaments.id", ondelete="CASCADE"), primary_key=True),
+    Column(
+        "tournament_id",
+        ForeignKey("tournaments.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
 )
+
 
 class Tournament(Base, PKMixin, AsyncAttrs):
     __tablename__ = "tournaments"
@@ -44,9 +49,7 @@ class Tournament(Base, PKMixin, AsyncAttrs):
         cascade="all, delete-orphan",
     )
     juries: Mapped[list["User"]] = relationship(
-        back_populates="evaluates_in", 
-        lazy="selectin",
-        secondary=tournament_juries
+        back_populates="evaluates_in", lazy="selectin", secondary=tournament_juries
     )
     status: Mapped["TournamentStatusOption"] = relationship(
         back_populates="tournaments", lazy="selectin"

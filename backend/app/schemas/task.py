@@ -1,6 +1,13 @@
 from datetime import datetime, timezone
 from typing_extensions import Self
-from pydantic import BaseModel, Field, ConfigDict, field_validator, model_validator, ConfigDict
+from pydantic import (
+    BaseModel,
+    Field,
+    ConfigDict,
+    field_validator,
+    model_validator,
+    ConfigDict,
+)
 
 
 class TaskBase(BaseModel):

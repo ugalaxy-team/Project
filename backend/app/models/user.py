@@ -32,14 +32,13 @@ class User(Base, PKMixin):
         secondary=user_roles, back_populates="users", lazy="selectin"
     )
     notifications: Mapped[list["Notification"]] = relationship(
-        back_populates="user", 
-        lazy="selectin", 
+        back_populates="user",
+        lazy="selectin",
         cascade="all, delete-orphan",
-        primaryjoin= lambda: or_(
-            User.id == foreign(Notification.user_id),
-            Notification.user_id == None
+        primaryjoin=lambda: or_(
+            User.id == foreign(Notification.user_id), Notification.user_id == None
         ),
-        viewonly=True
+        viewonly=True,
     )
     role_requests: Mapped[list["RoleRequest"]] = relationship(
         back_populates="user", lazy="selectin", cascade="all, delete-orphan"
@@ -50,9 +49,7 @@ class User(Base, PKMixin):
         cascade="all, delete-orphan",
     )
     evaluates_in: Mapped[list["Tournament"]] = relationship(
-        back_populates="juries", 
-        lazy="selectin",
-        secondary=tournament_juries
+        back_populates="juries", lazy="selectin", secondary=tournament_juries
     )
     participates_in: Mapped[list["Tournament"]] = relationship(
         "Tournament",

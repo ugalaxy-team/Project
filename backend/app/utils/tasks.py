@@ -3,12 +3,14 @@ from sqlalchemy import select
 from app.dependencies.session import SessionDep
 from app.models import Task, TaskRequirementOption
 
+
 async def get_task(task_id: int, session: SessionDep) -> Task:
     statement = select(Task).where(Task.id == task_id)
     task = (await session.execute(statement)).scalar()
     if not task:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Task not found!")
     return task
+
 
 async def get_requirements(
     requirement_names: list[str], session: SessionDep

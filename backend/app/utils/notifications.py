@@ -27,9 +27,7 @@ async def send_notification(
     await session.refresh(notification)
 
     user_result = await session.execute(
-        select(User)
-        .options(selectinload(User.roles))
-        .where(User.id == notification.user_id)
+        select(User).options(selectinload(User.roles)).where(User.id == notification.user_id)
     )
     user = user_result.scalar_one()
     payload = NotificationPublic.model_validate(

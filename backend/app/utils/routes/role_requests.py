@@ -10,7 +10,8 @@ async def approve_role_request(request: RoleRequest, session: SessionDep) -> Non
     await session.delete(request)
     await session.commit()
     await session.refresh(request.user)
-    
+
+
 async def approve_role_request_with_notification(request: RoleRequest, session: SessionDep):
     await approve_role_request(request, session)
     notification = NotificationCreate(
@@ -22,7 +23,8 @@ async def approve_role_request_with_notification(request: RoleRequest, session: 
 async def reject_role_request(request: RoleRequest, session: SessionDep) -> None:
     await session.delete(request)
     await session.commit()
-    
+
+
 async def reject_role_request_with_notification(request: RoleRequest, session: SessionDep):
     await reject_role_request(request, session)
     notification = NotificationCreate(

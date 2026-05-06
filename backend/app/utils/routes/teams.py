@@ -59,6 +59,4 @@ async def validate_team_registration(
 
     all_emails = [team_data.captain.email] + [m.email for m in team_data.members]
     if len(all_emails) != len(set(all_emails)):
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST, "Emails must be unique inside team"
-        )
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Emails must be unique inside team")

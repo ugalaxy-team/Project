@@ -68,24 +68,24 @@ async def create_request(
     return await get_role_request(role_request.id, session)
 
 
-@router.get("/{request_id}/", response_model=RoleRequestPublic, dependencies=[current_user_dependency])
+@router.get(
+    "/{request_id}/",
+    response_model=RoleRequestPublic,
+    dependencies=[current_user_dependency],
+)
 async def get_request(request: RoleRequestDep):
     return request
 
 
 @router.post("/{request_id}/approve/", response_model=UserPublic)
-async def approve_request(
-    request: RoleRequestDep, session: SessionDep, admin: AdminUserDep
-):
+async def approve_request(request: RoleRequestDep, session: SessionDep, admin: AdminUserDep):
     await approve_role_request_with_notification(request, session)
 
     return request.user
 
 
 @router.post("/{request_id}/reject/", response_model=UserPublic)
-async def reject_request(
-    request: RoleRequestDep, session: SessionDep, admin: AdminUserDep
-):
+async def reject_request(request: RoleRequestDep, session: SessionDep, admin: AdminUserDep):
 
     await reject_role_request_with_notification(request, session)
 

@@ -35,9 +35,7 @@ async def submissions(session: SessionDep):
     return users.scalars().all()
 
 
-@router.get(
-    "/{team_id}/", response_model=SubmissionModel, status_code=status.HTTP_200_OK
-)
+@router.get("/{team_id}/", response_model=SubmissionModel, status_code=status.HTTP_200_OK)
 async def submission(team_id: int, session: SessionDep):
     return await get_submission(team_id, session)
 

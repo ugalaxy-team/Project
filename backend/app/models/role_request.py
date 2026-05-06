@@ -20,6 +20,7 @@ class RoleRequest(Base, PKMixin):
     def __repr__(self):
         return f"<RoleRequest(role_name={self.role_name}, user_id={self.user_id})>"
 
+
 class RoleRequestInfoOption(Base, OptionMixin):
     __tablename__ = "role_request_info_options"
 
@@ -29,9 +30,7 @@ class RoleRequestInfoOption(Base, OptionMixin):
 
 class RoleRequestInfo(Base, PKMixin):
     __tablename__ = "role_request_info"
-    request_id: Mapped[int] = mapped_column(
-        ForeignKey("role_requests.id", ondelete="CASCADE")
-    )
+    request_id: Mapped[int] = mapped_column(ForeignKey("role_requests.id", ondelete="CASCADE"))
     option_name: Mapped[str] = mapped_column(
         ForeignKey("role_request_info_options.name", ondelete="CASCADE")
     )

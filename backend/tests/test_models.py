@@ -95,9 +95,7 @@ async def test_user_roles_relationship(db_session, create):
     user.roles.extend([role_organizer, role_admin])
     await db_session.commit()
 
-    stmt_check = (
-        select(User).where(User.id == user.id).options(selectinload(User.roles))
-    )
+    stmt_check = select(User).where(User.id == user.id).options(selectinload(User.roles))
     result_check = await db_session.execute(stmt_check)
     db_user = result_check.unique().scalar_one()
 
@@ -119,11 +117,7 @@ async def test_user_participates_in_relationship(db_session, create):
     await create(TeamMemberFactory, team=team2, tournament=tournament2, email=user.email)
     await create(TeamMemberFactory, team=other_team, tournament=other_tournament)
 
-    stmt = (
-        select(User)
-        .where(User.id == user.id)
-        .options(selectinload(User.participates_in))
-    )
+    stmt = select(User).where(User.id == user.id).options(selectinload(User.participates_in))
     result = await db_session.execute(stmt)
     db_user = result.unique().scalar_one()
 
@@ -140,6 +134,7 @@ async def test_create_team_member(create):
     assert member.id is not None
     assert member.team_id == member.team.id
 
+
 async def test_team_member_duplicate_email_same_team(create, db_session):
     team = await create(TeamFactory)
     member1 = await create(TeamMemberFactory, team=team)
@@ -152,6 +147,7 @@ async def test_team_member_duplicate_email_same_team(create, db_session):
 
     await db_session.rollback()
 
+
 async def test_team_member_duplicate_email_different_tournaments(create, db_session):
     team1 = await create(TeamFactory)
     team2 = await create(TeamFactory)
@@ -161,6 +157,7 @@ async def test_team_member_duplicate_email_different_tournaments(create, db_sess
     await db_session.commit()
     assert member1.email == member2.email
 
+
 async def test_team_member_duplicate_email_same_tournament(create, db_session):
     team1 = await create(TeamFactory)
     team2 = await create(TeamFactory, tournament=team1.tournament)
@@ -168,14 +165,16 @@ async def test_team_member_duplicate_email_same_tournament(create, db_session):
     with pytest.raises(IntegrityError):
         await create(TeamMemberFactory, email=member1.email, tournament=team2.tournament)
         await db_session.flush()
-    
+
     await db_session.rollback()
+
 
 async def test_create_team(create):
     team = await create(TeamFactory)
     assert team.id is not None
     assert team.name is not None
     assert team.team_email is not None
+
 
 async def test_team_duplicate_email(db_session, create):
     email = "duplicate@example.com"
@@ -231,9 +230,7 @@ async def test_tournament_cascade_delete_children(db_session, create):
     submission = await create(SubmissionFactory, team=team)
     url = await create(SubmissionUrlFactory, submission=submission)
     evaluation = await create(SubmissionEvaluationFactory, submission=submission)
-    requirement_evaluation = await create(
-        RequirementEvaluationFactory, evaluation=evaluation
-    )
+    requirement_evaluation = await create(RequirementEvaluationFactory, evaluation=evaluation)
 
     ids = {
         "task": task.id,
@@ -254,10 +251,7 @@ async def test_tournament_cascade_delete_children(db_session, create):
     assert await db_session.get(Submission, ids["submission"]) is None
     assert await db_session.get(SubmissionUrl, ids["url"]) is None
     assert await db_session.get(SubmissionEvaluation, ids["evaluation"]) is None
-    assert (
-        await db_session.get(RequirementEvaluation, ids["requirement_evaluation"])
-        is None
-    )
+    assert await db_session.get(RequirementEvaluation, ids["requirement_evaluation"]) is None
 
 
 # TASK TESTS
@@ -275,15 +269,14 @@ async def test_task_requirements_relationship(db_session, create):
     option = await create(TaskRequirementOptionFactory, category=category)
     task = await create(TaskFactory, requirements=[option])
 
-    stmt = (
-        select(Task).where(Task.id == task.id).options(selectinload(Task.requirements))
-    )
+    stmt = select(Task).where(Task.id == task.id).options(selectinload(Task.requirements))
 
     result = await db_session.execute(stmt)
     db_task = result.unique().scalar_one()
 
     assert len(db_task.requirements) == 1
     assert db_task.requirements[0].name == option.name
+
 
 async def test_task_invalid_time(create):
     task = await create(
@@ -317,7 +310,9 @@ async def test_create_task_status_option(create):
     status = await create(TaskStatusOptionFactory)
 
     assert status.name in [option["name"] for option in settings.TASK_STATUS_OPTIONS]
-    assert status.display_name in [option["display_name"] for option in settings.TASK_STATUS_OPTIONS]
+    assert status.display_name in [
+        option["display_name"] for option in settings.TASK_STATUS_OPTIONS
+    ]
 
 
 async def test_task_status_relationship(db_session, create):
@@ -340,23 +335,22 @@ async def test_create_tournament(create):
     assert tournament.description is not None
     assert tournament.max_teams is not None
 
+
 async def test_tournament_end_time(create, db_session):
     tournament1 = await create(TournamentFactory)
     tournament2 = await create(TournamentFactory)
     t1 = await create(
-        TaskFactory, 
-        tournament=tournament1, 
-        end_time=datetime.now() + timedelta(hours=12)
+        TaskFactory,
+        tournament=tournament1,
+        end_time=datetime.now() + timedelta(hours=12),
     )
     t2 = await create(
-        TaskFactory, 
-        tournament=tournament1, 
-        end_time=datetime.now() + timedelta(days=1)
+        TaskFactory, tournament=tournament1, end_time=datetime.now() + timedelta(days=1)
     )
     t3 = await create(
-        TaskFactory, 
-        tournament=tournament1, 
-        end_time=datetime.now() + timedelta(weeks=1)
+        TaskFactory,
+        tournament=tournament1,
+        end_time=datetime.now() + timedelta(weeks=1),
     )
     assert tournament1.end_date == t3.end_time
     assert not tournament2.end_date
@@ -368,6 +362,7 @@ async def test_tournament_end_time(create, db_session):
     await db_session.refresh(tournament2)
     assert tournament2.end_date == t2.end_time
 
+
 async def test_tournament_active_task(create, db_session):
     tournament = await create(TournamentFactory)
     active = await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.ACTIVE)
@@ -375,22 +370,11 @@ async def test_tournament_active_task(create, db_session):
         TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED
     )
     draft = await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.DRAFT)
-    t1 = await create(
-        TaskFactory, 
-        tournament=tournament, 
-        status=active
-    )
-    t2 = await create(
-        TaskFactory, 
-        tournament=tournament,
-        status_id=submission_closed
-    )
-    t3 = await create(
-        TaskFactory, 
-        tournament=tournament,
-        status_id=draft
-    )
+    t1 = await create(TaskFactory, tournament=tournament, status=active)
+    await create(TaskFactory, tournament=tournament, status_id=submission_closed)
+    await create(TaskFactory, tournament=tournament, status_id=draft)
     assert tournament.active_task.id == t1.id
+
 
 async def test_tournament_invalid_time(create):
     tournament = await create(
@@ -650,13 +634,12 @@ async def test_user_notifications_relationship(db_session, create):
     await create(NotificationFactory, user=user)
     await create(NotificationFactory, user=user)
 
-    stmt = (
-        select(User).where(User.id == user.id).options(selectinload(User.notifications))
-    )
+    stmt = select(User).where(User.id == user.id).options(selectinload(User.notifications))
     result = await db_session.execute(stmt)
     db_user = result.scalar_one()
 
     assert len(db_user.notifications) == 2
+
 
 async def test_notification_user_relationship(db_session, create):
     notification = await create(NotificationFactory)
@@ -680,14 +663,13 @@ async def test_create_role_request(create):
     assert role_request.role is not None
     assert role_request.user is not None
 
+
 async def test_user_role_requests_relationship(db_session, create):
     user = await create(UserFactory)
     await create(RoleRequestFactory, user=user)
     await create(RoleRequestFactory, user=user)
 
-    stmt = (
-        select(User).where(User.id == user.id).options(selectinload(User.role_requests))
-    )
+    stmt = select(User).where(User.id == user.id).options(selectinload(User.role_requests))
     result = await db_session.execute(stmt)
     db_user = result.scalar_one()
 
@@ -705,6 +687,7 @@ async def test_role_requests_relationship(db_session, create):
 
     assert len(db_role.requests) == 2
 
+
 # NEWS
 async def test_create_news(create):
     news = await create(NewsFactory)
@@ -712,13 +695,17 @@ async def test_create_news(create):
     assert news.id is not None
     assert news.body
 
+
 async def test_create_news_important(db_session, create):
     news = await create(NewsFactory, is_important=True)
-    notification = (await db_session.execute(select(Notification).where(Notification.body==news.excerpt))).scalar_one_or_none()
+    notification = (
+        await db_session.execute(select(Notification).where(Notification.body == news.excerpt))
+    ).scalar_one_or_none()
     assert notification
     assert notification.id
     assert notification.body
     assert not notification.user_id
+
 
 async def test_create_news_category(create):
     category = await create(NewsCattegoryFactory)

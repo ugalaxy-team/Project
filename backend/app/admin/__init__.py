@@ -27,21 +27,29 @@ from app.models import (
     TournamentStatusOption,
     User,
     News,
-    NewsCattegory
+    NewsCattegory,
 )
 from app.config import settings
 from app.firebase import firebase
 from app.dependencies import get_or_create_user_from_token
 
+
 class BaseModelView(ModelView):
-    form_excluded_columns = ('created_at', 'updated_at')
+    form_excluded_columns = ("created_at", "updated_at")
+
 
 class NamePrimaryKeyAdmin(BaseModelView):
     form_include_pk = True
 
 
 class UserAdmin(BaseModelView, model=User):
-    column_list = [User.id, User.full_name, User.email, User.firebase_uid, User.created_at]
+    column_list = [
+        User.id,
+        User.full_name,
+        User.email,
+        User.firebase_uid,
+        User.created_at,
+    ]
     column_searchable_list = [User.full_name, User.email, User.firebase_uid]
 
 
@@ -86,9 +94,7 @@ class RoleRequestAdmin(BaseModelView, model=RoleRequest):
         if referer:
             return RedirectResponse(referer)
         else:
-            return RedirectResponse(
-                request.url_for("admin:list", identity=self.identity)
-            )
+            return RedirectResponse(request.url_for("admin:list", identity=self.identity))
 
     @action(
         name="approve_request",
@@ -111,9 +117,7 @@ class RoleRequestAdmin(BaseModelView, model=RoleRequest):
         if referer:
             return RedirectResponse(referer)
         else:
-            return RedirectResponse(
-                request.url_for("admin:list", identity=self.identity)
-            )
+            return RedirectResponse(request.url_for("admin:list", identity=self.identity))
 
 
 class TournamentAdmin(BaseModelView, model=Tournament):
@@ -204,11 +208,14 @@ class RequirementEvaluationAdmin(BaseModelView, model=RequirementEvaluation):
 class NotificationAdmin(BaseModelView, model=Notification):
     column_list = [Notification.id, Notification.user_id, Notification.body]
 
+
 class NewsCategoryAdmin(NamePrimaryKeyAdmin, model=NewsCattegory):
     pass
 
+
 class NewsAdmin(BaseModelView, model=News):
     column_list = [News.id, News.is_important, News.body]
+
 
 class AdminAuth(AuthenticationBackend):
     async def login(self, request: Request) -> bool:
@@ -218,9 +225,7 @@ class AdminAuth(AuthenticationBackend):
             return False
 
         try:
-            decoded_token = auth.verify_id_token(
-                id_token, firebase, clock_skew_seconds=10
-            )
+            decoded_token = auth.verify_id_token(id_token, firebase, clock_skew_seconds=10)
             session_cookie = auth.create_session_cookie(
                 id_token,
                 expires_in=settings.ADMIN_SESSION_EXPIRES,

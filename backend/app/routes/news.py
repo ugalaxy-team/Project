@@ -12,9 +12,7 @@ router = APIRouter(prefix="/news", tags=["news"])
 @router.get("/", response_model=list[NewsPublic], status_code=status.HTTP_200_OK)
 async def get_news(session: SessionDep):
     statement = (
-        select(News)
-        .options(selectinload(News.category))
-        .order_by(News.created_at.desc())
+        select(News).options(selectinload(News.category)).order_by(News.created_at.desc())
     )
     result = await session.execute(statement)
     return result.scalars().all()

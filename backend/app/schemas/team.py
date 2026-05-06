@@ -20,6 +20,7 @@ class TeamMemberBase(BaseModel):
     def normalize_email(cls, value: EmailStr):
         return value.lower()
 
+
 class TeamMemberCreate(BaseModel):
     pass
 
@@ -30,8 +31,10 @@ class TeamMemberUpdate(BaseModel):
     telegram_username: str | None = None
     educational_institution: str | None = None
 
+
 class TeamMemberPublic(BaseModel):
     pass
+
 
 class TeamBase(BaseModel):
     name: str = Field(..., description="Name of the team")
@@ -54,6 +57,7 @@ class TeamModel(TeamBase):
     captain: TeamMemberPublic
     members: list[TeamMemberPublic] = Field(..., min_length=1)
 
+
 class TeamPublic(TeamBase):
-    tournament: 'TournamentPublic'
+    tournament: "TournamentPublic"
     members: list[TeamMemberPublic]

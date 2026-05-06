@@ -27,9 +27,7 @@ class News(Base, PKMixin, DatetimeMixin):
         ForeignKey("news_categories.name", ondelete="CASCADE")
     )
 
-    category: Mapped["NewsCattegory"] = relationship(
-        back_populates="news", lazy="selectin"
-    )
+    category: Mapped["NewsCattegory"] = relationship(back_populates="news", lazy="selectin")
 
     @property
     def read_time(self):
@@ -41,10 +39,10 @@ class News(Base, PKMixin, DatetimeMixin):
             body_preview += "..."
         return f"<News(id={self.id}, body={body_preview})>"
 
-@event.listens_for(News, 'after_insert')
+
+@event.listens_for(News, "after_insert")
 def receive_after_insert(mapper, connection, target: News):
     from .notification import Notification
+
     if target.is_important:
-        connection.execute(
-            insert(Notification).values(body=target.excerpt, user_id=None)
-        )
+        connection.execute(insert(Notification).values(body=target.excerpt, user_id=None))

@@ -39,10 +39,10 @@ async def task(tournament_id: int, task_id: int, session: SessionDep):
 
 
 @router.post(
-    "/", 
-    response_model=TaskPublic, 
+    "/",
+    response_model=TaskPublic,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[current_user_dependency]
+    dependencies=[current_user_dependency],
 )
 async def create_task(tournament_id: int, task_data: TaskCreate, session: SessionDep):
     task_dict = task_data.model_dump(exclude={"requirements"})
@@ -61,10 +61,10 @@ async def create_task(tournament_id: int, task_data: TaskCreate, session: Sessio
 
 
 @router.patch(
-    "/{task_id}/", 
-    response_model=TaskPublic, 
+    "/{task_id}/",
+    response_model=TaskPublic,
     status_code=status.HTTP_200_OK,
-    dependencies=[current_user_dependency]
+    dependencies=[current_user_dependency],
 )
 async def update_task(
     tournament_id: int, task_id: int, task_data: TaskUpdate, session: SessionDep
@@ -99,9 +99,9 @@ async def update_task(
 
 
 @router.delete(
-    "/{task_id}/", 
+    "/{task_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[current_user_dependency]
+    dependencies=[current_user_dependency],
 )
 async def delete_task(task_id: int, session: SessionDep):
     task = await get_task(task_id, session)
