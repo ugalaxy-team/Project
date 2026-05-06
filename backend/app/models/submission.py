@@ -9,7 +9,7 @@ class Submission(Base):
     team_id: Mapped[int] = mapped_column(
         ForeignKey("teams.id", ondelete="CASCADE"), primary_key=True
     )
-
+    description: Mapped[str] = mapped_column(nullable=True)
     team: Mapped["Team"] = relationship(
         back_populates="submission", single_parent=True, lazy="selectin"
     )
@@ -33,6 +33,7 @@ class SubmissionUrl(Base):
         ForeignKey("submission_url_options.name", ondelete="CASCADE"), primary_key=True
     )
 
+    url_value: Mapped[str] = mapped_column()
     submission: Mapped["Submission"] = relationship(back_populates="urls", lazy="selectin")
     url: Mapped["SubmissionUrlOption"] = relationship(lazy="selectin")
 
