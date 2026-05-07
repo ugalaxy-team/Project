@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List
 from sqlalchemy import ForeignKey, inspect, Column, Table
-from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.config import settings
 from .base import Base
@@ -20,7 +19,7 @@ tournament_juries = Table(
 )
 
 
-class Tournament(Base, PKMixin, AsyncAttrs):
+class Tournament(Base, PKMixin):
     __tablename__ = "tournaments"
 
     title: Mapped[str] = mapped_column(nullable=False)
