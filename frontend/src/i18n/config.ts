@@ -2,15 +2,32 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
+const importLocales = (lng: string) => ({
+  common:
+    lng === "uk"
+      ? import("../locales/uk/common.json")
+      : import("../locales/en/common.json"),
+});
+
 import ukCommon from "../locales/uk/common.json";
 import ukAuth from "../locales/uk/auth.json";
 import ukRegistration from "../locales/uk/registration.json";
 import ukHome from "../locales/uk/home.json";
-
+import ukAbout from "../locales/uk/about.json";
+import ukFaq from "../locales/uk/faq.json";
+import ukSupport from "../locales/uk/support.json";
+import ukContact from "../locales/uk/contact.json";
+import ukTournaments from "../locales/uk/tournaments.json";
+// ENGLISH
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enRegistration from "../locales/en/registration.json";
 import enHome from "../locales/en/home.json";
+import enAbout from "../locales/en/about.json";
+import enFaq from "../locales/en/faq.json";
+import enSupport from "../locales/en/support.json";
+import enContact from "../locales/en/contact.json";
+import enTournaments from "../locales/en/tournaments.json";
 
 const resources = {
   uk: {
@@ -18,12 +35,22 @@ const resources = {
     auth: ukAuth,
     registration: ukRegistration,
     home: ukHome,
+    about: ukAbout,
+    faq: ukFaq,
+    support: ukSupport,
+    contact: ukContact,
+    tournaments: ukTournaments,
   },
   en: {
     common: enCommon,
     auth: enAuth,
     registration: enRegistration,
     home: enHome,
+    about: enAbout,
+    faq: enFaq,
+    support: enSupport,
+    contact: enContact,
+    tournaments: enTournaments,
   },
 };
 
@@ -34,14 +61,20 @@ i18n
     resources,
     fallbackLng: "uk",
     supportedLngs: ["uk", "en"],
-    ns: ["common", "auth", "registration", "home"],
+    ns: [
+      "common",
+      "auth",
+      "registration",
+      "home",
+      "about",
+      "faq",
+      "support",
+      "contact",
+      "tournaments",
+    ],
     defaultNS: "common",
-
     debug: import.meta.env.DEV,
-
-    interpolation: {
-      escapeValue: false,
-    },
+    interpolation: { escapeValue: false },
   });
 
 export default i18n;
