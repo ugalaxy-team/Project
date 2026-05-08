@@ -2,6 +2,7 @@ import asyncio
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from sqlalchemy import select, or_
+from sqlalchemy.orm import selectinload
 from fastapi.security import HTTPBearer
 from firebase_admin import auth
 from firebase_admin.auth import (
@@ -13,13 +14,15 @@ from firebase_admin.auth import (
 )
 
 from .session import SessionDep
-from app.models import User
+from app.models import User, Tournament
 from app.firebase import firebase
 
 
 async def get_or_create_user_from_token(token: dict, session: SessionDep) -> User:
     try:
-        u: auth.UserRecord = await asyncio.to_thread(auth.get_user_by_email, token["email"])
+        u: auth.UserRecord = await asyncio.to_thread(
+            auth.get_user_by_email, token["email"]
+        )
     except auth.UserNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Firebase user not found"
@@ -82,7 +85,15 @@ async def get_user(identifier: str | int, session: SessionDep):
         statement = select(User).where(User.id == identifier)
     else:
         raise ValueError("Wrong user identifier type")
-    user = (await session.execute(statement)).scalar()
+
+    statement = statement.options(
+        selectinload(User.roles),
+        selectinload(User.notifications),
+        selectinload(User.created_tournaments).selectinload(Tournament.juries),
+        selectinload(User.created_tournaments).selectinload(Tournament.status),
+        selectinload(User.evaluates_in),
+    )
+    user = (await session.execute(statement)).scalar_one_or_none()
 
     if not user:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User not found!")
