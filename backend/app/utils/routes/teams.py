@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 
 from app.dependencies import SessionDep
 from app.models import Team, Tournament
-from app.schemas import TeamModel
+from app.schemas import TeamCreate
 
 
 def check_registration_open(tournament: Tournament):
@@ -49,7 +49,7 @@ async def get_team(team_id: int, tournament_id: int, session: SessionDep) -> Tea
 
 
 async def validate_team_registration(
-    tournament: Tournament, team_data: TeamModel, session: AsyncSession
+    tournament: Tournament, team_data: TeamCreate, session: AsyncSession
 ):
 
     count_stmt = select(func.count()).where(Team.tournament_id == tournament.id)
@@ -59,4 +59,6 @@ async def validate_team_registration(
 
     all_emails = [team_data.captain.email] + [m.email for m in team_data.members]
     if len(all_emails) != len(set(all_emails)):
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Emails must be unique inside team")
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST, "Emails must be unique inside team"
+        )

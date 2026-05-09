@@ -28,21 +28,11 @@ class TaskBase(BaseModel):
 
 
 class TaskCreate(TaskBase):
-    @field_validator("start_time")
+    @field_validator("start_time", "end_time", mode="before")
     @classmethod
-    def start_not_past(cls, value: datetime):
-        if value.tzinfo is None:
-            value = value.replace(tzinfo=timezone.utc)
-
-        if value < datetime.now(timezone.utc):
-            raise ValueError("Task cannot start in the past")
-        return value
-
-    @field_validator("end_time")
-    @classmethod
-    def end_make_aware(cls, value: datetime):
-        if value.tzinfo is None:
-            value = value.replace(tzinfo=timezone.utc)
+    def make_aware(cls, value):
+        if isinstance(value, datetime) and value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
         return value
 
     @model_validator(mode="after")
@@ -58,6 +48,13 @@ class TaskUpdate(BaseModel):
     start_time: datetime | None = None
     end_time: datetime | None = None
     requirements: list[str] | None = None
+
+    @model_validator(mode="after")
+    def check_update_dates(self) -> Self:
+        if self.start_time and self.end_time:
+            if self.end_time <= self.start_time:
+                raise ValueError("end_time must be later than start_time")
+        return self
 
 
 class TaskPublic(TaskBase):

@@ -8,7 +8,7 @@ from .submission import SubmissionUrlOptionModel, SubmissionUrlModel, Submission
 from .task_options import TaskRequirementOptionCreate, TaskRequirementOptionPublic
 from .task import TaskBase, TaskCreate, TaskUpdate, TaskPublic
 from .team import (
-    TeamModel,
+    TeamCreate,
     TeamPublic,
     TeamUpdate,
     TeamMemberCreate,
