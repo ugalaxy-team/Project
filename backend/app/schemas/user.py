@@ -15,17 +15,17 @@ class UserBase(BaseModel):
 
     full_name: str = Field(..., description="Username")
 
+
+class UserCreate(UserBase):
+    firebase_uid: str = Field(..., description="Firebase user id")
+    email: EmailStr = Field(..., description="Email")
+
     @field_validator("full_name")
     @classmethod
     def check_name(cls, value: str):
         if not value.strip():
             raise ValueError("The name cannot be empty")
         return value
-
-
-class UserCreate(UserBase):
-    firebase_uid: str = Field(..., description="Firebase user id")
-    email: EmailStr = Field(..., description="Email")
 
 
 class UserUpdate(UserBase):

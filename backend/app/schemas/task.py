@@ -19,15 +19,14 @@ class TaskBase(BaseModel):
     end_time: datetime
     requirements: list[str] = Field(...)
 
+
+class TaskCreate(TaskBase):
     @field_validator("title")
     @classmethod
     def check_title(cls, value: str):
         if not value.strip():
             raise ValueError("Title cannot be empty")
         return value.strip()
-
-
-class TaskCreate(TaskBase):
     @field_validator("start_time")
     @classmethod
     def start_not_past(cls, value: datetime):
