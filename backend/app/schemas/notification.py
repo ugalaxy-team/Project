@@ -8,11 +8,11 @@ class NotificationBase(BaseModel):
     user_id: int | None = Field(None, description="Notification receiver id")
 
 
-from .user import UserPublic
+from .user import UserMinimalPublic
 
 
 class NotificationPublic(NotificationBase):
-    user: UserPublic | None = Field(None, description="Notification receiver")
+    user: UserMinimalPublic | None = Field(None, description="Notification receiver")
 
 
 class NotificationCreate(NotificationBase):

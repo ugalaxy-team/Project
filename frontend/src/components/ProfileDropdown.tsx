@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { roleByName } from "@/config/appConfig";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 interface ProfileDropdownProps {
   userRoles?: any[];
@@ -13,6 +15,7 @@ export const ProfileDropdown = ({
 }: ProfileDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const user = useSelector((s: RootState) => s.user.user);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
@@ -33,6 +36,7 @@ export const ProfileDropdown = ({
 
   const isAdmin = hasRole(roleByName.admin.name);
   const isOrganizer = hasRole(roleByName.organizer.name);
+  const isJury = user?.is_jury;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -122,6 +126,29 @@ export const ProfileDropdown = ({
                 />
               </svg>
               Панель організатора
+            </Link>
+          )}
+
+          {isJury && (
+            <Link
+              to="/jury-panel"
+              onClick={closeMenu}
+              className="px-5 py-3 text-gray-700 font-semibold hover:bg-orange-50 hover:text-orange-600 transition-colors flex items-center gap-3"
+            >
+              <svg
+                className="w-5 h-5 text-orange-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
+              </svg>
+              Панель журі
             </Link>
           )}
 

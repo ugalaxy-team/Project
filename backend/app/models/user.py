@@ -65,6 +65,10 @@ class User(Base, PKMixin):
     @property
     def is_admin(self) -> bool:
         return any(role.name == settings.ROLE_NAMES.ADMIN for role in self.roles)
+    
+    @property
+    def is_jury(self) -> bool:
+        return len(self.evaluates_in) > 0
 
     def __repr__(self):
         return f"<User(id={self.id}, full_name={self.full_name}, email={self.email})>"

@@ -17,7 +17,7 @@ from .task import TaskPublic
 
 if TYPE_CHECKING:
     from .team import TeamPublic
-    from .user import UserPublic
+    from .user import UserMinimalPublic
 
 
 def make_naive(value: datetime) -> datetime:
@@ -103,16 +103,20 @@ class TournamentStatusOptionModel(BaseModel):
 
     name: StrippedStr = Field(..., min_length=3)
 
-
-class TournamentPublic(TournamentBase):
+class TournamentPublicMinimal(TournamentBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     end_date: datetime | None
-    creator: "UserPublic"
+    creator: "UserMinimalPublic"
     status: OptionPublic
     tasks: list[TaskPublic]
     active_task: TaskPublic | None
-    teams: list[TeamPublic]
-    juries: list["UserPublic"]
+    juries: list["UserMinimalPublic"]
     status_name: str = Field(validation_alias=AliasPath("status", "display_name"))
+
+class TournamentPublic(TournamentPublicMinimal):
+    model_config = ConfigDict(from_attributes=True)
+
+    teams: list[TeamPublic]
+

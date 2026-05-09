@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict
+from pydantic import BaseModel, Field, EmailStr, field_validator
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
 if TYPE_CHECKING:
-    from .tournament import TournamentPublic
+    from .tournament import TournamentPublicMinimal
 
 
 class TeamMemberBase(BaseModel):
@@ -59,5 +59,5 @@ class TeamModel(TeamBase):
 
 
 class TeamPublic(TeamBase):
-    tournament: "TournamentPublic"
+    tournament: "TournamentPublicMinimal"
     members: list[TeamMemberPublic]

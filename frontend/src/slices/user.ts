@@ -1,3 +1,4 @@
+import type { Tournament } from "@/data/mockTournaments";
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface FirebaseUserData {
@@ -18,9 +19,11 @@ export interface ApiUserData {
   telegram?: string;
   github?: string;
   discord?: string;
+  is_jury: boolean;
+  evaluates_in: Tournament[];
 }
 
-export interface UserData extends ApiUserData, FirebaseUserData {}
+export interface UserData extends ApiUserData, FirebaseUserData { }
 
 interface UserState {
   user: UserData | null | undefined;

@@ -36,6 +36,18 @@ class UserUpdate(UserBase):
     discord: str | None = None
 
 
+class UserMinimalPublic(UserBase):
+    """Minimal user schema without circular relationships for use in nested contexts"""
+    id: int
+    email: EmailStr
+    firebase_uid: str
+    roles: list[RolePublic]
+    telegram: str | None
+    github: str | None
+    discord: str | None
+    is_jury: bool
+
+
 class UserPublic(UserBase):
     id: int
     email: EmailStr
@@ -44,6 +56,8 @@ class UserPublic(UserBase):
     telegram: str | None
     github: str | None
     discord: str | None
+    is_jury: bool
+    evaluates_in: list['TournamentPublic']
 
 
 class UserModel(UserBase):

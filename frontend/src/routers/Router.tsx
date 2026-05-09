@@ -17,6 +17,8 @@ import { AuthPage } from "@/pages/Auth/AuthPage";
 import SignOut from "@/pages/Auth/SignOut";
 import { OrganizerPanel } from "@/pages/OrganizerPanel/OrganizerPanel";
 import { NewsPage } from "@/pages/NewsPage/NewsPage";
+import JuryPanel from "@/pages/JuryPanel/JuryPanel";
+import EvaluateTournamentPage from "@/pages/JuryPanel/EvaluateTournamentPage";
 
 export const Router = () => {
   return (
@@ -48,6 +50,10 @@ export const Router = () => {
           <Route path="/support" element={<SupportPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/rules" element={<RulesPage />} />
+          <Route path="/jury-panel">
+            <Route index element={<ProtectedRoute><JuryPanel /></ProtectedRoute>} />
+            <Route path="evaluate/:id" element={<ProtectedRoute><EvaluateTournamentPage /></ProtectedRoute>} />
+          </Route>
           <Route path="/organizer-panel" element={<OrganizerPanel />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="*" element={<Page404 />} />

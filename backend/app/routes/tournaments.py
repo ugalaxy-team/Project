@@ -11,6 +11,7 @@ from app.models import Tournament
 from app.dependencies import SessionDep, CurrentUserDep
 from app.utils import get_tournament, tournament_load_options, get_status_by_name
 from app.dependencies import get_user, current_user_dependency
+from app.schemas import SubmissionPublic
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 
@@ -28,6 +29,12 @@ async def tournaments(session: SessionDep):
 async def tournament(tournament_id: int, session: SessionDep):
     return await get_tournament(tournament_id, session)
 
+@router.get(
+    "/{tournament_id}/submissions", response_model=list[SubmissionPublic], status_code=status.HTTP_200_OK
+)
+async def submissions(tournament_id: int, session: SessionDep, current_user: CurrentUserDep):
+    tournament = await get_tournament(tournament_id, session)
+    return tournament.submissions
 
 @router.post("/", response_model=TournamentPublic, status_code=status.HTTP_201_CREATED)
 async def create_tournament(
