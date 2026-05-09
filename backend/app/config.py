@@ -25,6 +25,12 @@ class OptionConfig(BaseModel):
     display_name: str
 
 
+class RequirementOptionConfig(BaseModel):
+    name: str
+    display_name: str
+    category_id: str
+
+
 class CategoryConfig(BaseModel):
     name: str
     main_id: str | None = None
@@ -41,6 +47,7 @@ class SharedAppConfig(BaseModel):
     categories: list[CategoryConfig]
     role_request_options: list[OptionConfig]
     news_categories: list[NewsCategoryConfig]
+    requirement_options: list[RequirementOptionConfig]
 
 
 def load_shared_app_config() -> SharedAppConfig:
@@ -153,6 +160,10 @@ class Settings(BaseSettings):
     @property
     def ROLE_REQUEST_INFO_OPTIONS(self) -> list[dict[str, Any]]:
         return [opt.model_dump() for opt in self.SHARED_APP_CONFIG.role_request_options]
+
+    @property
+    def REQUIREMENT_OPTIONS(self) -> list[dict[str, Any]]:
+        return [opt.model_dump() for opt in self.SHARED_APP_CONFIG.requirement_options]
 
     @property
     def TASK_CATEGORIES(self) -> SimpleNamespace:
