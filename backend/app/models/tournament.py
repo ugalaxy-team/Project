@@ -6,6 +6,8 @@ from app.config import settings
 from .base import Base
 from .mixin import PKMixin, OptionMixin
 from .task import Task
+from .team import Team
+from .submission import Submission
 
 tournament_juries = Table(
     "tournament_juries",
@@ -46,6 +48,14 @@ class Tournament(Base, PKMixin):
         foreign_keys="Task.tournament_id",
         lazy="selectin",
         cascade="all, delete-orphan",
+    )
+    submissions: Mapped[list["Submission"]] = relationship(
+        "Submission",
+        secondary=lambda: Team.__table__,
+        primaryjoin=lambda: Tournament.id == Team.tournament_id,
+        secondaryjoin=lambda: Team.id == Submission.team_id,
+        viewonly=True,
+        lazy="selectin",
     )
     juries: Mapped[list["User"]] = relationship(
         back_populates="evaluates_in", lazy="selectin", secondary=tournament_juries
