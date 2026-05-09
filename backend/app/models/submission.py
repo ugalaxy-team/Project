@@ -17,7 +17,7 @@ class Submission(Base):
         back_populates="submission", lazy="selectin", cascade="all, delete-orphan"
     )
     evaluations: Mapped[list["SubmissionEvaluation"]] = relationship(
-        back_populates="submission", cascade="all, delete-orphan"
+        back_populates="submission", cascade="all, delete-orphan", lazy="selectin"
     )
 
     def __repr__(self):
@@ -33,15 +33,21 @@ class SubmissionUrl(Base):
         ForeignKey("submission_url_options.name", ondelete="CASCADE"), primary_key=True
     )
 
-    submission: Mapped["Submission"] = relationship(back_populates="urls", lazy="selectin")
+    submission: Mapped["Submission"] = relationship(
+        back_populates="urls", lazy="selectin"
+    )
     url: Mapped["SubmissionUrlOption"] = relationship(lazy="selectin")
 
     def __repr__(self):
-        return f"<SubmissionUrl(submission_id={self.submission_id}, url_id={self.url_id})>"
+        return (
+            f"<SubmissionUrl(submission_id={self.submission_id}, url_id={self.url_id})>"
+        )
 
 
 class SubmissionUrlOption(Base, OptionMixin):
     __tablename__ = "submission_url_options"
 
     def __repr__(self):
-        return f"<SubmissionUrlOption(name={self.name}, display_name={self.display_name})>"
+        return (
+            f"<SubmissionUrlOption(name={self.name}, display_name={self.display_name})>"
+        )
