@@ -71,6 +71,8 @@ class TournamentUpdate(BaseModel):
     start_date: NaiveDatetime | None = None
     reg_start: NaiveDatetime | None = None
     reg_end: NaiveDatetime | None = None
+    min_people_in_team: int | None = Field(None, gt=0)
+    max_people_in_team: int | None = Field(None, gt=0)
     max_teams: int | None = Field(None, gt=0)
     juries: list[int | str] | None = Field(None, description="Jury ids")
 
@@ -95,6 +97,16 @@ class TournamentUpdate(BaseModel):
             if self.start_date <= self.reg_end:
                 raise ValueError("Tournament must start after registration ends")
 
+        return self
+
+    @model_validator(mode="after")
+    def validate_limits(self) -> "TournamentUpdate":
+
+        if self.min_people_in_team and self.max_people_in_team:
+            if self.min_people_in_team > self.max_people_in_team:
+                raise ValueError(
+                    "min_people_in_team cannot be greater than max_people_in_team"
+                )
         return self
 
 
