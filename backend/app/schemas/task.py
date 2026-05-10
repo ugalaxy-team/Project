@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Annotated
 from typing_extensions import Self
 from pydantic import (
     BaseModel,
@@ -6,34 +7,33 @@ from pydantic import (
     ConfigDict,
     field_validator,
     model_validator,
-    ConfigDict,
+    AfterValidator,
 )
 
 
+def make_naive(value: datetime) -> datetime:
+    if value.tzinfo is not None:
+        return value.astimezone(timezone.utc).replace(tzinfo=None)
+    return value
+
+
+NaiveDatetime = Annotated[datetime, AfterValidator(make_naive)]
+StrippedStr = Annotated[str, AfterValidator(lambda v: v.strip())]
+
+
 class TaskBase(BaseModel):
-    title: str = Field(..., min_length=3, description="Short name of the task")
+    model_config = ConfigDict(from_attributes=True)
+
+    title: StrippedStr = Field(..., min_length=3, description="Short name of the task")
     description: str | None = Field(
         None, description="A detailed description of what needs to be done"
     )
-    start_time: datetime
-    end_time: datetime
+    start_time: NaiveDatetime
+    end_time: NaiveDatetime
     requirements: list[str] = Field(...)
-
-    @field_validator("title")
-    @classmethod
-    def check_title(cls, value: str):
-        if not value.strip():
-            raise ValueError("Title cannot be empty")
-        return value.strip()
 
 
 class TaskCreate(TaskBase):
-    @field_validator("start_time", "end_time", mode="before")
-    @classmethod
-    def make_aware(cls, value):
-        if isinstance(value, datetime) and value.tzinfo is None:
-            return value.replace(tzinfo=timezone.utc)
-        return value
 
     @model_validator(mode="after")
     def check_time_logic(self) -> Self:
@@ -43,10 +43,10 @@ class TaskCreate(TaskBase):
 
 
 class TaskUpdate(BaseModel):
-    title: str | None = Field(None, min_length=3)
+    title: StrippedStr | None = Field(None, min_length=3)
     description: str | None = None
-    start_time: datetime | None = None
-    end_time: datetime | None = None
+    start_time: NaiveDatetime | None = None
+    end_time: NaiveDatetime | None = None
     requirements: list[str] | None = None
 
     @model_validator(mode="after")
