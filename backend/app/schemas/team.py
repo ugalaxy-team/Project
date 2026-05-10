@@ -35,7 +35,7 @@ class TeamMemberUpdate(BaseModel):
         return value.lower().strip() if value else value
 
 
-class TeamMemberPublic(BaseModel):
+class TeamMemberPublic(TeamMemberBase):
     pass
 
 
