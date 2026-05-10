@@ -16,7 +16,7 @@ class TeamMemberBase(BaseModel):
     educational_institution: str
 
 
-class TeamMemberCreate(BaseModel):
+class TeamMemberCreate(TeamMemberBase):
     @field_validator("email")
     @classmethod
     def normalize_email(cls, value: EmailStr):
