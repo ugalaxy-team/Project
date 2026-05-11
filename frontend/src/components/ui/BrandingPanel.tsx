@@ -18,14 +18,14 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
       className={`w-[44%] hidden md:flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-hero-from to-hero-to transition-colors duration-500 ${className}`}
     >
       <div className="absolute top-[8%] left-0 right-0 pointer-events-none overflow-hidden">
-        <div className="flex w-max font-quicksand font-extrabold text-[130px] leading-[0.88] text-white/[0.05] whitespace-nowrap animate-marquee tracking-[-0.04em] select-none">
+        <div className="flex w-max font-nunito font-extrabold text-[130px] leading-[0.88] text-white/[0.05] whitespace-nowrap animate-marquee tracking-[-0.04em] select-none">
           <span>UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★&nbsp;</span>
           <span>UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★&nbsp;</span>
         </div>
       </div>
 
       <div className="absolute bottom-[8%] left-0 right-0 pointer-events-none overflow-hidden">
-        <div className="flex w-max font-quicksand font-extrabold text-[130px] leading-[0.88] text-white/[0.05] whitespace-nowrap animate-marquee-reverse tracking-[-0.04em] select-none">
+        <div className="flex w-max font-nunito font-extrabold text-[130px] leading-[0.88] text-white/[0.05] whitespace-nowrap animate-marquee-reverse tracking-[-0.04em] select-none">
           <span>STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★&nbsp;</span>
           <span>STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★&nbsp;</span>
         </div>

@@ -25,22 +25,22 @@ export const StepConfirm: React.FC<StepConfirmProps> = ({
 
   return (
     <div>
-      <h1 className="font-quicksand font-extrabold text-[30px] text-text-main tracking-[-0.02em] mb-[5px] transition-colors">
-        {t("step3.title", "Підтвердження")}
+      <h1 className="font-nunito font-extrabold text-[30px] text-text-main tracking-[-0.02em] mb-[5px] transition-colors">
+        {t("step_3.title")}
       </h1>
       <p className="text-[15px] text-text-muted font-medium mb-6 transition-colors">
-        {t("step3.subtitle", "Перевірте дані перед реєстрацією.")}
+        {t("step_3.subtitle")}
       </p>
 
       <div className="bg-bg-card border-2 border-border rounded-[24px] overflow-hidden mb-5 transition-colors shadow-sm">
         <div className="bg-indigo-950 px-7 pt-7 pb-6 text-white relative overflow-hidden">
-          <div className="absolute right-[-10px] bottom-[-20px] font-quicksand text-[60px] font-extrabold text-white/[0.03] tracking-[-0.03em] pointer-events-none select-none uppercase">
+          <div className="absolute right-[-10px] bottom-[-20px] font-nunito text-[60px] font-extrabold text-white/[0.03] tracking-[-0.03em] pointer-events-none select-none uppercase">
             UGalaxy
           </div>
-          <div className="text-[10px] font-bold tracking-[0.12em] uppercase opacity-60 mb-1.5 font-quicksand relative z-10">
+          <div className="text-[10px] font-bold tracking-[0.12em] uppercase opacity-60 mb-1.5 font-nunito relative z-10">
             {cfg.title}
           </div>
-          <div className="font-quicksand font-extrabold text-[24px] tracking-[-0.01em] leading-tight relative z-10">
+          <div className="font-nunito font-extrabold text-[24px] tracking-[-0.01em] leading-tight relative z-10">
             {formValues.teamName || capName}
           </div>
         </div>
@@ -49,12 +49,12 @@ export const StepConfirm: React.FC<StepConfirmProps> = ({
           <div className="py-4 border-b border-border last:border-b-0 transition-colors">
             <div className="flex items-center gap-3 mb-1">
               <div className="text-primary">
-                <Icon.User />
+                <Icon.User size={16} />
               </div>
-              <div className="text-[11px] font-bold tracking-[0.08em] uppercase text-text-muted font-quicksand">
+              <div className="text-[11px] font-bold tracking-[0.08em] uppercase text-text-muted font-nunito">
                 {isSolo
-                  ? t("step3.labels.player", "Гравець")
-                  : t("step3.labels.captain", "Капітан")}
+                  ? t("step_3.labels.player")
+                  : t("step_3.labels.captain")}
               </div>
             </div>
             <div className="ml-7 text-sm font-semibold text-text-main">
@@ -84,10 +84,10 @@ export const StepConfirm: React.FC<StepConfirmProps> = ({
             <div className="py-4 border-b border-border last:border-b-0 transition-colors">
               <div className="flex items-center gap-3 mb-3">
                 <div className="text-primary">
-                  <Icon.Users />
+                  <Icon.Users size={16} />
                 </div>
-                <div className="text-[11px] font-bold tracking-[0.08em] uppercase text-text-muted font-quicksand">
-                  {t("step3.labels.members", "Учасники команди")}
+                <div className="text-[11px] font-bold tracking-[0.08em] uppercase text-text-muted font-nunito">
+                  {t("step_3.labels.members")}
                 </div>
               </div>
 
@@ -123,20 +123,15 @@ export const StepConfirm: React.FC<StepConfirmProps> = ({
 
       <div className="bg-primary/5 border border-primary/10 rounded-2xl px-5 py-4 flex gap-3 items-start text-[13px] text-text-main leading-relaxed mb-8 transition-colors">
         <span className="shrink-0 mt-[1px] text-primary">
-          <Icon.Info />
+          <Icon.Info size={16} />
         </span>
-        <span className="opacity-80 font-medium">
-          {t(
-            "step3.warning",
-            "Перевірте дані. Після надсилання змінити склад можна буде лише через адміна.",
-          )}
-        </span>
+        <span className="opacity-80 font-medium">{t("step_3.warning")}</span>
       </div>
 
       <div className="flex gap-3 mt-10">
         <BtnBack onClick={onBack} />
         <BtnNext>
-          <Icon.Check /> {t("step3.submitBtn", "Підтвердити")}
+          <Icon.Check size={20} strokeWidth={3} /> {t("step_3.submit_btn")}
         </BtnNext>
       </div>
     </div>

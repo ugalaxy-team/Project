@@ -24,7 +24,6 @@ export const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Сторінки з Хедером та Футером */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route
@@ -51,8 +50,22 @@ export const Router = () => {
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/rules" element={<RulesPage />} />
           <Route path="/jury-panel">
-            <Route index element={<ProtectedRoute><JuryPanel /></ProtectedRoute>} />
-            <Route path="evaluate/:id" element={<ProtectedRoute><EvaluateTournamentPage /></ProtectedRoute>} />
+            <Route
+              index
+              element={
+                <ProtectedRoute>
+                  <JuryPanel />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="evaluate/:id"
+              element={
+                <ProtectedRoute>
+                  <EvaluateTournamentPage />
+                </ProtectedRoute>
+              }
+            />
           </Route>
           <Route path="/organizer-panel" element={<OrganizerPanel />} />
           <Route path="/news" element={<NewsPage />} />

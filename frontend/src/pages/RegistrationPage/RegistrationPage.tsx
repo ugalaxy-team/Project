@@ -81,20 +81,18 @@ export const RegistrationPage = () => {
         <div className="px-6 lg:px-11 pt-7 flex items-center justify-between shrink-0">
           <Link
             to="/"
-            className="font-quicksand font-extrabold text-[22px] md:text-[24px] text-text-main tracking-[-0.01em] hover:opacity-80 transition-all flex items-center gap-2"
+            className="font-nunito font-extrabold text-[22px] md:text-[24px] text-text-main tracking-[-0.01em] hover:opacity-80 transition-all flex items-center gap-2"
           >
-            <span>{t("brand", "UGalaxy")}</span>
+            <span>{t("brand")}</span>
             <span className="text-primary opacity-90 px-0.5">×</span>
             <span>Star for Life</span>
           </Link>
 
-          <div className="hidden sm:flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-text-muted font-quicksand transition-colors">
-            <span className="opacity-50">
-              {t("breadcrumbs.tournaments", "Турніри")}
-            </span>
+          <div className="hidden sm:flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-text-muted font-nunito transition-colors">
+            <span className="opacity-50">{t("breadcrumbs.tournaments")}</span>
             <span className="opacity-30">/</span>
             <span className="text-primary/80">
-              {t("breadcrumbs.registration", "Реєстрація")}
+              {t("breadcrumbs.registration")}
             </span>
           </div>
         </div>

@@ -36,7 +36,7 @@ const SupportPageComponent: React.FC = () => {
   ];
 
   return (
-    <div className="w-full flex flex-col min-h-screen bg-bg-body text-text-main pb-20 font-quicksand transition-colors duration-300">
+    <div className="w-full flex flex-col min-h-screen bg-bg-body text-text-main pb-20 font-nunito transition-colors duration-300">
       <Hero
         bgText={t("hero.bg_text")}
         title={t("hero.title")}

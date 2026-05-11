@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import { tournamentStatusByName } from "@/config/appConfig";
 import { type Tournament } from "../data/mockTournaments";
 import { cn } from "../utils/cn";
+import { Clock, UserPlus, Zap, Award, Calendar } from "lucide-react";
 
 const STATUS_CFG = {
   draft: {
@@ -10,48 +12,44 @@ const STATUS_CFG = {
     dot: "bg-amber-400",
     gradFrom: "#fbbf24",
     gradTo: "#d97706",
-    icon: <path d="M12 6v6l4 2" />,
-    btnText: "Скоро відкриється",
+    icon: Clock,
+    btnTextKey: "tournament_card.btn_draft",
     btnClass:
       "bg-slate-100 text-slate-500 border border-slate-200 cursor-default",
   },
   registration: {
-    label: tournamentStatusByName.registration.display_name, // Текст з бекенду
-    badgeBg: "bg-green-500/10", // Твій дизайн
+    label: tournamentStatusByName.registration.display_name,
+    badgeBg: "bg-green-500/10",
     badgeText: "text-green-600 dark:text-green-400",
     dot: "bg-green-500",
     gradFrom: "#34d399",
     gradTo: "#059669",
-    icon: <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />,
-    btnText: "Подати заявку",
+    icon: UserPlus,
+    btnTextKey: "tournament_card.btn_registration",
     btnClass:
       "bg-primary text-white hover:bg-primary/90 shadow-md cursor-pointer",
   },
   running: {
-    // Ключ змінено з active на running (як просить бекенд)
     label: tournamentStatusByName.running.display_name,
-    badgeBg: "bg-pink-accent/10", // Твій дизайн
+    badgeBg: "bg-pink-accent/10",
     badgeText: "text-pink-accent",
     dot: "bg-pink-accent",
     gradFrom: "#c084fc",
     gradTo: "#ec4899",
-    icon: <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />,
-    btnText: "Спостерігати",
+    icon: Zap,
+    btnTextKey: "tournament_card.btn_running",
     btnClass:
       "bg-transparent border-2 border-primary text-primary hover:bg-primary/5 cursor-pointer",
   },
   finished: {
-    // Ключ змінено з completed на finished
     label: tournamentStatusByName.finished.display_name,
-    badgeBg: "bg-border", // Твій дизайн
+    badgeBg: "bg-border",
     badgeText: "text-text-muted",
     dot: "bg-text-muted",
     gradFrom: "#94a3b8",
     gradTo: "#475569",
-    icon: (
-      <path d="M12 2a5 5 0 100 10A5 5 0 0012 2zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z" />
-    ),
-    btnText: "Переглянути результати",
+    icon: Award,
+    btnTextKey: "tournament_card.btn_finished",
     btnClass:
       "bg-transparent border-2 border-border text-text-muted hover:bg-border/30 hover:text-text-main cursor-pointer",
   },
@@ -73,16 +71,20 @@ export const TournamentCard = ({
   max,
   deadline,
 }: Tournament) => {
+  const { t } = useTranslation("tournaments");
+
   const cfg = STATUS_CFG[status as keyof typeof STATUS_CFG];
   const pct = Math.min(100, Math.round((teams / max) * 100));
   const isFull = teams >= max;
   const gradId = `grad-${title.replace(/\s+/g, "-")}`;
 
+  const StatusIcon = cfg.icon;
+
   return (
     <div className="h-full bg-bg-card rounded-[28px] border-[1.5px] border-border shadow-sm flex flex-col overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(0,0,0,0.08)]">
       <div className="p-7 flex flex-col h-full">
         <div className="flex items-start gap-3.5 mb-3.5">
-          <div className="shrink-0 w-11 h-11 flex items-center justify-center relative drop-shadow-md group-hover:rotate-6 transition-transform duration-300">
+          <div className="shrink-0 w-11 h-11 flex items-center justify-center relative drop-shadow-md transition-transform duration-300">
             <svg className="absolute inset-0 w-full h-full" viewBox="0 0 24 24">
               <defs>
                 <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -95,15 +97,13 @@ export const TournamentCard = ({
                 d="M12 2l2.4 2.3 3.3-.4.8 3.2 2.9 1.7-1.8 2.8 1.8 2.8-2.9 1.7-.8 3.2-3.3-.4L12 22l-2.4-2.3-3.3.4-.8-3.2-2.9-1.7 1.8-2.8-1.8-2.8 2.9-1.7.8-3.2 3.3.4L12 2z"
               />
             </svg>
-            <svg
+
+            <StatusIcon
               className="relative z-10 w-5 h-5 text-white"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              {cfg.icon}
-            </svg>
+              strokeWidth={2.5}
+            />
           </div>
-          <h3 className="font-quicksand text-[22px] font-extrabold leading-[1.2] flex-1 text-text-main line-clamp-2 min-h-[53px] transition-colors duration-300">
+          <h3 className="font-nunito text-[22px] font-extrabold leading-[1.2] flex-1 text-text-main line-clamp-2 min-h-[53px] transition-colors duration-300">
             {title}
           </h3>
         </div>
@@ -133,9 +133,9 @@ export const TournamentCard = ({
           <div className="mb-4">
             <div className="flex justify-between items-baseline mb-1.5 transition-colors duration-300">
               <span className="text-[11px] font-extrabold text-text-muted uppercase tracking-wider">
-                Команди
+                {t("tournament_card.teams_label")}
               </span>
-              <span className="font-quicksand text-[20px] font-extrabold text-text-main">
+              <span className="font-nunito text-[20px] font-extrabold text-text-main">
                 {teams}{" "}
                 <span className="text-[13px] text-text-muted">/ {max}</span>
               </span>
@@ -153,20 +153,8 @@ export const TournamentCard = ({
 
           <div className="flex justify-between items-center pt-4 border-t-[1.5px] border-border mb-5 transition-colors duration-300">
             <div className="flex items-center gap-1.5 text-[14px] font-bold text-text-muted">
-              <svg
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth="2.5"
-                className="w-4 h-4 opacity-65"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z"
-                />
-              </svg>
-              До {deadline}
+              <Calendar className="w-4 h-4 opacity-65" strokeWidth={2.5} />
+              {t("tournament_card.until")} {deadline}
             </div>
             <span
               className={cn(
@@ -181,15 +169,15 @@ export const TournamentCard = ({
           </div>
 
           <button
-            disabled={status === "draft" || status === "finished"} // Логіка з dev
+            disabled={status === "draft" || status === "finished"}
             className={cn(
-              "w-full py-3.5 rounded-xl font-quicksand text-[16px] font-extrabold transition-all duration-300",
+              "w-full py-3.5 rounded-xl font-nunito text-[16px] font-extrabold transition-all duration-300",
               cfg.btnClass,
               (status === "draft" || status === "finished") &&
-                "opacity-70 cursor-not-allowed", // Додатковий стиль для вимкненої кнопки
+                "opacity-70 cursor-not-allowed",
             )}
           >
-            {cfg.btnText}
+            {t(cfg.btnTextKey)}
           </button>
         </div>
       </div>

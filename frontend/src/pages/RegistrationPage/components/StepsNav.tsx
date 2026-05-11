@@ -15,12 +15,12 @@ export const StepsNav: React.FC<StepsNavProps> = ({ step, isSolo }) => {
     step === n ? "active" : step > n ? "done" : "idle";
 
   const steps = [
-    { id: 1, label: t("nav.step1", "Загальне"), actualStep: 1, visualNum: 1 },
+    { id: 1, label: t("nav.step_1"), actualStep: 1, visualNum: 1 },
     ...(!isSolo
       ? [
           {
             id: 2,
-            label: t("nav.step2", "Учасники"),
+            label: t("nav.step_2"),
             actualStep: 2,
             visualNum: 2,
           },
@@ -28,7 +28,7 @@ export const StepsNav: React.FC<StepsNavProps> = ({ step, isSolo }) => {
       : []),
     {
       id: 3,
-      label: t("nav.step3", "Підтвердження"),
+      label: t("nav.step_3"),
       actualStep: 3,
       visualNum: isSolo ? 2 : 3,
     },
@@ -55,7 +55,7 @@ export const StepsNav: React.FC<StepsNavProps> = ({ step, isSolo }) => {
                 <StepCircle num={s.visualNum} state={state} />
 
                 <span
-                  className={`absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 whitespace-nowrap hidden sm:block font-quicksand text-[15px] font-extrabold tracking-wide transition-colors duration-300 ${
+                  className={`absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 whitespace-nowrap hidden sm:block font-nunito text-[15px] font-extrabold tracking-wide transition-colors duration-300 ${
                     state === "active"
                       ? "text-primary"
                       : state === "done"

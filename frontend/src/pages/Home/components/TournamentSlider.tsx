@@ -2,29 +2,10 @@ import { useEffect, useRef, useCallback, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import { Dices, ArrowLeft, ArrowRight } from "lucide-react";
 import { TournamentCard } from "../../../components/TournamentCard";
 import { TOURNAMENTS_DATA } from "../../../data/mockTournaments";
 import { Button } from "../../../components/ui/Button";
-
-const DiceIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.8}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="w-5 h-5"
-  >
-    <rect x="2" y="2" width="20" height="20" rx="4" ry="4" />
-    <circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none" />
-    <circle cx="16" cy="8" r="1.2" fill="currentColor" stroke="none" />
-    <circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none" />
-    <circle cx="8" cy="16" r="1.2" fill="currentColor" stroke="none" />
-    <circle cx="16" cy="16" r="1.2" fill="currentColor" stroke="none" />
-  </svg>
-);
 
 const CORNERS = [
   "-top-[2px] -left-[2px] border-t-[3px] border-l-[3px] rounded-tl-[28px]",
@@ -209,10 +190,8 @@ export const TournamentSlider = () => {
 
       <div className="w-full max-w-[1320px] mx-auto px-4 md:px-5 relative z-20">
         <div className="mb-8 md:mb-14 flex flex-col lg:flex-row justify-between items-center gap-6">
-          <h2 className="text-[28px] sm:text-[32px] md:text-[52px] lg:text-[64px] leading-[1.1] uppercase font-quicksand font-extrabold text-text-main text-center lg:text-left transition-colors duration-500">
-            {winnerId
-              ? t("slider.winnerTitle", "Ідеальний метч!")
-              : t("slider.title", "Знайди свій турнір")}
+          <h2 className="text-[28px] sm:text-[32px] md:text-[52px] lg:text-[64px] leading-[1.1] uppercase font-inter font-extrabold text-text-main text-center lg:text-left transition-colors duration-500">
+            {winnerId ? t("slider.winner_title") : t("slider.title")}
           </h2>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto relative z-30">
@@ -222,14 +201,18 @@ export const TournamentSlider = () => {
               className="w-full sm:w-auto min-w-[240px] transition-all duration-300 shadow-md hover:shadow-lg"
               onClick={winnerId ? () => setWinnerId(null) : startRoulette}
               isLoading={isSpinning}
-              leftIcon={!isSpinning && !winnerId ? <DiceIcon /> : undefined}
+              leftIcon={
+                !isSpinning && !winnerId ? (
+                  <Dices strokeWidth={2} className="w-5 h-5" />
+                ) : undefined
+              }
             >
               <span className="w-full text-center">
                 {isSpinning
-                  ? t("slider.button.spinning", "Підбираємо...")
+                  ? t("slider.button.spinning")
                   : winnerId
-                    ? t("slider.button.reset", "Скинути вибір")
-                    : t("slider.button.random", "Випадковий турнір")}
+                    ? t("slider.button.reset")
+                    : t("slider.button.random")}
               </span>
             </Button>
           </div>
@@ -250,20 +233,7 @@ export const TournamentSlider = () => {
                 : "opacity-100"
             }`}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={3}
-              stroke="currentColor"
-              className="w-6 h-6 pr-0.5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5L8.25 12l7.5-7.5"
-              />
-            </svg>
+            <ArrowLeft strokeWidth={2.5} className="w-6 h-6 pr-0.5" />
           </button>
 
           <div
@@ -326,20 +296,7 @@ export const TournamentSlider = () => {
                 : "opacity-100"
             }`}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={3}
-              stroke="currentColor"
-              className="w-6 h-6 pl-0.5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8.25 4.5l7.5 7.5-7.5 7.5"
-              />
-            </svg>
+            <ArrowRight strokeWidth={2.5} className="w-6 h-6 pl-0.5" />
           </button>
         </div>
 

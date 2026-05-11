@@ -1,17 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
-const PLATFORM_LINKS = [
-  { to: "/tournaments", key: "footer.all_tournaments" },
-  { to: "/rules", key: "footer.rules" },
-  { to: "/faq", key: "footer.faq" },
-];
-
-const INFO_LINKS = [
-  { to: "/about-us", key: "footer.about" },
-  { to: "/contact", key: "footer.contact" },
-  { to: "/news", key: "footer.news" }, // <--- Додали маршрут з гілки dev
-];
+import { PLATFORM_LINKS, INFO_LINKS } from "../config/navigation";
 
 export const Footer = () => {
   const { t } = useTranslation("common");
@@ -24,7 +13,7 @@ export const Footer = () => {
             <div className="sm:col-span-2 md:col-span-1">
               <Link
                 to="/"
-                className="font-quicksand text-[28px] md:text-[36px] font-extrabold text-accent mb-3 block no-underline transition-colors"
+                className="font-nunito text-[28px] md:text-[36px] font-extrabold text-accent mb-3 block no-underline transition-colors"
               >
                 UGalaxy x Star for Life
               </Link>
@@ -34,7 +23,7 @@ export const Footer = () => {
             </div>
 
             <div className="flex flex-col">
-              <h4 className="font-quicksand font-extrabold text-[18px] md:text-[20px] mb-3 text-white/70">
+              <h4 className="font-nunito font-extrabold text-[18px] md:text-[20px] mb-3 text-white/70">
                 {t("footer.platform_title")}
               </h4>
               <ul className="list-none space-y-2">
@@ -52,7 +41,7 @@ export const Footer = () => {
             </div>
 
             <div className="flex flex-col">
-              <h4 className="font-quicksand font-extrabold text-[18px] md:text-[20px] mb-3 text-white/70">
+              <h4 className="font-nunito font-extrabold text-[18px] md:text-[20px] mb-3 text-white/70">
                 {t("footer.info_title")}
               </h4>
               <ul className="list-none space-y-2">

@@ -2,7 +2,7 @@
 @import "@firebase-oss/ui-styles/tailwind";
 
 @layer base {
-    /* СВІТЛА ТЕМА */
+    /* Light */
     :root {
         --color-primary: #6366f1;
         --color-accent: #fbbf24;
@@ -20,7 +20,7 @@
         --color-border: #f1f5f9;
     }
 
-    /* ТЕМНА ТЕМА */
+    /* Dark */
     .dark {
         --color-primary: #818cf8;
         --color-accent: #fbbf24;
@@ -49,13 +49,13 @@
     h2,
     h3,
     h4 {
-        @apply font-quicksand font-extrabold text-text-main transition-colors duration-500;
+        @apply font-nunito font-extrabold text-text-main transition-colors duration-500;
     }
 }
 
 @theme {
     --font-inter: "Inter", sans-serif;
-    --font-quicksand: "Quicksand", sans-serif;
+    --font-nunito: "Nunito", sans-serif;
 
     --color-primary: var(--color-primary);
     --color-accent: var(--color-accent);
@@ -70,7 +70,6 @@
     --color-text-muted: var(--color-text-muted);
     --color-border: var(--color-border);
 
-    /* Анімації */
     --animate-marquee: marquee 40s linear infinite;
     --animate-marquee-reverse: marquee-reverse 65s linear infinite;
     --animate-shimmer: shimmer 2s infinite linear;
@@ -115,7 +114,7 @@
 
 @layer components {
     .btn {
-        @apply inline-flex items-center justify-center px-9 py-4 rounded-full font-quicksand font-bold text-[18px] cursor-pointer no-underline border-none transition-all duration-200;
+        @apply inline-flex items-center justify-center px-9 py-4 rounded-full font-nunito font-bold text-[18px] cursor-pointer no-underline border-none transition-all duration-200;
     }
     .btn-accent {
         @apply bg-accent text-slate-900 hover:-translate-y-1 hover:scale-105 shadow-[0_10px_20px_rgba(251,191,36,0.4)];

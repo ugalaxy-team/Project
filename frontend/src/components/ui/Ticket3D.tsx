@@ -96,18 +96,18 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
           <div className="px-7 pt-7 pb-[10px] bg-bg-card relative z-10 transition-colors duration-500">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-[3px] font-quicksand transition-colors">
+                <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-[3px] font-nunito transition-colors">
                   {t("ticket.label.event", "Подія")}
                 </div>
-                <div className="font-bold text-[13px] text-primary font-quicksand leading-snug max-w-[160px] transition-colors">
+                <div className="font-bold text-[13px] text-primary font-nunito leading-snug max-w-[160px] transition-colors">
                   {eventTitle || "—"}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-[3px] font-quicksand transition-colors">
+                <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-[3px] font-nunito transition-colors">
                   {t("ticket.label.format", "Формат")}
                 </div>
-                <div className="font-bold text-[13px] text-text-main font-quicksand transition-colors">
+                <div className="font-bold text-[13px] text-text-main font-nunito transition-colors">
                   {isSolo
                     ? t("ticket.value.solo", "Соло")
                     : t("ticket.value.team", "Командний")}
@@ -115,13 +115,13 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
               </div>
             </div>
 
-            <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-1 font-quicksand transition-colors">
+            <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-1 font-nunito transition-colors">
               {isSolo
                 ? t("ticket.label.player", "Нікнейм")
                 : t("ticket.label.team", "Команда")}
             </div>
             <div
-              className={`font-quicksand font-extrabold text-[22px] leading-tight tracking-[-0.02em] break-words min-h-[28px] transition-colors duration-300 ${
+              className={`font-nunito font-extrabold text-[22px] leading-tight tracking-[-0.02em] break-words min-h-[28px] transition-colors duration-300 ${
                 isEmpty ? "text-text-muted/50" : "text-text-main"
               }`}
             >
@@ -140,7 +140,7 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
           </div>
 
           <div className="px-7 pt-[10px] pb-[18px] bg-bg-card relative z-10 transition-colors duration-500">
-            <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-2.5 font-quicksand transition-colors">
+            <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-2.5 font-nunito transition-colors">
               {isSolo
                 ? t("ticket.label.participant", "Учасник")
                 : t("ticket.label.roster", "Склад")}
@@ -148,7 +148,7 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
             <div className="flex flex-col gap-[7px]">
               <div className="flex items-center gap-2.5 bg-bg-body border border-border rounded-xl py-[9px] px-[13px] transition-colors duration-500">
                 <span
-                  className={`text-[10px] font-bold px-2 py-[3px] rounded-full font-quicksand tracking-[0.06em] shrink-0 transition-colors ${
+                  className={`text-[10px] font-bold px-2 py-[3px] rounded-full font-nunito tracking-[0.06em] shrink-0 transition-colors ${
                     isSolo
                       ? "bg-primary/10 text-primary"
                       : "bg-accent/10 text-accent"
@@ -158,7 +158,7 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
                     ? t("ticket.badge.solo", "Соло")
                     : t("ticket.badge.captain", "Капітан")}
                 </span>
-                <span className="font-quicksand font-bold text-[13px] text-text-main truncate transition-colors">
+                <span className="font-nunito font-bold text-[13px] text-text-main truncate transition-colors">
                   {captainName || "—"}
                 </span>
               </div>
@@ -174,11 +174,11 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
                       transition={{ duration: 0.3 }}
                       className="flex items-center gap-2.5 bg-bg-body border border-border rounded-xl py-[9px] px-[13px] transition-colors duration-500"
                     >
-                      <span className="text-[10px] font-bold px-2 py-[3px] rounded-full bg-primary/10 text-primary font-quicksand tracking-[0.06em] shrink-0 transition-colors">
+                      <span className="text-[10px] font-bold px-2 py-[3px] rounded-full bg-primary/10 text-primary font-nunito tracking-[0.06em] shrink-0 transition-colors">
                         {t("ticket.badge.member", "Учасник")}
                       </span>
                       <span
-                        className={`font-quicksand font-bold text-[13px] truncate transition-colors ${
+                        className={`font-nunito font-bold text-[13px] truncate transition-colors ${
                           m.name ? "text-text-main" : "text-text-muted/60"
                         }`}
                       >
@@ -218,7 +218,7 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
                   />
                 ))}
               </div>
-              <div className="font-quicksand font-extrabold text-[15px] text-text-main tracking-[-0.01em] transition-colors duration-500">
+              <div className="font-nunito font-extrabold text-[15px] text-text-main tracking-[-0.01em] transition-colors duration-500">
                 {t("brand", "UGalaxy")}
               </div>
             </div>

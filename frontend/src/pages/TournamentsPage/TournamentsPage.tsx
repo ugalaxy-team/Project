@@ -13,8 +13,6 @@ import { cn } from "../../utils/cn";
 
 const PER_PAGE = 15;
 
-// Оновили ключі під новий бекенд (draft, running, finished),
-// але залишили твою логіку та стилі
 const FILTER_IDS: { id: TournamentStatus | "all"; dotColor?: string }[] = [
   { id: "all" },
   { id: "draft", dotColor: "bg-amber-500" },
@@ -72,12 +70,9 @@ export const TournamentsPage = () => {
   return (
     <div className="w-full flex flex-col min-h-screen bg-bg-body font-inter text-text-main transition-colors duration-300">
       <Hero
-        bgText={t("hero.bgText", "ТУРНІРИ")}
-        title={t("hero.title", "Турніри")}
-        description={t(
-          "hero.description",
-          "Знайди змагання до душі, збирай команду та перемагай. Твій шлях до вершин починається тут.",
-        )}
+        bgText={t("hero.bg_text")}
+        title={t("hero.title")}
+        description={t("hero.description")}
       />
 
       <div className="flex-grow w-full max-w-[1320px] mx-auto px-4 md:px-6 -mt-[50px] md:-mt-[70px] mb-20 relative z-30">
@@ -89,7 +84,7 @@ export const TournamentsPage = () => {
                 type="text"
                 value={query}
                 onChange={handleSearch}
-                placeholder={t("search.placeholder", "Пошук турнірів...")}
+                placeholder={t("search.placeholder")}
                 className="w-full md:w-[260px] pl-[44px] pr-4 py-3 bg-bg-body border-[1.5px] border-border rounded-xl text-[15px] text-text-main font-bold outline-none focus:border-primary focus:bg-bg-card transition-all placeholder:text-text-muted/60 placeholder:font-semibold"
               />
             </div>
@@ -124,11 +119,11 @@ export const TournamentsPage = () => {
         </div>
 
         <div className="mb-6 text-[15px] font-bold text-text-muted transition-colors duration-300 px-1">
-          {t("results.found", "Знайдено:")}{" "}
+          {t("results.found")}{" "}
           <strong className="text-primary">{filteredData.length}</strong>{" "}
           {filteredData.length === 1
-            ? t("results.tournaments_one", "турнір")
-            : t("results.tournaments_many", "турнірів")}
+            ? t("results.tournaments_one")
+            : t("results.tournaments_many")}
         </div>
 
         <AnimatePresence mode="wait">
@@ -161,14 +156,11 @@ export const TournamentsPage = () => {
               className="py-24 text-center col-span-full bg-bg-card rounded-3xl border border-border transition-colors duration-300 mx-2 md:mx-0"
             >
               <span className="text-[52px] block mb-4 opacity-50">🔍</span>
-              <h3 className="font-quicksand text-[24px] text-text-main font-extrabold mb-2 transition-colors duration-300">
-                {t("empty.title", "Нічого не знайдено")}
+              <h3 className="font-nunito text-[24px] text-text-main font-extrabold mb-2 transition-colors duration-300">
+                {t("empty.title")}
               </h3>
               <p className="text-[16px] font-semibold text-text-muted transition-colors duration-300 px-4">
-                {t(
-                  "empty.subtitle",
-                  "Спробуйте змінити фільтри або пошуковий запит.",
-                )}
+                {t("empty.subtitle")}
               </p>
             </motion.div>
           )}
@@ -183,12 +175,10 @@ export const TournamentsPage = () => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 disabled={page === 1}
-                className="flex items-center gap-1.5 font-quicksand font-extrabold text-[15px] text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted transition-colors duration-300"
+                className="flex items-center gap-1.5 font-nunito font-extrabold text-[15px] text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted transition-colors duration-300"
               >
                 <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
-                <span className="hidden sm:block">
-                  {t("pagination.prev", "Назад")}
-                </span>
+                <span className="hidden sm:block">{t("pagination.prev")}</span>
               </button>
 
               <div className="flex gap-2">
@@ -219,19 +209,17 @@ export const TournamentsPage = () => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 disabled={page === totalPages}
-                className="flex items-center gap-1.5 font-quicksand font-extrabold text-[15px] text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted transition-colors duration-300"
+                className="flex items-center gap-1.5 font-nunito font-extrabold text-[15px] text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted transition-colors duration-300"
               >
-                <span className="hidden sm:block">
-                  {t("pagination.next", "Вперед")}
-                </span>
+                <span className="hidden sm:block">{t("pagination.next")}</span>
                 <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
               </button>
             </div>
 
-            <div className="font-quicksand text-[14px] font-extrabold text-text-muted transition-colors duration-300">
-              {t("pagination.page", "Сторінка")}{" "}
+            <div className="font-nunito text-[14px] font-extrabold text-text-muted transition-colors duration-300">
+              {t("pagination.page")}{" "}
               <strong className="text-primary">{page}</strong>{" "}
-              {t("pagination.of", "з")} {totalPages}
+              {t("pagination.of")} {totalPages}
             </div>
           </div>
         )}

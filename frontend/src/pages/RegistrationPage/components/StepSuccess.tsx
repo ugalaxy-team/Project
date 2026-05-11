@@ -23,32 +23,15 @@ export const StepSuccess: React.FC<StepSuccessProps> = ({ onHome }) => {
       className="text-center py-[60px] sm:py-[80px] px-5 flex flex-col items-center justify-center min-h-[400px]"
     >
       <div className="w-[80px] h-[80px] bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-8 transition-colors">
-        <svg
-          width="36"
-          height="36"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-emerald-500"
-        >
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
+        <Icon.Check size={36} strokeWidth={2.5} className="text-emerald-500" />
       </div>
 
-      <h1 className="font-quicksand font-extrabold text-[30px] sm:text-[36px] text-text-main tracking-[-0.02em] mb-4 transition-colors leading-tight">
-        {isSolo
-          ? t("success.titleSolo", "Ви успішно зареєстровані!")
-          : t("success.title", "Команду зареєстровано!")}
+      <h1 className="font-nunito font-extrabold text-[30px] sm:text-[36px] text-text-main tracking-[-0.02em] mb-4 transition-colors leading-tight">
+        {isSolo ? t("success.title_solo") : t("success.title")}
       </h1>
 
       <p className="text-[16px] text-text-muted max-w-[440px] mx-auto mb-12 leading-relaxed font-medium transition-colors">
-        {t(
-          "success.desc",
-          "Ваша заявка успішно надіслана. Очікуйте підтвердження на пошту або перевірте статус турніру в особистому кабінеті.",
-        )}
+        {t("success.desc")}
       </p>
 
       <div className="w-full flex justify-center">
@@ -56,7 +39,8 @@ export const StepSuccess: React.FC<StepSuccessProps> = ({ onHome }) => {
           onClick={onHome}
           className="w-full sm:w-auto sm:min-w-[280px] sm:px-12"
         >
-          {t("success.homeBtn", "Повернутися на головну")} <Icon.ChevronRight />
+          {t("success.home_btn")}{" "}
+          <Icon.ChevronRight size={18} strokeWidth={2.5} />
         </BtnNext>
       </div>
     </motion.div>

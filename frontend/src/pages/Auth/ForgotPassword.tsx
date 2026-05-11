@@ -15,13 +15,13 @@ import { AuthLayout } from "../../components/layouts/AuthLayout";
 import { cn } from "../../utils/cn";
 
 const resetSchema = z.object({
-  email: z.string().email("errors.email_invalid"), // Ключ для перекладу
+  email: z.string().email("errors.email_invalid"),
 });
 
 type ResetFormData = z.infer<typeof resetSchema>;
 
 export const ForgotPassword = () => {
-  const { t } = useTranslation("auth"); // Підключаємо твій словник
+  const { t } = useTranslation("auth");
   const [isSuccess, setIsSuccess] = useState(false);
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
 
@@ -43,8 +43,8 @@ export const ForgotPassword = () => {
       const err = e as FirebaseError;
       setFirebaseError(
         err.code === "auth/user-not-found"
-          ? t("errors.user_not_found", "Користувача з таким email не знайдено.")
-          : t("errors.unknown", "Сталася помилка. Спробуйте ще раз."),
+          ? t("errors.user_not_found")
+          : t("errors.unknown"),
       );
     }
   };
@@ -68,18 +68,15 @@ export const ForgotPassword = () => {
                 size={18}
                 className="group-hover:-translate-x-1 transition-transform"
               />
-              {t("forgot.back_to_login", "Повернутися до входу")}
+              {t("forgot.back_to_login")}
             </Link>
 
             <div className="mb-6">
-              <h2 className="font-quicksand font-extrabold text-[34px] text-text-main leading-[1.1] mb-2 transition-colors">
-                {t("forgot.title", "Забули пароль?")}
+              <h2 className="font-nunito font-extrabold text-[34px] text-text-main leading-[1.1] mb-2 transition-colors">
+                {t("forgot.title")}
               </h2>
               <p className="text-[15px] font-medium text-text-muted leading-relaxed transition-colors">
-                {t(
-                  "forgot.subtitle",
-                  "Введіть ваш email, і ми надішлемо посилання для відновлення доступу.",
-                )}
+                {t("forgot.subtitle")}
               </p>
             </div>
 
@@ -91,9 +88,9 @@ export const ForgotPassword = () => {
               <div>
                 <label
                   htmlFor="reset-email"
-                  className="font-quicksand font-bold text-[14px] text-text-main block mb-2 px-1 transition-colors"
+                  className="font-nunito font-bold text-[14px] text-text-main block mb-2 px-1 transition-colors"
                 >
-                  {t("fields.email.label", "Email адреса")}
+                  {t("fields.email.label")}
                 </label>
                 <div className="relative group">
                   <Mail
@@ -141,7 +138,7 @@ export const ForgotPassword = () => {
                 className="w-full shadow-lg transition-all active:scale-[0.98]"
                 isLoading={isSubmitting}
               >
-                {t("forgot.submit", "Надіслати посилання")}
+                {t("forgot.submit")}
               </Button>
             </form>
           </motion.div>
@@ -164,14 +161,11 @@ export const ForgotPassword = () => {
               </div>
             </div>
 
-            <h2 className="font-quicksand font-extrabold text-[28px] text-text-main mb-3 transition-colors">
-              {t("forgot.success_title", "Лист відправлено!")}
+            <h2 className="font-nunito font-extrabold text-[28px] text-text-main mb-3 transition-colors">
+              {t("forgot.success_title")}
             </h2>
             <p className="text-[15px] font-medium text-text-muted mb-8 leading-relaxed transition-colors">
-              {t(
-                "forgot.success_desc",
-                'Перевірте пошту (і папку "Спам" про всяк випадок). Ми вже все надіслали!',
-              )}
+              {t("forgot.success_desc")}
             </p>
 
             <Link to="/auth" className="block w-full">
@@ -180,7 +174,7 @@ export const ForgotPassword = () => {
                 size="lg"
                 className="w-full rounded-full"
               >
-                {t("forgot.back_to_login", "Повернутися до входу")}
+                {t("forgot.back_to_login")}
               </Button>
             </Link>
           </motion.div>

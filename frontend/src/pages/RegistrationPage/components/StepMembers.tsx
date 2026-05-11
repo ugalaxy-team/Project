@@ -38,13 +38,7 @@ export const StepMembers: React.FC<StepMembersProps> = ({
 
   const handleNextClick = () => {
     if (fields.length < minTeammates) {
-      setMembersError(
-        t(
-          "step2.errors.minMembers",
-          "Додайте мінімум {{count}} тіммейта(-ів)",
-          { count: minTeammates },
-        ),
-      );
+      setMembersError(t("step_2.errors.min_members", { count: minTeammates }));
       return;
     }
 
@@ -57,13 +51,9 @@ export const StepMembers: React.FC<StepMembersProps> = ({
 
     if (dupes.length) {
       setMembersError(
-        t(
-          "step2.errors.duplicateEmail",
-          "Виявлено однакові email: {{emails}}",
-          {
-            emails: [...new Set(dupes)].join(", "),
-          },
-        ),
+        t("step_2.errors.duplicate_email", {
+          emails: [...new Set(dupes)].join(", "),
+        }),
       );
       return;
     }
@@ -74,21 +64,21 @@ export const StepMembers: React.FC<StepMembersProps> = ({
 
   return (
     <div>
-      <h1 className="font-quicksand font-extrabold text-[30px] text-text-main tracking-[-0.02em] mb-[5px] transition-colors">
-        {t("step2.title", "Склад команди")}
+      <h1 className="font-nunito font-extrabold text-[30px] text-text-main tracking-[-0.02em] mb-[5px] transition-colors">
+        {t("step_2.title")}
       </h1>
       <p className="text-[15px] text-text-muted font-medium mb-8 transition-colors">
-        {t("step2.subtitle1", "Додайте від")}{" "}
+        {t("step_2.subtitle_1")}{" "}
         <strong className="text-text-main font-bold">{minTeammates}</strong>{" "}
-        {t("step2.subtitle2", "до")}{" "}
+        {t("step_2.subtitle_2")}{" "}
         <strong className="text-text-main font-bold">{maxTeammates}</strong>{" "}
-        {t("step2.subtitle3", "учасників (без урахування капітана).")}
+        {t("step_2.subtitle_3")}
       </p>
 
       <div className="bg-bg-card border-2 border-border/60 rounded-[20px] p-5 mb-6 shadow-sm transition-colors">
         <div className="flex items-center justify-between mb-3.5 transition-colors">
-          <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-text-muted font-quicksand flex items-center gap-2">
-            <Icon.Team /> {t("step2.counter.label", "Тіммейти")}
+          <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-text-muted font-nunito flex items-center gap-2">
+            <Icon.Team size={14} /> {t("step_2.counter.label")}
           </div>
           <div className="text-[13px] font-bold text-text-muted bg-border/40 px-3 py-1 rounded-full">
             <span className="text-primary">{fields.length}</span> /{" "}
@@ -105,10 +95,10 @@ export const StepMembers: React.FC<StepMembersProps> = ({
           </div>
           <div className="flex justify-between mt-2.5 text-[10px] text-text-muted/70 font-bold uppercase tracking-wider">
             <span>
-              {t("step2.counter.min", "Мінімум:")} {minTeammates}
+              {t("step_2.counter.min")} {minTeammates}
             </span>
             <span>
-              {t("step2.counter.max", "Максимум:")} {maxTeammates}
+              {t("step_2.counter.max")} {maxTeammates}
             </span>
           </div>
         </div>
@@ -125,17 +115,14 @@ export const StepMembers: React.FC<StepMembersProps> = ({
             <div className="border-2 border-dashed border-text-muted/30 rounded-[20px] py-10 px-5 flex flex-col items-center justify-center text-center transition-colors">
               <div className="w-14 h-14 rounded-full bg-border/50 text-text-muted flex items-center justify-center mb-4 transition-colors">
                 <span className="scale-125 opacity-80">
-                  <Icon.Team />
+                  <Icon.Team size={24} />
                 </span>
               </div>
               <div className="text-text-main font-bold text-[15px] mb-1">
-                {t("step2.emptyTitle", "Поки що ви один")}
+                {t("step_2.empty_title")}
               </div>
               <div className="text-text-muted text-[13px] font-medium">
-                {t(
-                  "step2.emptyState",
-                  "Додайте першого тіммейта, щоб зібрати команду.",
-                )}
+                {t("step_2.empty_state")}
               </div>
             </div>
           </motion.div>
@@ -159,34 +146,31 @@ export const StepMembers: React.FC<StepMembersProps> = ({
                 <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-colors duration-300" />
 
                 <div className="flex items-center justify-between mb-5">
-                  <div className="font-quicksand text-[14px] font-bold text-text-main flex items-center gap-2.5 transition-colors">
+                  <div className="font-nunito text-[14px] font-bold text-text-main flex items-center gap-2.5 transition-colors">
                     <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[11px] shrink-0">
                       {index + 1}
                     </div>
-                    {t("step2.participantLabel", "Тіммейт")} {index + 1}
+                    {t("step_2.participant_label")} {index + 1}
                   </div>
                   <button
                     type="button"
                     onClick={() => remove(index)}
                     className="w-8 h-8 rounded-full border border-border bg-transparent text-text-muted flex items-center justify-center transition-all duration-300 hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-500 cursor-pointer"
-                    title={t("step2.removeBtn", "Видалити")}
+                    title={t("step_2.remove_btn")}
                   >
-                    <Icon.X />
+                    <Icon.X size={14} strokeWidth={3} />
                   </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-quicksand text-[11px] font-bold text-text-muted mb-2 uppercase tracking-wide">
-                      {t("step2.labels.name", "Ім'я")}{" "}
+                    <label className="block font-nunito text-[11px] font-bold text-text-muted mb-2 uppercase tracking-wide">
+                      {t("step_2.labels.name")}{" "}
                       <span className="text-primary">*</span>
                     </label>
                     <FieldInput
                       {...register(`members.${index}.name`)}
-                      placeholder={t(
-                        "step2.placeholders.name",
-                        "Нікнейм або ПІБ",
-                      )}
+                      placeholder={t("step_2.placeholders.name")}
                       autoComplete="off"
                       hasError={!!memberErrors?.name}
                     />
@@ -197,17 +181,14 @@ export const StepMembers: React.FC<StepMembersProps> = ({
                     )}
                   </div>
                   <div>
-                    <label className="block font-quicksand text-[11px] font-bold text-text-muted mb-2 uppercase tracking-wide">
-                      {t("step2.labels.email", "Email")}{" "}
+                    <label className="block font-nunito text-[11px] font-bold text-text-muted mb-2 uppercase tracking-wide">
+                      {t("step_2.labels.email")}{" "}
                       <span className="text-primary">*</span>
                     </label>
                     <FieldInput
                       {...register(`members.${index}.email`)}
                       type="email"
-                      placeholder={t(
-                        "step2.placeholders.email",
-                        "example@gmail.com",
-                      )}
+                      placeholder={t("step_2.placeholders.email")}
                       autoComplete="off"
                       hasError={!!memberErrors?.email}
                     />
@@ -225,7 +206,7 @@ export const StepMembers: React.FC<StepMembersProps> = ({
 
                     return (
                       <div key={cField.id}>
-                        <label className="block font-quicksand text-[11px] font-bold text-text-muted mb-2 uppercase tracking-wide">
+                        <label className="block font-nunito text-[11px] font-bold text-text-muted mb-2 uppercase tracking-wide">
                           {cField.label}{" "}
                           {cField.required && (
                             <span className="text-primary">*</span>
@@ -263,9 +244,9 @@ export const StepMembers: React.FC<StepMembersProps> = ({
           }
         }}
         disabled={fields.length >= maxTeammates}
-        className="w-full py-4 bg-transparent border-2 border-dashed border-text-muted/30 rounded-[20px] font-quicksand text-[14px] font-bold text-text-muted flex items-center justify-center gap-2 transition-all duration-300 hover:not:disabled:border-primary hover:not:disabled:text-primary hover:not:disabled:bg-primary/5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+        className="w-full py-4 bg-transparent border-2 border-dashed border-text-muted/30 rounded-[20px] font-nunito text-[14px] font-bold text-text-muted flex items-center justify-center gap-2 transition-all duration-300 hover:not:disabled:border-primary hover:not:disabled:text-primary hover:not:disabled:bg-primary/5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
-        <Icon.Plus /> {t("step2.addBtn", "Додати тіммейта")}
+        <Icon.Plus size={16} strokeWidth={2.5} /> {t("step_2.add_btn")}
       </button>
 
       <AnimatePresence>
@@ -277,7 +258,7 @@ export const StepMembers: React.FC<StepMembersProps> = ({
             className="bg-red-500/10 border border-red-500/20 text-red-500 text-[13px] font-medium p-4 rounded-2xl mt-5 flex items-center gap-3"
           >
             <span className="shrink-0">
-              <Icon.Info />
+              <Icon.Info size={16} />
             </span>
             {membersError}
           </motion.div>
@@ -287,7 +268,8 @@ export const StepMembers: React.FC<StepMembersProps> = ({
       <div className="flex gap-3 mt-10">
         <BtnBack onClick={onBack} />
         <BtnNext onClick={handleNextClick}>
-          {t("step2.nextBtn", "Переглянути заявку")} <Icon.ChevronRight />
+          {t("step_2.next_btn")}{" "}
+          <Icon.ChevronRight size={18} strokeWidth={2.5} />
         </BtnNext>
       </div>
     </div>

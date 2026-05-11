@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { Hero } from "../../components/Hero";
 import { TournamentSlider } from "./components/TournamentSlider";
 
@@ -22,23 +23,20 @@ export const Home = () => {
         bgText="STAR FOR LIFE"
         title={
           <>
-            {t("hero.title_1", "Твори.")}
+            {t("hero.title_1")}
             <br />
-            {t("hero.title_2", "Дій.")}
+            {t("hero.title_2")}
             <br />
-            {t("hero.title_3", "Перемагай.")}
+            {t("hero.title_3")}
           </>
         }
-        description={t(
-          "hero.description",
-          "Платформа для твоїх найсміливіших ідей. Від написання коду та дизайну до мистецтва й креативу — збирай команду, розкривай свій талант, ділися досвідом, набувай його і рухайся до вершини!",
-        )}
+        description={t("hero.description")}
         badges={[
           {
             text: (
               <span className="flex items-center gap-2 font-bold group">
                 <NotoEmoji code="1f525" />
-                {t("hero.badges.express", "Прояви себе!")}
+                {t("hero.badges.express")}
               </span>
             ),
             className:
@@ -48,7 +46,7 @@ export const Home = () => {
             text: (
               <span className="flex items-center gap-2 font-bold group">
                 <NotoEmoji code="1f4a1" />
-                {t("hero.badges.idea", "Твоя ідея змінить світ")}
+                {t("hero.badges.idea")}
               </span>
             ),
             className:
@@ -58,7 +56,7 @@ export const Home = () => {
             text: (
               <span className="flex items-center gap-2 font-bold group">
                 <NotoEmoji code="1f680" />
-                {t("hero.badges.act", "Дій зараз")}
+                {t("hero.badges.act")}
               </span>
             ),
             className:
@@ -68,7 +66,7 @@ export const Home = () => {
             text: (
               <span className="flex items-center gap-2 font-bold group">
                 <NotoEmoji code="1f355" />
-                {t("hero.badges.pizza", "Піца, код, перемога")}
+                {t("hero.badges.pizza")}
               </span>
             ),
             className:
@@ -78,7 +76,7 @@ export const Home = () => {
             text: (
               <span className="flex items-center gap-2 font-bold group">
                 <NotoEmoji code="1f918" />
-                {t("hero.badges.be_yourself", "Будь собою!")}
+                {t("hero.badges.be_yourself")}
               </span>
             ),
             className:
@@ -86,12 +84,9 @@ export const Home = () => {
           },
         ]}
         mascot={{
-          circularText: t(
-            "hero.mascot.circular",
-            "★ЗНАЙДИ КОМАНДУ ★ ПРОЯВИ СЕБЕ ",
-          ),
+          circularText: t("hero.mascot.circular"),
           lottieSrc: "/star.json",
-          buttonText: t("hero.mascot.button", "Всі турніри"),
+          buttonText: t("hero.mascot.button"),
           buttonLink: "/tournaments",
         }}
       />
@@ -111,38 +106,26 @@ export const Home = () => {
 
           <div className="relative z-10 text-center lg:text-left flex-1">
             <span className="inline-block bg-white/20 text-white backdrop-blur-sm border border-white/30 text-xs md:text-sm font-semibold px-4 py-1.5 rounded-full mb-4 md:mb-5">
-              {t("cta.badge", "Нові можливості")}
+              {t("cta.badge")}
             </span>
-            <h3 className="font-quicksand text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3 md:mb-4 leading-tight transition-colors duration-500">
-              {t("cta.title", "Хочеш більше впливу на платформі?")}
+            <h3 className="font-inter text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3 md:mb-4 leading-tight transition-colors duration-500">
+              {t("cta.title")}
             </h3>
             <p className="text-white/90 font-medium text-base md:text-lg max-w-2xl mx-auto lg:mx-0">
-              {t(
-                "cta.description",
-                "Подай заявку на отримання нової ролі та розблокуй додатковий функціонал для себе та своєї команди.",
-              )}
+              {t("cta.description")}
             </p>
           </div>
 
           <div className="relative z-10 shrink-0 mt-2 md:mt-0 w-full sm:w-auto">
             <Link
               to="/role-request-form"
-              className="flex sm:inline-flex items-center justify-center w-full sm:w-auto bg-bg-card text-primary font-quicksand font-bold text-base md:text-lg px-6 py-3 md:px-8 md:py-4 rounded-xl hover:bg-bg-body hover:-translate-y-1 shadow-lg hover:shadow-xl transition-all duration-300 dark:border dark:border-white/5 group"
+              className="flex sm:inline-flex items-center justify-center w-full sm:w-auto bg-bg-card text-primary font-inter font-bold text-base md:text-lg px-6 py-3 md:px-8 md:py-4 rounded-xl hover:bg-bg-body hover:-translate-y-1 shadow-lg hover:shadow-xl transition-all duration-300 dark:border dark:border-white/5 group"
             >
-              {t("cta.button", "Отримати роль")}
-              <svg
+              {t("cta.button")}
+              <ArrowRight
                 className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+                strokeWidth={2.5}
+              />
             </Link>
           </div>
         </motion.div>

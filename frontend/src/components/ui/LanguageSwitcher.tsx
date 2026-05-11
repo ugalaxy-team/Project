@@ -8,12 +8,12 @@ const LANGUAGES = [
 ];
 
 export const LanguageSwitcher = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation("common");
 
   return (
     <div
       role="group"
-      aria-label="Вибір мови"
+      aria-label={t("language_switcher.aria_label")}
       className="flex items-center bg-border/60 p-1 rounded-full transition-colors duration-300"
     >
       {LANGUAGES.map((lang) => {
@@ -39,7 +39,9 @@ export const LanguageSwitcher = () => {
                 transition={{ type: "spring", stiffness: 420, damping: 32 }}
               />
             )}
-            <span className="relative z-20 pt-[5px]">{lang.label}</span>
+            <span className="relative z-20 leading-none pt-[1px]">
+              {lang.label}
+            </span>
           </button>
         );
       })}

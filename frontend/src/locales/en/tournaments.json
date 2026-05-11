@@ -1,17 +1,18 @@
 {
   "hero": {
-    "bgText": "TOURNAMENTS",
-    "title": "tournaments",
-    "description": "Find the event that suits you. From code to design — gather your team and win."
+    "bg_text": "TOURNAMENTS",
+    "title": "All Tournaments",
+    "description": "Find the event that suits you best. From coding to design — build your team and win."
   },
   "search": {
     "placeholder": "Search tournaments…"
   },
   "filters": {
-    "all": "All events",
+    "all": "All Events",
+    "draft": "Coming Soon",
     "registration": "Registration",
-    "active": "Active",
-    "completed": "Archive"
+    "running": "In Progress",
+    "finished": "Finished"
   },
   "results": {
     "found": "Found:",
@@ -21,13 +22,21 @@
     "tournaments_many": "tournaments"
   },
   "empty": {
-    "title": "Nothing found",
-    "subtitle": "Try changing the filter or query"
+    "title": "Nothing Found",
+    "subtitle": "Try changing the filter or search query"
   },
   "pagination": {
-    "prev": "Prev",
+    "prev": "Previous",
     "next": "Next",
     "page": "Page",
     "of": "of"
+  },
+  "tournament_card": {
+    "teams_label": "Teams",
+    "until": "Until",
+    "btn_draft": "Coming Soon",
+    "btn_registration": "Apply Now",
+    "btn_running": "Watch",
+    "btn_finished": "View Results"
   }
 }

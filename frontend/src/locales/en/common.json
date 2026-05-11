@@ -22,8 +22,11 @@
     "copyright": "© 2026 UGalaxy x Star for Life. All rights reserved."
   },
   "profile_dropdown": {
-    "button": "Profile",
-    "my_profile": "My Profile",
+    "default_user": "User",
+    "my_profile": "My profile",
+    "organizer_panel": "Organizer panel",
+    "jury_panel": "Jury panel",
+    "admin_panel": "Admin panel",
     "logout": "Log Out"
   },
   "notifications": {
@@ -42,5 +45,6 @@
   },
   "ui": {
     "loading": "Loading..."
-  }
+  },
+  "language_switcher": { "aria_label": "Choice language" }
 }

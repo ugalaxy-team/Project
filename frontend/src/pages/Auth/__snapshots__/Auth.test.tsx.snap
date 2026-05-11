@@ -3,11 +3,11 @@
 exports[`AuthPage Component > matches snapshot 1`] = `
 <div>
   <style>
-    
+
         @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         .animate-marquee { animation: marquee 50s linear infinite; }
         .animate-marquee-reverse { animation: marquee 60s linear infinite reverse; }
-      
+
   </style>
   <div
     class="flex h-screen overflow-hidden bg-slate-50 text-slate-900 font-inter"
@@ -19,7 +19,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
         class="absolute top-[15%] left-0 right-0 overflow-hidden pointer-events-none"
       >
         <div
-          class="flex w-max font-quicksand font-extrabold text-[17vw] leading-[0.88] text-white/5 whitespace-nowrap select-none animate-marquee"
+          class="flex w-max font-nunito font-extrabold text-[17vw] leading-[0.88] text-white/5 whitespace-nowrap select-none animate-marquee"
         >
           <span>
             UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★ 
@@ -33,7 +33,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
         class="absolute bottom-[15%] left-0 right-0 overflow-hidden pointer-events-none"
       >
         <div
-          class="flex w-max font-quicksand font-extrabold text-[17vw] leading-[0.88] text-white/5 whitespace-nowrap select-none animate-marquee-reverse"
+          class="flex w-max font-nunito font-extrabold text-[17vw] leading-[0.88] text-white/5 whitespace-nowrap select-none animate-marquee-reverse"
         >
           <span>
             STAR FOR LIFE ★ UGALAXY ★ STAR FOR LIFE ★ UGALAXY ★ 
@@ -55,7 +55,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
           class="text-center mt-1"
         >
           <div
-            class="font-quicksand font-extrabold text-[64px] text-white leading-none tracking-tight"
+            class="font-nunito font-extrabold text-[64px] text-white leading-none tracking-tight"
           >
             UGalaxy
           </div>
@@ -65,7 +65,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
             ×
           </div>
           <div
-            class="font-quicksand font-bold text-[21px] text-white/85 tracking-widest uppercase"
+            class="font-nunito font-bold text-[21px] text-white/85 tracking-widest uppercase"
           >
             Star for Life
           </div>
@@ -102,7 +102,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
           class="mb-8 min-h-[76px]"
         >
           <h2
-            class="font-quicksand font-extrabold text-[34px] text-slate-900 leading-[1.1] mb-1.5"
+            class="font-nunito font-extrabold text-[34px] text-slate-900 leading-[1.1] mb-1.5"
           >
             З поверненням!
           </h2>
@@ -119,13 +119,13 @@ exports[`AuthPage Component > matches snapshot 1`] = `
             class="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-full shadow-sm z-0"
           />
           <button
-            class="flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 cursor-pointer transition-colors text-slate-900"
+            class="flex-1 py-3 font-nunito font-bold text-[14px] rounded-full relative z-10 cursor-pointer transition-colors text-slate-900"
             type="button"
           >
             Вхід
           </button>
           <button
-            class="flex-1 py-3 font-quicksand font-bold text-[14px] rounded-full relative z-10 cursor-pointer transition-colors text-slate-500"
+            class="flex-1 py-3 font-nunito font-bold text-[14px] rounded-full relative z-10 cursor-pointer transition-colors text-slate-500"
             type="button"
           >
             Реєстрація
@@ -136,7 +136,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
             class="mb-4"
           >
             <label
-              class="font-quicksand font-bold text-[14px] text-slate-900 block mb-2"
+              class="font-nunito font-bold text-[14px] text-slate-900 block mb-2"
             >
               Email
             </label>
@@ -154,7 +154,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
               class="flex justify-between items-center mb-2"
             >
               <label
-                class="font-quicksand font-bold text-[14px] text-slate-900"
+                class="font-nunito font-bold text-[14px] text-slate-900"
               >
                 Пароль
               </label>
@@ -226,7 +226,7 @@ exports[`AuthPage Component > matches snapshot 1`] = `
             class="text-center text-[12px] text-slate-400 font-medium mt-5"
           >
             Входячи
-            , ти погоджуєшся з 
+            , ти погоджуєшся з
             <br />
             <a
               class="text-indigo-500 font-semibold hover:underline cursor-pointer"
@@ -234,9 +234,9 @@ exports[`AuthPage Component > matches snapshot 1`] = `
             >
               Умовами використання
             </a>
-             
+
             та
-             
+
             <a
               class="text-indigo-500 font-semibold hover:underline cursor-pointer"
               href="#"

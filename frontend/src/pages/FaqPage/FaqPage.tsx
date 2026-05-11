@@ -8,7 +8,6 @@ const FaqPageComponent: React.FC = () => {
   const { t } = useTranslation("faq");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  // Створюємо масив індексів від 1 до 10, щоб динамічно генерувати ключі q1-q10 та a1-a10
   const faqIndexes = Array.from({ length: 10 }, (_, i) => i + 1);
 
   const toggleFaq = (index: number) => {
@@ -48,7 +47,7 @@ const FaqPageComponent: React.FC = () => {
                 className="w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group"
               >
                 <span
-                  className={`font-quicksand font-extrabold text-[20px] md:text-[24px] pr-6 transition-colors duration-300 leading-[1.2] ${
+                  className={`font-nunito font-extrabold text-[20px] md:text-[24px] pr-6 transition-colors duration-300 leading-[1.2] ${
                     isOpen
                       ? "text-primary"
                       : "text-text-main group-hover:text-primary"

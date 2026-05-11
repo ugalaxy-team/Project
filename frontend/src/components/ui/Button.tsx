@@ -51,7 +51,7 @@ export const Button = ({
       transition={{ duration: 0.2 }}
       disabled={isDisabled}
       className={cn(
-        "relative flex items-center justify-center gap-2.5 font-quicksand font-bold rounded-full transition-all duration-300 outline-none focus-visible:ring-4 focus-visible:ring-primary/20 disabled:opacity-70 disabled:pointer-events-none cursor-pointer",
+        "relative flex items-center justify-center gap-2.5 font-nunito font-bold rounded-full transition-all duration-300 outline-none focus-visible:ring-4 focus-visible:ring-primary/20 disabled:opacity-70 disabled:pointer-events-none cursor-pointer",
         variantStyles[variant],
         sizeStyles[size],
         className,

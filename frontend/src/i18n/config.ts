@@ -2,13 +2,7 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-const importLocales = (lng: string) => ({
-  common:
-    lng === "uk"
-      ? import("../locales/uk/common.json")
-      : import("../locales/en/common.json"),
-});
-
+// UKRAINIAN
 import ukCommon from "../locales/uk/common.json";
 import ukAuth from "../locales/uk/auth.json";
 import ukRegistration from "../locales/uk/registration.json";
@@ -18,6 +12,8 @@ import ukFaq from "../locales/uk/faq.json";
 import ukSupport from "../locales/uk/support.json";
 import ukContact from "../locales/uk/contact.json";
 import ukTournaments from "../locales/uk/tournaments.json";
+import ukRules from "../locales/uk/rules.json";
+
 // ENGLISH
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
@@ -28,6 +24,7 @@ import enFaq from "../locales/en/faq.json";
 import enSupport from "../locales/en/support.json";
 import enContact from "../locales/en/contact.json";
 import enTournaments from "../locales/en/tournaments.json";
+import enRules from "../locales/en/rules.json";
 
 const resources = {
   uk: {
@@ -40,6 +37,7 @@ const resources = {
     support: ukSupport,
     contact: ukContact,
     tournaments: ukTournaments,
+    rules: ukRules,
   },
   en: {
     common: enCommon,
@@ -51,6 +49,7 @@ const resources = {
     support: enSupport,
     contact: enContact,
     tournaments: enTournaments,
+    rules: enRules,
   },
 };
 
@@ -71,6 +70,7 @@ i18n
       "support",
       "contact",
       "tournaments",
+      "rules",
     ],
     defaultNS: "common",
     debug: import.meta.env.DEV,

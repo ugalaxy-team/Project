@@ -11,7 +11,7 @@ export const StepCircle = ({
   state: "active" | "done" | "idle";
 }) => (
   <div
-    className={`w-8 h-8 sm:w-[38px] sm:h-[38px] rounded-full border-2 flex items-center justify-center font-quicksand font-extrabold text-[15px] sm:text-[18px] shrink-0 transition-all duration-300 ${
+    className={`w-8 h-8 sm:w-[38px] sm:h-[38px] rounded-full border-2 flex items-center justify-center font-nunito font-extrabold text-[15px] sm:text-[18px] shrink-0 transition-all duration-300 ${
       state === "active"
         ? "border-primary bg-primary text-white ring-4 ring-primary/20 sm:ring-[5px] scale-110"
         : state === "done"
@@ -19,7 +19,7 @@ export const StepCircle = ({
           : "border-border bg-bg-card text-text-muted/60"
     }`}
   >
-    {state === "done" ? <Icon.Check /> : num}
+    {state === "done" ? <Icon.Check size={20} strokeWidth={3} /> : num}
   </div>
 );
 
@@ -60,7 +60,7 @@ export const BtnNext = ({
     whileHover={disabled ? {} : { scale: 1.02 }}
     whileTap={disabled ? {} : { scale: 0.98 }}
     transition={{ duration: 0.2 }}
-    className={`flex-1 py-[15px] px-6 bg-primary text-white rounded-full font-quicksand text-[16px] font-bold flex items-center justify-center gap-2.5 shadow-lg shadow-primary/25 transition-all duration-300 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/40 disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed cursor-pointer ${className}`}
+    className={`flex-1 py-[15px] px-6 bg-primary text-white rounded-full font-nunito text-[16px] font-bold flex items-center justify-center gap-2.5 shadow-lg shadow-primary/25 transition-all duration-300 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/40 disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed cursor-pointer ${className}`}
   >
     {children}
   </motion.button>
@@ -82,9 +82,9 @@ export const BtnBack = ({
       whileHover={disabled ? {} : { scale: 1.02 }}
       whileTap={disabled ? {} : { scale: 0.98 }}
       transition={{ duration: 0.2 }}
-      className="py-[15px] px-[22px] bg-transparent border-2 border-border rounded-full font-quicksand text-[15px] font-bold text-text-muted flex items-center gap-1.5 transition-all duration-300 hover:border-primary hover:text-primary hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/10 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+      className="py-[15px] px-[22px] bg-transparent border-2 border-border rounded-full font-nunito text-[15px] font-bold text-text-muted flex items-center gap-1.5 transition-all duration-300 hover:border-primary hover:text-primary hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/10 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
     >
-      <Icon.ChevronLeft /> {t("buttons.back", "Назад")}
+      <Icon.ChevronLeft size={18} strokeWidth={2.5} /> {t("buttons.back")}
     </motion.button>
   );
 };

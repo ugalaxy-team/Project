@@ -230,7 +230,6 @@ export const TournamentPage = () => {
   const { t } = useTranslation("tournament");
   const navigate = useNavigate();
 
-  // Використовуємо реальний запит до сервера з гілки dev
   const {
     data: tournament,
     isLoading,
@@ -317,7 +316,7 @@ export const TournamentPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-bg-body flex flex-col items-center justify-center font-quicksand transition-colors duration-500">
+      <div className="min-h-screen bg-bg-body flex flex-col items-center justify-center font-nunito transition-colors duration-500">
         <SpinnerIcon />
         <p className="mt-4 text-xl font-medium tracking-wide animate-pulse text-text-main">
           {t("loading", "Завантаження турніру...")}
@@ -339,7 +338,7 @@ export const TournamentPage = () => {
           <div className="text-red-500 bg-red-500/10 p-5 rounded-full mb-6 shadow-inner">
             <AlertIcon />
           </div>
-          <h2 className="text-2xl md:text-3xl font-quicksand font-black text-text-main mb-4 transition-colors duration-500">
+          <h2 className="text-2xl md:text-3xl font-nunito font-black text-text-main mb-4 transition-colors duration-500">
             {t("errors.oops", "Ой, халепа!")}
           </h2>
           <p className="text-text-muted text-[17px] mb-3 font-medium leading-relaxed transition-colors duration-500">
@@ -375,11 +374,11 @@ export const TournamentPage = () => {
           <div className="flex flex-col items-center w-full mt-8 animate-[fadeIn_0.6s_ease-out_forwards]">
             <div className="flex gap-3 mb-6 flex-wrap justify-center text-base normal-case tracking-normal">
               <div
-                className={`px-5 py-2 rounded-full font-quicksand font-bold text-sm flex items-center gap-2 transition-transform hover:scale-105 cursor-default ${statusInfo.className}`}
+                className={`px-5 py-2 rounded-full font-nunito font-bold text-sm flex items-center gap-2 transition-transform hover:scale-105 cursor-default ${statusInfo.className}`}
               >
                 {statusInfo.icon} {t(statusInfo.i18nKey, statusInfo.fallback)}
               </div>
-              <div className="bg-white/10 border border-white/20 text-white backdrop-blur-md px-5 py-2 rounded-full font-quicksand font-bold text-sm flex items-center gap-2 transition-transform hover:scale-105 cursor-default">
+              <div className="bg-white/10 border border-white/20 text-white backdrop-blur-md px-5 py-2 rounded-full font-nunito font-bold text-sm flex items-center gap-2 transition-transform hover:scale-105 cursor-default">
                 <GameDevIcon /> GameDev & Алгоритми
               </div>
             </div>
@@ -402,7 +401,7 @@ export const TournamentPage = () => {
               />
             </div>
 
-            <div className="flex gap-4 text-base font-normal normal-case tracking-normal font-quicksand relative z-30">
+            <div className="flex gap-4 text-base font-normal normal-case tracking-normal font-nunito relative z-30">
               <button className="btn btn-accent px-10 py-4 shadow-[0_0_30px_rgba(var(--color-accent),0.3)] hover:shadow-[0_0_40px_rgba(var(--color-accent),0.5)] hover:-translate-y-1 hover:scale-105 transition-all duration-300 text-dark-theme font-bold rounded-xl">
                 {t("hero.apply", "Подати заявку")}
               </button>
@@ -420,7 +419,7 @@ export const TournamentPage = () => {
 };
 
 const StatItem = ({ value, label }: { value: string; label: string }) => (
-  <div className="flex flex-col items-center font-quicksand group cursor-default">
+  <div className="flex flex-col items-center font-nunito group cursor-default">
     <span className="font-bold text-[36px] text-accent leading-none mb-2 tracking-wider group-hover:scale-110 transition-transform duration-300">
       {value}
     </span>
@@ -463,7 +462,7 @@ const TournamentMainContent = ({
                 tabsRef.current[index] = el;
               }}
               onClick={() => setActiveTab(tab.id)}
-              className={`font-quicksand font-bold text-[20px] md:text-[22px] cursor-pointer relative z-10 transition-colors duration-300 px-2 py-1 ${
+              className={`font-nunito font-bold text-[20px] md:text-[22px] cursor-pointer relative z-10 transition-colors duration-300 px-2 py-1 ${
                 activeTab === tab.id
                   ? "text-primary"
                   : "text-text-muted hover:text-primary/70"
@@ -498,7 +497,7 @@ const DescriptionTab = ({ description }: { description: string }) => {
   return (
     <div className="animate-[fadeIn_0.5s_ease_forwards] flex flex-col gap-12">
       <section>
-        <h2 className="text-[28px] md:text-[32px] text-text-main font-quicksand font-black mb-6 border-b border-border pb-4 transition-colors duration-500">
+        <h2 className="text-[28px] md:text-[32px] text-text-main font-nunito font-black mb-6 border-b border-border pb-4 transition-colors duration-500">
           {t("content.desc_title", "Що потрібно зробити?")}
         </h2>
         <p className="text-[17px] md:text-[18px] text-text-muted leading-[1.8] whitespace-pre-wrap font-medium transition-colors duration-500">
@@ -507,7 +506,7 @@ const DescriptionTab = ({ description }: { description: string }) => {
       </section>
 
       <section>
-        <h3 className="text-[24px] text-text-main font-quicksand font-bold mb-6 flex items-center gap-3 transition-colors duration-500">
+        <h3 className="text-[24px] text-text-main font-nunito font-bold mb-6 flex items-center gap-3 transition-colors duration-500">
           <div className="bg-primary/10 p-2 rounded-xl">
             <CheckCircleIcon />
           </div>
@@ -537,7 +536,7 @@ const PlaceholderTab = () => {
       <div className="w-[100px] h-[100px] bg-bg-body rounded-full flex justify-center items-center text-text-muted mb-8 shadow-inner transition-colors duration-500">
         <ClockIcon />
       </div>
-      <h2 className="text-[28px] md:text-[32px] mb-4 text-text-main font-quicksand font-bold transition-colors duration-500">
+      <h2 className="text-[28px] md:text-[32px] mb-4 text-text-main font-nunito font-bold transition-colors duration-500">
         {t("content.placeholder_title", "В розробці...")}
       </h2>
       <p className="max-w-[420px] text-text-muted text-[17px] leading-relaxed transition-colors duration-500">

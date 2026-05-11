@@ -4,21 +4,14 @@ import { useSelector } from "react-redux";
 import { type RootState } from "../store";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X } from "lucide-react";
+
 import { ProfileDropdown } from "./ProfileDropdown";
 import { NotificationsDropdown } from "./NotificationsDropdown";
 import { LanguageSwitcher } from "./ui/LanguageSwitcher";
 import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "../utils/cn";
-
-const NAV_ITEMS = [
-  { path: "/tournaments", key: "nav.tournaments" },
-  { path: "/about-us", key: "nav.about" },
-  { path: "/support", key: "nav.support" },
-  { path: "/contact", key: "nav.contact" },
-  { path: "/news", key: "nav.news" }, // Додано новий маршрут з гілки dev
-];
-
-const SOLID_BG_ROUTES = ["/profile", "/role-request-form"];
+import { NAV_ITEMS, SOLID_BG_ROUTES } from "../config/navigation";
 
 export const Header = () => {
   const { t } = useTranslation("common");
@@ -59,7 +52,7 @@ export const Header = () => {
       <header className="max-w-[1320px] mx-auto flex justify-between items-center px-5">
         <Link
           to="/"
-          className="font-quicksand text-[22px] md:text-[28px] font-extrabold text-white no-underline flex items-center gap-1.5 hover:opacity-90 transition-opacity duration-300"
+          className="font-nunito text-[22px] md:text-[28px] font-extrabold text-white no-underline flex items-center gap-1.5 hover:opacity-90 transition-opacity duration-300"
         >
           UGalaxy
           <span className="text-accent opacity-90 px-0.5">×</span>
@@ -111,7 +104,6 @@ export const Header = () => {
             <div className="flex items-center gap-3">
               <NotificationsDropdown />
               <div className="hidden lg:block">
-                {/* Додано userRoles з гілки dev */}
                 <ProfileDropdown userRoles={user?.roles || []} />
               </div>
             </div>
@@ -123,7 +115,7 @@ export const Header = () => {
             >
               <Link
                 to="/auth"
-                className="relative flex items-center justify-center h-[42px] px-7 font-quicksand font-bold text-[15px] rounded-full transition-all duration-300 bg-bg-card text-text-main shadow-sm border border-transparent hover:bg-accent hover:text-slate-900 hover:shadow-lg hover:shadow-accent/20 dark:border-white/5"
+                className="relative flex items-center justify-center h-[42px] px-7 font-nunito font-bold text-[15px] rounded-full transition-all duration-300 bg-bg-card text-text-main shadow-sm border border-transparent hover:bg-accent hover:text-slate-900 hover:shadow-lg hover:shadow-accent/20 dark:border-white/5"
               >
                 {t("auth.login")}
               </Link>
@@ -136,23 +128,11 @@ export const Header = () => {
             aria-label="Toggle mobile menu"
             aria-expanded={isMobileMenuOpen}
           >
-            <svg
-              className="w-7 h-7"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2.5"
-                d={
-                  isMobileMenuOpen
-                    ? "M6 18L18 6M6 6l12 12"
-                    : "M4 6h16M4 12h16M4 18h16"
-                }
-              />
-            </svg>
+            {isMobileMenuOpen ? (
+              <X className="w-7 h-7" strokeWidth={2.5} />
+            ) : (
+              <Menu className="w-7 h-7" strokeWidth={2.5} />
+            )}
           </button>
         </div>
       </header>
@@ -193,7 +173,6 @@ export const Header = () => {
 
                 {user?.uid ? (
                   <div onClick={() => setIsMobileMenuOpen(false)}>
-                    {/* Додано userRoles та isMobile з гілки dev */}
                     <ProfileDropdown
                       userRoles={user?.roles || []}
                       isMobile={true}
@@ -203,7 +182,7 @@ export const Header = () => {
                   <Link
                     to="/auth"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-center font-quicksand font-bold rounded-full py-3 px-8 text-[15px] bg-bg-card text-text-main shadow-md active:scale-95 transition-all"
+                    className="flex items-center justify-center font-nunito font-bold rounded-full py-3 px-8 text-[15px] bg-bg-card text-text-main shadow-md active:scale-95 transition-all"
                   >
                     {t("auth.login")}
                   </Link>
