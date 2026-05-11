@@ -1,32 +1,80 @@
 import React from 'react';
+import { Trash2, Calendar, Clock, AlignLeft, Type } from 'lucide-react';
 
 export const TaskItem = ({ task, index, onUpdate, onRemove }: any) => {
   const handleChange = (e: any) => onUpdate(index, { ...task, [e.target.name]: e.target.value });
 
   return (
-    <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-all relative group overflow-hidden">
-      <div className="absolute top-0 left-0 w-1 h-full bg-[#6366f1]" />
+    <div className="group relative bg-white border border-slate-200/60 rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300">
+      <div className="absolute top-0 left-8 w-12 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-b-full transition-all group-hover:w-24" />
       
-      <button onClick={() => onRemove(index)} className="absolute top-4 right-4 text-slate-300 hover:text-red-500 transition-colors">
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+      <button 
+        onClick={() => onRemove(index)} 
+        className="absolute top-6 right-6 p-2 rounded-full bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all duration-200 opacity-0 group-hover:opacity-100"
+      >
+        <Trash2 size={18} />
       </button>
 
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <span className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center text-xs font-black italic">#{index + 1}</span>
-          <input name="title" value={task.title} onChange={handleChange} placeholder="Назва завдання..." className="flex-1 bg-transparent text-slate-900 font-bold outline-none border-b border-transparent focus:border-[#6366f1]/30 pb-1" />
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <div className="flex-shrink-0 w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-indigo-200">
+            {index + 1}
+          </div>
+          <div className="relative flex-1">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-300">
+              <Type size={16} />
+            </div>
+            <input 
+              name="title" 
+              value={task.title} 
+              onChange={handleChange} 
+              placeholder="Назва завдання..." 
+              className="w-full bg-transparent pl-7 pr-4 py-2 text-slate-800 font-semibold text-lg outline-none border-b-2 border-slate-50 focus:border-indigo-500/40 transition-colors" 
+            />
+          </div>
         </div>
 
-        <textarea name="description" value={task.description} onChange={handleChange} placeholder="Опис завдання та критерії..." rows={2} className="w-full bg-slate-50/50 p-4 rounded-xl text-sm text-slate-600 outline-none focus:bg-white transition-all resize-none border border-transparent focus:border-[#6366f1]/10" />
+        <div className="relative">
+          <div className="absolute left-4 top-4 text-slate-400">
+            <AlignLeft size={16} />
+          </div>
+          <textarea 
+            name="description" 
+            value={task.description} 
+            onChange={handleChange} 
+            placeholder="Опис завдання та критерії..." 
+            rows={2} 
+            className="w-full bg-slate-50/80 pl-11 pr-4 py-3 rounded-2xl text-sm text-slate-600 outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/10 border border-transparent focus:border-indigo-100 transition-all resize-none" 
+          />
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="text-[9px] font-black text-slate-400 uppercase ml-1">Старт</label>
-            <input type="datetime-local" name="start_time" value={task.start_time} onChange={handleChange} className="w-full p-2 bg-slate-50 rounded-lg text-[11px] font-bold text-slate-800 outline-none" />
+          <div className="group/input space-y-2">
+            <label className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+              <Clock size={12} className="text-indigo-400" />
+              Старт
+            </label>
+            <input 
+              type="datetime-local" 
+              name="start_time" 
+              value={task.start_time} 
+              onChange={handleChange} 
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 outline-none focus:border-indigo-300 focus:bg-white transition-all cursor-pointer" 
+            />
           </div>
-          <div className="space-y-1">
-            <label className="text-[9px] font-black text-slate-400 uppercase ml-1">Дедлайн</label>
-            <input type="datetime-local" name="end_time" value={task.end_time} onChange={handleChange} className="w-full p-2 bg-slate-50 rounded-lg text-[11px] font-bold text-slate-800 outline-none" />
+          
+          <div className="group/input space-y-2">
+            <label className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+              <Calendar size={12} className="text-purple-400" />
+              Дедлайн
+            </label>
+            <input 
+              type="datetime-local" 
+              name="end_time" 
+              value={task.end_time} 
+              onChange={handleChange} 
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-[12px] font-medium text-slate-700 outline-none focus:border-purple-300 focus:bg-white transition-all cursor-pointer" 
+            />
           </div>
         </div>
       </div>
