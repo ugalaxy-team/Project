@@ -7,14 +7,14 @@ from .user import User, user_roles
 
 class Role(Base, OptionMixin):
     __tablename__ = "roles"
-    description: Mapped[str] = mapped_column(String(4096))
+    description: Mapped[str] = mapped_column()
 
     users: Mapped[list["User"]] = relationship(
         secondary=user_roles, back_populates="roles", lazy="selectin"
     )
     requests: Mapped[list["RoleRequest"]] = relationship(
-        back_populates="role", lazy="selectin"
+        back_populates="role", lazy="selectin", cascade="all, delete-orphan"
     )
 
     def __repr__(self):
-        return f"<Role(role={self.name})>"
+        return f"<Role(name={self.name}, display_name={self.display_name})>"

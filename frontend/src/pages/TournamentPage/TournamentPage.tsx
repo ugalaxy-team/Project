@@ -1,16 +1,23 @@
 import { useState, useRef, useEffect, useMemo, type ReactNode } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/api/client";
+import { tournamentStatuses } from "@/config/appConfig";
 import { Hero } from "../../components/Hero";
 
 interface TournamentData {
   title: string;
   description: string;
   start_date: string;
+  end_date?: string | null;
   reg_start: string;
   reg_end: string;
   max_teams: number;
+  status: {
+    name: string;
+    display_name: string;
+  };
 }
 
 const TABS = [
@@ -21,7 +28,11 @@ const TABS = [
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
-type TourneyStatus = "registration" | "active" | "waiting" | "finished";
+
+const [draftStatus, registrationStatus, runningStatus, finishedStatus] =
+  tournamentStatuses;
+
+type TourneyStatus = string;
 
 const RegistrationIcon = () => (
   <svg
@@ -54,7 +65,7 @@ const ActiveIcon = () => (
     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
   </svg>
 );
-const WaitingIcon = () => (
+const DraftIcon = () => (
   <svg
     width="18"
     height="18"
@@ -172,30 +183,30 @@ const STATUS_CONFIG: Record<
   TourneyStatus,
   { i18nKey: string; fallback: string; className: string; icon: ReactNode }
 > = {
-  registration: {
+  [draftStatus.name]: {
+    i18nKey: "status.waiting",
+    fallback: draftStatus.display_name,
+    className:
+      "bg-accent/10 text-yellow-600 dark:bg-accent/20 dark:text-accent shadow-[0_0_20px_rgba(250,204,21,0.2)]",
+    icon: <DraftIcon />,
+  },
+  [registrationStatus.name]: {
     i18nKey: "status.registration",
-    fallback: "Реєстрація",
+    fallback: registrationStatus.display_name,
     className:
       "bg-blue-500/10 text-blue-500 dark:bg-blue-500/20 dark:text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.2)]",
     icon: <RegistrationIcon />,
   },
-  active: {
+  [runningStatus.name]: {
     i18nKey: "status.active",
-    fallback: "Активно",
+    fallback: runningStatus.display_name,
     className:
       "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]",
     icon: <ActiveIcon />,
   },
-  waiting: {
-    i18nKey: "status.waiting",
-    fallback: "Очікування результатів",
-    className:
-      "bg-accent/10 text-yellow-600 dark:bg-accent/20 dark:text-accent shadow-[0_0_20px_rgba(250,204,21,0.2)]",
-    icon: <WaitingIcon />,
-  },
-  finished: {
+  [finishedStatus.name]: {
     i18nKey: "status.finished",
-    fallback: "Завершено",
+    fallback: finishedStatus.display_name,
     className: "bg-white/20 text-white backdrop-blur-md border border-white/20",
     icon: <FinishedIcon />,
   },
@@ -219,29 +230,29 @@ export const TournamentPage = () => {
   const { t } = useTranslation("tournament");
   const navigate = useNavigate();
 
-  const [tournament, setTournament] = useState<TournamentData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setTournament({
-        title: "SLOVO JAM",
-        description:
-          "Створити інноваційний проект з використанням GameDev підходів.",
-        start_date: "2026-05-01T10:00:00Z",
-        reg_start: "2026-04-01T10:00:00Z",
-        reg_end: "2026-04-20T10:00:00Z",
-        max_teams: 10,
-      });
-      setIsLoading(false);
-    }, 800);
-  }, []);
+  // Використовуємо реальний запит до сервера з гілки dev
+  const {
+    data: tournament,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["tournament", id],
+    queryFn: async () => {
+      if (!id) throw new Error("ID турніру не знайдено");
+      const response = await apiClient.get<TournamentData>(
+        `/tournaments/${id}`,
+      );
+      return response.data;
+    },
+    enabled: !!id,
+    retry: 1,
+  });
 
   const { currentStatus, deadlineValue, deadlineLabel } = useMemo(() => {
     if (!tournament) {
       return {
-        currentStatus: "waiting" as TourneyStatus,
+        currentStatus: draftStatus.name,
         deadlineValue: "...",
         deadlineLabel: t("hero.loading", "Завантаження"),
       };
@@ -251,45 +262,58 @@ export const TournamentPage = () => {
     const regStart = new Date(tournament.reg_start);
     const regEnd = new Date(tournament.reg_end);
     const eventStart = new Date(tournament.start_date);
-    const eventEnd = new Date(eventStart.getTime() + 48 * 60 * 60 * 1000);
+    const eventEnd = tournament.end_date
+      ? new Date(tournament.end_date)
+      : new Date(eventStart.getTime() + 48 * 60 * 60 * 1000);
+    const statusName = tournament.status?.name;
 
     if (now < regStart) {
       return {
-        currentStatus: "waiting" as TourneyStatus,
+        currentStatus: draftStatus.name,
         deadlineValue: getTimeLeftInfo(regStart, t),
         deadlineLabel: t("deadline.to_reg_start", "До початку реєстрації"),
       };
     }
-    if (now >= regStart && now <= regEnd) {
+
+    if (
+      (statusName === registrationStatus.name || now < regEnd) &&
+      now < eventStart
+    ) {
       return {
-        currentStatus: "registration" as TourneyStatus,
+        currentStatus: registrationStatus.name,
         deadlineValue: getTimeLeftInfo(regEnd, t),
         deadlineLabel: t("deadline.to_reg_end", "До кінця реєстрації"),
       };
     }
-    if (now > regEnd && now < eventStart) {
+
+    if (
+      (statusName === draftStatus.name || now < eventStart) &&
+      now < eventStart
+    ) {
       return {
-        currentStatus: "waiting" as TourneyStatus,
+        currentStatus: draftStatus.name,
         deadlineValue: getTimeLeftInfo(eventStart, t),
         deadlineLabel: t("deadline.to_event_start", "До старту турніру"),
       };
     }
-    if (now >= eventStart && now <= eventEnd) {
+
+    if (
+      (statusName === runningStatus.name || now < eventEnd) &&
+      statusName !== finishedStatus.name
+    ) {
       return {
-        currentStatus: "active" as TourneyStatus,
+        currentStatus: runningStatus.name,
         deadlineValue: getTimeLeftInfo(eventEnd, t),
         deadlineLabel: t("deadline.to_submission", "До здачі роботи"),
       };
     }
 
     return {
-      currentStatus: "finished" as TourneyStatus,
+      currentStatus: finishedStatus.name,
       deadlineValue: t("status.finished", "Завершено"),
       deadlineLabel: t("hero.tournament", "Турнір"),
     };
   }, [tournament, t]);
-
-  const statusInfo = STATUS_CONFIG[currentStatus];
 
   if (isLoading) {
     return (
@@ -303,6 +327,12 @@ export const TournamentPage = () => {
   }
 
   if (error || !tournament) {
+    const errorMessage =
+      (error as any)?.response?.data?.detail?.[0]?.msg ||
+      (error as any)?.response?.data?.message ||
+      (error as Error)?.message ||
+      t("errors.default_500", "Помилка 500: Турнір не знайдено");
+
     return (
       <div className="min-h-[70vh] bg-bg-body flex items-center justify-center p-5 transition-colors duration-500">
         <div className="max-w-md w-full bg-bg-card border border-red-500/20 rounded-[32px] p-8 md:p-10 flex flex-col items-center text-center shadow-[0_20px_50px_-10px_rgba(239,68,68,0.15)] animate-[fadeIn_0.4s_ease_forwards] transition-colors duration-500">
@@ -320,12 +350,11 @@ export const TournamentPage = () => {
           </p>
           <div className="bg-bg-body border border-border rounded-xl px-4 py-2 mb-8 w-full transition-colors duration-500">
             <p className="text-sm text-red-400 font-mono truncate">
-              {error ||
-                t("errors.default_500", "Помилка 500: Турнір не знайдено")}
+              {errorMessage}
             </p>
           </div>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => refetch()}
             className="w-full sm:w-auto px-8 py-3.5 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-300 font-bold shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] hover:-translate-y-1"
           >
             {t("errors.try_again", "Спробувати знову")}
@@ -334,6 +363,8 @@ export const TournamentPage = () => {
       </div>
     );
   }
+
+  const statusInfo = STATUS_CONFIG[currentStatus];
 
   return (
     <div className="min-h-screen bg-bg-body font-inter text-text-main flex flex-col selection:bg-accent/30 transition-colors duration-500">

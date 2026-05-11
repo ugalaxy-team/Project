@@ -1,0 +1,6 @@
+[tool.ruff]
+line-length = 95
+exclude = ['alembic']
+
+[tool.ruff.lint]
+extend-select = ["E501"]

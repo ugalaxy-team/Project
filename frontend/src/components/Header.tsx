@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { path: "/about-us", key: "nav.about" },
   { path: "/support", key: "nav.support" },
   { path: "/contact", key: "nav.contact" },
+  { path: "/news", key: "nav.news" }, // Додано новий маршрут з гілки dev
 ];
 
 const SOLID_BG_ROUTES = ["/profile", "/role-request-form"];
@@ -110,7 +111,8 @@ export const Header = () => {
             <div className="flex items-center gap-3">
               <NotificationsDropdown />
               <div className="hidden lg:block">
-                <ProfileDropdown />
+                {/* Додано userRoles з гілки dev */}
+                <ProfileDropdown userRoles={user?.roles || []} />
               </div>
             </div>
           ) : (
@@ -191,7 +193,11 @@ export const Header = () => {
 
                 {user?.uid ? (
                   <div onClick={() => setIsMobileMenuOpen(false)}>
-                    <ProfileDropdown />
+                    {/* Додано userRoles та isMobile з гілки dev */}
+                    <ProfileDropdown
+                      userRoles={user?.roles || []}
+                      isMobile={true}
+                    />
                   </div>
                 ) : (
                   <Link

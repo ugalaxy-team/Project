@@ -5,7 +5,7 @@ import { Heart, Handshake, Users2 } from "lucide-react";
 import { Hero } from "../../components/Hero";
 import { Button } from "../../components/ui/Button";
 
-export const SupportPage: React.FC = () => {
+const SupportPageComponent: React.FC = () => {
   const { t } = useTranslation("support");
 
   const supportOptions = [
@@ -105,3 +105,5 @@ export const SupportPage: React.FC = () => {
     </div>
   );
 };
+
+export const SupportPage = SupportPageComponent;

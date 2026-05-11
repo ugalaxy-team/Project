@@ -70,7 +70,7 @@ type AuthFormData = z.infer<typeof authSchema>;
 export const AuthPage = () => {
   const { t } = useTranslation("auth");
   const navigate = useNavigate();
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
 
@@ -83,7 +83,7 @@ export const AuthPage = () => {
   } = useForm<AuthFormData>({
     resolver: zodResolver(authSchema),
     defaultValues: {
-      mode: "register",
+      mode: "login",
       displayName: "",
       email: "",
       password: "",

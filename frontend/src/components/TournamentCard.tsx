@@ -1,11 +1,23 @@
-import React from "react";
+import { tournamentStatusByName } from "@/config/appConfig";
 import { type Tournament } from "../data/mockTournaments";
 import { cn } from "../utils/cn";
 
 const STATUS_CFG = {
+  draft: {
+    label: tournamentStatusByName.draft.display_name,
+    badgeBg: "bg-amber-50",
+    badgeText: "text-amber-700",
+    dot: "bg-amber-400",
+    gradFrom: "#fbbf24",
+    gradTo: "#d97706",
+    icon: <path d="M12 6v6l4 2" />,
+    btnText: "Скоро відкриється",
+    btnClass:
+      "bg-slate-100 text-slate-500 border border-slate-200 cursor-default",
+  },
   registration: {
-    label: "Реєстрація",
-    badgeBg: "bg-green-500/10",
+    label: tournamentStatusByName.registration.display_name, // Текст з бекенду
+    badgeBg: "bg-green-500/10", // Твій дизайн
     badgeText: "text-green-600 dark:text-green-400",
     dot: "bg-green-500",
     gradFrom: "#34d399",
@@ -15,9 +27,10 @@ const STATUS_CFG = {
     btnClass:
       "bg-primary text-white hover:bg-primary/90 shadow-md cursor-pointer",
   },
-  active: {
-    label: "В процесі",
-    badgeBg: "bg-pink-accent/10",
+  running: {
+    // Ключ змінено з active на running (як просить бекенд)
+    label: tournamentStatusByName.running.display_name,
+    badgeBg: "bg-pink-accent/10", // Твій дизайн
     badgeText: "text-pink-accent",
     dot: "bg-pink-accent",
     gradFrom: "#c084fc",
@@ -27,9 +40,10 @@ const STATUS_CFG = {
     btnClass:
       "bg-transparent border-2 border-primary text-primary hover:bg-primary/5 cursor-pointer",
   },
-  completed: {
-    label: "Завершено",
-    badgeBg: "bg-border",
+  finished: {
+    // Ключ змінено з completed на finished
+    label: tournamentStatusByName.finished.display_name,
+    badgeBg: "bg-border", // Твій дизайн
     badgeText: "text-text-muted",
     dot: "bg-text-muted",
     gradFrom: "#94a3b8",
@@ -167,9 +181,12 @@ export const TournamentCard = ({
           </div>
 
           <button
+            disabled={status === "draft" || status === "finished"} // Логіка з dev
             className={cn(
               "w-full py-3.5 rounded-xl font-quicksand text-[16px] font-extrabold transition-all duration-300",
               cfg.btnClass,
+              (status === "draft" || status === "finished") &&
+                "opacity-70 cursor-not-allowed", // Додатковий стиль для вимкненої кнопки
             )}
           >
             {cfg.btnText}

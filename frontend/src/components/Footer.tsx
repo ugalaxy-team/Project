@@ -10,6 +10,7 @@ const PLATFORM_LINKS = [
 const INFO_LINKS = [
   { to: "/about-us", key: "footer.about" },
   { to: "/contact", key: "footer.contact" },
+  { to: "/news", key: "footer.news" }, // <--- Додали маршрут з гілки dev
 ];
 
 export const Footer = () => {

@@ -1,10 +1,17 @@
-import React, { useState, type SubmitEvent } from "react";
+import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { store, type RootState } from "../../store";
 import { setUser } from "@/slices/user";
 import { updateProfile } from "@/api/requests/updateProfile";
 import { useSelector } from "react-redux";
 import { auth } from "@/firebase";
+
+interface ProfileFormData {
+  full_name: string;
+  telegram: string;
+  github: string;
+  discord: string;
+}
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -16,8 +23,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   onClose,
 }) => {
   const user = useSelector((s: RootState) => s.user.user);
-  // Email should be updated elsewhere, because this process requires confirmation that the new email belongs to user
-  const [formData, setFormData] = useState({
+
+  const [formData, setFormData] = useState<ProfileFormData>({
     full_name: user?.displayName ?? "",
     telegram: user?.telegram ?? "",
     github: user?.github ?? "",
@@ -25,24 +32,27 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   });
 
   const updateMutation = useMutation({
-    // Використовуємо uid, або id як запасний варіант
     mutationKey: ["update user", user?.uid],
-    mutationFn: async (data: typeof formData) => {
-      if (!auth.currentUser) return;
+    mutationFn: async (data: ProfileFormData) => {
+      if (!auth.currentUser) throw new Error("User not authenticated");
       return await updateProfile(auth.currentUser, data);
     },
-    onSuccess: (variables) => {
-      store.dispatch(
-        setUser({
-          ...user,
-          displayName: variables.full_name,
-          ...variables,
-        }),
-      );
+    onSuccess: (response, variables) => {
+      if (user) {
+        store.dispatch(
+          setUser({
+            ...user,
+            displayName: variables.full_name,
+            telegram: variables.telegram,
+            github: variables.github,
+            discord: variables.discord,
+          }),
+        );
+      }
       onClose();
     },
-    onError: (e: any) => {
-      console.error("Помилка при оновленні профілю", e.message);
+    onError: (error: any) => {
+      console.error(error.message);
     },
   });
 
@@ -51,7 +61,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateMutation.mutate(formData);
   };
@@ -118,7 +128,12 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </div>
 
           <div className="modal-actions">
-            <button type="button" className="btn-secondary" onClick={onClose}>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={onClose}
+              disabled={updateMutation.isPending}
+            >
               Скасувати
             </button>
             <button

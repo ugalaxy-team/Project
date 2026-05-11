@@ -3,7 +3,8 @@
     "tournaments": "Tournaments",
     "about": "About Us",
     "support": "Support",
-    "contact": "Contact"
+    "contact": "Contact",
+    "news": "News"
   },
   "auth": {
     "login": "Sign In"
@@ -17,6 +18,7 @@
     "faq": "FAQ",
     "about": "About Us",
     "contact": "Contact",
+    "news": "News",
     "copyright": "© 2026 UGalaxy x Star for Life. All rights reserved."
   },
   "profile_dropdown": {

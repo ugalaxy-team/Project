@@ -1,10 +1,14 @@
 import factory
+import factory.fuzzy
 from factory.faker import Faker
 from factory.alchemy import SQLAlchemyModelFactory
 
+from app.config import settings
 from app.models import (
     User,
     Role,
+    News,
+    NewsCattegory,
     TeamMember,
     Team,
     Tournament,
@@ -21,6 +25,7 @@ from app.models import (
     Notification,
     RoleRequest,
 )
+import datetime
 
 
 class BaseFactory(SQLAlchemyModelFactory):
@@ -30,28 +35,74 @@ class BaseFactory(SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = None
 
 
+class BaseOptionFactory(BaseFactory):
+    class Meta:
+        abstract = True
+
+    name = Faker("name")
+    display_name = factory.LazyAttribute(lambda f: f.name.upper())
+
+
 class UserFactory(BaseFactory):
     class Meta:
         model = User
 
-    firebase_uid = Faker('uuid4')
+    firebase_uid = Faker("uuid4")
     full_name = Faker("name")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
+
 
 class RoleFactory(BaseFactory):
     class Meta:
         model = Role
 
-    name = factory.Iterator(["admin", "user", "jury"])
-    display_name = factory.Iterator(["Admin", "User", "Jury"])
-    description = factory.Iterator('Test role')
+    name = factory.Iterator([option["name"] for option in settings.ROLE_OPTIONS])
+    display_name = factory.LazyAttribute(
+        lambda role: next(
+            option["display_name"]
+            for option in settings.ROLE_OPTIONS
+            if option["name"] == role.name
+        )
+    )
+    description = factory.LazyAttribute(
+        lambda role: next(
+            option["description"]
+            for option in settings.ROLE_OPTIONS
+            if option["name"] == role.name
+        )
+    )
 
 
-class TournamentStatusOptionFactory(BaseFactory):
+class TournamentStatusOptionFactory(BaseOptionFactory):
     class Meta:
         model = TournamentStatusOption
 
-    name = Faker("name")
+    name = factory.Iterator(list(settings.TOURNAMENT_STATUS_NAMES.__dict__.values()))
+
+
+class NewsCattegoryFactory(BaseOptionFactory):
+    class Meta:
+        model = NewsCattegory
+
+    name = factory.Iterator([option["name"] for option in settings.NEWS_CATEGORY_OPTIONS])
+    display_name = factory.LazyAttribute(
+        lambda category: next(
+            option["display_name"]
+            for option in settings.NEWS_CATEGORY_OPTIONS
+            if option["name"] == category.name
+        )
+    )
+
+
+class NewsFactory(BaseFactory):
+    class Meta:
+        model = News
+
+    title = factory.Sequence(lambda n: f"news_{n} title")
+    excerpt = factory.Sequence(lambda n: f"news_{n} excerpt")
+    body = factory.Sequence(lambda n: f"news_{n} body")
+    category = factory.SubFactory(NewsCattegoryFactory)
+    is_important = False
 
 
 class TournamentFactory(BaseFactory):
@@ -60,9 +111,15 @@ class TournamentFactory(BaseFactory):
 
     title = Faker("catch_phrase")
     description = Faker("paragraph")
-    start_date = Faker("future_datetime")
-    reg_start = Faker("past_datetime")
-    reg_end = Faker("future_datetime")
+    start_date = factory.LazyAttribute(
+        lambda o: o.reg_end + datetime.timedelta(days=factory.fuzzy.FuzzyInteger(1, 10).fuzz())
+    )
+    reg_start = Faker("future_datetime", end_date="+30d")
+    reg_end = factory.LazyAttribute(
+        lambda o: (
+            o.reg_start + datetime.timedelta(days=factory.fuzzy.FuzzyInteger(1, 10).fuzz())
+        )
+    )
     max_teams = Faker("pyint", min_value=10, max_value=100)
     min_people_in_team = Faker("pyint", min_value=1, max_value=100)
     max_people_in_team = Faker("pyint", min_value=1, max_value=100)
@@ -102,12 +159,18 @@ class TeamMemberFactory(BaseFactory):
     tournament = factory.SubFactory(TournamentFactory)
 
 
-class TaskStatusOptionFactory(BaseFactory):
+class TaskStatusOptionFactory(BaseOptionFactory):
     class Meta:
         model = TaskStatusOption
 
-    name = factory.Iterator(["draft", "active", "finished"])
-    display_name = factory.LazyAttribute(lambda f: f.name.upper())
+    name = factory.Iterator([option["name"] for option in settings.TASK_STATUS_OPTIONS])
+    display_name = factory.LazyAttribute(
+        lambda status: next(
+            option["display_name"]
+            for option in settings.TASK_STATUS_OPTIONS
+            if option["name"] == status.name
+        )
+    )
 
 
 class TaskFactory(BaseFactory):
@@ -119,23 +182,25 @@ class TaskFactory(BaseFactory):
     start_time = Faker("future_datetime")
     end_time = Faker("future_datetime")
     tournament = factory.SubFactory(TournamentFactory)
-    status = factory.SubFactory(TaskStatusOptionFactory)
+    status_id = factory.Iterator([option["name"] for option in settings.TASK_STATUS_OPTIONS])
+
+    @classmethod
+    def _adjust_kwargs(cls, **kwargs):
+        status_id = kwargs.get("status_id")
+        if isinstance(status_id, TaskStatusOption):
+            kwargs["status"] = status_id
+            kwargs.pop("status_id")
+        return super()._adjust_kwargs(**kwargs)
 
 
-class TaskRequirementCategoryFactory(BaseFactory):
+class TaskRequirementCategoryFactory(BaseOptionFactory):
     class Meta:
         model = TaskRequirementCategory
 
-    name = factory.Sequence(lambda n: f"category_{n}")
-    display_name = factory.LazyAttribute(lambda f: f.name.upper())
 
-
-class TaskRequirementOptionFactory(BaseFactory):
+class TaskRequirementOptionFactory(BaseOptionFactory):
     class Meta:
         model = TaskRequirementOption
-
-    name = factory.Sequence(lambda n: f"category_{n}")
-    display_name = factory.LazyAttribute(lambda f: f.name.upper())
 
     category = factory.SubFactory(TaskRequirementCategoryFactory)
 
@@ -147,12 +212,11 @@ class SubmissionFactory(BaseFactory):
     team = factory.SubFactory(TeamFactory)
 
 
-class SubmissionUrlOptionFactory(BaseFactory):
+class SubmissionUrlOptionFactory(BaseOptionFactory):
     class Meta:
         model = SubmissionUrlOption
 
     name = factory.Sequence(lambda n: f"url_option_{n}")
-    display_name = factory.LazyAttribute(lambda f: f.name.upper())
 
 
 class SubmissionUrlFactory(BaseFactory):

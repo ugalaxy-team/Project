@@ -3,7 +3,8 @@
     "tournaments": "Турніри",
     "about": "Про нас",
     "support": "Підтримати",
-    "contact": "Контакти"
+    "contact": "Контакти",
+    "news": "Новини"
   },
   "auth": {
     "login": "Увійти"
@@ -17,6 +18,7 @@
     "faq": "FAQ",
     "about": "Про нас",
     "contact": "Контакти",
+    "news": "Новини",
     "copyright": "© 2026 UGalaxy x Star for Life. Всі права захищено."
   },
   "profile_dropdown": {

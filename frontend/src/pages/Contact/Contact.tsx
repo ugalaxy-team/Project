@@ -59,7 +59,7 @@ const YoutubeIcon = () => (
   </svg>
 );
 
-export const ContactPage: React.FC = () => {
+const ContactPageComponent: React.FC = () => {
   const { t } = useTranslation("contact");
 
   const socials = [
@@ -229,3 +229,5 @@ export const ContactPage: React.FC = () => {
     </div>
   );
 };
+
+export const ContactPage = ContactPageComponent;

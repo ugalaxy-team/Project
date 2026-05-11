@@ -1,0 +1,193 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`RoleRequestPage Component > matches snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col md:flex-row min-h-screen font-sans bg-[#f7f8fc]"
+  >
+    <div
+      class="flex-1 bg-[#7b00ff] text-white flex flex-col items-center justify-center p-10"
+    >
+      <div
+        class="max-w-[480px] text-center md:text-left"
+      >
+        <div
+          class="text-[64px] mb-2.5 text-center"
+        >
+          <div
+            data-testid="lottie-mock"
+          />
+        </div>
+        <h2
+          class="text-[32px] m-0 font-extrabold text-center"
+        >
+          UGalaxy
+        </h2>
+        <p
+          class="text-sm tracking-[2px] mt-1 mb-10 opacity-90 text-center"
+        >
+          STAR FOR LIFE
+        </p>
+        <h1
+          class="text-[28px] font-extrabold text-white mt-0 mb-4 leading-[1.2]"
+        >
+          Заявка на роль Організатора
+        </h1>
+        <p
+          class="text-[15px] text-white/85 leading-[1.6] mb-6"
+        >
+          Заповніть форму нижче, щоб подати заявку. Ми розглядаємо кожну заявку вручну.
+          <br />
+          <br />
+          <b
+            class="font-bold"
+          >
+            Важливо:
+          </b>
+           відповідайте чесно та детально — це підвищує ваші шанси.
+        </p>
+      </div>
+    </div>
+    <div
+      class="flex-1 flex items-center justify-center p-10 px-5"
+    >
+      <div
+        class="bg-white w-full max-w-[420px] p-10 rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
+      >
+        <div
+          class="mb-6 p-4 bg-[#7b00ff]/10 border border-[#7b00ff]/20 rounded-xl"
+        >
+          <p
+            class="text-sm text-[#7b00ff] font-medium text-center"
+          >
+            Наразі ви можете отримати лише роль Організатора
+          </p>
+        </div>
+        <p
+          class="text-[13px] text-[#7b00ff] font-bold mb-4"
+        >
+          * — обов'язкове поле
+        </p>
+        <form
+          class="flex flex-col gap-4"
+        >
+          <div
+            class="relative w-full"
+          >
+            <input
+              class="peer w-full px-[18px] pt-6 pb-2 border border-slate-200 rounded-xl bg-[#fafafa] text-sm text-gray-800 transition-all focus:outline-none focus:border-[#7b00ff] focus:bg-white focus:shadow-[0_0_0_3px_rgba(123,0,255,0.1)] placeholder-transparent"
+              id="fullName"
+              name="fullName"
+              placeholder=" "
+              required=""
+              type="text"
+            />
+            <label
+              class="absolute left-[18px] top-1.5 text-[11px] font-medium text-[#7b00ff] pointer-events-none transition-all peer-placeholder-shown:top-[18px] peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:text-[#7b00ff] peer-focus:font-medium"
+              for="fullName"
+            >
+              ПІБ *
+            </label>
+          </div>
+          <div
+            class="relative w-full"
+          >
+            <input
+              class="peer w-full px-[18px] pt-6 pb-2 border border-slate-200 rounded-xl bg-[#fafafa] text-sm text-gray-800 transition-all focus:outline-none focus:border-[#7b00ff] focus:bg-white focus:shadow-[0_0_0_3px_rgba(123,0,255,0.1)] placeholder-transparent"
+              id="contact"
+              name="contact"
+              placeholder=" "
+              required=""
+              type="text"
+            />
+            <label
+              class="absolute left-[18px] top-1.5 text-[11px] font-medium text-[#7b00ff] pointer-events-none transition-all peer-placeholder-shown:top-[18px] peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:text-[#7b00ff] peer-focus:font-medium"
+              for="contact"
+            >
+              Email / Telegram *
+            </label>
+          </div>
+          <div
+            class="relative w-full"
+          >
+            <input
+              class="peer w-full px-[18px] pt-6 pb-2 border border-slate-200 rounded-xl bg-[#fafafa] text-sm text-gray-800 transition-all focus:outline-none focus:border-[#7b00ff] focus:bg-white focus:shadow-[0_0_0_3px_rgba(123,0,255,0.1)] placeholder-transparent"
+              id="age"
+              name="age"
+              placeholder=" "
+              required=""
+              type="number"
+            />
+            <label
+              class="absolute left-[18px] top-1.5 text-[11px] font-medium text-[#7b00ff] pointer-events-none transition-all peer-placeholder-shown:top-[18px] peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:text-[#7b00ff] peer-focus:font-medium"
+              for="age"
+            >
+              Ваш вік *
+            </label>
+          </div>
+          <div
+            class="relative w-full"
+          >
+            <textarea
+              class="peer w-full px-[18px] pt-6 pb-2 border border-slate-200 rounded-xl bg-[#fafafa] text-sm text-gray-800 transition-all focus:outline-none focus:border-[#7b00ff] focus:bg-white focus:shadow-[0_0_0_3px_rgba(123,0,255,0.1)] placeholder-transparent min-h-[80px] resize-y"
+              id="experience"
+              name="experience"
+              placeholder=" "
+              required=""
+              rows="2"
+            />
+            <label
+              class="absolute left-[18px] top-1.5 text-[11px] font-medium text-[#7b00ff] pointer-events-none transition-all peer-placeholder-shown:top-[18px] peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:text-[#7b00ff] peer-focus:font-medium"
+              for="experience"
+            >
+              Чи маєте релевантний досвід? *
+            </label>
+          </div>
+          <div
+            class="relative w-full"
+          >
+            <textarea
+              class="peer w-full px-[18px] pt-6 pb-2 border border-slate-200 rounded-xl bg-[#fafafa] text-sm text-gray-800 transition-all focus:outline-none focus:border-[#7b00ff] focus:bg-white focus:shadow-[0_0_0_3px_rgba(123,0,255,0.1)] placeholder-transparent min-h-[80px] resize-y"
+              id="reason"
+              name="reason"
+              placeholder=" "
+              required=""
+              rows="3"
+            />
+            <label
+              class="absolute left-[18px] top-1.5 text-[11px] font-medium text-[#7b00ff] pointer-events-none transition-all peer-placeholder-shown:top-[18px] peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:text-[#7b00ff] peer-focus:font-medium"
+              for="reason"
+            >
+              Чому ви хочете отримати цю роль? *
+            </label>
+          </div>
+          <div
+            class="relative w-full"
+          >
+            <textarea
+              class="peer w-full px-[18px] pt-6 pb-2 border border-slate-200 rounded-xl bg-[#fafafa] text-sm text-gray-800 transition-all focus:outline-none focus:border-[#7b00ff] focus:bg-white focus:shadow-[0_0_0_3px_rgba(123,0,255,0.1)] placeholder-transparent min-h-[80px] resize-y"
+              id="plans"
+              name="plans"
+              placeholder=" "
+              required=""
+              rows="3"
+            />
+            <label
+              class="absolute left-[18px] top-1.5 text-[11px] font-medium text-[#7b00ff] pointer-events-none transition-all peer-placeholder-shown:top-[18px] peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:text-[#7b00ff] peer-focus:font-medium"
+              for="plans"
+            >
+              Що ви плануєте робити на цій ролі? *
+            </label>
+          </div>
+          <button
+            class="mt-2.5 p-4 bg-[#7b00ff] text-white border-none rounded-full text-base font-bold cursor-pointer transition-all hover:bg-[#6a00e0] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            type="submit"
+          >
+            Надіслати форму
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+`;

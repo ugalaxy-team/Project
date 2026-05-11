@@ -1,5 +1,6 @@
 from .base import Base
 from .evaluation import SubmissionEvaluation, RequirementEvaluation
+from .news import News, NewsCattegory
 from .notification import Notification
 from .role_request import RoleRequest, RoleRequestInfo, RoleRequestInfoOption
 from .role import Role

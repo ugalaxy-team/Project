@@ -4,82 +4,12 @@ import { useTranslation } from "react-i18next";
 import { Plus, Minus } from "lucide-react";
 import { Hero } from "../../components/Hero";
 
-export const FaqPage: React.FC = () => {
+const FaqPageComponent: React.FC = () => {
   const { t } = useTranslation("faq");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const faqs = [
-    {
-      question: t("q1", "Хто ми і що це за платформа?"),
-      answer: t(
-        "a1",
-        "Це платформа від благодійного фонду Star for Life Ukraine. Ми допомагаємо молоді розвиватися через освіту, менторство та практику. Тут можна брати участь у турнірах, знайомитися з однодумцями та прокачувати свої навички.",
-      ),
-    },
-    {
-      question: t("q2", "Чому все безкоштовно?"),
-      answer: t(
-        "a2",
-        "Жодного підступу 🙂 Участь безкоштовна, бо платформу підтримують партнери та донори. Наша мета — дати рівні можливості кожному.",
-      ),
-    },
-    {
-      question: t("q3", "Які тут турніри?"),
-      answer: t(
-        "a3",
-        "Є IT-турніри, кіберспорт, дизайн, математика, творчі конкурси та інші напрямки. Кожен знайде щось для себе.",
-      ),
-    },
-    {
-      question: t("q4", "Як взяти участь у турнірі?"),
-      answer: t(
-        "a4",
-        "Все просто: зареєструйся, обери турнір у розділі «Турніри» та натисни «Взяти участь». У деяких турнірах потрібна команда — її можна створити або приєднатися до існуючої.",
-      ),
-    },
-    {
-      question: t("q5", "Що я отримаю від участі?"),
-      answer: t(
-        "a5",
-        "Практичний досвід, розвиток навичок, роботу в команді та нові знайомства. Також є можливість виграти призи: гаджети, курси, менторство або мерч.",
-      ),
-    },
-    {
-      question: t("q6", "Як змінити роль на платформі?"),
-      answer: t(
-        "a6",
-        "Спочатку всі мають роль «Користувач». Щоб отримати іншу роль, подай заявку на сторінці «Отримання ролі» — ми її перевіримо.",
-      ),
-    },
-    {
-      question: t("q7", "Що робити, якщо виникла проблема?"),
-      answer: t(
-        "a7",
-        "Якщо щось не працює (реєстрація, команда тощо) — звернись у підтримку через розділ «Контакти». Ми обов'язково допоможемо.",
-      ),
-    },
-    {
-      question: t("q8", "Чи є обмеження за віком?"),
-      answer: t(
-        "a8",
-        "Більшість турнірів орієнтовані на підлітків і студентів, але умови можуть відрізнятися. Перевіряй опис конкретного турніру.",
-      ),
-    },
-    {
-      question: t("q9", "Чи можна брати участь самому (без команди)?"),
-      answer: t(
-        "a9",
-        "Так. У багатьох турнірах можна брати участь індивідуально або знайти команду вже на платформі.",
-      ),
-    },
-    {
-      question: t("q10", "Чи можна брати участь у кількох турнірах одночасно?"),
-      answer: t(
-        "a10",
-        "Так, якщо графік не перетинається і ти встигаєш брати повноцінну участь у всіх обраних змаганнях.",
-      ),
-    },
-  ];
+  // Створюємо масив індексів від 1 до 10, щоб динамічно генерувати ключі q1-q10 та a1-a10
+  const faqIndexes = Array.from({ length: 10 }, (_, i) => i + 1);
 
   const toggleFaq = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -88,21 +18,21 @@ export const FaqPage: React.FC = () => {
   return (
     <div className="w-full flex flex-col min-h-screen bg-bg-body text-text-main pb-20 font-inter transition-colors duration-300">
       <Hero
-        bgText={t("hero.bg_text", "FAQ")}
-        title={t("hero.title", "Часті Питання")}
-        description={t(
-          "hero.description",
-          "Зібрали для вас відповіді на найпопулярніші запитання. Не знайшли свого? Напишіть нам у підтримку!",
-        )}
+        bgText={t("hero.bg_text")}
+        title={t("hero.title")}
+        description={t("hero.description")}
       />
 
       <div className="flex-grow w-full max-w-[900px] mx-auto px-6 -mt-[90px] relative z-20 space-y-6">
-        {faqs.map((faq, index) => {
+        {faqIndexes.map((num) => {
+          const index = num - 1;
           const isOpen = openIndex === index;
+          const questionKey = `q${num}`;
+          const answerKey = `a${num}`;
 
           return (
             <motion.div
-              key={index}
+              key={num}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -124,7 +54,7 @@ export const FaqPage: React.FC = () => {
                       : "text-text-main group-hover:text-primary"
                   }`}
                 >
-                  {faq.question}
+                  {t(questionKey)}
                 </span>
 
                 <div
@@ -152,7 +82,7 @@ export const FaqPage: React.FC = () => {
                   >
                     <div className="px-6 md:px-8 pb-6 md:pb-8 pt-0">
                       <p className="text-text-muted text-[17px] leading-relaxed font-medium">
-                        {faq.answer}
+                        {t(answerKey)}
                       </p>
                     </div>
                   </motion.div>
@@ -165,3 +95,5 @@ export const FaqPage: React.FC = () => {
     </div>
   );
 };
+
+export const FaqPage = FaqPageComponent;

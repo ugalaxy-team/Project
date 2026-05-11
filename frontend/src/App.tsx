@@ -1,41 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { io, Socket } from "socket.io-client";
 import { onIdTokenChanged } from "firebase/auth";
-
-// Firebase та Хуки
 import { auth } from "./firebase";
 import { useNotificationsSocket } from "./hooks/useNotificationsSocket";
-
-// Лейаути та Захист
 import { MainLayout } from "./components/MainLayout";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-
-// Сторінки (Основні)
+import ProtectedRoute from "./routers/ProtectedRoute/ProtectedRoute.tsx";
 import { Home } from "./pages/Home/Home";
 import { Profile } from "./pages/Profile/Profile";
 import { TournamentsPage } from "./pages/TournamentsPage/TournamentsPage";
 import { TournamentPage } from "./pages/TournamentPage/TournamentPage";
 import { RoleRequestPage } from "./pages/GetRole/RoleRequestPage";
 import { RegistrationPage } from "./pages/RegistrationPage/RegistrationPage";
-
-// Сторінки (Інфо)
 import { ContactPage } from "./pages/Contact/Contact";
 import { AboutUs } from "./pages/AboutUs/AboutUs";
 import { SupportPage } from "./pages/SupportPage/SupportPage";
 import { FaqPage } from "./pages/FaqPage/FaqPage";
 import { RulesPage } from "./pages/Rules/Rules";
 import { Page404 } from "./pages/Page404/Page404";
-
-// Сторінки (Авторизація)
 import { AuthPage } from "./pages/Auth/AuthPage";
 import { ForgotPassword } from "./pages/Auth/ForgotPassword";
 import SignOut from "./pages/Auth/SignOut";
 
-// ─── Компонент для скидання скролу ───
+const COOLDOWN_TIME = 3 * 60 * 1000;
+
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -49,7 +40,9 @@ export const App = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [toastTheme, setToastTheme] = useState<"colored" | "dark">("colored");
 
-  // ─── Динамічна тема додатку та тостів ───
+  const lastErrorTime = useRef<number>(0);
+  const wasError = useRef<boolean>(false);
+
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -67,11 +60,9 @@ export const App = () => {
       }
     };
 
-    // 1. Встановлюємо при старті та зміні системи
     applyTheme();
     mediaQuery.addEventListener("change", applyTheme);
 
-    // 2. Слідкуємо за ручним перемиканням через ThemeToggle
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.attributeName === "class") {
@@ -89,7 +80,6 @@ export const App = () => {
     };
   }, []);
 
-  // ─── Сокети та Firebase Auth ───
   useEffect(() => {
     let currentSocket: Socket | null = null;
 
@@ -103,20 +93,41 @@ export const App = () => {
         const token = await user.getIdToken();
         currentSocket = io(import.meta.env.VITE_SOCKETIO_SERVER_URL, {
           auth: { token },
+          reconnectionDelay: 5000,
         });
 
         currentSocket.on("connect_error", () => {
-          toast.error(
-            t(
-              "errors.socket",
-              "Проблеми з сервером :(. Сповіщення тимчасово не працюють",
-            ),
-            { toastId: "socket-error" },
-          );
+          const now = Date.now();
+
+          if (
+            now - lastErrorTime.current > COOLDOWN_TIME ||
+            !wasError.current
+          ) {
+            toast.error(
+              <div>
+                <div className="font-bold mb-1">
+                  {t("errors.socket", "Проблеми з сервером :(")}
+                </div>
+                <div className="text-[13px] opacity-90 leading-tight">
+                  Сповіщення тимчасово не працюють
+                </div>
+              </div>,
+              { toastId: "socket-error" },
+            );
+
+            lastErrorTime.current = now;
+            wasError.current = true;
+          }
         });
 
         currentSocket.on("connect", () => {
           toast.dismiss("socket-error");
+
+          if (wasError.current) {
+            toast.success("Зв'язок відновлено!", { toastId: "socket-success" });
+            wasError.current = false;
+            lastErrorTime.current = 0;
+          }
         });
 
         setSocket(currentSocket);
@@ -125,9 +136,7 @@ export const App = () => {
 
     return () => {
       unsubscribeAuth();
-      if (currentSocket) {
-        currentSocket.disconnect();
-      }
+      if (currentSocket) currentSocket.disconnect();
     };
   }, [t]);
 

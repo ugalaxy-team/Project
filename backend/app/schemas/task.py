@@ -1,34 +1,72 @@
-from datetime import datetime
+from datetime import datetime, timezone
+from typing import Annotated
 from typing_extensions import Self
-from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
+from pydantic import (
+    BaseModel,
+    Field,
+    ConfigDict,
+    field_validator,
+    model_validator,
+    AfterValidator,
+)
 
 
-class TaskModel(BaseModel):
+def make_naive(value: datetime) -> datetime:
+    if value.tzinfo is not None:
+        return value.astimezone(timezone.utc).replace(tzinfo=None)
+    return value
+
+
+NaiveDatetime = Annotated[datetime, AfterValidator(make_naive)]
+StrippedStr = Annotated[str, AfterValidator(lambda v: v.strip())]
+
+
+class TaskBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    
-    title: str = Field(..., min_length=3, description="Short name of the task")
-    description: str = Field(
-        description="A detailed description of what needs to be done"
+
+    title: StrippedStr = Field(..., min_length=3, description="Short name of the task")
+    description: str | None = Field(
+        None, description="A detailed description of what needs to be done"
     )
-    start_time: datetime
-    end_time: datetime
-    tournament_id: int = Field(..., gt=0)
-    status_id: str = Field(..., gt=0)
+    start_time: NaiveDatetime
+    end_time: NaiveDatetime
+    requirements: list[str] = Field(...)
 
-    @field_validator("title")
-    @classmethod
-    def check_title(cls, value: str):
-        return value.strip()
 
-    @field_validator("start_time")
-    @classmethod
-    def start_not_past(cls, value: datetime):
-        if value < datetime.now():
-            raise ValueError("Task cannot start in the past")
-        return value
+class TaskCreate(TaskBase):
 
     @model_validator(mode="after")
     def check_time_logic(self) -> Self:
         if self.end_time <= self.start_time:
             raise ValueError("end_time must be later than start_time")
         return self
+
+
+class TaskUpdate(BaseModel):
+    title: StrippedStr | None = Field(None, min_length=3)
+    description: str | None = None
+    start_time: NaiveDatetime | None = None
+    end_time: NaiveDatetime | None = None
+    requirements: list[str] | None = None
+
+    @model_validator(mode="after")
+    def check_update_dates(self) -> Self:
+        if self.start_time and self.end_time:
+            if self.end_time <= self.start_time:
+                raise ValueError("end_time must be later than start_time")
+        return self
+
+
+class TaskPublic(TaskBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    tournament_id: int = Field(..., gt=0)
+    status_id: str = Field(...)
+
+    @field_validator("requirements", mode="before")
+    @classmethod
+    def transform_requirements(cls, value):
+        if isinstance(value, list) and len(value) > 0 and not isinstance(value[0], str):
+            return [req.name for req in value]
+        return value

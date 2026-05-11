@@ -24,23 +24,28 @@ class SubmissionEvaluation(Base, PKMixin):
     __tablename__ = "evaluations"
     __table_args__ = (UniqueConstraint("submission_id", "jury_id"),)
     submission_id: Mapped[int] = mapped_column(
-        ForeignKey("submissions.team_id"), nullable=False
+        ForeignKey("submissions.team_id", ondelete="CASCADE"), nullable=False
     )
-    jury_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    jury_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
 
     submission: Mapped["Submission"] = relationship(
         back_populates="evaluations", lazy="selectin"
     )
     jury: Mapped["User"] = relationship(lazy="selectin")
     requirement_evaluations: Mapped[list["RequirementEvaluation"]] = relationship(
-        back_populates="evaluation", lazy="selectin"
+        back_populates="evaluation", lazy="selectin", cascade="all, delete-orphan"
     )
+
+    def __repr__(self):
+        return f"<SubmissionEvaluation(id={self.id}, submission_id={self.submission_id}, jury_id={self.jury_id})>"
 
 
 class RequirementEvaluation(Base, PKMixin):
     __tablename__ = "requirement_evaluations"
     evaluation_id: Mapped[int] = mapped_column(
-        ForeignKey("evaluations.id"), nullable=False
+        ForeignKey("evaluations.id", ondelete="CASCADE"), nullable=False
     )
     evaluation: Mapped["SubmissionEvaluation"] = relationship(
         back_populates="requirement_evaluations", lazy="selectin"
@@ -49,3 +54,7 @@ class RequirementEvaluation(Base, PKMixin):
     requirement: Mapped[list["TaskRequirementOption"]] = relationship(
         secondary=evaluation_requirements, lazy="selectin"
     )
+
+    def __repr__(self):
+        requirement_count = len(self.requirement) if "requirement" in self.__dict__ else "?"
+        return f"<RequirementEvaluation(id={self.id}, evaluation_id={self.evaluation_id}, score={self.score}, requirements={requirement_count})>"

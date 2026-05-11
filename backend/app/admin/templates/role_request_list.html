@@ -1,0 +1,101 @@
+{% extends "sqladmin/list.html" %}
+
+{% block model_list_table %}
+<div class="table-responsive">
+    <table class="table card-table table-vcenter text-nowrap">
+        <thead>
+            <tr>
+                <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select all"
+                        id="select-all"></th>
+                <th class="w-1"></th>
+                {% for name in model_view._list_prop_names %}
+                {% set label = model_view._column_labels.get(name, name) %}
+                <th>
+                    {% if name in model_view._sort_fields %}
+                    {% if request.query_params.get("sortBy") == name and request.query_params.get("sort") == "asc" %}
+                    <a href="{{ request.url.include_query_params(sort='desc') }}"><i class="fa-solid fa-arrow-up"></i>
+                        {{
+                        label }}</a>
+                    {% elif request.query_params.get("sortBy") == name and request.query_params.get("sort") == "desc"
+                    %}
+                    <a href="{{ request.url.include_query_params(sort='asc') }}"><i class="fa-solid fa-arrow-down"></i>
+                        {{ label
+                        }}</a>
+                    {% else %}
+                    <a href="{{ request.url.include_query_params(sortBy=name, sort='asc') }}">{{ label }}</a>
+                    {% endif %}
+                    {% else %}
+                    {{ label }}
+                    {% endif %}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in pagination.rows %}
+            <tr>
+                <td>
+                    <input type="hidden" value="{{ get_object_identifier(row) }}">
+                    <input class="form-check-input m-0 align-middle select-box" type="checkbox"
+                        aria-label="Select item">
+                </td>
+                <td class="text-end">
+                    {% if model_view.check_can_view_details(request, row) %}
+                    <a href="{{ model_view._build_url_for('admin:details', request, row) }}" data-bs-toggle="tooltip"
+                        data-bs-placement="top" title="View">
+                        <span class="me-1"><i class="fa-solid fa-eye"></i></span>
+                    </a>
+                    {% endif %}
+                    {% if model_view.check_can_edit(request, row) %}
+                    <a href="{{ model_view._build_url_for('admin:edit', request, row) }}" data-bs-toggle="tooltip"
+                        data-bs-placement="top" title="Edit">
+                        <span class="me-1"><i class="fa-solid fa-pen-to-square"></i></span>
+                    </a>
+                    {% endif %}
+                    {% if model_view.check_can_delete(request, row) %}
+                    <a href="#" data-name="{{ model_view.name }}" data-pk="{{ get_object_identifier(row) }}"
+                        data-url="{{ model_view._url_for_delete(request, row) }}" data-bs-toggle="modal"
+                        data-bs-target="#modal-delete">
+                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                            <span class="me-1"><i class="fa-solid fa-trash"></i></span>
+                        </span>
+                    </a>
+                    {% endif %}
+                    <a href="{{ model_view._url_for_action(request, 'approve-request') }}?pks={{ get_object_identifier(row) }}"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Approve">
+                        <span class="me-1"><i class="fa-solid fa-check"></i></span>
+                    </a>
+                    <a href="{{ model_view._url_for_action(request, 'reject-request') }}?pks={{ get_object_identifier(row) }}"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Reject">
+                        <span class="me-1"><i class="fa-solid fa-times"></i></span>
+                    </a>
+                </td>
+                {% for name in model_view._list_prop_names %}
+                {% set value, formatted_value = model_view.get_list_value(row, name) %}
+                {% if name in model_view._relation_names %}
+                {% if is_list( value ) %}
+                <td>
+                    {% for elem, formatted_elem in zip(value, formatted_value) %}
+                    {% if model_view.show_compact_lists %}
+                    <a href="{{ model_view._build_url_for('admin:details', request, elem) }}">({{ formatted_elem
+                        }})</a>
+                    {% else %}
+                    <a href="{{ model_view._build_url_for('admin:details', request, elem) }}">{{ formatted_elem
+                        }}</a><br />
+                    {% endif %}
+                    {% endfor %}
+                </td>
+                {% else %}
+                <td><a href="{{ model_view._url_for_details_with_prop(request, row, name) }}">{{ formatted_value
+                        }}</a></td>
+                {% endif %}
+                {% else %}
+                <td>{{ formatted_value }}</td>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

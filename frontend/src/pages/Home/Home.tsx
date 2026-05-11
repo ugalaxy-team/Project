@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Hero } from "../../components/Hero";
 import { TournamentSlider } from "./components/TournamentSlider";
-import { toast } from "react-toastify"; // Змінили імпорт
 
 const NotoEmoji = ({ code }: { code: string }) => (
   <img
@@ -38,7 +37,7 @@ export const Home = () => {
           {
             text: (
               <span className="flex items-center gap-2 font-bold group">
-                <NotoEmoji code="1f525" /> {/* 🔥 Fire */}
+                <NotoEmoji code="1f525" />
                 {t("hero.badges.express", "Прояви себе!")}
               </span>
             ),
@@ -48,7 +47,7 @@ export const Home = () => {
           {
             text: (
               <span className="flex items-center gap-2 font-bold group">
-                <NotoEmoji code="1f4a1" /> {/* 💡 Light bulb */}
+                <NotoEmoji code="1f4a1" />
                 {t("hero.badges.idea", "Твоя ідея змінить світ")}
               </span>
             ),
@@ -58,7 +57,7 @@ export const Home = () => {
           {
             text: (
               <span className="flex items-center gap-2 font-bold group">
-                <NotoEmoji code="1f680" /> {/* 🚀 Rocket */}
+                <NotoEmoji code="1f680" />
                 {t("hero.badges.act", "Дій зараз")}
               </span>
             ),
@@ -68,7 +67,7 @@ export const Home = () => {
           {
             text: (
               <span className="flex items-center gap-2 font-bold group">
-                <NotoEmoji code="1f355" /> {/* 🍕 Pizza */}
+                <NotoEmoji code="1f355" />
                 {t("hero.badges.pizza", "Піца, код, перемога")}
               </span>
             ),
@@ -78,7 +77,7 @@ export const Home = () => {
           {
             text: (
               <span className="flex items-center gap-2 font-bold group">
-                <NotoEmoji code="1f918" /> {/* 🤘 Sign of the horns */}
+                <NotoEmoji code="1f918" />
                 {t("hero.badges.be_yourself", "Будь собою!")}
               </span>
             ),
@@ -98,34 +97,6 @@ export const Home = () => {
       />
 
       <TournamentSlider />
-
-      {/* ТИМЧАСОВА КНОПКА ДЛЯ ТЕСТУ ТОСТІВ (видали потім!) */}
-      <button
-        onClick={() => {
-          toast.success("Команду успішно зареєстровано!");
-
-          setTimeout(() => {
-            toast.error("Ой, сервер втомився і впав :(");
-          }, 300);
-
-          setTimeout(() => {
-            // В react-toastify для складного тексту передаємо React-вузол
-            toast.info(
-              <div>
-                <div className="font-bold mb-1">
-                  Турнір розпочнеться за 5 хвилин
-                </div>
-                <div className="text-[13px] opacity-90 leading-tight">
-                  Не забудьте зібратися в Discord каналі.
-                </div>
-              </div>,
-            );
-          }, 600);
-        }}
-        className="fixed bottom-10 left-10 z-[100] bg-primary text-white font-bold px-6 py-3 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all"
-      >
-        Тест Тостів 🍞
-      </button>
 
       <div className="flex-grow w-full max-w-[1320px] mx-auto px-4 md:px-6 pb-16 md:pb-25 relative z-20">
         <motion.div

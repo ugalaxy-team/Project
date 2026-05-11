@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Hero } from "../../components/Hero";
 import { Button } from "../../components/ui/Button";
 
-export const RulesPage: React.FC = () => {
+const RulesPageComponent: React.FC = () => {
   const { t } = useTranslation("rules");
 
   const rules = [
@@ -227,3 +227,5 @@ export const RulesPage: React.FC = () => {
     </div>
   );
 };
+
+export const RulesPage = RulesPageComponent;

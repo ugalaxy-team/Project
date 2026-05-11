@@ -13,11 +13,14 @@ import { cn } from "../../utils/cn";
 
 const PER_PAGE = 15;
 
+// Оновили ключі під новий бекенд (draft, running, finished),
+// але залишили твою логіку та стилі
 const FILTER_IDS: { id: TournamentStatus | "all"; dotColor?: string }[] = [
   { id: "all" },
+  { id: "draft", dotColor: "bg-amber-500" },
   { id: "registration", dotColor: "bg-green-500" },
-  { id: "active", dotColor: "bg-pink-accent" },
-  { id: "completed", dotColor: "bg-text-muted" },
+  { id: "running", dotColor: "bg-pink-accent" },
+  { id: "finished", dotColor: "bg-text-muted" },
 ];
 
 export const TournamentsPage = () => {

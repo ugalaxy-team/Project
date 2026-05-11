@@ -1,167 +1,212 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { RoleRequestPage } from './RoleRequestPage';
-import { requestRole } from '@/api/requests/requestRole';
-import apiClient from '@/api/client';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RoleRequestPage } from "./RoleRequestPage";
+import { requestRole } from "@/api/requests/requestRole";
+import { auth } from "@/firebase";
 
-vi.mock('react-redux', () => ({
+vi.mock("react-redux", () => ({
   useSelector: vi.fn(),
 }));
 
-vi.mock('react-router-dom', () => ({
+vi.mock("react-router-dom", () => ({
   useNavigate: vi.fn(),
 }));
 
-vi.mock('react-hot-toast', () => ({
-  default: {
+vi.mock("sonner", () => ({
+  toast: {
     success: vi.fn(),
     error: vi.fn(),
   },
 }));
 
-vi.mock('@/api/requests/requestRole', () => ({
+vi.mock("@/api/requests/requestRole", () => ({
   requestRole: vi.fn(),
 }));
 
-vi.mock('@/api/client', () => ({
-  default: {
-    get: vi.fn(),
-  },
-}));
-
-vi.mock('@/firebase', () => ({
+vi.mock("@/firebase", () => ({
   auth: {
-    currentUser: { uid: 'mock-user-123' },
+    currentUser: { uid: "mock-user-123" },
   },
 }));
 
-vi.mock('lottie-react', () => ({
+vi.mock("lottie-react", () => ({
   default: () => <div data-testid="lottie-mock" />,
 }));
 
-describe('RoleRequestPage Component', () => {
+describe("RoleRequestPage Component", () => {
   const mockNavigate = vi.fn();
-
-  const mockRoles = [
-    { name: 'admin', display_name: 'Administrator', description: 'Admin role' },
-    { name: 'moderator', display_name: 'Moderator', description: 'Mod role' },
-    { name: 'user', display_name: 'User', description: 'Regular user' },
-  ];
+  let queryClient: QueryClient;
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useNavigate).mockReturnValue(mockNavigate);
-    vi.mocked(apiClient.get).mockResolvedValue({ data: mockRoles });
-  });
+    (auth as { currentUser: any }).currentUser = { uid: "mock-user-123" };
 
-  it('renders loading state initially', () => {
-    vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    render(<RoleRequestPage />);
-
-    expect(screen.getByText('Завантаження ролей...')).toBeInTheDocument();
-  });
-
-  it('fetches and displays roles correctly, filtering out "user"', async () => {
-    vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    render(<RoleRequestPage />);
-    
-    await waitFor(() => {
-      expect(screen.getByText('Administrator')).toBeInTheDocument();
-      expect(screen.getByText('Moderator')).toBeInTheDocument();
-    });
-    
-    expect(screen.queryByText('User')).not.toBeInTheDocument();
-    expect(screen.getByText('Заявка на роль administrator')).toBeInTheDocument();
-  });
-
-  it('shows error toast if role fetching fails', async () => {
-    vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    vi.mocked(apiClient.get).mockRejectedValue(new Error('Network Error'));
-
-    render(<RoleRequestPage />);
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Не вдалося завантажити список ролей');
+    queryClient = new QueryClient({
+      defaultOptions: {
+        mutations: {
+          retry: false,
+        },
+      },
     });
   });
 
-  it('shows error when user is missing on submit', async () => {
+  const renderWithProviders = () => {
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <RoleRequestPage />
+      </QueryClientProvider>,
+    );
+  };
+
+  it("matches snapshot", () => {
+    vi.mocked(useSelector).mockReturnValue({ id: "123" });
+    const { container } = renderWithProviders();
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it("renders correctly with hardcoded organizer role and warning message", () => {
+    vi.mocked(useSelector).mockReturnValue({ id: "123" });
+    renderWithProviders();
+
+    expect(screen.getByText("Заявка на роль Організатора")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Наразі ви можете отримати лише роль Організатора/i),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("lottie-mock")).toBeInTheDocument();
+  });
+
+  it("allows user to type in form fields", () => {
+    vi.mocked(useSelector).mockReturnValue({ id: "123" });
+    renderWithProviders();
+
+    const nameInput = screen.getByLabelText(/ПІБ \*/i);
+    fireEvent.change(nameInput, { target: { value: "Ivan Franko" } });
+
+    expect((nameInput as HTMLInputElement).value).toBe("Ivan Franko");
+  });
+
+  it("shows error toast when user is not in redux store on submit", () => {
     vi.mocked(useSelector).mockReturnValue(null);
-    const { container } = render(<RoleRequestPage />);
+    const { container } = renderWithProviders();
 
-    await waitFor(() => expect(screen.getByText('Administrator')).toBeInTheDocument());
+    fireEvent.submit(container.querySelector("form")!);
 
-    fireEvent.submit(container.querySelector('form')!);
-
-    expect(toast.error).toHaveBeenCalledWith('Користувач не знайдений або не авторизований!');
+    expect(toast.error).toHaveBeenCalledWith(
+      "Користувач не знайдений або не авторизований!",
+      { id: "auth-error" },
+    );
+    expect(requestRole).not.toHaveBeenCalled();
   });
 
-  it('submits form successfully and navigates', async () => {
-    vi.mocked(useSelector).mockReturnValue({ id: '123' });
+  it("returns early and does not submit if auth.currentUser is null", async () => {
+    vi.mocked(useSelector).mockReturnValue({ id: "123" });
+    (auth as { currentUser: any }).currentUser = null;
+
+    const { container } = renderWithProviders();
+    fireEvent.submit(container.querySelector("form")!);
+
+    await waitFor(() => {
+      expect(requestRole).not.toHaveBeenCalled();
+    });
+  });
+
+  it("submits form successfully with all fields and navigates to home", async () => {
+    vi.mocked(useSelector).mockReturnValue({ id: "123" });
     vi.mocked(requestRole).mockResolvedValue(200 as any);
 
-    const { container } = render(<RoleRequestPage />);
+    const { container } = renderWithProviders();
 
-    await waitFor(() => expect(screen.getByText('Administrator')).toBeInTheDocument());
+    fireEvent.change(screen.getByLabelText(/ПІБ \*/i), {
+      target: { value: "Tolka" },
+    });
+    fireEvent.change(screen.getByLabelText(/Email \/ Telegram \*/i), {
+      target: { value: "@tolka" },
+    });
+    fireEvent.change(screen.getByLabelText(/Ваш вік \*/i), {
+      target: { value: "25" },
+    });
+    fireEvent.change(
+      screen.getByLabelText(/Чи маєте релевантний досвід\? \*/i),
+      { target: { value: "Yes" } },
+    );
+    fireEvent.change(
+      screen.getByLabelText(/Чому ви хочете отримати цю роль\? \*/i),
+      { target: { value: "Because" } },
+    );
+    fireEvent.change(
+      screen.getByLabelText(/Що ви плануєте робити на цій ролі\? \*/i),
+      { target: { value: "Work" } },
+    );
 
-    fireEvent.click(screen.getByText('Moderator'));
-
-    fireEvent.change(screen.getByLabelText(/ПІБ \*/i), { target: { value: 'Толька' } });
-    fireEvent.change(screen.getByLabelText(/Email \/ Telegram \*/i), { target: { value: '@tolka_boss' } });
-    fireEvent.change(screen.getByLabelText(/Ваш вік \*/i), { target: { value: '22' } });
-    fireEvent.change(screen.getByLabelText(/Чи маєте релевантний досвід\? \*/i), { target: { value: 'Досвід бути Толькою' } });
-    fireEvent.change(screen.getByLabelText(/Чому ви хочете отримати цю роль\? \*/i), { target: { value: 'Бо я Толька' } });
-    fireEvent.change(screen.getByLabelText(/Що ви плануєте робити на цій ролі\? \*/i), { target: { value: 'Наводити порядки' } });
-
-    fireEvent.submit(container.querySelector('form')!);
+    fireEvent.submit(container.querySelector("form")!);
 
     await waitFor(() => {
-      expect(requestRole).toHaveBeenCalledWith('moderator', { uid: 'mock-user-123' }, '123', [
-        { option_name: 'ПІБ', value: 'Толька' },
-        { option_name: 'Контакти', value: '@tolka_boss' },
-        { option_name: 'Вік', value: '22' },
-        { option_name: 'Досвід', value: 'Досвід бути Толькою' },
-        { option_name: 'Причина', value: 'Бо я Толька' },
-        { option_name: 'Плани', value: 'Наводити порядки' },
-      ]);
+      expect(requestRole).toHaveBeenCalledWith(
+        "organizer",
+        { uid: "mock-user-123" },
+        "123",
+        [
+          { option_name: "ПІБ", value: "Tolka" },
+          { option_name: "Контакти", value: "@tolka" },
+          { option_name: "Вік", value: "25" },
+          { option_name: "Досвід", value: "Yes" },
+          { option_name: "Причина", value: "Because" },
+          { option_name: "Плани", value: "Work" },
+        ],
+      );
     });
 
-    expect(toast.success).toHaveBeenCalledWith('Заявку відправлено! Очікуйте на відповідь');
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(toast.success).toHaveBeenCalledWith(
+      "Заявку відправлено! Очікуйте на відповідь",
+      { id: "role-submit" },
+    );
+    expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 
-  it('shows duplicate error on 400 response', async () => {
-    vi.mocked(useSelector).mockReturnValue({ id: '123' });
+  it("shows duplicate error toast on 400 response with specific detail", async () => {
+    vi.mocked(useSelector).mockReturnValue({ id: "123" });
     vi.mocked(requestRole).mockRejectedValue({
-      response: { status: 400, data: { detail: 'Role requests already exists!' } }
+      response: {
+        status: 400,
+        data: { detail: "Role requests already exists!" },
+      },
     });
 
-    const { container } = render(<RoleRequestPage />);
+    const { container } = renderWithProviders();
 
-    await waitFor(() => expect(screen.getByText('Administrator')).toBeInTheDocument());
-
-    fireEvent.submit(container.querySelector('form')!);
+    fireEvent.submit(container.querySelector("form")!);
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Ви вже подавали заявку на цю роль! Очікуйте на рішення.');
+      expect(toast.error).toHaveBeenCalledWith(
+        "Ви вже подавали заявку на цю роль! Очікуйте на рішення.",
+        { id: "role-error" },
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 
-  it('shows fallback error on API failure', async () => {
-    vi.mocked(useSelector).mockReturnValue({ id: '123' });
-    vi.mocked(requestRole).mockRejectedValue(new Error('Network Error'));
+  it("shows fallback error toast on random API failure", async () => {
+    vi.mocked(useSelector).mockReturnValue({ id: "123" });
+    vi.mocked(requestRole).mockRejectedValue(
+      new Error("Internal Server Error"),
+    );
 
-    const { container } = render(<RoleRequestPage />);
+    const { container } = renderWithProviders();
 
-    await waitFor(() => expect(screen.getByText('Administrator')).toBeInTheDocument());
-
-    fireEvent.submit(container.querySelector('form')!);
+    fireEvent.submit(container.querySelector("form")!);
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Щось пішло не так. Спробуйте пізніше.');
+      expect(toast.error).toHaveBeenCalledWith(
+        "Щось пішло не так. Спробуйте пізніше.",
+        { id: "role-error" },
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 });
