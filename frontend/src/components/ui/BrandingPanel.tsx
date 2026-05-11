@@ -3,12 +3,16 @@ import React from "react";
 interface BrandingPanelProps {
   children?: React.ReactNode;
   className?: string;
+  wavePosition?: "left" | "right";
 }
 
 export const BrandingPanel: React.FC<BrandingPanelProps> = ({
   children,
   className = "",
+  wavePosition = "left",
 }) => {
+  const isLeft = wavePosition === "left";
+
   return (
     <div
       className={`w-[44%] hidden md:flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-hero-from to-hero-to transition-colors duration-500 ${className}`}
@@ -27,7 +31,11 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
         </div>
       </div>
 
-      <div className="absolute top-0 -left-[1px] w-[5vw] h-full z-10 pointer-events-none text-bg-body transition-colors duration-500">
+      <div
+        className={`absolute top-0 w-[5vw] h-full z-10 pointer-events-none text-bg-body transition-colors duration-500 ${
+          isLeft ? "-left-[1px]" : "-right-[1px]"
+        }`}
+      >
         <svg
           viewBox="0 0 100 1440"
           preserveAspectRatio="none"
@@ -35,7 +43,11 @@ export const BrandingPanel: React.FC<BrandingPanelProps> = ({
         >
           <path
             fill="currentColor"
-            d="M50,0 C70,320 70,420 50,720 C30,1020 30,1120 50,1440 L0,1440 L0,0 Z"
+            d={
+              isLeft
+                ? "M50,0 C70,320 70,420 50,720 C30,1020 30,1120 50,1440 L0,1440 L0,0 Z"
+                : "M50,0 C30,320 30,420 50,720 C70,1020 70,1120 50,1440 L100,1440 L100,0 Z"
+            }
           />
         </svg>
       </div>

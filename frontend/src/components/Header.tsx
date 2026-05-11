@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { type RootState } from "../store";
 import { useTranslation } from "react-i18next";
@@ -17,24 +17,40 @@ const NAV_ITEMS = [
   { path: "/contact", key: "nav.contact" },
 ];
 
+const SOLID_BG_ROUTES = ["/profile", "/role-request-form"];
+
 export const Header = () => {
+  const { t } = useTranslation("common");
+  const { pathname } = useLocation();
+  const user = useSelector((state: RootState) => state.user.user);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const { t } = useTranslation("common");
-  const user = useSelector((s: RootState) => s.user.user);
-
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    handleScroll();
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const isAlwaysSolid = useMemo(() => {
+    return (
+      SOLID_BG_ROUTES.includes(pathname) || pathname.startsWith("/tournament/")
+    );
+  }, [pathname]);
+
+  const showSolidBg = isScrolled || isAlwaysSolid;
 
   return (
     <div
       className={cn(
         "w-full fixed top-0 left-0 z-50 transition-all duration-500 border-b",
-        isScrolled
+        showSolidBg
           ? "bg-header-bg backdrop-blur-md shadow-lg py-2 border-white/10 dark:border-white/5"
           : "bg-transparent py-3 md:py-4 border-transparent",
       )}
@@ -64,6 +80,7 @@ export const Header = () => {
               {({ isActive }) => (
                 <>
                   <span className="relative z-10">{t(key)}</span>
+
                   {isActive ? (
                     <motion.div
                       layoutId="activeNav"
@@ -115,6 +132,7 @@ export const Header = () => {
             className="lg:hidden text-white p-1.5 focus:outline-none hover:text-accent transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle mobile menu"
+            aria-expanded={isMobileMenuOpen}
           >
             <svg
               className="w-7 h-7"

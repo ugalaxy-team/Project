@@ -14,7 +14,7 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-bg-body text-text-main font-inter transition-colors duration-300">
-      <BrandingPanel position="left">
+      <BrandingPanel wavePosition="right">
         <Player
           autoplay
           loop
