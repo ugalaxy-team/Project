@@ -27,7 +27,6 @@ const OrganizerPanel = () => {
   const queryClient = useQueryClient();
 
   const [activeTab, setActiveTab] = useState<"tournaments" | "tasks">("tournaments");
-
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -120,7 +119,7 @@ const OrganizerPanel = () => {
     try {
       await deleteMutation.mutateAsync(id);
     } catch (error) {
-      console.error("Помилка при видаленні:", error);
+      console.error(error);
     }
   };
 
@@ -137,15 +136,9 @@ const OrganizerPanel = () => {
   const openTasksTab = (t: Tournament | null) => {
     setSelectedTournament(t);
     if (t) {
-      // Fetch tasks for the selected tournament
       getTasks(t.id)
-        .then((fetchedTasks: Task[]) => {
-          setTasks(fetchedTasks);
-        })
-        .catch((error) => {
-          console.error("Error fetching tasks:", error);
-          setTasks([]);
-        });
+        .then((fetchedTasks: Task[]) => setTasks(fetchedTasks))
+        .catch(() => setTasks([]));
     }
   };
 
@@ -162,7 +155,7 @@ const OrganizerPanel = () => {
         taskData: formData,
       });
     } catch (error) {
-      console.error("Помилка при створенні завдання:", error);
+      console.error(error);
     }
   };
 
@@ -180,19 +173,19 @@ const OrganizerPanel = () => {
         taskData: formData,
       });
     } catch (error) {
-      console.error("Помилка при редагуванні завдання:", error);
+      console.error(error);
     }
   };
 
   const handleDeleteTask = async (taskId: number) => {
-    if (!selectedTournament || !confirm("Ви впевнені, що хочете видалити це завдання?")) return;
+    if (!selectedTournament || !confirm("Видалити завдання?")) return;
     try {
       await deleteTaskMutation.mutateAsync({
         tournamentId: selectedTournament.id,
         taskId: taskId,
       });
     } catch (error) {
-      console.error("Помилка при видаленні завдання:", error);
+      console.error(error);
     }
   };
 
@@ -205,70 +198,68 @@ const OrganizerPanel = () => {
 
   if (!currentUser)
     return (
-      <div className="p-10 text-center font-bold text-slate-500">
-        Завантаження профілю...
+      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
+        <div className="text-center animate-pulse">
+           <div className="w-16 h-16 border-4 border-[#6366f1] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+           <p className="text-xl font-black text-slate-400 uppercase tracking-widest">Профіль...</p>
+        </div>
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans pb-20">
-      <section className="bg-[#6366f1] relative pt-12 pb-28 px-6 overflow-hidden">
-        <div className="max-w-6xl mx-auto relative z-10 text-center">
-          <span className="bg-[#fbbf24] text-slate-900 px-4 py-1.5 rounded-full font-bold text-xs inline-block mb-6 shadow-sm">
-            👋 Привіт, {"Організаторе"}!
+    <div className="min-h-screen bg-[#F8FAFC] pb-32">
+      <section className="bg-gradient-to-br from-[#6366f1] to-[#4f46e5] relative pt-20 pb-40 px-8 overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10 text-center">
+          <span className="bg-[#fbbf24] text-slate-900 px-6 py-2.5 rounded-2xl font-black text-xs inline-block mb-8 shadow-xl uppercase tracking-tighter">
+            ⚡ Привіт Організаторе!
           </span>
-          <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-black tracking-wider mb-4 drop-shadow-md uppercase italic leading-tight">
-            ПАНЕЛЬ ОРГАНІЗАТОРА
+          <h1 className="text-white text-5xl md:text-7xl font-black tracking-tight mb-6 drop-shadow-2xl uppercase italic leading-none">
+            Управління <br className="hidden md:block" /> Подіями
           </h1>
         </div>
-        <div className="absolute -bottom-[1px] left-0 w-full leading-[0]">
-          <svg
-            viewBox="0 0 1440 100"
-            className="h-[40px] md:h-[70px] w-full"
-            preserveAspectRatio="none"
-          >
-            <path
-              fill="#F8FAFC"
-              d="M0,50 C320,0 420,0 720,50 C1020,100 1120,100 1440,50 L1440,100 L0,100 Z"
-            ></path>
+        
+        <div className="absolute -bottom-1 left-0 w-full leading-[0]">
+          <svg viewBox="0 0 1440 120" className="h-[60px] md:h-[100px] w-full fill-[#F8FAFC]" preserveAspectRatio="none">
+            <path d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
           </svg>
         </div>
       </section>
 
-      <div className="max-w-6xl mx-auto px-6 -mt-12 relative z-20">
-        <div className="flex justify-center gap-4 mb-8">
+      <div className="max-w-7xl mx-auto px-8 -mt-24 relative z-20">
+        <div className="flex flex-col md:flex-row justify-center items-center gap-6 mb-12">
           <button
             onClick={() => setActiveTab("tournaments")}
-            className={`px-8 py-3 rounded-2xl font-bold text-sm transition-all shadow-md ${
+            className={`w-full md:w-auto px-12 py-5 rounded-[2rem] font-black text-sm transition-all shadow-2xl flex items-center justify-center gap-3 tracking-widest uppercase ${
               activeTab === "tournaments"
-                ? "bg-[#fbbf24] text-slate-900 scale-105"
-                : "bg-white text-slate-500 hover:bg-gray-50"
+                ? "bg-[#fbbf24] text-slate-900 scale-105 ring-4 ring-[#fbbf24]/20"
+                : "bg-white text-slate-400 hover:text-slate-600 hover:bg-slate-50"
             }`}
           >
-            🏆 МОЇ ТУРНІРИ
+            <span className="text-xl">🏆</span> Турніри
           </button>
           <button
             onClick={() => setActiveTab("tasks")}
-            className={`px-8 py-3 rounded-2xl font-bold text-sm transition-all shadow-md ${
+            className={`w-full md:w-auto px-12 py-5 rounded-[2rem] font-black text-sm transition-all shadow-2xl flex items-center justify-center gap-3 tracking-widest uppercase ${
               activeTab === "tasks"
-                ? "bg-[#fbbf24] text-slate-900 scale-105"
-                : "bg-white text-slate-500 hover:bg-gray-50"
+                ? "bg-[#fbbf24] text-slate-900 scale-105 ring-4 ring-[#fbbf24]/20"
+                : "bg-white text-slate-400 hover:text-slate-600 hover:bg-slate-50"
             }`}
           >
-            📋 КЕРУВАННЯ ЗАВДАННЯМИ
+            <span className="text-xl">📋</span> Завдання
           </button>
         </div>
 
-        <div className="bg-white rounded-[2.5rem] p-6 md:p-10 shadow-xl border border-gray-100">
+        <div className="bg-white rounded-[3rem] p-8 md:p-14 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-slate-100">
           {isLoading ? (
-            <div className="flex flex-col justify-center items-center py-20 gap-4">
-              <div className="animate-spin rounded-full h-14 w-14 border-t-4 border-b-4 border-[#6366f1]"></div>
-              <p className="text-slate-400 font-bold animate-pulse">
-                Завантаження...
-              </p>
+            <div className="flex flex-col justify-center items-center py-32 gap-6">
+              <div className="relative">
+                <div className="w-20 h-20 border-8 border-slate-100 rounded-full"></div>
+                <div className="w-20 h-20 border-8 border-[#6366f1] border-t-transparent rounded-full animate-spin absolute top-0"></div>
+              </div>
+              <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-sm animate-pulse">Оновлення даних...</p>
             </div>
           ) : (
-            <>
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               {activeTab === "tournaments" && (
                 <TournamentsTab
                   tournaments={tournaments}
@@ -295,7 +286,7 @@ const OrganizerPanel = () => {
                   onSwitchTab={() => setActiveTab("tournaments")}
                 />
               )}
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -323,6 +314,7 @@ const OrganizerPanel = () => {
           await updateMutation.mutateAsync({ id, data });
         }}
       />
+      
       <CreateTournamentModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
