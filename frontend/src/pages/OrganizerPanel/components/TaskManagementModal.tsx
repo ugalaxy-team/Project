@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { createPortal } from "react-dom";
 import appConfig from "@/../../shared/app_config.json";
 import { type Tournament } from "./types";
+import DateTimePicker from "@/components/ui/DateTimePicker";
 
 const REQUIREMENT_OPTIONS = appConfig.requirement_options;
 
@@ -52,20 +53,11 @@ const TaskManagementModal = ({
 
   React.useEffect(() => {
     if (isOpen && editingTask) {
-      const formatDateTime = (dateStr: string) => {
-        const date = new Date(dateStr);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        const hours = String(date.getHours()).padStart(2, "0");
-        const minutes = String(date.getMinutes()).padStart(2, "0");
-        return `${year}-${month}-${day}T${hours}:${minutes}`;
-      };
       setFormData({
         title: editingTask.title || "",
         description: editingTask.description || "",
-        start_time: editingTask.start_time ? formatDateTime(editingTask.start_time) : "",
-        end_time: editingTask.end_time ? formatDateTime(editingTask.end_time) : "",
+        start_time: editingTask.start_time || "",
+        end_time: editingTask.end_time || "",
         requirements: editingTask.requirements || [],
       });
     } else if (isOpen) {
@@ -91,6 +83,15 @@ const TaskManagementModal = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => {
+      const newErr = { ...prev };
+      delete newErr[name];
+      return newErr;
+    });
+  };
+
+  const handleDateChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => {
       const newErr = { ...prev };
@@ -182,25 +183,21 @@ const TaskManagementModal = ({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Початок виконання</label>
-              <input
-                type="datetime-local"
-                name="start_time"
+            <div className={`p-1 rounded-2xl transition-colors ${errors.start_time ? 'bg-red-50' : ''}`}>
+              <DateTimePicker 
+                label="Початок виконання"
                 value={formData.start_time}
-                onChange={handleInputChange}
-                className={`w-full p-4 bg-white border ${errors.start_time ? 'border-red-400' : 'border-slate-200'} rounded-2xl text-xs font-bold text-slate-800 outline-none`}
+                onChange={(date) => handleDateChange("start_time", date)}
               />
+              {errors.start_time && <p className="text-[8px] font-black text-red-400 uppercase mt-1 ml-3">{errors.start_time}</p>}
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Дедлайн</label>
-              <input
-                type="datetime-local"
-                name="end_time"
+            <div className={`p-1 rounded-2xl transition-colors ${errors.end_time ? 'bg-red-50' : ''}`}>
+              <DateTimePicker 
+                label="Дедлайн"
                 value={formData.end_time}
-                onChange={handleInputChange}
-                className={`w-full p-4 bg-white border ${errors.end_time ? 'border-red-400' : 'border-slate-200'} rounded-2xl text-xs font-bold text-slate-800 outline-none`}
+                onChange={(date) => handleDateChange("end_time", date)}
               />
+              {errors.end_time && <p className="text-[8px] font-black text-red-400 uppercase mt-1 ml-3">{errors.end_time}</p>}
             </div>
           </div>
 

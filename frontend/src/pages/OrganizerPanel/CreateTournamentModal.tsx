@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { getAllUsers } from "@/api/requests/getAllUsers";
 import { JurySelectionModal } from "./components/JurySelectionModal";
 import { type User } from "./components/types";
+import DateTimePicker from "@/components/ui/DateTimePicker";
 
 interface FormData {
   title: string;
@@ -62,6 +63,10 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: any) => {
     const { name, value } = e.target;
     const isNumber = ["max_teams", "min_people_in_team", "max_people_in_team"].includes(name);
     setFormData(prev => ({ ...prev, [name]: isNumber ? Number(value) : value }));
+  };
+
+  const handleDateChange = (name: string, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const canGoNext = () => {
@@ -146,7 +151,7 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: any) => {
                   value={formData.title}
                   onChange={handleChange}
                   placeholder="Наприклад: Winter Coding Cup 2024"
-                  className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-[#6D72F1] font-bold text-slate-800"
+                  className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-[#6D72F1] font-bold text-slate-800 transition-all"
                 />
               </div>
 
@@ -160,25 +165,27 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: any) => {
                   value={formData.description}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-[#6D72F1] text-slate-700 font-medium"
+                  className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-[#6D72F1] text-slate-700 font-medium transition-all"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-5 bg-white border border-slate-200 rounded-[1.5rem] space-y-4">
+                <div className="p-5 bg-white border border-slate-200 rounded-[1.5rem] space-y-4 shadow-sm">
                   <span className="text-[10px] font-black text-[#6D72F1] uppercase tracking-widest flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                     Реєстрація
                   </span>
                   <div className="space-y-3">
-                    <div className="relative">
-                      <span className="absolute -top-2 left-3 bg-white px-1 text-[8px] font-bold text-slate-400 uppercase">Відкриття</span>
-                      <input name="reg_start" type="datetime-local" value={formData.reg_start} onChange={handleChange} className="w-full p-3 bg-slate-50 rounded-xl text-xs font-bold text-slate-800 border-none outline-none" />
-                    </div>
-                    <div className="relative">
-                      <span className="absolute -top-2 left-3 bg-white px-1 text-[8px] font-bold text-slate-400 uppercase">Закриття</span>
-                      <input name="reg_end" type="datetime-local" value={formData.reg_end} onChange={handleChange} className="w-full p-3 bg-slate-50 rounded-xl text-xs font-bold text-slate-800 border-none outline-none" />
-                    </div>
+                    <DateTimePicker 
+                      label="Відкриття"
+                      value={formData.reg_start}
+                      onChange={(val) => handleDateChange("reg_start", val)}
+                    />
+                    <DateTimePicker 
+                      label="Закриття"
+                      value={formData.reg_end}
+                      onChange={(val) => handleDateChange("reg_end", val)}
+                    />
                   </div>
                 </div>
 
@@ -187,11 +194,12 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: any) => {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                     Початок
                   </span>
-                  <div className="relative pt-2">
-                    <span className="absolute top-0 left-3 bg-white px-1 text-[8px] font-bold text-slate-400 uppercase">Дата та час старту</span>
-                    <input name="start_date" type="datetime-local" value={formData.start_date} onChange={handleChange} className="w-full p-3 bg-slate-50 rounded-xl text-xs font-bold text-slate-800 border-none outline-none" />
-                  </div>
-                  <p className="text-[9px] text-slate-400 font-medium leading-tight">Турнір стане активним автоматично</p>
+                  <DateTimePicker 
+                    label="Дата та час старту"
+                    value={formData.start_date}
+                    onChange={(val) => handleDateChange("start_date", val)}
+                  />
+                  <p className="text-[9px] text-slate-400 font-medium leading-tight pt-1">Турнір розпочнеться автоматично</p>
                 </div>
               </div>
             </div>

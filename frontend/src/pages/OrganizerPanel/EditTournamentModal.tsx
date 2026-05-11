@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { getAllUsers } from "@/api/requests/getAllUsers";
 import { JurySelectionModal } from "./components/JurySelectionModal";
 import { type User } from "./components/types";
+import DateTimePicker from "@/components/ui/DateTimePicker";
 
 interface Tournament {
   id: number;
@@ -82,11 +83,6 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
   const [isJuryModalOpen, setIsJuryModalOpen] = useState(false);
   const [allUsers, setAllUsers] = useState<User[]>([]);
 
-  const formatForInput = (isoString?: string | null) => {
-    if (!isoString) return "";
-    return isoString.substring(0, 16);
-  };
-
   useEffect(() => {
     if (isOpen) {
       getAllUsers().then(setAllUsers).catch(console.error);
@@ -100,9 +96,9 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
         setFormData({
           title: tournament.title || "",
           description: tournament.description || "",
-          start_date: formatForInput(tournament.start_date),
-          reg_start: formatForInput(tournament.reg_start),
-          reg_end: formatForInput(tournament.reg_end),
+          start_date: tournament.start_date || "",
+          reg_start: tournament.reg_start || "",
+          reg_end: tournament.reg_end || "",
           max_teams: tournament.max_teams || 2,
           min_people_in_team: tournament.min_people_in_team || 1,
           max_people_in_team: tournament.max_people_in_team || 5,
@@ -123,6 +119,10 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
     }));
   };
 
+  const handleDateChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const canGoNext = () => {
     if (currentStep === 1) {
       return formData.title.trim() !== "" && formData.description.trim() !== "";
@@ -137,9 +137,9 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
       const dataToSubmit: UpdateTournamentData = {
         title: formData.title,
         description: formData.description,
-        start_date: formData.start_date ? new Date(formData.start_date).toISOString() : null,
-        reg_start: formData.reg_start ? new Date(formData.reg_start).toISOString() : null,
-        reg_end: formData.reg_end ? new Date(formData.reg_end).toISOString() : null,
+        start_date: formData.start_date || null,
+        reg_start: formData.reg_start || null,
+        reg_end: formData.reg_end || null,
         max_teams: formData.max_teams,
         min_people_in_team: formData.min_people_in_team,
         max_people_in_team: formData.max_people_in_team,
@@ -208,23 +208,26 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
                 <div className="p-5 bg-white border border-slate-200 rounded-[1.5rem] space-y-4">
                   <span className="text-[10px] font-black text-[#6D72F1] uppercase tracking-widest block">Реєстрація</span>
                   <div className="space-y-3">
-                    <div className="relative">
-                      <span className="absolute -top-2 left-3 bg-white px-1 text-[8px] font-bold text-slate-400 uppercase">Відкриття</span>
-                      <input name="reg_start" type="datetime-local" value={formData.reg_start} onChange={handleChange} className="w-full p-3 bg-slate-50 rounded-xl text-xs font-bold text-slate-800 outline-none" />
-                    </div>
-                    <div className="relative">
-                      <span className="absolute -top-2 left-3 bg-white px-1 text-[8px] font-bold text-slate-400 uppercase">Закриття</span>
-                      <input name="reg_end" type="datetime-local" value={formData.reg_end} onChange={handleChange} className="w-full p-3 bg-slate-50 rounded-xl text-xs font-bold text-slate-800 outline-none" />
-                    </div>
+                    <DateTimePicker 
+                      label="Відкриття"
+                      value={formData.reg_start}
+                      onChange={(date) => handleDateChange("reg_start", date)}
+                    />
+                    <DateTimePicker 
+                      label="Закриття"
+                      value={formData.reg_end}
+                      onChange={(date) => handleDateChange("reg_end", date)}
+                    />
                   </div>
                 </div>
 
-                <div className="p-5 bg-white border border-slate-200 rounded-[1.5rem] space-y-4">
+                <div className="p-5 bg-white border border-slate-200 rounded-[1.5rem] space-y-4 flex flex-col justify-center">
                   <span className="text-[10px] font-black text-[#6D72F1] uppercase tracking-widest block">Початок</span>
-                  <div className="relative pt-2">
-                    <span className="absolute top-0 left-3 bg-white px-1 text-[8px] font-bold text-slate-400 uppercase">Дата старту</span>
-                    <input name="start_date" type="datetime-local" value={formData.start_date} onChange={handleChange} className="w-full p-3 bg-slate-50 rounded-xl text-xs font-bold text-slate-800 outline-none" />
-                  </div>
+                  <DateTimePicker 
+                    label="Дата старту"
+                    value={formData.start_date}
+                    onChange={(date) => handleDateChange("start_date", date)}
+                  />
                 </div>
               </div>
             </div>
