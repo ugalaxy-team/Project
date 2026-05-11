@@ -3,6 +3,16 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Hero } from "../../components/Hero";
 import { TournamentSlider } from "./components/TournamentSlider";
+import { toast } from "react-toastify"; // Змінили імпорт
+
+const NotoEmoji = ({ code }: { code: string }) => (
+  <img
+    src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${code}/emoji.svg`}
+    alt="emoji"
+    draggable={false}
+    className="w-6 h-6 select-none"
+  />
+);
 
 export const Home = () => {
   const { t } = useTranslation("home");
@@ -26,29 +36,54 @@ export const Home = () => {
         )}
         badges={[
           {
-            text: t("hero.badges.express", "🔥 Прояви себе!"),
+            text: (
+              <span className="flex items-center gap-2 font-bold group">
+                <NotoEmoji code="1f525" /> {/* 🔥 Fire */}
+                {t("hero.badges.express", "Прояви себе!")}
+              </span>
+            ),
             className:
-              "bottom-[35%] left-[2vw] xl:left-[10vw] bg-dark-theme text-white -rotate-6",
+              "bottom-[35%] left-[2vw] xl:left-[10vw] bg-dark-theme text-white -rotate-6 hover:rotate-0 transition-transform duration-300",
           },
           {
-            text: t("hero.badges.idea", "💡 Твоя ідея змінить світ"),
+            text: (
+              <span className="flex items-center gap-2 font-bold group">
+                <NotoEmoji code="1f4a1" /> {/* 💡 Light bulb */}
+                {t("hero.badges.idea", "Твоя ідея змінить світ")}
+              </span>
+            ),
             className:
-              "top-[15%] right-[2vw] xl:right-[8vw] bg-accent text-slate-900 rotate-3 text-[22px]",
+              "top-[15%] right-[2vw] xl:right-[8vw] bg-accent text-slate-900 rotate-3 text-[22px] hover:-rotate-3 transition-transform duration-300",
           },
           {
-            text: t("hero.badges.act", "🚀 Дій зараз"),
+            text: (
+              <span className="flex items-center gap-2 font-bold group">
+                <NotoEmoji code="1f680" /> {/* 🚀 Rocket */}
+                {t("hero.badges.act", "Дій зараз")}
+              </span>
+            ),
             className:
-              "bottom-[20%] right-[4vw] xl:right-[12vw] bg-pink-accent text-white -rotate-3",
+              "bottom-[20%] right-[4vw] xl:right-[12vw] bg-pink-accent text-white -rotate-3 hover:scale-105 transition-transform duration-300",
           },
           {
-            text: t("hero.badges.pizza", "🍕 Піца, код, перемога"),
+            text: (
+              <span className="flex items-center gap-2 font-bold group">
+                <NotoEmoji code="1f355" /> {/* 🍕 Pizza */}
+                {t("hero.badges.pizza", "Піца, код, перемога")}
+              </span>
+            ),
             className:
-              "top-[25%] left-[5vw] xl:left-[12vw] bg-primary text-white rotate-6 border-2 border-white/20",
+              "top-[25%] left-[5vw] xl:left-[12vw] bg-primary text-white rotate-6 border-2 border-white/20 hover:scale-105 transition-transform duration-300",
           },
           {
-            text: t("hero.badges.be_yourself", "🤘 Будь собою!"),
+            text: (
+              <span className="flex items-center gap-2 font-bold group">
+                <NotoEmoji code="1f918" /> {/* 🤘 Sign of the horns */}
+                {t("hero.badges.be_yourself", "Будь собою!")}
+              </span>
+            ),
             className:
-              "bottom-[50%] right-[1vw] xl:right-[5vw] bg-bg-card text-text-main -rotate-12 transition-all duration-300",
+              "bottom-[50%] right-[1vw] xl:right-[5vw] bg-bg-card text-text-main -rotate-12 transition-all duration-300 hover:rotate-0 hover:scale-110",
           },
         ]}
         mascot={{
@@ -63,6 +98,34 @@ export const Home = () => {
       />
 
       <TournamentSlider />
+
+      {/* ТИМЧАСОВА КНОПКА ДЛЯ ТЕСТУ ТОСТІВ (видали потім!) */}
+      <button
+        onClick={() => {
+          toast.success("Команду успішно зареєстровано!");
+
+          setTimeout(() => {
+            toast.error("Ой, сервер втомився і впав :(");
+          }, 300);
+
+          setTimeout(() => {
+            // В react-toastify для складного тексту передаємо React-вузол
+            toast.info(
+              <div>
+                <div className="font-bold mb-1">
+                  Турнір розпочнеться за 5 хвилин
+                </div>
+                <div className="text-[13px] opacity-90 leading-tight">
+                  Не забудьте зібратися в Discord каналі.
+                </div>
+              </div>,
+            );
+          }, 600);
+        }}
+        className="fixed bottom-10 left-10 z-[100] bg-primary text-white font-bold px-6 py-3 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all"
+      >
+        Тест Тостів 🍞
+      </button>
 
       <div className="flex-grow w-full max-w-[1320px] mx-auto px-4 md:px-6 pb-16 md:pb-25 relative z-20">
         <motion.div
@@ -93,7 +156,7 @@ export const Home = () => {
           <div className="relative z-10 shrink-0 mt-2 md:mt-0 w-full sm:w-auto">
             <Link
               to="/role-request-form"
-              className="flex sm:inline-flex items-center justify-center w-full sm:w-auto bg-bg-card text-primary font-quicksand font-bold text-base md:text-lg px-6 py-3 md:px-8 md:py-4 rounded-xl hover:bg-bg-body hover:-translate-y-1 shadow-lg hover:shadow-xl transition-all duration-300 dark:border dark:border-white/5"
+              className="flex sm:inline-flex items-center justify-center w-full sm:w-auto bg-bg-card text-primary font-quicksand font-bold text-base md:text-lg px-6 py-3 md:px-8 md:py-4 rounded-xl hover:bg-bg-body hover:-translate-y-1 shadow-lg hover:shadow-xl transition-all duration-300 dark:border dark:border-white/5 group"
             >
               {t("cta.button", "Отримати роль")}
               <svg
