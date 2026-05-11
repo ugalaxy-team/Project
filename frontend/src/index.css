@@ -4,12 +4,10 @@
 @layer base {
     /* СВІТЛА ТЕМА */
     :root {
-        /* Акценти */
         --color-primary: #6366f1;
         --color-accent: #fbbf24;
         --color-pink-accent: #ec4899;
 
-        /* Блоки та фони */
         --color-hero-from: #6b73ff;
         --color-hero-to: #4c51bf;
         --color-header-bg: rgba(107, 115, 255, 0.95);
@@ -17,7 +15,6 @@
         --color-bg-card: #ffffff;
         --color-dark-theme: #0f172a;
 
-        /* Текст та рамки */
         --color-text-main: #0f172a;
         --color-text-muted: #64748b;
         --color-border: #f1f5f9;
@@ -25,12 +22,10 @@
 
     /* ТЕМНА ТЕМА */
     .dark {
-        /* Акценти (неонові відтінки) */
         --color-primary: #818cf8;
         --color-accent: #fbbf24;
         --color-pink-accent: #f472b6;
 
-        /* Блоки та фони (інвертовані для глибини) */
         --color-hero-from: #1e1b4b;
         --color-hero-to: #0f172a;
         --color-header-bg: rgba(15, 23, 42, 0.95);
@@ -38,10 +33,12 @@
         --color-bg-card: #1e293b;
         --color-dark-theme: #020617;
 
-        /* Текст та рамки (м'який контраст) */
         --color-text-main: #f8fafc;
         --color-text-muted: #94a3b8;
         --color-border: #334155;
+
+        --toastify-color-dark: var(--color-bg-card);
+        --toastify-text-color-dark: var(--color-text-main);
     }
 
     /* Глобальні стилі типографіки та плавні переходи */
