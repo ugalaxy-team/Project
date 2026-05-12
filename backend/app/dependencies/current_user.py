@@ -2,7 +2,6 @@ import asyncio
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from sqlalchemy import select, or_
-from sqlalchemy.orm import selectinload
 from fastapi.security import HTTPBearer
 from firebase_admin import auth
 from firebase_admin.auth import (
@@ -14,15 +13,13 @@ from firebase_admin.auth import (
 )
 
 from .session import SessionDep
-from app.models import User, Tournament
+from app.models import User
 from app.firebase import firebase
 
 
 async def get_or_create_user_from_token(token: dict, session: SessionDep) -> User:
     try:
-        u: auth.UserRecord = await asyncio.to_thread(
-            auth.get_user_by_email, token["email"]
-        )
+        u: auth.UserRecord = await asyncio.to_thread(auth.get_user_by_email, token["email"])
     except auth.UserNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Firebase user not found"
@@ -45,7 +42,7 @@ async def get_or_create_user_from_token(token: dict, session: SessionDep) -> Use
             user = User(firebase_uid=u.uid, full_name=u.display_name, email=u.email)
             session.add(user)
             await session.commit()
-            user = await get_user(u.uid, session)
+            await session.refresh(user)
             return user
 
 
@@ -60,7 +57,6 @@ async def get_current_user(
         else:
             token = auth.verify_id_token(token, firebase)
         user = await get_or_create_user_from_token(token, session)
-        user = await get_user(user.id, session)
     except (
         ValueError,
         InvalidIdTokenError,
@@ -86,31 +82,6 @@ async def get_user(identifier: str | int, session: SessionDep):
         statement = select(User).where(User.id == identifier)
     else:
         raise ValueError("Wrong user identifier type")
-    
-    # Eager load all relationships needed for CurrentUser response
-    # Load created_tournaments with their nested relationships
-    statement = statement.options(
-        selectinload(User.created_tournaments).selectinload(Tournament.juries),
-        selectinload(User.created_tournaments).selectinload(Tournament.teams),
-        selectinload(User.created_tournaments).selectinload(Tournament.tasks),
-        selectinload(User.created_tournaments).selectinload(Tournament.status),
-        selectinload(User.created_tournaments).selectinload(Tournament.creator),
-        # Load evaluates_in tournaments with their nested relationships
-        selectinload(User.evaluates_in).selectinload(Tournament.juries),
-        selectinload(User.evaluates_in).selectinload(Tournament.teams),
-        selectinload(User.evaluates_in).selectinload(Tournament.tasks),
-        selectinload(User.evaluates_in).selectinload(Tournament.status),
-        selectinload(User.evaluates_in).selectinload(Tournament.creator),
-        # Load participates_in tournaments with their nested relationships
-        selectinload(User.participates_in).selectinload(Tournament.juries),
-        selectinload(User.participates_in).selectinload(Tournament.teams),
-        selectinload(User.participates_in).selectinload(Tournament.tasks),
-        selectinload(User.participates_in).selectinload(Tournament.status),
-        selectinload(User.participates_in).selectinload(Tournament.creator),
-        # Load other top-level relationships
-        selectinload(User.roles),
-        selectinload(User.notifications)
-    )
     user = (await session.execute(statement)).scalar()
 
     if not user:

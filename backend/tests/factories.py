@@ -46,11 +46,12 @@ class BaseOptionFactory(BaseFactory):
     name = Faker("name")
     display_name = factory.LazyAttribute(lambda f: f.name.upper())
 
+
 class BaseDatetimeFactory(BaseFactory):
     class Meta:
         abstract = True
 
-    created_at = factory.Faker('date_time')
+    created_at = factory.Faker("date_time")
     updated_at = factory.LazyAttribute(lambda o: o.created_at + datetime.timedelta(hours=1))
 
 
@@ -188,7 +189,9 @@ class JuryAssignmentStatusOptionFactory(BaseOptionFactory):
     class Meta:
         model = JuryAssignmentStatusOption
 
-    name = factory.Iterator([option["name"] for option in settings.JURY_ASSIGNMENT_STATUS_OPTIONS])
+    name = factory.Iterator(
+        [option["name"] for option in settings.JURY_ASSIGNMENT_STATUS_OPTIONS]
+    )
     display_name = factory.LazyAttribute(
         lambda status: next(
             option["display_name"]
@@ -283,7 +286,9 @@ class JuryAssignmentFactory(BaseDatetimeFactory):
     submission = factory.SubFactory(SubmissionFactory)
     task = factory.SelfAttribute("submission.task")
     jury = factory.SubFactory(UserFactory)
-    status_id = factory.Iterator([option["name"] for option in settings.JURY_ASSIGNMENT_STATUS_OPTIONS])
+    status_id = factory.Iterator(
+        [option["name"] for option in settings.JURY_ASSIGNMENT_STATUS_OPTIONS]
+    )
 
     @classmethod
     def _adjust_kwargs(cls, **kwargs):

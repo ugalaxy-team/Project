@@ -13,8 +13,10 @@ class CriterionScoreBase(BaseModel):
     criterion_id: int = Field(..., gt=0)
     score: int = Field(..., ge=0)
 
+
 class CriterionScoreCreate(CriterionScoreBase):
     pass
+
 
 class CriterionScorePublic(CriterionScoreBase):
     id: int
@@ -23,8 +25,10 @@ class CriterionScorePublic(CriterionScoreBase):
 class SubmissionEvaluationBase(BaseModel):
     comment: str | None = None
 
+
 class SubmissionEvaluationCreate(SubmissionEvaluationBase):
     criterion_scores: list[CriterionScoreCreate] = Field([], min_length=1)
+
 
 class SubmissionEvaluationUpdate(SubmissionEvaluationBase):
     comment: str | None = None
@@ -47,6 +51,7 @@ class JuryAssignmentStatusPublic(BaseModel):
     name: str
     display_name: str
 
+
 class JuryAssignmentBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -56,11 +61,13 @@ class JuryAssignmentBase(BaseModel):
     jury_id: int
     status_id: str
 
+
 class JuryAssignmentPublic(JuryAssignmentBase):
     status: JuryAssignmentStatusPublic
     submission: SubmissionPublic
     task: TaskPublic
     evaluation: SubmissionEvaluationPublic | None = None
+
 
 class EvaluationLeaderboardEntry(BaseModel):
     submission_id: int

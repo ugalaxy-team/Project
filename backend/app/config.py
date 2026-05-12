@@ -123,7 +123,9 @@ class Settings(BaseSettings):
 
     @property
     def JURY_ASSIGNMENT_STATUS_OPTIONS(self) -> list[dict[str, Any]]:
-        return [status.model_dump() for status in self.SHARED_APP_CONFIG.jury_assignment_statuses]
+        return [
+            status.model_dump() for status in self.SHARED_APP_CONFIG.jury_assignment_statuses
+        ]
 
     @property
     def NEWS_CATEGORY_OPTIONS(self) -> list[dict[str, Any]]:

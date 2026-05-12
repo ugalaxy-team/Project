@@ -1,5 +1,10 @@
 from .base import Base
-from .evaluation import JuryAssignment, JuryAssignmentStatusOption, CriterionScore, SubmissionEvaluation
+from .evaluation import (
+    JuryAssignment,
+    JuryAssignmentStatusOption,
+    CriterionScore,
+    SubmissionEvaluation,
+)
 from .news import News, NewsCattegory
 from .notification import Notification
 from .role_request import RoleRequest, RoleRequestInfo, RoleRequestInfoOption

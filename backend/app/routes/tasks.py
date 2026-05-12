@@ -1,11 +1,12 @@
 from fastapi import status, HTTPException
 from fastapi.routing import APIRouter
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from app.config import settings
 from app.dependencies import SessionDep
-from app.models import Task
-from app.schemas import TaskCreate, TaskUpdate, TaskPublic
+from app.models import Task, Submission, SubmissionUrl, Team
+from app.schemas import TaskCreate, TaskUpdate, TaskPublic, SubmissionCreate, SubmissionModel
 from app.utils import TaskStatus, update_tasks_status
 from app.utils import get_requirements, get_task
 from app.dependencies import current_user_dependency
@@ -108,3 +109,27 @@ async def delete_task(task_id: int, session: SessionDep):
 
     await session.delete(task)
     await session.commit()
+
+
+@router.post(
+    "/{task_id}/submissions/",
+    response_model=SubmissionModel,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_submission(
+    tournament_id: int, task_id: int, submission_data: SubmissionCreate, session: SessionDep
+):
+    team = await session.get(Team, submission_data.team_id)
+    if not team:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Team not found")
+
+    new_submission = Submission(team_id=submission_data.team_id, task_id=task_id)
+
+    for item in submission_data.urls:
+        new_submission.urls.append(SubmissionUrl(url_id=item.url_id, value=item.value))
+
+    session.add(new_submission)
+    await session.commit()
+    await session.refresh(new_submission, ["urls"])
+
+    return new_submission

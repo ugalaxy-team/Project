@@ -38,6 +38,7 @@ class UserUpdate(UserBase):
 
 class UserMinimalPublic(UserBase):
     """Minimal user schema without circular relationships for use in nested contexts"""
+
     id: int
     email: EmailStr
     firebase_uid: str
@@ -56,7 +57,7 @@ class UserPublic(UserBase):
     github: str | None
     discord: str | None
     is_jury: bool
-    evaluates_in: list['TournamentPublic']
+    evaluates_in: list["TournamentPublic"]
 
 
 class UserModel(UserBase):

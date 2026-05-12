@@ -14,7 +14,9 @@ class JuryAssignmentStatusOption(Base, OptionMixin):
     )
 
     def __repr__(self):
-        return f"<JuryAssignmentStatusOption(name={self.name}, display_name={self.display_name})>"
+        return (
+            f"<JuryAssignmentStatusOption(name={self.name}, display_name={self.display_name})>"
+        )
 
 
 class JuryAssignment(Base, PKMixin, DatetimeMixin):
@@ -49,7 +51,7 @@ class JuryAssignment(Base, PKMixin, DatetimeMixin):
 
 class SubmissionEvaluation(Base, PKMixin, DatetimeMixin):
     __tablename__ = "evaluations"
-    __table_args__ = (UniqueConstraint('jury_id', 'submission_id'),)
+    __table_args__ = (UniqueConstraint("jury_id", "submission_id"),)
 
     assignment_id: Mapped[int] = mapped_column(
         ForeignKey("jury_assignments.id", ondelete="CASCADE"), nullable=False

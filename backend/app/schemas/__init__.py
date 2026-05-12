@@ -7,7 +7,7 @@ from .evaluation import (
     JuryAssignmentPublic,
     SubmissionEvaluationCreate,
     SubmissionEvaluationPublic,
-    SubmissionEvaluationUpdate
+    SubmissionEvaluationUpdate,
 )
 from .news import NewsPublic
 from .notification import NotificationPublic, NotificationCreate
@@ -46,7 +46,7 @@ from .tournament import (
     TournamentCreate,
     TournamentPublic,
     TournamentStatusOptionModel,
-    TournamentPublicMinimal
+    TournamentPublicMinimal,
 )
 from .user import UserModel, UserPublic, UserUpdate, UserCreate, CurrentUser, UserMinimalPublic
 

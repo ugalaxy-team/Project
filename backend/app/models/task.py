@@ -115,7 +115,9 @@ class TaskEvaluationCategory(Base, PKMixin):
     )
     name: Mapped[str]
 
-    task: Mapped["Task"] = relationship(back_populates="evaluation_categories", lazy="selectin")
+    task: Mapped["Task"] = relationship(
+        back_populates="evaluation_categories", lazy="selectin"
+    )
     criteria: Mapped[list["TaskEvaluationCriterion"]] = relationship(
         back_populates="category", lazy="selectin", cascade="all, delete-orphan"
     )
