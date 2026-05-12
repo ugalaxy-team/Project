@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,41 +6,17 @@ import { io, Socket } from "socket.io-client";
 import { onIdTokenChanged } from "firebase/auth";
 import { auth } from "./firebase";
 import { useNotificationsSocket } from "./hooks/useNotificationsSocket";
-import { MainLayout } from "./components/MainLayout";
-import ProtectedRoute from "./routers/ProtectedRoute/ProtectedRoute.tsx";
-import { Home } from "./pages/Home/Home";
-import { Profile } from "./pages/Profile/Profile";
-import { TournamentsPage } from "./pages/TournamentsPage/TournamentsPage";
-import { TournamentPage } from "./pages/TournamentPage/TournamentPage";
-import { RoleRequestPage } from "./pages/GetRole/RoleRequestPage";
-import { RegistrationPage } from "./pages/RegistrationPage/RegistrationPage";
-import { ContactPage } from "./pages/Contact/Contact";
-import { AboutUs } from "./pages/AboutUs/AboutUs";
-import { SupportPage } from "./pages/SupportPage/SupportPage";
-import { FaqPage } from "./pages/FaqPage/FaqPage";
-import { RulesPage } from "./pages/Rules/Rules";
-import { Page404 } from "./pages/Page404/Page404";
-import { AuthPage } from "./pages/Auth/AuthPage";
-import { ForgotPassword } from "./pages/Auth/ForgotPassword";
-import SignOut from "./pages/Auth/SignOut";
+import { Router } from "./routers/Router";
 
 const COOLDOWN_TIME = 3 * 60 * 1000;
-
-const ScrollToTop = () => {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-};
 
 export const App = () => {
   const { t } = useTranslation("common");
   const [socket, setSocket] = useState<Socket | null>(null);
   const [toastTheme, setToastTheme] = useState<"colored" | "dark">("colored");
 
-  const lastErrorTime = useRef<number>(0);
-  const wasError = useRef<boolean>(false);
+  const lastErrorTime = useRef(0);
+  const wasError = useRef(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -106,7 +81,7 @@ export const App = () => {
             toast.error(
               <div>
                 <div className="font-bold mb-1">
-                  {t("errors.socket", "Проблеми з сервером :(")}
+                  {t("errors.socket")}
                 </div>
                 <div className="text-[13px] opacity-90 leading-tight">
                   Сповіщення тимчасово не працюють
@@ -157,53 +132,7 @@ export const App = () => {
         theme={toastTheme}
       />
 
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/tournaments" element={<TournamentsPage />} />
-            <Route path="/tournament/:id" element={<TournamentPage />} />
-            <Route
-              path="/role-request-form"
-              element={
-                <ProtectedRoute>
-                  <RoleRequestPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/support" element={<SupportPage />} />
-            <Route path="/faq" element={<FaqPage />} />
-            <Route path="/rules" element={<RulesPage />} />
-            <Route path="*" element={<Page404 />} />
-          </Route>
-
-          <Route path="/auth/">
-            <Route index element={<AuthPage />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="sign-out" element={<SignOut />} />
-          </Route>
-
-          <Route
-            path="/tournament/:id/register"
-            element={
-              <ProtectedRoute>
-                <RegistrationPage />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+      <Router />
     </>
   );
 };

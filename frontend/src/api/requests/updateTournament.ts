@@ -1,4 +1,5 @@
 import apiClient from "../client";
+import { getAuth } from "firebase/auth";
 
 interface UpdateTournamentData {
   title?: string;
@@ -14,10 +15,21 @@ export const updateTournament = async (
   data: UpdateTournamentData,
 ) => {
   try {
-    const response = await apiClient.patch(
-      `/tournaments/${tournamentId}`,
-      data,
-    );
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error("Користувач не авторизований");
+    }
+
+    const token = await user.getIdToken();
+
+    const response = await apiClient.patch(`/tournaments/${tournamentId}`,data,{
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
     return response.data;
   } catch (e) {

@@ -19,6 +19,7 @@ import { OrganizerPanel } from "@/pages/OrganizerPanel/OrganizerPanel";
 import { NewsPage } from "@/pages/NewsPage/NewsPage";
 import JuryPanel from "@/pages/JuryPanel/JuryPanel";
 import EvaluateTournamentPage from "@/pages/JuryPanel/EvaluateTournamentPage";
+import { RegistrationPage } from "@/pages/RegistrationPage/RegistrationPage";
 
 export const Router = () => {
   return (
@@ -36,6 +37,16 @@ export const Router = () => {
           />
           <Route path="/tournaments" element={<TournamentsPage />} />
           <Route path="/tournament/:id" element={<TournamentPage />} />
+
+          <Route
+            path="/tournament/:id/register"
+            element={
+              <ProtectedRoute>
+                <RegistrationPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/role-request-form"
             element={
