@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
 interface LookingForTeamModalProps {
@@ -23,10 +23,7 @@ export const LookingForTeamModal = ({
 
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all">
-      {/* Container */}
       <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in duration-300">
-        
-        {/* Header Section */}
         <div className="bg-[#6D72F1] p-8 text-white relative">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-black uppercase tracking-tight flex items-center gap-3">
@@ -55,8 +52,6 @@ export const LookingForTeamModal = ({
             </button>
           </div>
         </div>
-
-        {/* Content Section */}
         <div className="p-10 bg-[#FBFBFF] text-center">
           <div className="w-20 h-20 bg-[#6D72F1]/10 text-[#6D72F1] rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-inner">
             <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,8 +66,6 @@ export const LookingForTeamModal = ({
           <p className="text-slate-500 font-medium mb-8 leading-relaxed">
             Зв'яжись з нами — ми допоможемо тобі знайти однодумців та приєднатися до турніру вже сьогодні!
           </p>
-
-          {/* Action Buttons */}
           <div className="space-y-3">
             <a
               href="/contact"
@@ -88,13 +81,6 @@ export const LookingForTeamModal = ({
               Закрити
             </button>
           </div>
-        </div>
-
-        {/* Footer Info */}
-        <div className="py-4 bg-white border-t border-slate-50 text-center">
-          <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.15em]">
-            Наша команда готова допомогти тобі 24/7
-          </p>
         </div>
       </div>
     </div>,
