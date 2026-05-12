@@ -1,6 +1,9 @@
-# Tournament platform
-This project was created as a tournament submission for the **Code4Future 2026** team programming competition organized by **Star for Life**.
-
+<h1 align="center">English documentation</h1>
+<p align="center">
+  <a href="./README.md">
+    <img src="https://img.shields.io/badge/⬅_Back_to_Documentation-grey?style=for-the-badge">
+  </a>
+</p>
 
 ## Project overview
 
@@ -56,7 +59,7 @@ git clone <repository-url>
 cd Project
 ```
 
-### 2. Environment file (optional but recommended)
+### 2. Environment file
 
 ```bash
 cp .env.example .env
