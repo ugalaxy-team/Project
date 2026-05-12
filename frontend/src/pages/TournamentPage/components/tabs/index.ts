@@ -1,3 +1,3 @@
 export { DescriptionTab } from "./DescriptionTab";
-export { PlaceholderTab } from "./PlaceholderTab";
+export { CalendarTab } from "./CalendarTab";
 export { TeamsTab } from "./TeamsTab";

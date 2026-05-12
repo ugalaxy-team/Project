@@ -8,9 +8,10 @@ import {
 import type { TabConfig, StatusConfig } from "./types";
 
 export const TABS: TabConfig[] = [
-  { id: "desc", label: "Опис завдання" },
+  { id: "desc", label: "Опис турінра" },
+  { id: "task_desc", label: "Опис завдання"},
   { id: "teams", label: "Команди" },
-  { id: "results", label: "Результати" },
+  { id: "calendar", label: "Календар" },
 ];
 
 const [draftStatus, registrationStatus, runningStatus, finishedStatus] =
