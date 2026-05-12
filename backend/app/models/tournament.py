@@ -42,13 +42,6 @@ class Tournament(Base, PKMixin):
     teams: Mapped[list["Team"]] = relationship(
         back_populates="tournament", lazy="selectin", cascade="all, delete-orphan"
     )
-    tasks: Mapped[list["Task"]] = relationship(
-        "Task",
-        back_populates="tournament",
-        foreign_keys="Task.tournament_id",
-        lazy="selectin",
-        cascade="all, delete-orphan",
-    )
     submissions: Mapped[list["Submission"]] = relationship(
         "Submission",
         secondary=lambda: Team.__table__,
@@ -56,6 +49,13 @@ class Tournament(Base, PKMixin):
         secondaryjoin=lambda: Team.id == Submission.team_id,
         viewonly=True,
         lazy="selectin",
+    )
+    tasks: Mapped[list["Task"]] = relationship(
+        "Task",
+        back_populates="tournament",
+        foreign_keys="Task.tournament_id",
+        lazy="selectin",
+        cascade="all, delete-orphan",
     )
     juries: Mapped[list["User"]] = relationship(
         back_populates="evaluates_in", lazy="selectin", secondary=tournament_juries

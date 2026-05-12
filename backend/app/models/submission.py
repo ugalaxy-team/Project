@@ -9,14 +9,21 @@ class Submission(Base):
     team_id: Mapped[int] = mapped_column(
         ForeignKey("teams.id", ondelete="CASCADE"), primary_key=True
     )
+    task_id: Mapped[int] = mapped_column(
+        ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False
+    )
 
     team: Mapped["Team"] = relationship(
         back_populates="submission", single_parent=True, lazy="selectin"
     )
+    task: Mapped["Task"] = relationship(lazy="selectin")
     urls: Mapped[list["SubmissionUrl"]] = relationship(
         back_populates="submission", lazy="selectin", cascade="all, delete-orphan"
     )
     evaluations: Mapped[list["SubmissionEvaluation"]] = relationship(
+        back_populates="submission", cascade="all, delete-orphan"
+    )
+    assignments: Mapped[list["JuryAssignment"]] = relationship(
         back_populates="submission", cascade="all, delete-orphan", lazy="selectin"
     )
 
@@ -32,22 +39,17 @@ class SubmissionUrl(Base):
     url_id: Mapped[int] = mapped_column(
         ForeignKey("submission_url_options.name", ondelete="CASCADE"), primary_key=True
     )
+    value: Mapped[str]
 
-    submission: Mapped["Submission"] = relationship(
-        back_populates="urls", lazy="selectin"
-    )
+    submission: Mapped["Submission"] = relationship(back_populates="urls", lazy="selectin")
     url: Mapped["SubmissionUrlOption"] = relationship(lazy="selectin")
 
     def __repr__(self):
-        return (
-            f"<SubmissionUrl(submission_id={self.submission_id}, url_id={self.url_id})>"
-        )
+        return f"<SubmissionUrl(submission_id={self.submission_id}, url_id={self.url_id})>"
 
 
 class SubmissionUrlOption(Base, OptionMixin):
     __tablename__ = "submission_url_options"
 
     def __repr__(self):
-        return (
-            f"<SubmissionUrlOption(name={self.name}, display_name={self.display_name})>"
-        )
+        return f"<SubmissionUrlOption(name={self.name}, display_name={self.display_name})>"

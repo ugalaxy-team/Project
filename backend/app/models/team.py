@@ -19,17 +19,14 @@ class Team(Base, PKMixin):
         ForeignKey("team_members.id", ondelete="CASCADE"), nullable=True
     )
 
-    tournament: Mapped["Tournament"] = relationship(
-        back_populates="teams", lazy="selectin"
-    )
+    tournament: Mapped["Tournament"] = relationship(back_populates="teams", lazy="selectin")
     members: Mapped[list["TeamMember"]] = relationship(
         back_populates="team",
         foreign_keys="TeamMember.team_id",
         cascade="all, delete-orphan",
-        lazy="selectin",
     )
     captain: Mapped["TeamMember"] = relationship(
-        "TeamMember", foreign_keys="Team.captain_id", lazy="selectin", post_update=True
+        "TeamMember", foreign_keys="Team.captain_id", post_update=True
     )
 
     submission: Mapped["Submission"] = relationship(
@@ -48,9 +45,7 @@ class TeamMember(Base, PKMixin):
     telegram: Mapped[str] = mapped_column(nullable=False)
     educational_institution: Mapped[Optional[str]] = mapped_column(nullable=True)
     team_id: Mapped[int] = mapped_column(
-        ForeignKey(
-            "teams.id", use_alter=True, name="fk_teammember_team", ondelete="CASCADE"
-        )
+        ForeignKey("teams.id", use_alter=True, name="fk_teammember_team", ondelete="CASCADE")
     )
     # This field exists so we can impose contraints related to it
     tournament_id: Mapped[int] = mapped_column(
@@ -59,9 +54,7 @@ class TeamMember(Base, PKMixin):
 
     __table_args__ = (
         UniqueConstraint("tournament_id", "email", name="uq_tournament_member_email"),
-        UniqueConstraint(
-            "tournament_id", "telegram", name="uq_tournament_member_telegram"
-        ),
+        UniqueConstraint("tournament_id", "telegram", name="uq_tournament_member_telegram"),
         UniqueConstraint("team_id", "email", name="uq_team_member_email"),
         UniqueConstraint("team_id", "telegram", name="uq_team_member_telegram"),
     )

@@ -19,14 +19,15 @@ class TaskBase(BaseModel):
     end_time: datetime
     requirements: list[str] = Field(...)
 
-
-class TaskCreate(TaskBase):
     @field_validator("title")
     @classmethod
     def check_title(cls, value: str):
         if not value.strip():
             raise ValueError("Title cannot be empty")
         return value.strip()
+
+
+class TaskCreate(TaskBase):
     @field_validator("start_time")
     @classmethod
     def start_not_past(cls, value: datetime):
@@ -72,3 +73,34 @@ class TaskPublic(TaskBase):
         if isinstance(value, list) and len(value) > 0 and not isinstance(value[0], str):
             return [req.name for req in value]
         return value
+
+
+class TaskEvaluationCategoryCreate(BaseModel):
+    name: str
+
+
+class TaskEvaluationCategoryPublic(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    task_id: int
+    name: str
+    criteria: list["TaskEvaluationCriterionPublic"] = []
+
+
+class TaskEvaluationCriterionCreate(BaseModel):
+    name: str
+    description: str | None = None
+    weight: int = 1
+    max_score: int = 10
+
+
+class TaskEvaluationCriterionPublic(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    category_id: int
+    name: str
+    description: str | None
+    weight: int
+    max_score: int

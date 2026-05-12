@@ -52,6 +52,20 @@
       "display_name": "Evaluated"
     }
   ],
+  "jury_assignment_statuses": [
+    {
+      "name": "assigned",
+      "display_name": "Assigned"
+    },
+    {
+      "name": "submitted",
+      "display_name": "Submitted"
+    },
+    {
+      "name": "evaluated",
+      "display_name": "Evaluated"
+    }
+  ],
   "categories": [
     {
       "name": "Languages",
@@ -174,188 +188,6 @@
       "name": "education",
       "display_name": "Освіта",
       "categoryColor": "bg-teal-100 text-teal-700"
-    }
-  ],
-  "requirement_options": [
-    {
-      "name": "Python",
-      "display_name": "Python",
-      "category_id": "Languages"
-    },
-    {
-      "name": "JavaScript",
-      "display_name": "JavaScript",
-      "category_id": "Languages"
-    },
-    {
-      "name": "TypeScript",
-      "display_name": "TypeScript",
-      "category_id": "Languages"
-    },
-    {
-      "name": "Java",
-      "display_name": "Java",
-      "category_id": "Languages"
-    },
-    {
-      "name": "C#",
-      "display_name": "C#",
-      "category_id": "Languages"
-    },
-    {
-      "name": "Go",
-      "display_name": "Go",
-      "category_id": "Languages"
-    },
-    {
-      "name": "Rust",
-      "display_name": "Rust",
-      "category_id": "Languages"
-    },
-    {
-      "name": "FastAPI",
-      "display_name": "FastAPI",
-      "category_id": "Frameworks"
-    },
-    {
-      "name": "Django",
-      "display_name": "Django",
-      "category_id": "Frameworks"
-    },
-    {
-      "name": "Flask",
-      "display_name": "Flask",
-      "category_id": "Frameworks"
-    },
-    {
-      "name": "Express",
-      "display_name": "Express",
-      "category_id": "Frameworks"
-    },
-    {
-      "name": "Spring Boot",
-      "display_name": "Spring Boot",
-      "category_id": "Frameworks"
-    },
-    {
-      "name": "React",
-      "display_name": "React",
-      "category_id": "JS Frameworks"
-    },
-    {
-      "name": "Vue",
-      "display_name": "Vue",
-      "category_id": "JS Frameworks"
-    },
-    {
-      "name": "Angular",
-      "display_name": "Angular",
-      "category_id": "JS Frameworks"
-    },
-    {
-      "name": "Next.js",
-      "display_name": "Next.js",
-      "category_id": "JS Frameworks"
-    },
-    {
-      "name": "Redux",
-      "display_name": "Redux",
-      "category_id": "State Management"
-    },
-    {
-      "name": "Zustand",
-      "display_name": "Zustand",
-      "category_id": "State Management"
-    },
-    {
-      "name": "Recoil",
-      "display_name": "Recoil",
-      "category_id": "State Management"
-    },
-    {
-      "name": "PostgreSQL",
-      "display_name": "PostgreSQL",
-      "category_id": "SQL"
-    },
-    {
-      "name": "MySQL",
-      "display_name": "MySQL",
-      "category_id": "SQL"
-    },
-    {
-      "name": "SQLite",
-      "display_name": "SQLite",
-      "category_id": "SQL"
-    },
-    {
-      "name": "MongoDB",
-      "display_name": "MongoDB",
-      "category_id": "NoSQL"
-    },
-    {
-      "name": "Redis",
-      "display_name": "Redis",
-      "category_id": "NoSQL"
-    },
-    {
-      "name": "Firebase",
-      "display_name": "Firebase",
-      "category_id": "NoSQL"
-    },
-    {
-      "name": "Pinecone",
-      "display_name": "Pinecone",
-      "category_id": "Vector DB"
-    },
-    {
-      "name": "Weaviate",
-      "display_name": "Weaviate",
-      "category_id": "Vector DB"
-    },
-    {
-      "name": "Docker",
-      "display_name": "Docker",
-      "category_id": "DevOps"
-    },
-    {
-      "name": "Kubernetes",
-      "display_name": "Kubernetes",
-      "category_id": "DevOps"
-    },
-    {
-      "name": "GitHub Actions",
-      "display_name": "GitHub Actions",
-      "category_id": "DevOps"
-    },
-    {
-      "name": "AWS",
-      "display_name": "AWS",
-      "category_id": "Cloud"
-    },
-    {
-      "name": "Google Cloud",
-      "display_name": "Google Cloud",
-      "category_id": "Cloud"
-    },
-    {
-      "name": "Azure",
-      "display_name": "Azure",
-      "category_id": "Cloud"
-    },
-    {
-      "name": "Prometheus",
-      "display_name": "Prometheus",
-      "category_id": "Monitoring"
-    },
-    {
-      "name": "Grafana",
-      "display_name": "Grafana",
-      "category_id": "Monitoring"
-    },
-    {
-      "name": "ELK Stack",
-      "display_name": "ELK Stack",
-      "category_id": "Monitoring"
     }
   ]
 }

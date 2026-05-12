@@ -45,7 +45,6 @@ class UserMinimalPublic(UserBase):
     telegram: str | None
     github: str | None
     discord: str | None
-    is_jury: bool
 
 
 class UserPublic(UserBase):

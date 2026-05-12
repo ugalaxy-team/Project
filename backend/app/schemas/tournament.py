@@ -44,12 +44,8 @@ class TournamentBase(BaseModel):
     max_people_in_team: int = Field(..., gt=0)
     max_teams: int = Field(..., gt=0)
 
-
-class TournamentCreate(TournamentBase):
-    juries: list[int | str] = Field(..., description="Jury ids")
-
     @model_validator(mode="after")
-    def validate_dates(self) -> "TournamentCreate":
+    def validate_dates(self) -> "TournamentBase":
 
         now = drop_time(datetime.now(timezone.utc).replace(tzinfo=None))
 
@@ -65,14 +61,16 @@ class TournamentCreate(TournamentBase):
         return self
 
 
+class TournamentCreate(TournamentBase):
+    juries: list[int | str] = Field(..., description="Jury ids")
+
+
 class TournamentUpdate(BaseModel):
     title: StrippedStr | None = Field(None, min_length=3)
     description: str | None = None
     start_date: NaiveDatetime | None = None
     reg_start: NaiveDatetime | None = None
     reg_end: NaiveDatetime | None = None
-    min_people_in_team: int | None = Field(None, gt=0)
-    max_people_in_team: int | None = Field(None, gt=0)
     max_teams: int | None = Field(None, gt=0)
     juries: list[int | str] | None = Field(None, description="Jury ids")
 
@@ -99,23 +97,14 @@ class TournamentUpdate(BaseModel):
 
         return self
 
-    @model_validator(mode="after")
-    def validate_limits(self) -> "TournamentUpdate":
-
-        if self.min_people_in_team and self.max_people_in_team:
-            if self.min_people_in_team > self.max_people_in_team:
-                raise ValueError(
-                    "min_people_in_team cannot be greater than max_people_in_team"
-                )
-        return self
-
 
 class TournamentStatusOptionModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: StrippedStr = Field(..., min_length=3)
 
-class TournamentPublicMinimal(TournamentBase):
+
+class TournamentPublic(TournamentBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -124,11 +113,15 @@ class TournamentPublicMinimal(TournamentBase):
     status: OptionPublic
     tasks: list[TaskPublic]
     active_task: TaskPublic | None
+    teams: list[TeamPublic]
     juries: list["UserMinimalPublic"]
     status_name: str = Field(validation_alias=AliasPath("status", "display_name"))
 
-class TournamentPublic(TournamentPublicMinimal):
+
+class TournamentPublicMinimal(TournamentBase):
     model_config = ConfigDict(from_attributes=True)
 
-    teams: list[TeamPublic]
-
+    id: int
+    end_date: datetime | None
+    status: OptionPublic
+    status_name: str = Field(validation_alias=AliasPath("status", "display_name"))
