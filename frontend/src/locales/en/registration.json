@@ -88,5 +88,26 @@
     "title_solo": "You Have Successfully Registered!",
     "desc": "Your application has been successfully submitted. Wait for confirmation by email or check the tournament status in your dashboard.",
     "home_btn": "Back to Home"
+  },
+  "ticket": {
+    "label": {
+      "event": "Event",
+      "format": "Format",
+      "player": "Nickname",
+      "team": "Team",
+      "participant": "Participant",
+      "roster": "Roster"
+    },
+    "value": {
+      "solo": "Solo",
+      "team": "Team",
+      "empty": "Not filled",
+      "waiting": "Waiting..."
+    },
+    "badge": {
+      "solo": "Solo",
+      "captain": "Captain",
+      "member": "Member"
+    }
   }
 }

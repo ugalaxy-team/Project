@@ -11,7 +11,7 @@ import { NotificationsDropdown } from "./NotificationsDropdown";
 import { LanguageSwitcher } from "./ui/LanguageSwitcher";
 import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "../utils/cn";
-import { NAV_ITEMS, SOLID_BG_ROUTES } from "../config/navigation";
+import { NAV_ITEMS, TRANSPARENT_BG_ROUTES } from "../config/navigation";
 
 export const Header = () => {
   const { t } = useTranslation("common");
@@ -33,9 +33,9 @@ export const Header = () => {
   }, []);
 
   const isAlwaysSolid = useMemo(() => {
-    return (
-      SOLID_BG_ROUTES.includes(pathname) || pathname.startsWith("/tournament/")
-    );
+    const isTransparent = TRANSPARENT_BG_ROUTES.includes(pathname);
+
+    return !isTransparent;
   }, [pathname]);
 
   const showSolidBg = isScrolled || isAlwaysSolid;

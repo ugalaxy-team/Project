@@ -97,7 +97,7 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
             <div className="flex justify-between items-start mb-4">
               <div>
                 <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-[3px] font-nunito transition-colors">
-                  {t("ticket.label.event", "Подія")}
+                  {t("ticket.label.event")}
                 </div>
                 <div className="font-bold text-[13px] text-primary font-nunito leading-snug max-w-[160px] transition-colors">
                   {eventTitle || "—"}
@@ -105,27 +105,23 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
               </div>
               <div className="text-right">
                 <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-[3px] font-nunito transition-colors">
-                  {t("ticket.label.format", "Формат")}
+                  {t("ticket.label.format")}
                 </div>
                 <div className="font-bold text-[13px] text-text-main font-nunito transition-colors">
-                  {isSolo
-                    ? t("ticket.value.solo", "Соло")
-                    : t("ticket.value.team", "Командний")}
+                  {isSolo ? t("ticket.value.solo") : t("ticket.value.team")}
                 </div>
               </div>
             </div>
 
             <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-1 font-nunito transition-colors">
-              {isSolo
-                ? t("ticket.label.player", "Нікнейм")
-                : t("ticket.label.team", "Команда")}
+              {isSolo ? t("ticket.label.player") : t("ticket.label.team")}
             </div>
             <div
               className={`font-nunito font-extrabold text-[22px] leading-tight tracking-[-0.02em] break-words min-h-[28px] transition-colors duration-300 ${
                 isEmpty ? "text-text-muted/50" : "text-text-main"
               }`}
             >
-              {teamName || t("ticket.value.empty", "Не заповнено")}
+              {teamName || t("ticket.value.empty")}
             </div>
           </div>
 
@@ -142,8 +138,8 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
           <div className="px-7 pt-[10px] pb-[18px] bg-bg-card relative z-10 transition-colors duration-500">
             <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-text-muted mb-2.5 font-nunito transition-colors">
               {isSolo
-                ? t("ticket.label.participant", "Учасник")
-                : t("ticket.label.roster", "Склад")}
+                ? t("ticket.label.participant")
+                : t("ticket.label.roster")}
             </div>
             <div className="flex flex-col gap-[7px]">
               <div className="flex items-center gap-2.5 bg-bg-body border border-border rounded-xl py-[9px] px-[13px] transition-colors duration-500">
@@ -154,9 +150,7 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
                       : "bg-accent/10 text-accent"
                   }`}
                 >
-                  {isSolo
-                    ? t("ticket.badge.solo", "Соло")
-                    : t("ticket.badge.captain", "Капітан")}
+                  {isSolo ? t("ticket.badge.solo") : t("ticket.badge.captain")}
                 </span>
                 <span className="font-nunito font-bold text-[13px] text-text-main truncate transition-colors">
                   {captainName || "—"}
@@ -175,14 +169,14 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
                       className="flex items-center gap-2.5 bg-bg-body border border-border rounded-xl py-[9px] px-[13px] transition-colors duration-500"
                     >
                       <span className="text-[10px] font-bold px-2 py-[3px] rounded-full bg-primary/10 text-primary font-nunito tracking-[0.06em] shrink-0 transition-colors">
-                        {t("ticket.badge.member", "Учасник")}
+                        {t("ticket.badge.member")}
                       </span>
                       <span
                         className={`font-nunito font-bold text-[13px] truncate transition-colors ${
                           m.name ? "text-text-main" : "text-text-muted/60"
                         }`}
                       >
-                        {m.name || t("ticket.value.waiting", "Очікування...")}
+                        {m.name || t("ticket.value.waiting")}
                       </span>
                     </motion.div>
                   ))}
@@ -219,7 +213,7 @@ export const Ticket3D: React.FC<Ticket3DProps> = ({
                 ))}
               </div>
               <div className="font-nunito font-extrabold text-[15px] text-text-main tracking-[-0.01em] transition-colors duration-500">
-                {t("brand", "UGalaxy")}
+                {t("brand")}
               </div>
             </div>
           </div>

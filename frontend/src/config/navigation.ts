@@ -18,4 +18,12 @@ export const NAV_ITEMS = [
   { path: "/news", key: "nav.news" },
 ];
 
-export const SOLID_BG_ROUTES = ["/profile", "/role-request-form"];
+export const TRANSPARENT_BG_ROUTES = [
+  "/",
+  "/tournaments",
+  "/contact",
+  "/about-us",
+  "/rules",
+  "/faq",
+  "/support",
+];
