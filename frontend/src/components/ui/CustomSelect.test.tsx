@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { AlertCircle } from "lucide-react";
 import CustomSelect from "./CustomSelect";
 
-// Mock floating-ui to avoid layout issues in tests
+
 vi.mock("@floating-ui/react", () => ({
     useFloating: () => ({
         refs: {
@@ -105,7 +105,7 @@ describe("CustomSelect", () => {
         );
         const button = screen.getByRole("button");
         const svgs = button.querySelectorAll("svg");
-        expect(svgs.length).toBeLessThanOrEqual(1); // Only ChevronDown
+        expect(svgs.length).toBeLessThanOrEqual(1); 
     });
 
     it("opens listbox when button is clicked", async () => {
@@ -136,7 +136,7 @@ describe("CustomSelect", () => {
 
         await user.click(screen.getByRole("button"));
 
-        // Шукаємо елемент саме з роллю option для надійності
+        
         const option = await screen.findByRole("option", { name: /Option 1/i });
         await user.click(option);
 
@@ -199,7 +199,7 @@ describe("CustomSelect", () => {
         await user.click(screen.getByRole("button"));
 
         await waitFor(() => {
-            // При value={null} в кнопці текст "Виберіть варіант", тому Option 1 буде тільки в списку (1 шт)
+            
             expect(screen.getAllByText("Option 1")).toHaveLength(1);
             expect(screen.getByText("Option 3")).toBeInTheDocument();
             expect(screen.getByText("Option 4 with very long text to test truncation")).toBeInTheDocument();
@@ -223,9 +223,9 @@ describe("CustomSelect", () => {
         await user.click(screen.getByRole("button"));
 
         await waitFor(() => {
-            // Перевіряємо наявність іконок у документі (через портал)
+            
             const svgs = document.querySelectorAll("svg");
-            expect(svgs.length).toBeGreaterThan(1); // ChevronDown + Check
+            expect(svgs.length).toBeGreaterThan(1); 
         });
     });
 
@@ -240,7 +240,7 @@ describe("CustomSelect", () => {
             />
         );
 
-        // Виправлено друкарську помилку ث -> т
+        
         expect(screen.getByText("Виберіть варіант")).toBeInTheDocument();
         expect(screen.getByRole("button")).toBeInTheDocument();
     });
@@ -274,14 +274,14 @@ describe("CustomSelect", () => {
         const onChange = vi.fn();
         render(<CustomSelect options={mockOptions} value={null} onChange={onChange} label="Select" />);
 
-        // 1. Відкриваємо список
+        
         await user.click(screen.getByRole("button"));
 
-        // 2. Чекаємо на появу опції (role="option")
+        
         const option = await screen.findByRole("option", { name: /Option 1/i });
         await user.click(option);
 
-        // 3. Тепер перевірка спрацює, бо onChange гарантовано викликаний
+        
         expect(onChange).toHaveBeenCalledTimes(1);
         const callArg = onChange.mock.calls[0][0];
         expect(callArg).toEqual({ id: "1", label: "Option 1" });
@@ -302,7 +302,7 @@ describe("CustomSelect", () => {
 
         const button = screen.getByRole("button");
 
-        // Шукаємо елемент з класом truncate всередині кнопки
+        
         const textElement = button.querySelector(".truncate");
 
         expect(textElement).toBeInTheDocument();

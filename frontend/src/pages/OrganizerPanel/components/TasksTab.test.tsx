@@ -294,7 +294,7 @@ describe("TasksTab", () => {
 
     expect(screen.getByText("Tournament A")).toBeInTheDocument();
 
-    // Switch to second tournament
+    
     rerender(
       <TasksTab
         tournaments={multipleTournaments}
@@ -340,23 +340,23 @@ describe("TasksTab", () => {
       />
     );
 
-    // Test back button
+    
     const headerRow = screen.getByText("Поточний турнір").closest(".flex.items-center.gap-4");
     const backBtn = headerRow?.querySelector("button");
     await user.click(backBtn as HTMLButtonElement);
     expect(onTasksClick).toHaveBeenCalledWith(null);
 
-    // Test create button
+    
     await user.click(screen.getByRole("button", { name: /Нове завдання/i }));
     expect(onCreateTaskClick).toHaveBeenCalledWith(tournaments[0]);
 
-    // Test edit button
+    
     const taskCard = screen.getByText("Build API").closest("div.group.relative") as HTMLElement;
     const [editBtn] = within(taskCard).getAllByRole("button");
     await user.click(editBtn);
     expect(onEditTaskClick).toHaveBeenCalledWith(expect.objectContaining({ id: 10 }));
 
-    // Test delete button
+    
     const [, deleteBtn] = within(taskCard).getAllByRole("button");
     await user.click(deleteBtn);
     expect(onDeleteTaskClick).toHaveBeenCalledWith(10);
@@ -486,7 +486,7 @@ describe("TasksTab", () => {
       tasks: [taskWithoutReqs],
     });
 
-    // Should not crash and render the task
+    
     expect(screen.getByText("Build API")).toBeInTheDocument();
   });
 
@@ -518,7 +518,7 @@ describe("TasksTab", () => {
 
     const taskCard = screen.getByText("Build API").closest("div.group.relative") as HTMLElement;
     const buttons = within(taskCard).getAllByRole("button");
-    expect(buttons).toHaveLength(2); // Edit and Delete
+    expect(buttons).toHaveLength(2); 
   });
 
   it("handles tournament with same ID as previous selection", async () => {
@@ -574,7 +574,7 @@ describe("TasksTab", () => {
       />
     );
 
-    // Should render without crashing
+    
     expect(screen.getByText("Tournament 0")).toBeInTheDocument();
   });
 
@@ -598,7 +598,7 @@ describe("TasksTab", () => {
       />
     );
 
-    // Should render without crashing
+    
     expect(screen.getByText("Task 0")).toBeInTheDocument();
   });
 
@@ -658,7 +658,7 @@ describe("TasksTab", () => {
       />
     );
 
-    // Tournament card should be clickable
+    
     expect(screen.getByText("Alpha Cup")).toBeInTheDocument();
   });
 });

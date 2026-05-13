@@ -285,11 +285,11 @@ describe("TournamentsTab", () => {
       />,
     );
 
-    // Check tournament 1 info
+    
     expect(screen.getByText("Alpha Cup")).toBeInTheDocument();
     expect(screen.getByText("Чернетка")).toBeInTheDocument();
 
-    // Check tournament 2 info
+    
     expect(screen.getByText("Beta Cup")).toBeInTheDocument();
     expect(screen.getByText("Активний")).toBeInTheDocument();
   });
@@ -307,16 +307,16 @@ describe("TournamentsTab", () => {
 
     const searchInput = screen.getByPlaceholderText("Пошук турніру...") as HTMLInputElement;
 
-    // First search
+    
     await user.type(searchInput, "Alpha");
     expect(screen.getByText("Alpha Cup")).toBeInTheDocument();
 
-    // Clear and search again
+    
     await user.clear(searchInput);
     await user.type(searchInput, "Beta");
     expect(screen.getByText("Beta Cup")).toBeInTheDocument();
 
-    // Clear all
+    
     await user.clear(searchInput);
     expect(screen.getByText("Всього: 2")).toBeInTheDocument();
   });
@@ -334,8 +334,8 @@ describe("TournamentsTab", () => {
       />,
     );
 
-    // Click info button (first button in row)
-    const infoButtons = screen.getAllByRole("button").slice(1, 3); // Info buttons for each tournament
+    
+    const infoButtons = screen.getAllByRole("button").slice(1, 3); 
     await user.click(infoButtons[0]);
 
     expect(onInfo).toHaveBeenCalledWith(expect.objectContaining({
@@ -556,7 +556,7 @@ describe("TournamentsTab", () => {
 
     expect(screen.getByText("Alpha Cup")).toBeInTheDocument();
 
-    // Rerender with same props
+    
     rerender(
       <TournamentsTab
         tournaments={tournaments}
@@ -632,7 +632,7 @@ describe("TournamentsTab", () => {
     );
 
     await user.type(screen.getByPlaceholderText("Пошук турніру..."), "Cup");
-    expect(screen.getByText("Всього: 2")).toBeInTheDocument(); // Both "Alpha Cup" and "Beta Cup"
+    expect(screen.getByText("Всього: 2")).toBeInTheDocument(); 
   });
 
   it("handles status filter changing multiple times", async () => {
@@ -648,15 +648,15 @@ describe("TournamentsTab", () => {
 
     const statusSelect = screen.getByRole("combobox");
 
-    // Filter by draft
+    
     await user.selectOptions(statusSelect, "draft");
     expect(screen.getByText("Alpha Cup")).toBeInTheDocument();
 
-    // Filter by running
+    
     await user.selectOptions(statusSelect, "running");
     expect(screen.getByText("Beta Cup")).toBeInTheDocument();
 
-    // Back to all
+    
     await user.selectOptions(statusSelect, "all");
     expect(screen.getByText("Всього: 2")).toBeInTheDocument();
   });

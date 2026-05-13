@@ -171,7 +171,7 @@ it("handles null activeTask", () => {
     <TabContent activeTab="desc" tournament={tournamentWithNullTask} />
   );
   
-  // Використовуємо регулярний вираз, щоб знайти початок рядка
+  
   expect(screen.getByText(/Active Task:/i)).toBeInTheDocument();
 });
 
@@ -184,7 +184,7 @@ it("handles null activeTask", () => {
   render(<TabContent activeTab="desc" tournament={tournamentNoDesc} />);
 
   const descriptionElement = screen.getByText((content, element) => {
-    // trim() видалить зайві пробіли та переноси рядків, які створює React
+    
     return element?.textContent?.trim() === "Description:";
   });
 
@@ -388,7 +388,7 @@ it("handles null activeTask", () => {
       <TabContent activeTab="desc" tournament={mockTournament} />
     );
     const div = container.firstChild;
-    // Check if parent or ancestor has proper positioning context
+    
     expect(div).toBeInTheDocument();
   });
 });
