@@ -8,7 +8,7 @@ import { ForgotPassword } from "./ForgotPassword";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase";
 
-// --- Mocks --
+
 vi.mock("firebase/auth", () => ({
   sendPasswordResetEmail: vi.fn(),
 }));
@@ -30,7 +30,7 @@ vi.mock("../../components/ui", () => ({
   ),
 }));
 
-// --- Setup ---
+
 describe("ForgotPassword Component", () => {
   let queryClient: QueryClient;
 
@@ -56,7 +56,7 @@ describe("ForgotPassword Component", () => {
     return { user, ...view };
   };
 
-  // --- Initial Render ---
+  
   describe("Initial Render", () => {
     it("matches snapshot", () => {
       const { container } = renderForgotPassword();
@@ -103,7 +103,7 @@ describe("ForgotPassword Component", () => {
     });
   });
 
-  // --- Form Validation ---
+  
   describe("Form Validation", () => {
     it("shows an error when submitting empty email", async () => {
       const { user } = renderForgotPassword();
@@ -160,7 +160,7 @@ describe("ForgotPassword Component", () => {
     });
   });
 
-  // --- Successful Flows ---
+  
   describe("Successful Flows", () => {
     it("calls sendPasswordResetEmail and renders success UI", async () => {
       vi.mocked(sendPasswordResetEmail).mockResolvedValue(undefined);
@@ -191,7 +191,7 @@ describe("ForgotPassword Component", () => {
     });
   });
 
-  // --- Loading States ---
+  
   describe("Loading States", () => {
     it("disables submit button and shows loading state during submission", async () => {
       let resolvePromise: (value: any) => void;
@@ -217,10 +217,16 @@ describe("ForgotPassword Component", () => {
       await waitFor(() => {
         expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
       });
+
+      await waitFor(() => {
+        expect(
+          screen.getByText("Лист відправлено!"),
+        ).toBeInTheDocument();
+      });
     });
   });
 
-  // --- Error Handling ---
+  
   describe("Firebase Error Handling", () => {
     it("displays error message for auth/user-not-found", async () => {
       vi.mocked(sendPasswordResetEmail).mockRejectedValue({

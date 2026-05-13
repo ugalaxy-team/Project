@@ -458,6 +458,9 @@ describe("AuthPage Component", () => {
       expect(submitBtn).toBeDisabled();
 
       resolvePromise!({});
+      await waitFor(() => {
+        expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+      });
     });
 
     it("disables submit button and shows loading state during registration", async () => {
@@ -492,6 +495,9 @@ describe("AuthPage Component", () => {
       expect(submitBtn).toBeDisabled();
 
       resolvePromise!({});
+      await waitFor(() => {
+        expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+      });
     });
   });
 

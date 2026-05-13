@@ -1,7 +1,8 @@
 import { DescriptionTab } from "./tabs/DescriptionTab";
-import { PlaceholderTab } from "./tabs/PlaceholderTab";
 import { TeamsTab } from "./tabs/TeamsTab";
 import type { TabId, TournamentData } from "../types";
+import { TaskDescriptionTab } from "./tabs/TaskDescriptionTab";
+import { CalendarTab } from "./tabs/CalendarTab";
 
 interface TabContentProps {
   activeTab: TabId;
@@ -18,8 +19,13 @@ export const TabContent = ({ activeTab, tournament }: TabContentProps) => {
           activeTask={tournament.active_task}
         />
       )}
+      {activeTab === "task_desc" && (
+        <TaskDescriptionTab
+          tasks={tournament.tasks}
+          activeTask={tournament.active_task}/>
+      )}
       {activeTab === "teams" && <TeamsTab teams={tournament.teams} />}
-      {activeTab === "results" && <PlaceholderTab />}
+      {activeTab === "calendar" && <CalendarTab tournamentData={tournament} />}
     </div>
   );
 };

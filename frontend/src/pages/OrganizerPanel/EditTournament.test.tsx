@@ -43,6 +43,12 @@ describe("EditTournamentModal", () => {
     });
   });
 
+  const waitForFormReady = async () => {
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("Old Cup")).toBeInTheDocument();
+    });
+  };
+
   it("prevents save when max people is less than min people", async () => {
     const user = userEvent.setup();
     const onSave = vi.fn().mockResolvedValue(undefined);
@@ -56,13 +62,14 @@ describe("EditTournamentModal", () => {
       />,
     );
 
+    await waitForFormReady();
     await user.click(screen.getByRole("button", { name: "Далі" }));
     const maxPeopleInput = document.querySelector("input[name='max_people_in_team']");
     expect(maxPeopleInput).toBeTruthy();
     await user.clear(maxPeopleInput as HTMLInputElement);
     await user.type(maxPeopleInput as HTMLInputElement, "1");
 
-    const saveButton = screen.getByRole("button", { name: "Зберегти Зміни" });
+    const saveButton = screen.getByRole("button", { name: /Зберегти зміни/i });
     expect(saveButton).toBeDisabled();
     await user.click(saveButton);
     expect(onSave).not.toHaveBeenCalled();
@@ -82,11 +89,12 @@ describe("EditTournamentModal", () => {
       />,
     );
 
+    await waitForFormReady();
     const titleInput = screen.getByDisplayValue("Old Cup");
     await user.clear(titleInput);
     await user.type(titleInput, "Updated Cup");
     await user.click(screen.getByRole("button", { name: "Далі" }));
-    await user.click(screen.getByRole("button", { name: "Зберегти Зміни" }));
+    await user.click(screen.getByRole("button", { name: /Зберегти зміни/i }));
 
     await waitFor(() => {
       expect(onSave).toHaveBeenCalledWith(
@@ -124,9 +132,10 @@ describe("EditTournamentModal", () => {
       />,
     );
 
+    await waitForFormReady();
     await user.click(screen.getByRole("button", { name: "Далі" }));
     await user.click(screen.getByRole("button", { name: "Назад" }));
-    expect(screen.getByText("КРОК 1 З 2 • ТУРНІР #9")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Old Cup")).toBeInTheDocument();
   });
 
   it("opens jury modal on second step", async () => {
@@ -141,8 +150,9 @@ describe("EditTournamentModal", () => {
       />,
     );
 
+    await waitForFormReady();
     await user.click(screen.getByRole("button", { name: "Далі" }));
-    await user.click(screen.getByRole("button", { name: /Суддівська Колегія/i }));
+    await user.click(screen.getByRole("button", { name: /Суддівська команда/i }));
     expect(screen.getByText("Вибір журі")).toBeInTheDocument();
   });
 
@@ -158,6 +168,7 @@ describe("EditTournamentModal", () => {
         onSave={vi.fn().mockResolvedValue(undefined)}
       />,
     );
+    await waitForFormReady();
     await user.click(screen.getByRole("button", { name: "Скасувати" }));
     expect(onClose).toHaveBeenCalled();
   });

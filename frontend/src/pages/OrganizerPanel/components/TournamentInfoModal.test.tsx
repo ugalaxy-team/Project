@@ -96,7 +96,7 @@ describe("TournamentInfoModal", () => {
 
   it("renders jury contact buttons when links exist", () => {
     render(<TournamentInfoModal isOpen tournament={tournament} onClose={vi.fn()} />);
-    expect(screen.getByRole("link", { name: "GitHub" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /nina/i })).toBeInTheDocument();
   });
 
   it("closes when backdrop is clicked", async () => {

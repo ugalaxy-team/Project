@@ -66,7 +66,7 @@ export interface TournamentData {
   teams: Team[];
 }
 
-export type TabId = "desc" | "teams" | "results";
+export type TabId = "desc" | "teams" | "calendar" | "task_desc";
 
 export interface TabConfig {
   id: TabId;

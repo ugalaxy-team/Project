@@ -26,6 +26,7 @@ type TokenUser = {
 describe("API request wrappers", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getAuth).mockReturnValue({ currentUser: null } as never);
   });
 
   describe("getAllUsers", () => {
