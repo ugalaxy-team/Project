@@ -38,13 +38,13 @@ PostgreSQL
 
 ## Стек технологій
 
-| Область               | Технології                                                                                                                                                   |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Фронтенд**          | React 19, TypeScript, Vite 7, Tailwind CSS 4, Redux Toolkit, TanStack Query, Zod, React Router 7, Socket.IO client, Firebase JS SDK, Vitest, Testing Library |
-| **Бекенд**            | Python 3.12, FastAPI, Uvicorn, SQLAlchemy 2 (асинхронно), Alembic, Pydantic Settings, python-socketio, Firebase Admin SDK, SQLAdmin                          |
-| **База даних**        | PostgreSQL 16 (асинхронний драйвер: `asyncpg`; тести використовують SQLite через `aiosqlite`)                                                                |
-| **Тестування**        | Фронтенд: Vitest (`npm run test`, `npm run test:coverage`). Бекенд: pytest + pytest-asyncio (`pytest` з папки `backend/`)                                    |
-| **Docker / розробка** | Docker Compose (`db`, `backend`, `frontend`), багатоступеневі Dockerfile'и в папках `backend/` та `frontend/`                                                |
+| Область               | Технології                                                                                                                                                    |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Фронтенд**          | React 19, TypeScript, Vite 7, Tailwind CSS 4, Redux Toolkit, TanStack Query, Zod, React Router 7, Socket.IO client, Firebase JS SDK, Vitest, Testing Library  |
+| **Бекенд**            | Python 3.12, FastAPI, Uvicorn, SQLAlchemy 2 (асинхронно), Alembic, Pydantic Settings, python-socketio, Firebase Admin SDK, SQLAdmin                           |
+| **База даних**        | PostgreSQL 16 (асинхронний драйвер: `asyncpg`; тести використовують SQLite через `aiosqlite`)                                                                 |
+| **Тестування**        | Фронтенд: Vitest (`npm run test`, `npm run test:coverage`). Бекенд: pytest + pytest-asyncio (`pytest` з папки `backend/`, coverage: `pytest --cov=app tests`) |
+| **Docker / розробка** | Docker Compose (`db`, `backend`, `frontend`), багатоступеневі Dockerfile'и в папках `backend/` та `frontend/`                                                 |
 
 ---
 

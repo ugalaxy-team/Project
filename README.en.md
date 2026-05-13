@@ -44,7 +44,7 @@ The database is seeded based on this file. It makes it easy to create, delete, a
 | **Frontend**     | React 19, TypeScript, Vite 7, Tailwind CSS 4, Redux Toolkit, TanStack Query, Zod, React Router 7, Socket.IO client, Firebase JS SDK, Vitest, Testing Library |
 | **Backend**      | Python 3.12, FastAPI, Uvicorn, SQLAlchemy 2 (async), Alembic, Pydantic Settings, python-socketio, Firebase Admin SDK, SQLAdmin                               |
 | **Database**     | PostgreSQL 16 (async driver: `asyncpg`; tests use SQLite via `aiosqlite`)                                                                                    |
-| **Testing**      | Frontend: Vitest (`npm run test`, `npm run test:coverage`). Backend: pytest + pytest-asyncio (`pytest` from `backend/`)                                      |
+| **Testing**      | Frontend: Vitest (`npm run test`, `npm run test:coverage`). Backend: pytest + pytest-asyncio (`pytest` from `backend/`, coverage: `pytest --cov=app tests`)  |
 | **Docker / dev** | Docker Compose (`db`, `backend`, `frontend`), multi-stage Dockerfiles under `backend/` and `frontend/`                                                       |
 
 ---
