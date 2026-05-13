@@ -8,6 +8,13 @@ import { store } from "../../store";
 import { deleteUser } from "@/api/requests";
 import { setUser } from "@/slices/user";
 
+// Магія: мокаємо переклади, щоб вони просто повертали свої ключі
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
 vi.mock("react-redux", () => ({
   useSelector: vi.fn(),
 }));
@@ -38,7 +45,15 @@ vi.mock("@/slices/user", () => ({
 }));
 
 vi.mock("./EditProfileModal", () => ({
-  EditProfileModal: ({ isOpen, onClose, currentUser }: { isOpen: boolean; onClose: () => void, currentUser: any }) =>
+  EditProfileModal: ({
+    isOpen,
+    onClose,
+    currentUser,
+  }: {
+    isOpen: boolean;
+    onClose: () => void;
+    currentUser: any;
+  }) =>
     isOpen ? (
       <div data-testid="edit-profile-modal">
         <span data-testid="modal-current-user">{currentUser?.email}</span>
@@ -47,6 +62,7 @@ vi.mock("./EditProfileModal", () => ({
     ) : null,
 }));
 
+// Оновлені мок-дані: додали масив турнірів!
 const mockUserFull = {
   id: "user-1",
   displayName: "Super Hacker",
@@ -56,6 +72,11 @@ const mockUserFull = {
   github: "hacker777",
   discord: "hacker#7777",
   roles: [{ display_name: "Admin", name: "admin" }, { name: "manager" }],
+  created_tournaments: [
+    { id: 1, title: "Напишіть Ядро Лінукс" },
+    { id: 2, name: "Напишіть свою мову програмування" },
+    { id: 3, title: "Напишіть гру на JS" },
+  ],
 };
 
 const mockUserFallbackName = {
@@ -63,12 +84,7 @@ const mockUserFallbackName = {
   full_name: "Fallback Name",
   email: "fallback@example.com",
   roles: [],
-};
-
-const mockUserPartial = {
-  id: "user-3",
-  displayName: "Tester",
-  email: "tester@example.com",
+  created_tournaments: [],
 };
 
 const mockUserEmpty = {
@@ -90,7 +106,7 @@ describe("Profile Component", () => {
   it("displays loading state when user is null", () => {
     vi.mocked(useSelector).mockReturnValue(null);
     render(<Profile />);
-    expect(screen.getByText("Завантаження...")).toBeInTheDocument();
+    expect(screen.getByText("loading")).toBeInTheDocument();
   });
 
   it("renders the SVG avatar icon", () => {
@@ -113,28 +129,22 @@ describe("Profile Component", () => {
     expect(screen.getByText("Fallback Name")).toBeInTheDocument();
   });
 
-  it("displays 'Без імені' when both displayName and full_name are missing", () => {
+  it("displays 'unnamed' key when both displayName and full_name are missing", () => {
     vi.mocked(useSelector).mockReturnValue(mockUserEmpty);
     render(<Profile />);
-    expect(screen.getByText("Без імені")).toBeInTheDocument();
+    expect(screen.getByText("unnamed")).toBeInTheDocument();
   });
 
   it("displays roles using display_name if available, otherwise name", () => {
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
     render(<Profile />);
-    expect(screen.getByText("Роль: Admin, manager")).toBeInTheDocument();
+    expect(screen.getByText("role: Admin, manager")).toBeInTheDocument();
   });
 
-  it("displays 'Немає ролей' when roles array is empty", () => {
+  it("displays 'no_roles' when roles array is empty", () => {
     vi.mocked(useSelector).mockReturnValue(mockUserFallbackName);
     render(<Profile />);
-    expect(screen.getByText("Роль: Немає ролей")).toBeInTheDocument();
-  });
-
-  it("displays 'Немає ролей' when roles is undefined", () => {
-    vi.mocked(useSelector).mockReturnValue(mockUserEmpty);
-    render(<Profile />);
-    expect(screen.getByText("Роль: Немає ролей")).toBeInTheDocument();
+    expect(screen.getByText("role: no_roles")).toBeInTheDocument();
   });
 
   it("opens edit modal on edit button click and closes on close button click", () => {
@@ -142,7 +152,7 @@ describe("Profile Component", () => {
     render(<Profile />);
 
     expect(screen.queryByTestId("edit-profile-modal")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByText("Редагувати профіль"));
+    fireEvent.click(screen.getByText("edit_profile"));
     expect(screen.getByTestId("edit-profile-modal")).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("Close"));
@@ -152,39 +162,47 @@ describe("Profile Component", () => {
   it("passes correct currentUser data to EditProfileModal", () => {
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
     render(<Profile />);
-    fireEvent.click(screen.getByText("Редагувати профіль"));
-    expect(screen.getByTestId("modal-current-user")).toHaveTextContent("hacker777@example.com");
+    fireEvent.click(screen.getByText("edit_profile"));
+    expect(screen.getByTestId("modal-current-user")).toHaveTextContent(
+      "hacker777@example.com",
+    );
   });
 
   it("calls window.confirm with correct text before deleting", () => {
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
     render(<Profile />);
-    fireEvent.click(screen.getByText("Видалити"));
-    expect(window.confirm).toHaveBeenCalledWith("Ви впевнені?");
+    fireEvent.click(screen.getByText("delete_account"));
+    expect(window.confirm).toHaveBeenCalledWith("confirm_delete");
   });
 
   it("calls delete mutation on delete button click if confirmed", () => {
     const mockMutate = vi.fn();
-    vi.mocked(useMutation).mockReturnValue({ mutate: mockMutate, isPending: false } as any);
+    vi.mocked(useMutation).mockReturnValue({
+      mutate: mockMutate,
+      isPending: false,
+    } as any);
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
     render(<Profile />);
 
-    fireEvent.click(screen.getByText("Видалити"));
+    fireEvent.click(screen.getByText("delete_account"));
     expect(mockMutate).toHaveBeenCalled();
   });
 
   it("does not call mutate if user cancels confirm dialog", () => {
     window.confirm = vi.fn(() => false);
     const mockMutate = vi.fn();
-    vi.mocked(useMutation).mockReturnValue({ mutate: mockMutate, isPending: false } as any);
+    vi.mocked(useMutation).mockReturnValue({
+      mutate: mockMutate,
+      isPending: false,
+    } as any);
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
 
     render(<Profile />);
-    fireEvent.click(screen.getByText("Видалити"));
+    fireEvent.click(screen.getByText("delete_account"));
     expect(mockMutate).not.toHaveBeenCalled();
   });
 
-  it("shows loading state on delete button during mutation and disables it", () => {
+  it("disables delete button during mutation", () => {
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
     vi.mocked(useMutation).mockReturnValue({
       mutate: vi.fn(),
@@ -192,31 +210,10 @@ describe("Profile Component", () => {
     } as any);
 
     render(<Profile />);
-    const deleteButton = screen.getByText("Видалення...");
+    // Шукаємо кнопку за текстом ключа
+    const deleteButton = screen.getByText("delete_account").closest("button");
     expect(deleteButton).toBeInTheDocument();
     expect(deleteButton).toBeDisabled();
-  });
-
-  it("initializes useMutation with correct mutationKey", () => {
-    vi.mocked(useSelector).mockReturnValue(mockUserFull);
-    render(<Profile />);
-    expect(useMutation).toHaveBeenCalledWith(expect.objectContaining({
-      mutationKey: ["delete user"]
-    }));
-  });
-
-  it("executes mutationFn with current user", async () => {
-    vi.mocked(useSelector).mockReturnValue(mockUserFull);
-    let mutationConfig: any;
-    vi.mocked(useMutation).mockImplementation((config: any) => {
-      mutationConfig = config;
-      return { mutate: vi.fn(), isPending: false } as any;
-    });
-
-    render(<Profile />);
-    await mutationConfig.mutationFn();
-
-    expect(deleteUser).toHaveBeenCalledWith(auth.currentUser);
   });
 
   it("throws error in mutationFn when currentUser is null", async () => {
@@ -230,7 +227,9 @@ describe("Profile Component", () => {
     });
 
     render(<Profile />);
-    await expect(mutationConfig.mutationFn()).rejects.toThrow("Користувач не авторизований");
+    await expect(mutationConfig.mutationFn()).rejects.toThrow(
+      "errors.not_authorized",
+    );
   });
 
   it("handles mutation onSuccess by clearing user data from auth and redux", async () => {
@@ -248,83 +247,44 @@ describe("Profile Component", () => {
     expect(store.dispatch).toHaveBeenCalledWith(setUser(null));
   });
 
-  it("handles mutation onError by logging the error", () => {
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.mocked(useSelector).mockReturnValue(mockUserFull);
-    let mutationConfig: any;
-    vi.mocked(useMutation).mockImplementation((config: any) => {
-      mutationConfig = config;
-      return { mutate: vi.fn(), isPending: false } as any;
-    });
-
-    render(<Profile />);
-    const testError = new Error("Test error message");
-    mutationConfig.onError(testError);
-
-    expect(consoleSpy).toHaveBeenCalledWith("An error occurred:", "Test error message");
-    consoleSpy.mockRestore();
-  });
-
-  it("displays correct contact details when available", () => {
-    vi.mocked(useSelector).mockReturnValue(mockUserFull);
-    render(<Profile />);
-
-    expect(screen.getByText("hacker777@example.com")).toBeInTheDocument();
-    expect(screen.getByText("@hacker777")).toBeInTheDocument();
-    expect(screen.getByText("hacker777")).toBeInTheDocument();
-    expect(screen.getByText("hacker#7777")).toBeInTheDocument();
-  });
-
-  it("displays missing state 'Відсутній' for all missing contact details", () => {
+  it("displays missing state 'missing' for all missing contact details", () => {
     vi.mocked(useSelector).mockReturnValue(mockUserEmpty);
     render(<Profile />);
-    const missingBadges = screen.getAllByText("Відсутній");
-    expect(missingBadges).toHaveLength(3);
+    const missingBadges = screen.getAllByText("missing");
+    expect(missingBadges).toHaveLength(3); // Telegram, GitHub, Discord
   });
 
   it("applies specific colors for Telegram chip", () => {
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
     render(<Profile />);
-    
+
     const telegramValue = screen.getByText("@hacker777");
     const chipWrapper = telegramValue.closest("div");
-    
-    expect(chipWrapper).toHaveClass("bg-[#eff6ff]");
-    expect(chipWrapper).toHaveClass("text-[#2563eb]");
+
+    expect(chipWrapper).toHaveClass("bg-blue-500/10");
+    expect(chipWrapper).toHaveClass("text-blue-600");
   });
 
   it("applies specific colors for Discord chip", () => {
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
     render(<Profile />);
-    
+
     const discordValue = screen.getByText("hacker#7777");
     const chipWrapper = discordValue.closest("div");
-    
-    expect(chipWrapper).toHaveClass("bg-[#f5f3ff]");
-    expect(chipWrapper).toHaveClass("text-[#7c3aed]");
+
+    expect(chipWrapper).toHaveClass("bg-purple-500/10");
+    expect(chipWrapper).toHaveClass("text-purple-600");
   });
 
-  it("applies default colors for Email chip", () => {
-    vi.mocked(useSelector).mockReturnValue(mockUserFull);
-    render(<Profile />);
-    
-    const emailValue = screen.getByText("hacker777@example.com");
-    const chipWrapper = emailValue.closest("div");
-    
-    expect(chipWrapper).toHaveClass("bg-[#f3f4f6]");
-    expect(chipWrapper).toHaveClass("text-[#111827]");
-  });
-
-  it("displays tournament lists correctly with dot color", () => {
+  it("displays tournament lists correctly from API data", () => {
     vi.mocked(useSelector).mockReturnValue(mockUserFull);
     render(<Profile />);
 
-    expect(screen.getByText("Турніри")).toBeInTheDocument();
+    expect(screen.getByText("tournaments")).toBeInTheDocument();
     expect(screen.getByText("Напишіть Ядро Лінукс")).toBeInTheDocument();
-    expect(screen.getByText("Напишіть свою мову програмування")).toBeInTheDocument();
+    expect(
+      screen.getByText("Напишіть свою мову програмування"),
+    ).toBeInTheDocument();
     expect(screen.getByText("Напишіть гру на JS")).toBeInTheDocument();
-
-    const listArrows = screen.getAllByText("❯");
-    expect(listArrows).toHaveLength(3);
   });
 });

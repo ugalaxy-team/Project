@@ -41,7 +41,11 @@
       "back": "Back",
       "go_home": "Home"
     },
-    "socket": "Server connection issues :(. Notifications are temporarily unavailable"
+    "socket": "Connection Error",
+    "socket_desc": "Notifications are temporarily unavailable"
+  },
+  "success": {
+    "socket_restored": "Connection restored!"
   },
   "ui": {
     "loading": "Loading..."

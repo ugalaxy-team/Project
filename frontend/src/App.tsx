@@ -4,14 +4,19 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { io, Socket } from "socket.io-client";
 import { onIdTokenChanged } from "firebase/auth";
+import { useDispatch } from "react-redux";
+
 import { auth } from "./firebase";
 import { useNotificationsSocket } from "./hooks/useNotificationsSocket";
 import { Router } from "./routers/Router";
+import { setUser, clearUser } from "./slices/user";
+import { getProfile } from "./api/requests/getProfile";
 
 const COOLDOWN_TIME = 3 * 60 * 1000;
 
 export const App = () => {
   const { t } = useTranslation("common");
+  const dispatch = useDispatch();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [toastTheme, setToastTheme] = useState<"colored" | "dark">("colored");
 
@@ -20,19 +25,12 @@ export const App = () => {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
     const applyTheme = () => {
       const savedTheme = localStorage.getItem("theme");
       const isDark =
         savedTheme === "dark" || (!savedTheme && mediaQuery.matches);
-
-      if (isDark) {
-        document.documentElement.classList.add("dark");
-        setToastTheme("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-        setToastTheme("colored");
-      }
+      document.documentElement.classList.toggle("dark", isDark);
+      setToastTheme(isDark ? "dark" : "colored");
     };
 
     applyTheme();
@@ -48,7 +46,6 @@ export const App = () => {
     });
 
     observer.observe(document.documentElement, { attributes: true });
-
     return () => {
       mediaQuery.removeEventListener("change", applyTheme);
       observer.disconnect();
@@ -65,47 +62,71 @@ export const App = () => {
       }
 
       if (user) {
-        const token = await user.getIdToken();
-        currentSocket = io(import.meta.env.VITE_SOCKETIO_SERVER_URL, {
-          auth: { token },
-          reconnectionDelay: 5000,
-        });
+        try {
+          const token = await user.getIdToken();
+          const apiProfile = await getProfile(user);
 
-        currentSocket.on("connect_error", () => {
-          const now = Date.now();
+          dispatch(
+            setUser({
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+              emailVerified: user.emailVerified,
+              isAnonymous: user.isAnonymous,
+              ...apiProfile,
+            }),
+          );
 
-          if (
-            now - lastErrorTime.current > COOLDOWN_TIME ||
-            !wasError.current
-          ) {
-            toast.error(
-              <div>
-                <div className="font-bold mb-1">
-                  {t("errors.socket")}
-                </div>
-                <div className="text-[13px] opacity-90 leading-tight">
-                  Сповіщення тимчасово не працюють
-                </div>
-              </div>,
-              { toastId: "socket-error" },
-            );
+          currentSocket = io(import.meta.env.VITE_SOCKETIO_SERVER_URL, {
+            auth: { token },
+            reconnectionDelay: 5000,
+          });
 
-            lastErrorTime.current = now;
-            wasError.current = true;
+          currentSocket.on("connect_error", () => {
+            const now = Date.now();
+            if (
+              now - lastErrorTime.current > COOLDOWN_TIME ||
+              !wasError.current
+            ) {
+              toast.error(
+                <div>
+                  <div className="font-bold mb-1">{t("errors.socket")}</div>
+                  <div className="text-[13px] opacity-90 leading-tight">
+                    {t("errors.socket_desc")}{" "}
+                  </div>
+                </div>,
+                { toastId: "socket-error" },
+              );
+              lastErrorTime.current = now;
+              wasError.current = true;
+            }
+          });
+
+          currentSocket.on("connect", () => {
+            toast.dismiss("socket-error");
+            if (wasError.current) {
+              toast.success(t("success.socket_restored"), {
+                toastId: "socket-success",
+              });
+              {
+              }
+              wasError.current = false;
+              lastErrorTime.current = 0;
+            }
+          });
+
+          setSocket(currentSocket);
+
+          if (window.location.pathname.startsWith("/auth")) {
+            window.location.replace("/");
           }
-        });
-
-        currentSocket.on("connect", () => {
-          toast.dismiss("socket-error");
-
-          if (wasError.current) {
-            toast.success("Зв'язок відновлено!", { toastId: "socket-success" });
-            wasError.current = false;
-            lastErrorTime.current = 0;
-          }
-        });
-
-        setSocket(currentSocket);
+        } catch (error) {
+          console.error("Помилка синхронізації профілю:", error);
+          dispatch(clearUser());
+        }
+      } else {
+        dispatch(clearUser());
       }
     });
 
@@ -113,7 +134,7 @@ export const App = () => {
       unsubscribeAuth();
       if (currentSocket) currentSocket.disconnect();
     };
-  }, [t]);
+  }, [t, dispatch]);
 
   useNotificationsSocket(socket);
 
@@ -131,7 +152,6 @@ export const App = () => {
         pauseOnHover
         theme={toastTheme}
       />
-
       <Router />
     </>
   );

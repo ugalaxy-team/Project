@@ -103,6 +103,23 @@ export const AuthPage = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setFirebaseError(null);
+    try {
+      const cred = await signInWithPopup(auth, google);
+
+      await syncUser(cred.user);
+
+      navigate("/");
+    } catch (e) {
+      const err = e as FirebaseError;
+      if (err.code !== "auth/popup-closed-by-user") {
+        setFirebaseError(t("errors.unknown"));
+        console.error("Google Auth Error:", err);
+      }
+    }
+  };
+
   return (
     <AuthLayout>
       <div className="mb-4 min-h-[76px]">
@@ -286,7 +303,7 @@ export const AuthPage = () => {
           type="button"
           className="w-full"
           leftIcon={<GoogleIcon />}
-          onClick={() => signInWithPopup(auth, google)}
+          onClick={handleGoogleLogin}
         >
           {t("submit.google")}
         </Button>

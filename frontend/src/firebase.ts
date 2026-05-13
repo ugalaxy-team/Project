@@ -88,7 +88,6 @@ export const syncUser = async (user: User | null) => {
     };
 
     store.dispatch(setUser(userData));
-    console.log("User authenticated!");
   } catch (error) {
     console.error(
       "Failed to sync user with API, falling back to Firebase data",
