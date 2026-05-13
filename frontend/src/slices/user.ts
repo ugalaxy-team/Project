@@ -23,7 +23,7 @@ export interface ApiUserData {
   evaluates_in: Tournament[];
 }
 
-export interface UserData extends ApiUserData, FirebaseUserData { }
+export interface UserData extends ApiUserData, FirebaseUserData {}
 
 interface UserState {
   user: UserData | null | undefined;
@@ -44,8 +44,11 @@ export const userSlice = createSlice({
       if (!state.user) return;
       state.user.displayName = action.payload;
     },
+    clearUser: (state) => {
+      state.user = null;
+    },
   },
 });
 
-export const { setUser, setDisplayName } = userSlice.actions;
+export const { setUser, setDisplayName, clearUser } = userSlice.actions;
 export default userSlice.reducer;

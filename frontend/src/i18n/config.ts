@@ -1,0 +1,84 @@
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
+
+// UKRAINIAN
+import ukCommon from "../locales/uk/common.json";
+import ukAuth from "../locales/uk/auth.json";
+import ukRegistration from "../locales/uk/registration.json";
+import ukHome from "../locales/uk/home.json";
+import ukAbout from "../locales/uk/about.json";
+import ukFaq from "../locales/uk/faq.json";
+import ukSupport from "../locales/uk/support.json";
+import ukContact from "../locales/uk/contact.json";
+import ukTournaments from "../locales/uk/tournaments.json";
+import ukRules from "../locales/uk/rules.json";
+import ukProfile from "../locales/uk/profile.json";
+
+// ENGLISH
+import enCommon from "../locales/en/common.json";
+import enAuth from "../locales/en/auth.json";
+import enRegistration from "../locales/en/registration.json";
+import enHome from "../locales/en/home.json";
+import enAbout from "../locales/en/about.json";
+import enFaq from "../locales/en/faq.json";
+import enSupport from "../locales/en/support.json";
+import enContact from "../locales/en/contact.json";
+import enTournaments from "../locales/en/tournaments.json";
+import enRules from "../locales/en/rules.json";
+import enProfile from "../locales/en/profile.json";
+
+const resources = {
+  uk: {
+    common: ukCommon,
+    auth: ukAuth,
+    registration: ukRegistration,
+    home: ukHome,
+    about: ukAbout,
+    faq: ukFaq,
+    support: ukSupport,
+    contact: ukContact,
+    tournaments: ukTournaments,
+    rules: ukRules,
+    profile: ukProfile,
+  },
+  en: {
+    common: enCommon,
+    auth: enAuth,
+    registration: enRegistration,
+    home: enHome,
+    about: enAbout,
+    faq: enFaq,
+    support: enSupport,
+    contact: enContact,
+    tournaments: enTournaments,
+    rules: enRules,
+    profile: enProfile,
+  },
+};
+
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: "uk",
+    supportedLngs: ["uk", "en"],
+    ns: [
+      "common",
+      "auth",
+      "registration",
+      "home",
+      "about",
+      "faq",
+      "support",
+      "contact",
+      "tournaments",
+      "rules",
+    ],
+    defaultNS: "common",
+    debug: import.meta.env.DEV,
+    interpolation: { escapeValue: false },
+  });
+
+export default i18n;

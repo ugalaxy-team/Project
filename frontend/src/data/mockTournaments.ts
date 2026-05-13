@@ -1,3 +1,5 @@
+import type { CustomField } from "../pages/RegistrationPage/types";
+
 export type TournamentStatus =
   | "draft"
   | "registration"
@@ -19,6 +21,9 @@ export interface Tournament {
   deadline: string;
   max: number;
   teams: number;
+  minMembers?: number;
+  maxMembers?: number;
+  customFields?: CustomField[];
 }
 
 const RAW_DATA: Omit<Tournament, "id">[] = [
@@ -33,6 +38,22 @@ const RAW_DATA: Omit<Tournament, "id">[] = [
       { label: "Битва", type: "accent" },
       { label: "Екшин", type: "pink" },
     ],
+    minMembers: 1,
+    maxMembers: 3,
+    customFields: [
+      {
+        id: "telegram",
+        label: "Контактний Telegram",
+        placeholder: "@username",
+        required: true,
+      },
+      {
+        id: "brawl_tag",
+        label: "Тег гравця Brawl Stars",
+        placeholder: "#XXXXXXXX",
+        required: true,
+      },
+    ],
   },
   {
     title: "24 години челендж",
@@ -44,6 +65,16 @@ const RAW_DATA: Omit<Tournament, "id">[] = [
     tags: [
       { label: "Їжа", type: "primary" },
       { label: "Макдональдс", type: "light" },
+    ],
+    minMembers: 1,
+    maxMembers: 1,
+    customFields: [
+      {
+        id: "allergies",
+        label: "Харчові алергії",
+        placeholder: "Немає",
+        required: false,
+      },
     ],
   },
   {
@@ -57,6 +88,22 @@ const RAW_DATA: Omit<Tournament, "id">[] = [
       { label: "Спорт", type: "primary" },
       { label: "T-Rex", type: "accent" },
     ],
+    minMembers: 1,
+    maxMembers: 2,
+    customFields: [
+      {
+        id: "telegram",
+        label: "Telegram капітана",
+        placeholder: "@rex",
+        required: true,
+      },
+      {
+        id: "suit_size",
+        label: "Розмір костюма",
+        placeholder: "S, M, L, XL",
+        required: true,
+      },
+    ],
   },
   {
     title: "Забіг синіх їжаків",
@@ -69,6 +116,8 @@ const RAW_DATA: Omit<Tournament, "id">[] = [
       { label: "Біг", type: "accent" },
       { label: "Розваги", type: "light" },
     ],
+    minMembers: 1,
+    maxMembers: 4,
   },
   {
     title: "Екстремальний продаж",
@@ -113,10 +162,30 @@ export const TOURNAMENTS_DATA: Tournament[] = Array.from(
   (_, index) => {
     const baseCard = RAW_DATA[index % RAW_DATA.length];
 
+    const defaultMin = baseCard.minMembers || 1;
+    const defaultMax = baseCard.maxMembers || 5;
+    const defaultCustomFields: CustomField[] = baseCard.customFields || [
+      {
+        id: "organization",
+        label: "Навчальний заклад / Організація",
+        placeholder: "ЧПФК, КНУ...",
+        required: false,
+      },
+      {
+        id: "telegram",
+        label: "Контактний Telegram",
+        placeholder: "@username",
+        required: true,
+      },
+    ];
+
     return {
       ...baseCard,
       id: index + 1,
       title: `${baseCard.title} #${index + 1}`,
+      minMembers: defaultMin,
+      maxMembers: defaultMax,
+      customFields: defaultCustomFields,
     };
   },
 );

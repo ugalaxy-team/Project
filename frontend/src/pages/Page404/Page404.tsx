@@ -1,42 +1,45 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
 export const Page404 = () => {
-  const navigate = useNavigate();
+  const { t } = useTranslation("common");
 
   return (
-    <main className="min-h-[100dvh] flex flex-col items-center justify-center bg-bg-body px-6 text-center relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 opacity-[0.03] bg-[radial-gradient(circle_at_center,#000_2px,transparent_2px)] bg-[size:24px_24px]"></div>
+    <main className="min-h-screen w-full flex items-center justify-center bg-bg-body text-text-main relative overflow-hidden font-inter transition-colors duration-500">
+      {/* Масивний статичний фон 404 для глибини */}
+      <div className="absolute font-nunito font-extrabold text-[35vw] text-text-main/[0.02] select-none z-0 flex items-center justify-center w-full h-full pointer-events-none overflow-hidden leading-none tracking-tighter">
+        404
+      </div>
 
-      <div className="space-y-6 max-w-2xl relative z-10">
-        <h1 className="text-[120px] md:text-[150px] leading-none font-quicksand font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-primary to-pink-accent select-none drop-shadow-sm">
-          404
-        </h1>
+      <div className="relative z-10 text-center flex flex-col items-center px-4 w-full max-w-2xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex flex-col items-center"
+        >
+          {/* Акцентний заголовок Nunito */}
+          <h1 className="text-[120px] md:text-[180px] leading-none font-nunito font-extrabold text-primary mb-2 drop-shadow-[0_0_40px_rgba(99,102,241,0.15)] select-none">
+            404
+          </h1>
 
-        <div className="space-y-4">
-          <h2 className="text-3xl md:text-4xl font-quicksand font-bold text-dark-theme">
-            Ви вийшли за межі системи 👾
+          <h2 className="text-3xl md:text-5xl font-nunito font-extrabold text-text-main mb-5 tracking-tight uppercase">
+            {t("errors.404.title")}
           </h2>
-          <p className="text-lg text-slate-600 max-w-md mx-auto font-inter">
-            Сторінку, яку ви шукаєте, було видалено, або вона існує лише в
-            паралельному всесвіті. Давайте повернемося на безпечну територію.
-          </p>
-        </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-          <button
-            onClick={() => navigate(-1)}
-            className="w-full sm:w-auto px-8 py-3.5 font-quicksand font-bold text-[18px] rounded-full border-2 border-primary text-primary hover:bg-primary/5 focus:outline-none focus:ring-4 focus:ring-primary/20 active:scale-95 transition-all"
-          >
-            ← Назад
-          </button>
+          {/* Основний текст Inter */}
+          <p className="text-[16px] md:text-[18px] text-text-muted mb-12 font-medium max-w-lg mx-auto leading-relaxed">
+            {t("errors.404.description")}
+          </p>
 
           <Link
             to="/"
-            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 font-quicksand font-bold text-[18px] rounded-full bg-primary text-white hover:-translate-y-1 shadow-[0_10px_20px_var(--color-primary)] shadow-primary/30 focus:outline-none focus:ring-4 focus:ring-primary/30 active:scale-95 transition-all"
+            className="inline-flex items-center justify-center px-12 py-4 rounded-full font-nunito font-extrabold text-[16px] bg-primary text-white hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(99,102,241,0.35)] active:scale-95 transition-all duration-300"
           >
-            На головну
+            {t("errors.404.go_home")}
           </Link>
-        </div>
+        </motion.div>
       </div>
     </main>
   );

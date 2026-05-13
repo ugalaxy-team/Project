@@ -36,7 +36,6 @@ const firebaseConfig: FirebaseOptions = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
-// TODO: implement redirect strategy
 const ui = initializeUI({
   app,
   behaviors: [requireDisplayName(), providerPopupStrategy()],
@@ -89,7 +88,6 @@ export const syncUser = async (user: User | null) => {
     };
 
     store.dispatch(setUser(userData));
-    console.log("User authenticated!");
   } catch (error) {
     console.error(
       "Failed to sync user with API, falling back to Firebase data",
