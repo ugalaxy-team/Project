@@ -1,8 +1,10 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { createPortal } from "react-dom";
 import appConfig from "@/../../shared/app_config.json";
 import { type Tournament } from "./types";
 import DateTimePicker from "@/components/ui/DateTimePicker";
+import CustomSelect from "@/components/ui/CustomSelect";
+import { X, Plus, Info, CheckCircle2, Loader2 } from "lucide-react";
 
 const REQUIREMENT_OPTIONS = appConfig.requirement_options;
 
@@ -25,10 +27,12 @@ interface TaskManagementModalProps {
 
 const Tooltip = ({ text }: { text: string }) => (
   <div className="group relative inline-block ml-2 cursor-help">
-    <div className="w-4 h-4 bg-[#6D72F1]/10 text-[#6D72F1] rounded-full flex items-center justify-center text-[10px] font-bold hover:bg-[#6D72F1] hover:text-white transition-all">?</div>
-    <div className="absolute top-6 left-0 hidden group-hover:block w-52 p-3 bg-white text-slate-600 text-[11px] rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] border border-slate-100 z-[100] leading-normal animate-in fade-in zoom-in duration-200">
-      <div className="relative z-[101] font-semibold">{text}</div>
-      <div className="absolute -top-1 left-1.5 border-4 border-transparent border-b-white"></div>
+    <div className="w-4 h-4 bg-[#6D72F1]/10 text-[#6D72F1] rounded-full flex items-center justify-center text-[10px] font-bold hover:bg-[#6D72F1] hover:text-white transition-all">
+      <Info size={10} strokeWidth={3} />
+    </div>
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden group-hover:block w-52 p-3 bg-slate-900 text-white text-[10px] font-bold rounded-xl shadow-2xl z-[100] leading-normal uppercase tracking-wider">
+      {text}
+      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
     </div>
   </div>
 );
@@ -51,77 +55,76 @@ const TaskManagementModal = ({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  React.useEffect(() => {
-    if (isOpen && editingTask) {
-      setFormData({
-        title: editingTask.title || "",
-        description: editingTask.description || "",
-        start_time: editingTask.start_time || "",
-        end_time: editingTask.end_time || "",
-        requirements: editingTask.requirements || [],
+  const groupedOptions = useMemo(() => {
+    const filtered = REQUIREMENT_OPTIONS.filter(
+      (opt) => !formData.requirements.includes(opt.name)
+    );
+
+    const groups: Record<string, any[]> = {};
+
+    filtered.forEach((opt) => {
+      const categoryId = opt.category_id || "Other";
+      if (!groups[categoryId]) {
+        groups[categoryId] = [];
+      }
+      groups[categoryId].push({
+        id: opt.name,
+        label: opt.display_name,
       });
-    } else if (isOpen) {
-      setFormData({
-        title: "",
-        description: "",
-        start_time: "",
-        end_time: "",
-        requirements: [],
-      });
+    });
+
+    return Object.entries(groups).map(([category, items]) => ({
+      category,
+      items,
+    }));
+  }, [formData.requirements]);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (editingTask) {
+        setFormData({
+          title: editingTask.title || "",
+          description: editingTask.description || "",
+          start_time: editingTask.start_time || "",
+          end_time: editingTask.end_time || "",
+          requirements: editingTask.requirements || [],
+        });
+      } else {
+        setFormData({
+          title: "",
+          description: "",
+          start_time: "",
+          end_time: "",
+          requirements: [],
+        });
+      }
+      setErrors({});
     }
   }, [isOpen, editingTask]);
-
-  const groupedRequirements = useMemo(() => {
-    return REQUIREMENT_OPTIONS.reduce((acc, item) => {
-      if (!acc[item.category_id]) {
-        acc[item.category_id] = [];
-      }
-      acc[item.category_id].push(item);
-      return acc;
-    }, {} as Record<string, typeof REQUIREMENT_OPTIONS>);
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => {
-      const newErr = { ...prev };
-      delete newErr[name];
-      return newErr;
-    });
-  };
-
-  const handleDateChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => {
-      const newErr = { ...prev };
-      delete newErr[name];
-      return newErr;
-    });
-  };
-
-  const handleAddRequirement = (name: string) => {
-    if (!name || formData.requirements.includes(name)) return;
-    setFormData((prev) => ({
-      ...prev,
-      requirements: [...prev.requirements, name],
-    }));
-    if (errors.requirements) setErrors(p => ({ ...p, requirements: "" }));
-  };
-
-  const handleRemoveRequirement = (name: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      requirements: prev.requirements.filter((r) => r !== name),
-    }));
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrs = { ...prev };
+        delete newErrs[name];
+        return newErrs;
+      });
+    }
   };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-    if (!formData.title.trim() || formData.title.trim().length < 3) newErrors.title = "Назва занадто коротка";
-    if (!formData.start_time) newErrors.start_time = "Обов'язково";
-    if (!formData.end_time) newErrors.end_time = "Обов'язково";
-    if (formData.requirements.length === 0) newErrors.requirements = "Оберіть хоча б одну технологію";
+    if (!formData.title.trim()) newErrors.title = "Обов'язкове поле";
+    if (!formData.start_time) newErrors.start_time = "Вкажіть час";
+    if (!formData.end_time) newErrors.end_time = "Вкажіть час";
+    
+    if (formData.start_time && formData.end_time) {
+      if (new Date(formData.start_time) >= new Date(formData.end_time)) {
+        newErrors.end_time = "Має бути пізніше старту";
+      }
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -129,140 +132,134 @@ const TaskManagementModal = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm() || isLoading) return;
     await onSave(formData);
-    onClose();
   };
 
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[94vh]">
-        
-        <div className="bg-[#6D72F1] p-8 text-white flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-black uppercase tracking-tight italic">
-              {editingTask ? "Оновити завдання" : "Створити завдання"}
-            </h2>
-            {tournament && (
-              <p className="text-white/80 text-[10px] font-bold uppercase tracking-widest mt-1">
-                Для турніру: {tournament.title}
-              </p>
-            )}
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border border-slate-200"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="bg-[#6D72F1] p-8 text-white shrink-0">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-black uppercase tracking-tight italic leading-none">
+                {editingTask ? "Оновити таск" : "Нове завдання"}
+              </h2>
+              {tournament && (
+                <div className="flex items-center gap-2 mt-2 opacity-80">
+                   <div className="h-px w-4 bg-white/50"></div>
+                   <p className="text-[10px] font-black uppercase tracking-widest">Турнір: {tournament.title}</p>
+                </div>
+              )}
+            </div>
+            <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-xl transition-colors">
+              <X size={20} strokeWidth={3} />
+            </button>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-all">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FBFBFF] space-y-6">
+        <div className="flex-1 overflow-y-auto p-8 bg-white space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center">
-              Заголовок <Tooltip text="Назва завдання, яку бачитимуть учасники в списку" />
-            </label>
+            <div className="flex justify-between items-center ml-1">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center">
+                Назва завдання <Tooltip text="Введіть коротку назву" />
+              </label>
+              {errors.title && <span className="text-[9px] text-red-500 font-bold uppercase">{errors.title}</span>}
+            </div>
             <input
               name="title"
               value={formData.title}
               onChange={handleInputChange}
-              placeholder="Наприклад: створити веб платформу"
-              className={`w-full px-5 py-4 bg-white border ${errors.title ? 'border-red-400' : 'border-slate-200'} rounded-2xl outline-none focus:border-[#6D72F1] font-bold text-slate-800 shadow-sm`}
+              placeholder="Наприклад: Розробка смарт-контракту"
+              className={`w-full px-5 py-4 bg-white border-2 rounded-2xl outline-none transition-all font-bold text-slate-800 ${
+                errors.title ? "border-red-200 focus:border-red-500" : "border-slate-100 focus:border-[#6D72F1]"
+              }`}
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Деталі завдання</label>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Детальний опис</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              rows={3}
-              placeholder="Що саме потрібно зробити?"
-              className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-[#6D72F1] text-slate-700 font-medium shadow-sm resize-none"
+              rows={4}
+              className="w-full px-5 py-4 bg-white border-2 border-slate-100 rounded-2xl outline-none focus:border-[#6D72F1] text-slate-700 font-bold resize-none"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className={`p-1 rounded-2xl transition-colors ${errors.start_time ? 'bg-red-50' : ''}`}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <DateTimePicker 
-                label="Початок виконання"
+                label="Старт прийому"
                 value={formData.start_time}
-                onChange={(date) => handleDateChange("start_time", date)}
+                onChange={(date) => setFormData(p => ({...p, start_time: date}))}
               />
-              {errors.start_time && <p className="text-[8px] font-black text-red-400 uppercase mt-1 ml-3">{errors.start_time}</p>}
+              {errors.start_time && <p className="text-[9px] text-red-500 font-bold uppercase ml-1">{errors.start_time}</p>}
             </div>
-            <div className={`p-1 rounded-2xl transition-colors ${errors.end_time ? 'bg-red-50' : ''}`}>
+            <div className="space-y-2">
               <DateTimePicker 
-                label="Дедлайн"
+                label="Кінцевий дедлайн"
                 value={formData.end_time}
-                onChange={(date) => handleDateChange("end_time", date)}
+                onChange={(date) => setFormData(p => ({...p, end_time: date}))}
               />
-              {errors.end_time && <p className="text-[8px] font-black text-red-400 uppercase mt-1 ml-3">{errors.end_time}</p>}
+              {errors.end_time && <p className="text-[9px] text-red-500 font-bold uppercase ml-1">{errors.end_time}</p>}
             </div>
           </div>
 
           <div className="space-y-4 pt-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center">
-              Необхідні вимоги <Tooltip text="Оберіть інструменти, які обов'язкові для цього завдання" />
-            </label>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center ml-1">Стек технологій</label>
+            <CustomSelect
+              label={groupedOptions.length > 0 ? "Додати інструмент" : "Весь стек додано"}
+              options={groupedOptions}
+              disabled={groupedOptions.length === 0}
+              value={null}
+              onChange={(opt) => setFormData(p => ({...p, requirements: [...p.requirements, opt.id as string]}))}
+              icon={Plus}
+            />
             
-            <select
-              onChange={(e) => {
-                handleAddRequirement(e.target.value);
-                e.target.value = "";
-              }}
-              className={`w-full px-5 py-4 bg-white border ${errors.requirements ? 'border-red-400' : 'border-slate-200'} rounded-2xl outline-none focus:border-[#6D72F1] font-bold text-slate-800 shadow-sm appearance-none cursor-pointer`}
-            >
-              <option value="">Додати вимогу...</option>
-              {Object.entries(groupedRequirements).map(([category, items]) => (
-                <optgroup key={category} label={category} className="font-bold text-[#6D72F1]">
-                  {items.map((item) => (
-                    <option 
-                      key={item.name} 
-                      value={item.name} 
-                      disabled={formData.requirements.includes(item.name)}
-                      className="text-slate-800 font-medium"
-                    >
-                      {item.display_name}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-
-            <div className="flex flex-wrap gap-2">
-              {formData.requirements.map((reqName) => {
-                const configItem = REQUIREMENT_OPTIONS.find(opt => opt.name === reqName);
-                return (
-                  <span
-                    key={reqName}
-                    className="bg-[#6D72F1]/10 text-[#6D72F1] border border-[#6D72F1]/20 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-3 animate-in fade-in zoom-in duration-200"
-                  >
-                    {configItem?.display_name || reqName}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveRequirement(reqName)}
-                      className="hover:text-red-500 transition-colors"
-                    >
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
+            {formData.requirements.length > 0 ? (
+              <div className="flex flex-wrap gap-2 p-4 rounded-3xl border-2 border-dashed border-slate-100 bg-slate-50/50">
+                {formData.requirements.map((reqName) => (
+                  <div key={reqName} className="bg-white text-[#6D72F1] border border-slate-100 pl-3 pr-1 py-1.5 rounded-xl text-[10px] font-black uppercase flex items-center gap-2 shadow-sm hover:border-[#6D72F1] transition-colors">
+                    <CheckCircle2 size={12} className="text-green-500" />
+                    {reqName}
+                    <button type="button" onClick={() => setFormData(p => ({...p, requirements: p.requirements.filter(r => r !== reqName)}))} className="w-6 h-6 flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors">
+                      <X size={12} strokeWidth={3} />
                     </button>
-                  </span>
-                );
-              })}
-            </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-8 border-2 border-dashed border-slate-100 rounded-3xl flex items-center justify-center">
+                <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Вимоги не вказані</span>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="p-6 bg-white border-t flex gap-4">
-          <button onClick={onClose} className="flex-1 py-4 font-bold text-slate-400 uppercase text-[10px] tracking-widest hover:text-slate-600 transition-colors">
+        <div className="p-6 bg-slate-50 border-t border-slate-100 flex items-center gap-4 shrink-0">
+          <button 
+            type="button" 
+            onClick={onClose} 
+            className="px-6 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest hover:text-slate-600 transition-colors"
+          >
             Скасувати
           </button>
           <button
             onClick={handleSubmit}
             disabled={isLoading}
-            className="flex-[2] py-4 bg-[#6D72F1] text-white rounded-2xl font-bold uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-[#6D72F1]/20 disabled:bg-slate-200 disabled:text-slate-400 transition-all active:scale-[0.98] hover:brightness-110"
+            className="flex-1 py-4 bg-[#6D72F1] disabled:bg-slate-300 text-white rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-[#6D72F1]/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
           >
-            {isLoading ? "Збереження..." : editingTask ? "Оновити завдання" : "Створити завдання"}
+            {isLoading ? <Loader2 className="animate-spin" size={16} /> : "Зберегти"}
           </button>
         </div>
       </div>
