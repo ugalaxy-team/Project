@@ -18,22 +18,52 @@ vi.mock("react-router-dom", () => ({
   useParams: () => ({ id: "123" }),
 }));
 
-vi.mock("../../components/Hero", () => ({
+vi.mock("@/components/Hero", () => ({
   Hero: ({ title }: any) => <div data-testid="mock-hero">{title}</div>,
 }));
 
+const [draftStatus, registrationStatus, runningStatus] = tournamentStatuses;
+
 const mockTournament = {
+  id: 123,
   title: "SLOVO JAM",
   description: "Тестовий опис завдання турніру",
   reg_start: "2026-04-01T10:00:00Z",
   reg_end: "2026-04-20T10:00:00Z",
   start_date: "2026-05-01T10:00:00Z",
+  end_date: "2026-06-01T10:00:00Z",
   max_teams: 10,
+  min_people_in_team: 1,
+  max_people_in_team: 5,
+  status_name: "draft",
+  status: {
+    name: "draft",
+    display_name: draftStatus.display_name,
+  },
+  creator: {
+    id: 1,
+    full_name: "Creator",
+    email: "c@x.com",
+    firebase_uid: "uid",
+    roles: [],
+    is_jury: false,
+  },
+  tasks: [
+    {
+      id: 1,
+      title: "Round One",
+      description: "Solve tasks",
+      start_time: "2026-06-01T10:00:00Z",
+      end_time: "2026-06-02T10:00:00Z",
+      requirements: ["TypeScript"],
+      tournament_id: 123,
+      status_id: "active",
+    },
+  ],
+  teams: [],
+  juries: [],
+  active_task: null,
 };
-
-const [draftStatus, registrationStatus, runningStatus] = tournamentStatuses;
-
-const placeholderTabs = ["Шукають команду", "Команди (3)", "Результати"];
 
 describe("TournamentPage", () => {
   let queryClient: QueryClient;
@@ -156,6 +186,9 @@ describe("TournamentPage", () => {
   });
 
   it('shows "Завершено" state when more than 48h after start_date passed', async () => {
+    (apiClient.get as any).mockResolvedValue({
+      data: { ...mockTournament, end_date: undefined },
+    });
     vi.setSystemTime(new Date("2026-05-10T10:00:00Z"));
     renderWithProviders();
 
@@ -175,36 +208,54 @@ describe("TournamentPage", () => {
     expect(screen.getByText(mockTournament.description)).toBeInTheDocument();
   });
 
-  it.each(placeholderTabs)(
-    'shows PlaceholderTab on "%s" click',
-    async (tabName) => {
-      const { user } = renderWithProviders();
-
-      await waitFor(() => {
-        expect(screen.getByText("Що потрібно зробити?")).toBeInTheDocument();
-      });
-
-      const tabButton = screen.getByText(tabName);
-      await user.click(tabButton);
-
-      expect(screen.getByText("В розробці...")).toBeInTheDocument();
-      expect(
-        screen.queryByText("Що потрібно зробити?"),
-      ).not.toBeInTheDocument();
-    },
-  );
-
-  it("navigates back to DescriptionTab when clicked", async () => {
+  it("opens teams tab and shows empty teams copy", async () => {
+    vi.setSystemTime(new Date("2026-04-10T10:00:00Z"));
     const { user } = renderWithProviders();
 
     await waitFor(() => {
       expect(screen.getByText("Що потрібно зробити?")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByText("Результати"));
-    expect(screen.getByText("В розробці...")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Команди" }));
+    expect(screen.getByText("Команд ще немає")).toBeInTheDocument();
+  });
 
-    await user.click(screen.getByText("Опис завдання"));
-    expect(screen.getByText("Що потрібно зробити?")).toBeInTheDocument();
+  it("opens task description tab before tasks start", async () => {
+    vi.setSystemTime(new Date("2026-04-10T10:00:00Z"));
+    const { user } = renderWithProviders();
+
+    await waitFor(() => {
+      expect(screen.getByText("Що потрібно зробити?")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Опис завдання" }));
+    expect(screen.getByText("Турнір ще не розпочався")).toBeInTheDocument();
+  });
+
+  it("opens calendar tab with registration milestone", async () => {
+    vi.setSystemTime(new Date("2026-04-10T10:00:00Z"));
+    const { user } = renderWithProviders();
+
+    await waitFor(() => {
+      expect(screen.getByText("Що потрібно зробити?")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Календар" }));
+    expect(screen.getByText("Реєстрація команд")).toBeInTheDocument();
+  });
+
+  it("returns to tournament description tab from another tab", async () => {
+    vi.setSystemTime(new Date("2026-04-10T10:00:00Z"));
+    const { user } = renderWithProviders();
+
+    await waitFor(() => {
+      expect(screen.getByText("Що потрібно зробити?")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Календар" }));
+    expect(screen.getByText("Реєстрація команд")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Опис турінра" }));
+    expect(screen.getByText(mockTournament.description)).toBeInTheDocument();
   });
 });

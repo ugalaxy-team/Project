@@ -1,7 +1,29 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TaskManagementModal } from "./TaskManagementModal";
+
+vi.mock("@/components/ui/DateTimePicker", () => ({
+  default: ({
+    label,
+    value,
+    onChange,
+  }: {
+    label: string;
+    value: string;
+    onChange: (v: string) => void;
+  }) => (
+    <label>
+      <span>{label}</span>
+      <input
+        aria-label={label}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </label>
+  ),
+}));
 
 const tournament = {
   id: 11,
@@ -35,8 +57,11 @@ describe("TaskManagementModal", () => {
 
     await user.click(screen.getByRole("button", { name: "Створити завдання" }));
 
-    expect(screen.getByText("Назва повинна бути не менше 3 символів")).toBeInTheDocument();
-    expect(screen.getByText("Додайте хоча б одну вимогу")).toBeInTheDocument();
+    expect(
+      document.querySelector('input[name="title"]'),
+    ).toHaveClass("border-red-400");
+    expect(screen.getAllByText("Обов'язково").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByRole("combobox")).toHaveClass(/border-red-400/);
   });
 
   it("submits valid task form and closes modal", async () => {
@@ -53,14 +78,16 @@ describe("TaskManagementModal", () => {
       />,
     );
 
-    await user.type(screen.getByPlaceholderText("Введіть назву..."), "Build scoring");
-    await user.type(screen.getByPlaceholderText("Опишіть завдання..."), "Implement rankings");
-    const startInput = document.querySelector("input[name='start_time']");
-    const endInput = document.querySelector("input[name='end_time']");
-    expect(startInput).toBeTruthy();
-    expect(endInput).toBeTruthy();
-    await user.type(startInput as HTMLInputElement, "2026-05-11T12:00");
-    await user.type(endInput as HTMLInputElement, "2026-05-11T14:00");
+    await user.type(
+      screen.getByPlaceholderText("Наприклад: створити веб платформу"),
+      "Build scoring",
+    );
+    await user.type(
+      screen.getByPlaceholderText("Що саме потрібно зробити?"),
+      "Implement rankings",
+    );
+    await user.type(screen.getByLabelText("Початок виконання"), "2026-05-11T12:00:00.000Z");
+    await user.type(screen.getByLabelText("Дедлайн"), "2026-05-11T14:00:00.000Z");
 
     await user.selectOptions(screen.getByRole("combobox"), "Python");
 
@@ -78,7 +105,7 @@ describe("TaskManagementModal", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("prefills form for editing task", () => {
+  it("prefills form for editing task", async () => {
     render(
       <TaskManagementModal
         isOpen
@@ -96,10 +123,12 @@ describe("TaskManagementModal", () => {
       />,
     );
 
-    expect(screen.getByDisplayValue("Existing task")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("Existing task")).toBeInTheDocument();
+    });
     expect(screen.getByDisplayValue("Already exists")).toBeInTheDocument();
     expect(screen.getAllByText("React").length).toBeGreaterThan(0);
-    expect(screen.getByRole("button", { name: "Зберегти завдання" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Оновити завдання" })).toBeInTheDocument();
   });
 
   it("shows tournament title in header details", () => {
@@ -111,7 +140,9 @@ describe("TaskManagementModal", () => {
         onSave={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-    expect(screen.getByText("Test Tournament")).toBeInTheDocument();
+    expect(
+      screen.getByText("Для турніру: Test Tournament"),
+    ).toBeInTheDocument();
   });
 
   it("closes modal from cancel button", async () => {
@@ -140,7 +171,11 @@ describe("TaskManagementModal", () => {
         onSave={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-    await user.click(screen.getByRole("button", { name: "✕" }));
+    const header = screen
+      .getByRole("heading", { name: "Створити завдання" })
+      .closest(".flex.justify-between");
+    expect(header).toBeTruthy();
+    await user.click(within(header as HTMLElement).getAllByRole("button")[0]);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -173,8 +208,16 @@ describe("TaskManagementModal", () => {
     await user.selectOptions(screen.getByRole("combobox"), "Python");
     expect(screen.getAllByText("Python").length).toBeGreaterThan(1);
 
-    const removeButtons = screen.getAllByRole("button", { name: "✕" });
-    await user.click(removeButtons[1]);
+    const chipRemove = screen
+      .getAllByText("Python")
+      .map((el) => el.closest("span"))
+      .find(
+        (span) =>
+          span?.className.includes("tracking-wider") &&
+          within(span as HTMLElement).queryAllByRole("button").length > 0,
+      );
+    expect(chipRemove).toBeTruthy();
+    await user.click(within(chipRemove as HTMLElement).getByRole("button"));
     expect(screen.getAllByText("Python").length).toBe(1);
   });
 
@@ -190,13 +233,19 @@ describe("TaskManagementModal", () => {
       />,
     );
 
-    await user.type(screen.getByPlaceholderText("Введіть назву..."), "ab");
-    await user.type(screen.getByPlaceholderText("Опишіть завдання..."), "desc");
+    await user.type(
+      screen.getByPlaceholderText("Наприклад: створити веб платформу"),
+      "ab",
+    );
+    await user.type(screen.getByLabelText("Початок виконання"), "2026-05-11T12:00:00.000Z");
+    await user.type(screen.getByLabelText("Дедлайн"), "2026-05-11T14:00:00.000Z");
     await user.selectOptions(screen.getByRole("combobox"), "Python");
     await user.click(screen.getByRole("button", { name: "Створити завдання" }));
 
     expect(onSave).not.toHaveBeenCalled();
-    expect(screen.getByText("Назва повинна бути не менше 3 символів")).toBeInTheDocument();
+    expect(document.querySelector('input[name="title"]')).toHaveClass(
+      "border-red-400",
+    );
   });
 
   it("resets edited values after successful submit", async () => {
@@ -212,11 +261,12 @@ describe("TaskManagementModal", () => {
       />,
     );
 
-    await user.type(screen.getByPlaceholderText("Введіть назву..."), "Build scoring");
-    const startInput = document.querySelector("input[name='start_time']");
-    const endInput = document.querySelector("input[name='end_time']");
-    await user.type(startInput as HTMLInputElement, "2026-05-11T12:00");
-    await user.type(endInput as HTMLInputElement, "2026-05-11T14:00");
+    await user.type(
+      screen.getByPlaceholderText("Наприклад: створити веб платформу"),
+      "Build scoring",
+    );
+    await user.type(screen.getByLabelText("Початок виконання"), "2026-05-11T12:00:00.000Z");
+    await user.type(screen.getByLabelText("Дедлайн"), "2026-05-11T14:00:00.000Z");
     await user.selectOptions(screen.getByRole("combobox"), "Python");
     await user.click(screen.getByRole("button", { name: "Створити завдання" }));
 

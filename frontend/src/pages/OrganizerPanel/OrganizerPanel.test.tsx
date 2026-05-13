@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
@@ -12,6 +12,28 @@ import { createTournament } from "@/api/requests/createTournament";
 import { updateTournament } from "@/api/requests/updateTournament";
 import { createTask } from "@/api/requests/createTask";
 import { updateTask } from "@/api/requests/updateTask";
+
+vi.mock("@/components/ui/DateTimePicker", () => ({
+  default: ({
+    label,
+    value,
+    onChange,
+  }: {
+    label: string;
+    value: string;
+    onChange: (v: string) => void;
+  }) => (
+    <label>
+      <span>{label}</span>
+      <input
+        aria-label={label}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </label>
+  ),
+}));
 
 vi.mock("react-redux", () => ({
   useSelector: vi.fn(),
@@ -113,7 +135,7 @@ describe("OrganizerPanel", () => {
   it("shows profile loading placeholder when user is missing", () => {
     vi.mocked(useSelector).mockReturnValue(null);
     renderPanel();
-    expect(screen.getByText("Завантаження профілю...")).toBeInTheDocument();
+    expect(screen.getByText("Профіль...")).toBeInTheDocument();
   });
 
   it("renders only tournaments created by current user", async () => {
@@ -133,7 +155,7 @@ describe("OrganizerPanel", () => {
       expect(screen.getByText("My Tournament")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole("button", { name: "📋 КЕРУВАННЯ ЗАВДАННЯМИ" }));
+    await user.click(screen.getByRole("button", { name: /Завдання/i }));
     await user.click(screen.getByText("My Tournament"));
 
     await waitFor(() => {
@@ -152,11 +174,11 @@ describe("OrganizerPanel", () => {
       expect(screen.getByText("My Tournament")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole("button", { name: "📋 КЕРУВАННЯ ЗАВДАННЯМИ" }));
+    await user.click(screen.getByRole("button", { name: /Завдання/i }));
     await user.click(screen.getByText("My Tournament"));
 
     await waitFor(() => {
-      expect(screen.getByText("Завдань ще немає")).toBeInTheDocument();
+      expect(screen.getByText("Тут поки порожньо")).toBeInTheDocument();
     });
     errorSpy.mockRestore();
   });
@@ -170,13 +192,15 @@ describe("OrganizerPanel", () => {
       expect(screen.getByText("My Tournament")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole("button", { name: "📋 КЕРУВАННЯ ЗАВДАННЯМИ" }));
+    await user.click(screen.getByRole("button", { name: /Завдання/i }));
     await user.click(screen.getByText("My Tournament"));
     await waitFor(() => {
       expect(screen.getByText("Prepare docs")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByTitle("Видалити"));
+    const taskCard = screen.getByText("Prepare docs").closest("div.group.relative") as HTMLElement;
+    const [, deleteBtn] = within(taskCard).getAllByRole("button");
+    await user.click(deleteBtn);
     expect(deleteTask).not.toHaveBeenCalled();
   });
 
@@ -185,10 +209,10 @@ describe("OrganizerPanel", () => {
     renderPanel();
 
     await waitFor(() => expect(screen.getByText("My Tournament")).toBeInTheDocument());
-    await user.click(screen.getByRole("button", { name: "📋 КЕРУВАННЯ ЗАВДАННЯМИ" }));
-    expect(screen.getByText("Керування завданнями")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /Завдання/i }));
+    expect(screen.getByText("КЕРУВАННЯ ЗАВДАННЯМИ")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "🏆 МОЇ ТУРНІРИ" }));
+    await user.click(screen.getByRole("button", { name: /Турніри/i }));
     expect(screen.getByText("Управління списком")).toBeInTheDocument();
   });
 
@@ -207,9 +231,9 @@ describe("OrganizerPanel", () => {
     await waitFor(() => expect(screen.getByText("My Tournament")).toBeInTheDocument());
 
     await user.click(screen.getByRole("button", { name: "+ Створити турнір" }));
-    expect(screen.getByText("НОВИЙ ТУРНІР")).toBeInTheDocument();
+    expect(screen.getByText("Новий турнір")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Скасувати" }));
-    await waitFor(() => expect(screen.queryByText("НОВИЙ ТУРНІР")).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText("Новий турнір")).not.toBeInTheDocument());
   });
 
   it("creates tournament from modal and calls api mutation", async () => {
@@ -219,10 +243,19 @@ describe("OrganizerPanel", () => {
     await waitFor(() => expect(screen.getByText("My Tournament")).toBeInTheDocument());
 
     await user.click(screen.getByRole("button", { name: "+ Створити турнір" }));
-    await user.type(screen.getByPlaceholderText("Наприклад: Global Cyber Cup"), "New Cup");
-    await user.type(screen.getByPlaceholderText("Короткий опис для учасників..."), "Description");
+    await user.type(
+      screen.getByPlaceholderText("Наприклад: Winter Coding Cup 2024"),
+      "New Cup",
+    );
+    await user.type(
+      document.querySelector('textarea[name="description"]') as HTMLTextAreaElement,
+      "Long description text that satisfies minimum length rules.",
+    );
+    await user.type(screen.getByLabelText("Відкриття"), "2026-05-01T10:00:00.000Z");
+    await user.type(screen.getByLabelText("Закриття"), "2026-05-10T10:00:00.000Z");
+    await user.type(screen.getByLabelText("Дата та час старту"), "2026-05-15T10:00:00.000Z");
     await user.click(screen.getByRole("button", { name: "Далі" }));
-    await user.click(screen.getByRole("button", { name: "Створити Турнір" }));
+    await user.click(screen.getByRole("button", { name: "Створити турнір" }));
 
     await waitFor(() => expect(createTournament).toHaveBeenCalled());
   });
@@ -232,7 +265,8 @@ describe("OrganizerPanel", () => {
     renderPanel();
     await waitFor(() => expect(screen.getByText("My Tournament")).toBeInTheDocument());
 
-    await user.click(screen.getAllByRole("button")[3]);
+    const row = screen.getByText("My Tournament").closest("tr") as HTMLElement;
+    await user.click(within(row).getAllByRole("button")[0]);
     expect(screen.getByText("Зрозуміло, закрити")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Зрозуміло, закрити" }));
     await waitFor(() =>
@@ -247,10 +281,13 @@ describe("OrganizerPanel", () => {
     await waitFor(() => expect(screen.getByText("My Tournament")).toBeInTheDocument());
 
     await user.click(screen.getByRole("button", { name: "Редагувати" }));
-    await user.clear(screen.getByDisplayValue("My Tournament"));
-    await user.type(screen.getByPlaceholderText("Наприклад: Global Cyber Cup"), "Updated Name");
+    const titleField = document.querySelector(
+      'input[name="title"]',
+    ) as HTMLInputElement;
+    await user.clear(titleField);
+    await user.type(titleField, "Updated Name");
     await user.click(screen.getByRole("button", { name: "Далі" }));
-    await user.click(screen.getByRole("button", { name: "Зберегти Зміни" }));
+    await user.click(screen.getByRole("button", { name: /Зберегти зміни/i }));
 
     await waitFor(() => expect(updateTournament).toHaveBeenCalled());
   });
@@ -271,15 +308,16 @@ describe("OrganizerPanel", () => {
     vi.mocked(createTask).mockResolvedValue({ id: 111 } as never);
     renderPanel();
     await waitFor(() => expect(screen.getByText("My Tournament")).toBeInTheDocument());
-    await user.click(screen.getByRole("button", { name: "📋 КЕРУВАННЯ ЗАВДАННЯМИ" }));
+    await user.click(screen.getByRole("button", { name: /Завдання/i }));
     await user.click(screen.getByText("My Tournament"));
 
-    await user.click(screen.getByRole("button", { name: "+ Нове завдання" }));
-    await user.type(screen.getByPlaceholderText("Введіть назву..."), "Task name");
-    const startInput = document.querySelector("input[name='start_time']");
-    const endInput = document.querySelector("input[name='end_time']");
-    await user.type(startInput as HTMLInputElement, "2026-05-11T12:00");
-    await user.type(endInput as HTMLInputElement, "2026-05-11T13:00");
+    await user.click(screen.getByRole("button", { name: /Нове завдання/i }));
+    await user.type(
+      screen.getByPlaceholderText("Наприклад: створити веб платформу"),
+      "Task name",
+    );
+    await user.type(screen.getByLabelText("Початок виконання"), "2026-05-11T12:00:00.000Z");
+    await user.type(screen.getByLabelText("Дедлайн"), "2026-05-11T13:00:00.000Z");
     await user.selectOptions(screen.getByRole("combobox"), "Python");
     await user.click(screen.getByRole("button", { name: "Створити завдання" }));
 
@@ -291,15 +329,17 @@ describe("OrganizerPanel", () => {
     vi.mocked(updateTask).mockResolvedValue({ ...tasks[0], title: "Updated task" } as never);
     renderPanel();
     await waitFor(() => expect(screen.getByText("My Tournament")).toBeInTheDocument());
-    await user.click(screen.getByRole("button", { name: "📋 КЕРУВАННЯ ЗАВДАННЯМИ" }));
+    await user.click(screen.getByRole("button", { name: /Завдання/i }));
     await user.click(screen.getByText("My Tournament"));
     await waitFor(() => expect(screen.getByText("Prepare docs")).toBeInTheDocument());
 
-    await user.click(screen.getByTitle("Редагувати"));
+    const taskCard = screen.getByText("Prepare docs").closest("div.group.relative") as HTMLElement;
+    const [editBtn] = within(taskCard).getAllByRole("button");
+    await user.click(editBtn);
     const titleInput = screen.getByDisplayValue("Prepare docs");
     await user.clear(titleInput);
     await user.type(titleInput, "Updated task");
-    await user.click(screen.getByRole("button", { name: "Зберегти завдання" }));
+    await user.click(screen.getByRole("button", { name: "Оновити завдання" }));
 
     await waitFor(() => expect(updateTask).toHaveBeenCalledWith(1, 101, expect.any(Object)));
   });
@@ -309,11 +349,13 @@ describe("OrganizerPanel", () => {
     vi.mocked(window.confirm).mockReturnValue(true);
     renderPanel();
     await waitFor(() => expect(screen.getByText("My Tournament")).toBeInTheDocument());
-    await user.click(screen.getByRole("button", { name: "📋 КЕРУВАННЯ ЗАВДАННЯМИ" }));
+    await user.click(screen.getByRole("button", { name: /Завдання/i }));
     await user.click(screen.getByText("My Tournament"));
     await waitFor(() => expect(screen.getByText("Prepare docs")).toBeInTheDocument());
 
-    await user.click(screen.getByTitle("Видалити"));
+    const taskCard = screen.getByText("Prepare docs").closest("div.group.relative") as HTMLElement;
+    const [, deleteBtn] = within(taskCard).getAllByRole("button");
+    await user.click(deleteBtn);
     await waitFor(() => expect(deleteTask).toHaveBeenCalledWith(1, 101));
   });
 });

@@ -27,8 +27,11 @@ describe("TaskItem", () => {
   });
 
   it("renders task index indicator", () => {
-    render(<TaskItem task={task} index={2} onUpdate={vi.fn()} onRemove={vi.fn()} />);
-    expect(screen.getByText("#3")).toBeInTheDocument();
+    const { container } = render(
+      <TaskItem task={task} index={2} onUpdate={vi.fn()} onRemove={vi.fn()} />,
+    );
+    const badge = container.querySelector(".flex-shrink-0.w-10.h-10");
+    expect(badge).toHaveTextContent("3");
   });
 
   it("updates description field", async () => {

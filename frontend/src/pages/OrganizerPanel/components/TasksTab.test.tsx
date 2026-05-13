@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TasksTab } from "./TasksTab";
 import type { Task, Tournament } from "./types";
@@ -88,16 +88,22 @@ describe("TasksTab", () => {
     expect(screen.getByText("Build API")).toBeInTheDocument();
     expect(screen.getByText("Python")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "← Назад" }));
+    const headerRow = screen.getByText("Поточний турнір").closest(".flex.items-center.gap-4");
+    expect(headerRow).toBeTruthy();
+    const backBtn = headerRow?.querySelector("button");
+    expect(backBtn).toBeTruthy();
+    await user.click(backBtn as HTMLButtonElement);
     expect(onTasksClick).toHaveBeenCalledWith(null);
 
-    await user.click(screen.getByRole("button", { name: "+ Нове завдання" }));
+    await user.click(screen.getByRole("button", { name: /Нове завдання/i }));
     expect(onCreateTaskClick).toHaveBeenCalledWith(tournaments[0]);
 
-    await user.click(screen.getByTitle("Редагувати"));
+    const taskCard = screen.getByText("Build API").closest("div.group.relative") as HTMLElement;
+    const [editBtn, deleteBtn] = within(taskCard).getAllByRole("button");
+    await user.click(editBtn);
     expect(onEditTaskClick).toHaveBeenCalledWith(tasks[0]);
 
-    await user.click(screen.getByTitle("Видалити"));
+    await user.click(deleteBtn);
     expect(onDeleteTaskClick).toHaveBeenCalledWith(10);
   });
 
@@ -120,7 +126,7 @@ describe("TasksTab", () => {
 
   it("renders tournament selection cards when tournament is not selected", () => {
     renderTab();
-    expect(screen.getByText("Керування завданнями")).toBeInTheDocument();
+    expect(screen.getByText("КЕРУВАННЯ ЗАВДАННЯМИ")).toBeInTheDocument();
     expect(screen.getByText("ID: 1")).toBeInTheDocument();
   });
 
@@ -139,8 +145,9 @@ describe("TasksTab", () => {
       selectedTournament: tournaments[0],
     });
 
-    expect(screen.getByText("Завдань ще немає")).toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: "+ Нове завдання" }).length).toBe(2);
+    expect(screen.getByText("Тут поки порожньо")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Нове завдання/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "+ Додати завдання" })).toBeInTheDocument();
   });
 
   it("creates task from empty tasks state", async () => {
@@ -152,7 +159,7 @@ describe("TasksTab", () => {
       onCreateTaskClick,
     });
 
-    await user.click(screen.getAllByRole("button", { name: "+ Нове завдання" })[1]);
+    await user.click(screen.getByRole("button", { name: "+ Додати завдання" }));
     expect(onCreateTaskClick).toHaveBeenCalledWith(tournaments[0]);
   });
 
@@ -175,9 +182,8 @@ describe("TasksTab", () => {
     expect(screen.queryByText("FastAPI")).not.toBeInTheDocument();
   });
 
-  it("renders localized date labels for selected task", () => {
+  it("renders formatted schedule chips for selected task", () => {
     renderTab({ selectedTournament: tournaments[0] });
-    expect(screen.getByText(/Початок:/)).toBeInTheDocument();
-    expect(screen.getByText(/Кінець:/)).toBeInTheDocument();
+    expect(screen.getByText(/До /)).toBeInTheDocument();
   });
 });
