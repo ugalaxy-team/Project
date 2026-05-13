@@ -103,7 +103,6 @@ class TournamentStatusOptionModel(BaseModel):
 
     name: StrippedStr = Field(..., min_length=3)
 
-
 class TournamentPublic(TournamentBase):
     model_config = ConfigDict(from_attributes=True)
 
@@ -116,7 +115,6 @@ class TournamentPublic(TournamentBase):
     teams: list[TeamPublic]
     juries: list["UserMinimalPublic"]
     status_name: str = Field(validation_alias=AliasPath("status", "display_name"))
-
 
 class TournamentPublicMinimal(TournamentBase):
     model_config = ConfigDict(from_attributes=True)

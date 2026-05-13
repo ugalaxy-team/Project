@@ -31,7 +31,7 @@ from .task import (
     TaskUpdate,
 )
 from .team import (
-    TeamModel,
+    TeamCreate,
     TeamPublic,
     TeamUpdate,
     TeamMemberCreate,
@@ -46,12 +46,23 @@ from .tournament import (
     TournamentStatusOptionModel,
     TournamentPublicMinimal,
 )
-from .user import UserModel, UserPublic, UserUpdate, UserCreate, CurrentUser, UserMinimalPublic
 
+from .user import (
+    UserModel,
+    UserPublic,
+    UserUpdate,
+    UserCreate,
+    CurrentUser,
+    UserMinimalPublic,
+)
 UserPublic.model_rebuild()
+UserMinimalPublic.model_rebuild()
 CurrentUser.model_rebuild()
+
 TeamPublic.model_rebuild()
+
 TournamentCreate.model_rebuild()
 TournamentUpdate.model_rebuild()
+TournamentPublicMinimal.model_rebuild()
 TournamentPublic.model_rebuild()
 TournamentPublicMinimal.model_rebuild()

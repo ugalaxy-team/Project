@@ -1,6 +1,8 @@
 from datetime import datetime
-from sqlalchemy import ForeignKey, Table, Column, func, join, or_
+from sqlalchemy import ForeignKey, Table, Column, func, join, or_, select
 from sqlalchemy.orm import Mapped, foreign, mapped_column, relationship
+from sqlalchemy.ext.hybrid import hybrid_property
+
 from .base import Base
 from .mixin import PKMixin
 from .team import Team, TeamMember
@@ -68,7 +70,17 @@ class User(Base, PKMixin):
 
     @property
     def is_jury(self) -> bool:
-        return len(self.evaluates_in) > 0
+        if "evaluates_in" in self.__dict__:
+            return len(self.evaluates_in) > 0
+        return False
+
+    @is_jury.expression
+    def is_jury(cls):
+        return (
+            select(func.count(tournament_juries.c.tournament_id))
+            .where(tournament_juries.c.user_id == cls.id)
+            .label("is_jury_count")
+        ) > 0
 
     def __repr__(self):
         return f"<User(id={self.id}, full_name={self.full_name}, email={self.email})>"

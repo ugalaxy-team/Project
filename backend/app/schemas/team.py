@@ -17,14 +17,12 @@ class TeamMemberBase(BaseModel):
     telegram_username: str
     educational_institution: str
 
+
+class TeamMemberCreate(TeamMemberBase):
     @field_validator("email")
     @classmethod
     def normalize_email(cls, value: EmailStr):
         return value.lower()
-
-
-class TeamMemberCreate(BaseModel):
-    pass
 
 
 class TeamMemberUpdate(BaseModel):
@@ -33,8 +31,13 @@ class TeamMemberUpdate(BaseModel):
     telegram_username: str | None = None
     educational_institution: str | None = None
 
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str | None):
+        return value.lower().strip() if value else value
 
-class TeamMemberPublic(BaseModel):
+
+class TeamMemberPublic(TeamMemberBase):
     pass
 
 
@@ -43,10 +46,15 @@ class TeamBase(BaseModel):
     team_email: EmailStr = Field(..., description="Contact email")
     contact_info: PhoneNumber = Field(..., description="Phone number")
 
+
+class TeamCreate(TeamBase):
+    captain: TeamMemberPublic
+    members: list[TeamMemberPublic] = Field(..., min_length=1)
+
     @field_validator("team_email")
     @classmethod
-    def normalize_email(cls, value: EmailStr):
-        return value.lower()
+    def normalize_email(cls, value: str):
+        return value.lower().strip()
 
 
 class TeamUpdate(BaseModel):
@@ -54,10 +62,10 @@ class TeamUpdate(BaseModel):
     team_email: EmailStr | None = None
     contact_info: PhoneNumber | None = None
 
-
-class TeamModel(TeamBase):
-    captain: TeamMemberPublic
-    members: list[TeamMemberPublic] = Field(..., min_length=1)
+    @field_validator("team_email")
+    @classmethod
+    def normalize_email(cls, value: str | None):
+        return value.lower().strip() if value else value
 
 
 class TeamPublic(TeamBase):

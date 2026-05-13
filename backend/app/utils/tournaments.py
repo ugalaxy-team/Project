@@ -8,9 +8,10 @@ from .fsm import auto_update_tournament_status
 tournament_load_options = (
     selectinload(Tournament.status),
     selectinload(Tournament.creator).selectinload(User.roles),
+    selectinload(Tournament.creator).selectinload(User.evaluates_in),
     selectinload(Tournament.tasks),
     selectinload(Tournament.teams).selectinload(Team.members),
-    selectinload(Tournament.juries),
+    selectinload(Tournament.juries).selectinload(User.evaluates_in),
 )
 
 

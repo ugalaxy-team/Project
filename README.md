@@ -1,22 +1,10 @@
-# Project
+This project was created as a tournament submission for the **Code4Future 2026** team programming competition organized by **Star for Life**.
 
-## Docker
+Цей проєкт було створено як турнірну роботу для командного турніру з програмування **Code4Future 2026**, організованого **Star for Life**.
 
-Run the full stack with Docker Compose:
 
-```bash
-docker compose up --build
-```
+## Choose language / Оберіть мову
 
-Services:
+[![🇺🇦 Українська](https://img.shields.io/badge/🇺🇦_Мова-Українська-1565C0?style=for-the-badge)](./README.ua.md)
 
-- Frontend: `http://localhost:5173`
-- Backend: `http://localhost:8000`
-- Postgres: `localhost:5432`
-
-Notes:
-
-- The backend container runs `alembic upgrade head` before starting Uvicorn.
-- The backend also runs `python -m app.init_db` to seed shared roles and status options from `shared/app_config.json`.
-- The backend expects `backend/app/serviceAccountKey.json` to exist for Firebase initialization.
-- You can copy `.env.example` to `.env` and override any defaults before starting the stack.
+[![🇬🇧 English](https://img.shields.io/badge/🇬🇧_Language-English-grey?style=for-the-badge)](./README.en.md)

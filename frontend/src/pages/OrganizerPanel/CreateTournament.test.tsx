@@ -1,380 +1,179 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CreateTournamentModal } from "./CreateTournamentModal";
+import { getAllUsers } from "@/api/requests/getAllUsers";
+
+vi.mock("@/components/ui/DateTimePicker", () => ({
+  default: ({
+    label,
+    value,
+    onChange,
+  }: {
+    label: string;
+    value: string;
+    onChange: (v: string) => void;
+  }) => (
+    <label>
+      <span>{label}</span>
+      <input
+        aria-label={label}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </label>
+  ),
+}));
+
+vi.mock("@/api/requests/getAllUsers", () => ({
+  getAllUsers: vi.fn(),
+}));
+
+const baseProps = {
+  isOpen: true,
+  onClose: vi.fn(),
+  onCreate: vi.fn().mockResolvedValue({ id: 123 }),
+};
+
+async function fillStep1(user: ReturnType<typeof userEvent.setup>) {
+  await user.type(
+    screen.getByPlaceholderText("Наприклад: Winter Coding Cup 2024"),
+    "Summer Cup",
+  );
+  await user.type(
+    document.querySelector('textarea[name="description"]') as HTMLTextAreaElement,
+    "Long enough description for validation rules.",
+  );
+  await user.type(screen.getByLabelText("Відкриття"), "2026-05-01T10:00:00.000Z");
+  await user.type(screen.getByLabelText("Закриття"), "2026-05-10T10:00:00.000Z");
+  await user.type(screen.getByLabelText("Дата та час старту"), "2026-05-15T10:00:00.000Z");
+}
 
 describe("CreateTournamentModal", () => {
-  const mockOnClose = vi.fn();
-  const mockOnCreate = vi.fn();
-
-  beforeEach(() => {
-    vi.clearAllMocks();
+  afterEach(() => {
+    document.body.style.overflow = "";
   });
 
-  const renderModal = () => {
+  it("loads users and toggles body overflow on open", async () => {
+    vi.mocked(getAllUsers).mockResolvedValue([]);
+    const { unmount } = render(<CreateTournamentModal {...baseProps} />);
+
+    await waitFor(() => {
+      expect(getAllUsers).toHaveBeenCalledTimes(1);
+    });
+    expect(document.body.style.overflow).toBe("hidden");
+    unmount();
+    expect(document.body.style.overflow).toBe("unset");
+  });
+
+  it("blocks next step when required fields are empty", async () => {
     const user = userEvent.setup();
-    const view = render(
+    vi.mocked(getAllUsers).mockResolvedValue([]);
+    render(<CreateTournamentModal {...baseProps} />);
+
+    const nextButton = screen.getByRole("button", { name: "Далі" });
+    expect(nextButton).toBeDisabled();
+    await user.click(nextButton);
+    expect(screen.getByText("Новий турнір")).toBeInTheDocument();
+  });
+
+  it("creates tournament after completing step 1 and step 2", async () => {
+    const user = userEvent.setup();
+    vi.mocked(getAllUsers).mockResolvedValue([]);
+    const onCreate = vi.fn().mockResolvedValue({ id: 55 });
+    const onClose = vi.fn();
+
+    render(
       <CreateTournamentModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onCreate={mockOnCreate}
+        {...baseProps}
+        onCreate={onCreate}
+        onClose={onClose}
       />,
     );
-    return { user, ...view };
-  };
 
-  const getForm = () =>
-    document.getElementById("create-tournament-form") as HTMLFormElement;
-  const getBackdrop = () =>
-    document.querySelector(".bg-slate-900\\/40") as HTMLDivElement;
+    await fillStep1(user);
+    await user.click(screen.getByRole("button", { name: "Далі" }));
 
-  // --- Rendering (Small) ---
+    await waitFor(() => {
+      expect(screen.getByText("Додати суддів")).toBeInTheDocument();
+    });
 
-  describe("Rendering", () => {
-    it("does not render anything when isOpen is false", () => {
-      const { container } = render(
-        <CreateTournamentModal
-          isOpen={false}
-          onClose={mockOnClose}
-          onCreate={mockOnCreate}
-        />,
+    await user.click(screen.getByRole("button", { name: "Створити турнір" }));
+    await waitFor(() => {
+      expect(onCreate).toHaveBeenCalledWith(
+        expect.objectContaining({ title: "Summer Cup" }),
       );
-      expect(container.firstChild).toBeNull();
     });
-
-    it("renders the modal dialog when isOpen is true", () => {
-      renderModal();
-      expect(screen.getByText("НОВИЙ ТУРНІР")).toBeInTheDocument();
-      expect(
-        screen.getByText("СТВОРЕННЯ НОВОЇ ПОДІЇ У ВСЕСВІТІ"),
-      ).toBeInTheDocument();
-    });
-
-    it("renders all form text inputs", () => {
-      renderModal();
-      expect(
-        screen.getByPlaceholderText("Введіть круту назву..."),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByPlaceholderText("Про що цей турнір?"),
-      ).toBeInTheDocument();
-      expect(
-        document.querySelector('input[name="max_teams"]'),
-      ).toBeInTheDocument();
-    });
-
-    it("renders all datetime inputs", () => {
-      renderModal();
-      expect(
-        document.querySelector('input[name="reg_start"]'),
-      ).toBeInTheDocument();
-      expect(
-        document.querySelector('input[name="reg_end"]'),
-      ).toBeInTheDocument();
-      expect(
-        document.querySelector('input[name="start_date"]'),
-      ).toBeInTheDocument();
-    });
-
-    it("renders control buttons with correct initial text", () => {
-      renderModal();
-      expect(screen.getByText("СКАСУВАТИ")).toBeInTheDocument();
-      expect(screen.getByText("СТВОРИТИ ТУРНІР")).toBeInTheDocument();
-      expect(screen.getByText("✕")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Готово до запуску")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "До керування" }));
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  // --- Input Handling (Small) ---
-
-  describe("Input Handling", () => {
-    it("updates title input value correctly", async () => {
-      const { user } = renderModal();
-      const titleInput = screen.getByPlaceholderText("Введіть круту назву...");
-
-      await user.type(titleInput, "Super Cup");
-      expect(titleInput).toHaveValue("Super Cup");
-    });
-
-    it("updates description input value correctly", async () => {
-      const { user } = renderModal();
-      const descInput = screen.getByPlaceholderText("Про що цей турнір?");
-
-      await user.type(descInput, "Test description");
-      expect(descInput).toHaveValue("Test description");
-    });
-
-    it("updates datetime inputs correctly via fireEvent", () => {
-      renderModal();
-      const regStartInput = document.querySelector(
-        'input[name="reg_start"]',
-      ) as HTMLInputElement;
-
-      fireEvent.change(regStartInput, {
-        target: { name: "reg_start", value: "2026-06-01T12:00" },
-      });
-      expect(regStartInput.value).toBe("2026-06-01T12:00");
-    });
-
-    it("parses max_teams as a number", async () => {
-      const { user } = renderModal();
-      const maxTeamsInput = document.querySelector(
-        'input[name="max_teams"]',
-      ) as HTMLInputElement;
-
-      await user.clear(maxTeamsInput);
-      await user.type(maxTeamsInput, "32");
-      expect(maxTeamsInput.value).toBe("32");
-    });
+  it("does not render when modal is closed", () => {
+    const { container } = render(
+      <CreateTournamentModal {...baseProps} isOpen={false} />,
+    );
+    expect(container).toBeEmptyDOMElement();
   });
 
-  // --- Closing Mechanisms (Small) ---
+  it("allows going back to first step from step two", async () => {
+    const user = userEvent.setup();
+    vi.mocked(getAllUsers).mockResolvedValue([]);
+    render(<CreateTournamentModal {...baseProps} />);
 
-  describe("Closing Mechanisms", () => {
-    it("triggers onClose when clicking the top right close icon", async () => {
-      const { user } = renderModal();
-      await user.click(screen.getByText("✕"));
-      expect(mockOnClose).toHaveBeenCalledTimes(1);
-    });
+    await fillStep1(user);
+    await user.click(screen.getByRole("button", { name: "Далі" }));
+    await user.click(screen.getByRole("button", { name: "Назад" }));
 
-    it("triggers onClose when clicking the cancel button", async () => {
-      const { user } = renderModal();
-      await user.click(screen.getByText("СКАСУВАТИ"));
-      expect(mockOnClose).toHaveBeenCalledTimes(1);
-    });
-
-    it("triggers onClose when clicking the backdrop", async () => {
-      renderModal();
-      fireEvent.click(getBackdrop());
-      expect(mockOnClose).toHaveBeenCalledTimes(1);
-    });
+    expect(screen.getByDisplayValue("Summer Cup")).toBeInTheDocument();
   });
 
-  // --- Form Submission (Large) ---
+  it("opens and closes jury modal from second step", async () => {
+    const user = userEvent.setup();
+    vi.mocked(getAllUsers).mockResolvedValue([
+      { id: 1, full_name: "Jury", email: "jury@x.com" } as never,
+    ]);
+    render(<CreateTournamentModal {...baseProps} />);
 
-  describe("Form Submission", () => {
-    const fillValidForm = async (user: any) => {
-      const titleInput = screen.getByPlaceholderText("Введіть круту назву...");
-      const descInput = screen.getByPlaceholderText("Про що цей турнір?");
-      const maxTeamsInput = document.querySelector(
-        'input[name="max_teams"]',
-      ) as HTMLInputElement;
-      const regStartInput = document.querySelector(
-        'input[name="reg_start"]',
-      ) as HTMLInputElement;
-      const regEndInput = document.querySelector(
-        'input[name="reg_end"]',
-      ) as HTMLInputElement;
-      const startDateInput = document.querySelector(
-        'input[name="start_date"]',
-      ) as HTMLInputElement;
+    await fillStep1(user);
+    await user.click(screen.getByRole("button", { name: "Далі" }));
+    await user.click(screen.getByRole("button", { name: /Додати суддів/i }));
+    expect(screen.getByText("Вибір журі")).toBeInTheDocument();
 
-      await user.type(titleInput, "Valid Tournament");
-      await user.type(descInput, "Valid Description");
-      await user.clear(maxTeamsInput);
-      await user.type(maxTeamsInput, "16");
-
-      fireEvent.change(regStartInput, {
-        target: { name: "reg_start", value: "2026-05-01T10:00" },
-      });
-      fireEvent.change(regEndInput, {
-        target: { name: "reg_end", value: "2026-05-15T10:00" },
-      });
-      fireEvent.change(startDateInput, {
-        target: { name: "start_date", value: "2026-05-20T10:00" },
-      });
-    };
-
-    it("submits the form successfully with correct data formatting", async () => {
-      const { user } = renderModal();
-      await fillValidForm(user);
-
-      fireEvent.submit(getForm());
-
-      await waitFor(() => {
-        expect(mockOnCreate).toHaveBeenCalledTimes(1);
-      });
-
-      expect(mockOnCreate).toHaveBeenCalledWith({
-        title: "Valid Tournament",
-        description: "Valid Description",
-        reg_start: new Date("2026-05-01T10:00").toISOString(),
-        reg_end: new Date("2026-05-15T10:00").toISOString(),
-        start_date: new Date("2026-05-20T10:00").toISOString(),
-        max_teams: 16,
-      });
-    });
-
-    it("trims whitespace from title and description before submitting", async () => {
-      const { user } = renderModal();
-
-      const titleInput = screen.getByPlaceholderText("Введіть круту назву...");
-      const descInput = screen.getByPlaceholderText("Про що цей турнір?");
-      await user.type(titleInput, "   Spaced Title   ");
-      await user.type(descInput, "   Spaced Desc   ");
-
-      const regStartInput = document.querySelector(
-        'input[name="reg_start"]',
-      ) as HTMLInputElement;
-      const regEndInput = document.querySelector(
-        'input[name="reg_end"]',
-      ) as HTMLInputElement;
-      const startDateInput = document.querySelector(
-        'input[name="start_date"]',
-      ) as HTMLInputElement;
-
-      fireEvent.change(regStartInput, {
-        target: { name: "reg_start", value: "2026-05-01T10:00" },
-      });
-      fireEvent.change(regEndInput, {
-        target: { name: "reg_end", value: "2026-05-15T10:00" },
-      });
-      fireEvent.change(startDateInput, {
-        target: { name: "start_date", value: "2026-05-20T10:00" },
-      });
-
-      fireEvent.submit(getForm());
-
-      await waitFor(() => {
-        expect(mockOnCreate).toHaveBeenCalledWith(
-          expect.objectContaining({
-            title: "Spaced Title",
-            description: "Spaced Desc",
-          }),
-        );
-      });
-    });
-
-    it("calls onClose after a successful submission", async () => {
-      const { user } = renderModal();
-      await fillValidForm(user);
-
-      fireEvent.submit(getForm());
-
-      await waitFor(() => {
-        expect(mockOnClose).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    it("resets form state after a successful submission", async () => {
-      const { user, rerender } = renderModal();
-      await fillValidForm(user);
-
-      fireEvent.submit(getForm());
-
-      await waitFor(() => {
-        expect(mockOnClose).toHaveBeenCalledTimes(1);
-      });
-
-      rerender(
-        <CreateTournamentModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onCreate={mockOnCreate}
-        />,
-      );
-
-      const titleInput = screen.getByPlaceholderText("Введіть круту назву...");
-      expect(titleInput).toHaveValue("");
-    });
+    await user.click(screen.getByRole("button", { name: "Підтвердити" }));
+    expect(screen.queryByText("Вибір журі")).not.toBeInTheDocument();
   });
 
-  // --- Loading and Error States (Large) ---
+  it("keeps create button disabled if team values are invalid", async () => {
+    const user = userEvent.setup();
+    vi.mocked(getAllUsers).mockResolvedValue([]);
+    render(<CreateTournamentModal {...baseProps} />);
 
-  describe("Loading and Error States", () => {
-    it("disables inputs and buttons while submission is in progress", async () => {
-      let resolvePromise: any;
-      mockOnCreate.mockImplementation(
-        () =>
-          new Promise((resolve) => {
-            resolvePromise = resolve;
-          }),
-      );
+    await fillStep1(user);
+    await user.click(screen.getByRole("button", { name: "Далі" }));
 
-      renderModal();
+    const minInput = document.querySelector(
+      "input[name='min_people_in_team']",
+    ) as HTMLInputElement;
+    const maxInput = document.querySelector(
+      "input[name='max_people_in_team']",
+    ) as HTMLInputElement;
+    await user.clear(minInput);
+    await user.type(minInput, "5");
+    await user.clear(maxInput);
+    await user.type(maxInput, "2");
 
-      const regStartInput = document.querySelector(
-        'input[name="reg_start"]',
-      ) as HTMLInputElement;
-      const regEndInput = document.querySelector(
-        'input[name="reg_end"]',
-      ) as HTMLInputElement;
-      const startDateInput = document.querySelector(
-        'input[name="start_date"]',
-      ) as HTMLInputElement;
+    expect(screen.getByRole("button", { name: "Створити турнір" })).toBeDisabled();
+  });
 
-      fireEvent.change(regStartInput, {
-        target: { name: "reg_start", value: "2026-05-01T10:00" },
-      });
-      fireEvent.change(regEndInput, {
-        target: { name: "reg_end", value: "2026-05-15T10:00" },
-      });
-      fireEvent.change(startDateInput, {
-        target: { name: "start_date", value: "2026-05-20T10:00" },
-      });
+  it("calls onClose from cancel button on first step", async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    vi.mocked(getAllUsers).mockResolvedValue([]);
+    render(<CreateTournamentModal {...baseProps} onClose={onClose} />);
 
-      fireEvent.submit(getForm());
-
-      expect(screen.getByText("СТВОРЕННЯ...")).toBeInTheDocument();
-
-      const submitBtn = screen.getByText("СТВОРЕННЯ...") as HTMLButtonElement;
-      const cancelBtn = screen.getByText("СКАСУВАТИ") as HTMLButtonElement;
-
-      expect(submitBtn).toBeDisabled();
-      expect(cancelBtn).toBeDisabled();
-
-      resolvePromise();
-
-      await waitFor(() => {
-        expect(mockOnClose).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    it("logs error to console and stops loading if onCreate throws", async () => {
-      const consoleSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
-      mockOnCreate.mockRejectedValue(new Error("Network Error"));
-
-      renderModal();
-
-      const regStartInput = document.querySelector(
-        'input[name="reg_start"]',
-      ) as HTMLInputElement;
-      const regEndInput = document.querySelector(
-        'input[name="reg_end"]',
-      ) as HTMLInputElement;
-      const startDateInput = document.querySelector(
-        'input[name="start_date"]',
-      ) as HTMLInputElement;
-
-      fireEvent.change(regStartInput, {
-        target: { name: "reg_start", value: "2026-05-01T10:00" },
-      });
-      fireEvent.change(regEndInput, {
-        target: { name: "reg_end", value: "2026-05-15T10:00" },
-      });
-      fireEvent.change(startDateInput, {
-        target: { name: "start_date", value: "2026-05-20T10:00" },
-      });
-
-      fireEvent.submit(getForm());
-
-      await waitFor(() => {
-        expect(consoleSpy).toHaveBeenCalledWith(
-          "Помилка при створенні турніру:",
-          expect.any(Error),
-        );
-      });
-
-      expect(screen.getByText("СТВОРИТИ ТУРНІР")).toBeInTheDocument();
-      const submitBtn = screen.getByText(
-        "СТВОРИТИ ТУРНІР",
-      ) as HTMLButtonElement;
-      expect(submitBtn).not.toBeDisabled();
-
-      expect(mockOnClose).not.toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
-    });
+    await user.click(screen.getByRole("button", { name: "Скасувати" }));
+    expect(onClose).toHaveBeenCalled();
   });
 });
