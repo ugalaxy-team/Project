@@ -33,12 +33,10 @@ const EvaluationsModal = ({ assignment, onClose}: EvaluationsModalProps) => {
         assignment.id,
         {
           comment,
-          criterion_scores: assignment.task.evaluation_categories.flatMap((category) =>
-            category.criteria.map((criterion) => ({
-              criterion_id: criterion.id,
-              score: requirements[criterion.id] ?? 0,
-            })),
-          ),
+          criterion_scores: assignment.task.criteria.map((criterion) => ({
+            criterion_id: criterion.id,
+            score: requirements[criterion.id] ?? 0,
+          })),
         },
         auth.currentUser,
         !!assignment.evaluation,
@@ -73,43 +71,36 @@ const EvaluationsModal = ({ assignment, onClose}: EvaluationsModalProps) => {
           </div>
         )}
 
-        <div className="space-y-6">
-          {assignment.task.evaluation_categories.map((category) => (
-            <section key={category.id} className="rounded-3xl border border-slate-200 p-5">
-              <h3 className="text-lg font-black text-slate-900">{category.name}</h3>
-              <div className="mt-4 space-y-4">
-                {category.criteria.map((criterion) => (
-                  <label key={criterion.id} className="block rounded-2xl bg-slate-50 p-4">
-                    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                      <div>
-                        <div className="font-semibold text-slate-900">{criterion.name}</div>
-                        {criterion.description && (
-                          <div className="text-sm text-slate-600">{criterion.description}</div>
-                        )}
-                      </div>
-                      <input
-                        type="number"
-                        min={0}
-                        max={criterion.max_score}
-                        value={requirements[criterion.id] ?? 0}
-                        onChange={(event) =>
-                          setRequirements((prev) => ({
-                            ...prev,
-                            [criterion.id]: Number(event.target.value),
-                          }))
-                        }
-                        disabled={isFinalized}
-                        readOnly={isFinalized}
-                        className="w-28 rounded-xl border border-slate-300 bg-white px-3 py-2 disabled:cursor-not-allowed disabled:bg-slate-100"
-                      />
-                    </div>
-                    <div className="mt-2 text-xs text-slate-500">
-                      Weight {criterion.weight} • Max {criterion.max_score}
-                    </div>
-                  </label>
-                ))}
+        <div className="space-y-4">
+          {assignment.task.criteria.map((criterion) => (
+            <label key={criterion.id} className="block rounded-2xl bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <div className="font-semibold text-slate-900">{criterion.name}</div>
+                  {criterion.description && (
+                    <div className="text-sm text-slate-600">{criterion.description}</div>
+                  )}
+                </div>
+                <input
+                  type="number"
+                  min={0}
+                  max={criterion.max_score}
+                  value={requirements[criterion.id] ?? 0}
+                  onChange={(event) =>
+                    setRequirements((prev) => ({
+                      ...prev,
+                      [criterion.id]: Number(event.target.value),
+                    }))
+                  }
+                  disabled={isFinalized}
+                  readOnly={isFinalized}
+                  className="w-28 rounded-xl border border-slate-300 bg-white px-3 py-2 disabled:cursor-not-allowed disabled:bg-slate-100"
+                />
               </div>
-            </section>
+              <div className="mt-2 text-xs text-slate-500">
+                Weight {criterion.weight} • Max {criterion.max_score}
+              </div>
+            </label>
           ))}
 
           <section>
@@ -128,9 +119,6 @@ const EvaluationsModal = ({ assignment, onClose}: EvaluationsModalProps) => {
 
         {!isFinalized && (
           <div className="mt-6 flex justify-end gap-3">
-            <button onClick={onClose} className="rounded-2xl bg-slate-100 px-4 py-2 font-semibold text-slate-700">
-              <RiCloseLargeLine />
-            </button>
             <button
               onClick={() => mutation.mutate()}
               disabled={mutation.isPending}

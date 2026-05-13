@@ -75,7 +75,7 @@ const EvaluateTournamentPage = () => {
             </div>
             {allReviewed && <button
               onClick={() => finishMutation.mutate()}
-              disabled={finishMutation.isPending}
+              disabled={finishMutation.isPending} 
               className="rounded-2xl bg-indigo-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:opacity-60"
             >
               {finishMutation.isPending ? "Finalizing..." : "Finalize evaluation"}

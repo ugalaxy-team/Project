@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict
 from .role import RolePublic
+from .tournament import TournamentPublicMinimal
 
 if TYPE_CHECKING:
     from .notification import NotificationPublic
-    from .tournament import TournamentPublic
 
 
 class UserBase(BaseModel):
@@ -57,7 +57,7 @@ class UserPublic(UserBase):
     github: str | None
     discord: str | None
     is_jury: bool
-    evaluates_in: list["TournamentPublic"]
+    evaluates_in: list["TournamentPublicMinimal"]
 
 
 class UserModel(UserBase):
@@ -72,5 +72,5 @@ class UserModel(UserBase):
 # Return notifications of current user only
 class CurrentUser(UserPublic):
     notifications: list["NotificationPublic"]
-    participates_in: list["TournamentPublic"] = Field(default_factory=list)
-    created_tournaments: list["TournamentPublic"]
+    participates_in: list["TournamentPublicMinimal"] = Field(default_factory=list)
+    created_tournaments: list["TournamentPublicMinimal"]

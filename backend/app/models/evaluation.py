@@ -48,6 +48,13 @@ class JuryAssignment(Base, PKMixin, DatetimeMixin):
         uselist=False,
     )
 
+    def __repr__(self):
+        return (
+            f"<JuryAssignment(id={self.id}, task_id={self.task_id}, "
+            f"submission_id={self.submission_id}, jury_id={self.jury_id}, "
+            f"status={self.status.name if self.status else None})>"
+        )
+
 
 class SubmissionEvaluation(Base, PKMixin, DatetimeMixin):
     __tablename__ = "evaluations"

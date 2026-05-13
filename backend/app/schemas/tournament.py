@@ -44,6 +44,10 @@ class TournamentBase(BaseModel):
     max_people_in_team: int = Field(..., gt=0)
     max_teams: int = Field(..., gt=0)
 
+
+class TournamentCreate(TournamentBase):
+    juries: list[int | str] = Field(..., description="Jury ids")
+
     @model_validator(mode="after")
     def validate_dates(self) -> "TournamentBase":
 
@@ -59,10 +63,6 @@ class TournamentBase(BaseModel):
             raise ValueError("Tournament must start after registration ends")
 
         return self
-
-
-class TournamentCreate(TournamentBase):
-    juries: list[int | str] = Field(..., description="Jury ids")
 
 
 class TournamentUpdate(BaseModel):

@@ -5,10 +5,9 @@ from sqlalchemy.orm import selectinload
 
 from app.config import settings
 from app.dependencies import SessionDep
-from app.models import Task, Submission, SubmissionUrl, Team
+from app.models import Task, TaskEvaluationCriterion, Submission, SubmissionUrl, Team
 from app.schemas import TaskCreate, TaskUpdate, TaskPublic, SubmissionCreate, SubmissionModel
-from app.utils import TaskStatus, update_tasks_status
-from app.utils import get_requirements, get_task
+from app.utils import TaskStatus, update_tasks_status, get_requirements, get_task, get_team
 from app.dependencies import current_user_dependency
 
 router = APIRouter(prefix="/tournaments/{tournament_id}/tasks", tags=["tasks"])
@@ -46,7 +45,7 @@ async def task(tournament_id: int, task_id: int, session: SessionDep):
     dependencies=[current_user_dependency],
 )
 async def create_task(tournament_id: int, task_data: TaskCreate, session: SessionDep):
-    task_dict = task_data.model_dump(exclude={"requirements"})
+    task_dict = task_data.model_dump(exclude={"requirements", "criteria"})
     new_task = Task(
         **task_dict,
         tournament_id=tournament_id,
@@ -56,6 +55,19 @@ async def create_task(tournament_id: int, task_data: TaskCreate, session: Sessio
     new_task.requirements = requirements
 
     session.add(new_task)
+    await session.flush()
+
+    for crit_data in task_data.criteria:
+        new_task.criteria.append(
+            TaskEvaluationCriterion(
+                task_id=new_task.id,
+                name=crit_data.name,
+                description=crit_data.description,
+                weight=crit_data.weight,
+                max_score=crit_data.max_score,
+            )
+        )
+
     await session.commit()
     await session.refresh(new_task)
     return new_task
@@ -78,9 +90,11 @@ async def update_task(
             detail="Task does not belong to this tournament",
         )
 
-    update_data = task_data.model_dump(exclude_unset=True, exclude={"requirements"})
+    update_data = task_data.model_dump(
+        exclude_unset=True, exclude={"requirements", "criteria"}
+    )
 
-    if not update_data and task_data.requirements is None:
+    if not update_data and task_data.requirements is None and task_data.criteria is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No fields provided for update",
@@ -91,6 +105,21 @@ async def update_task(
 
     if task_data.requirements is not None:
         task.requirements = await get_requirements(task_data.requirements, session)
+
+    if task_data.criteria is not None:
+        for crit in task.criteria:
+            await session.delete(crit)
+        for crit_data in task_data.criteria:
+            task.criteria.append(
+                TaskEvaluationCriterion(
+                    task_id=task.id,
+                    name=crit_data.name,
+                    description=crit_data.description,
+                    weight=crit_data.weight,
+                    max_score=crit_data.max_score,
+                )
+            )
+
     TaskStatus(task).update_by_time()
 
     await session.commit()
@@ -119,9 +148,7 @@ async def delete_task(task_id: int, session: SessionDep):
 async def create_submission(
     tournament_id: int, task_id: int, submission_data: SubmissionCreate, session: SessionDep
 ):
-    team = await session.get(Team, submission_data.team_id)
-    if not team:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Team not found")
+    await get_team(submission_data.team_id, tournament_id, session)
 
     new_submission = Submission(team_id=submission_data.team_id, task_id=task_id)
 
@@ -130,6 +157,6 @@ async def create_submission(
 
     session.add(new_submission)
     await session.commit()
-    await session.refresh(new_submission, ["urls"])
+    await session.refresh(new_submission, ["urls", "team"])
 
     return new_submission

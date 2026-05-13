@@ -62,8 +62,8 @@
       "display_name": "Submitted"
     },
     {
-      "name": "evaluated",
-      "display_name": "Evaluated"
+      "name": "reviewed",
+      "display_name": "Reviewed"
     }
   ],
   "categories": [
