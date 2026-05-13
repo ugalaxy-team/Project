@@ -1,86 +1,153 @@
 @import "tailwindcss";
 @import "@firebase-oss/ui-styles/tailwind";
 
-@theme {
-  --font-inter: "Inter", sans-serif;
-  --font-quicksand: "Quicksand", sans-serif;
-  --color-primary: #6366f1;
-  --color-accent: #fbbf24;
-  --color-bg-body: #f8fafc;
-  --color-bg-card: #ffffff;
-  --color-dark-theme: #1e293b;
-  --color-pink-accent: #ec4899;
+@layer base {
+    /* Light */
+    :root {
+        --color-primary: #6366f1;
+        --color-accent: #fbbf24;
+        --color-pink-accent: #ec4899;
 
-  --animate-marquee: marquee 40s linear infinite;
+        --color-hero-from: #6b73ff;
+        --color-hero-to: #4c51bf;
+        --color-header-bg: rgba(107, 115, 255, 0.95);
+        --color-bg-body: #f8fafc;
+        --color-bg-card: #ffffff;
+        --color-dark-theme: #0f172a;
 
-  @keyframes marquee {
-    0% {
-      transform: translateX(0);
+        --color-text-main: #0f172a;
+        --color-text-muted: #64748b;
+        --color-border: #f1f5f9;
     }
-    100% {
-      transform: translateX(-50%);
+
+    /* Dark */
+    .dark {
+        --color-primary: #818cf8;
+        --color-accent: #fbbf24;
+        --color-pink-accent: #f472b6;
+
+        --color-hero-from: #1e1b4b;
+        --color-hero-to: #0f172a;
+        --color-header-bg: rgba(15, 23, 42, 0.95);
+        --color-bg-body: #0f172a;
+        --color-bg-card: #1e293b;
+        --color-dark-theme: #020617;
+
+        --color-text-main: #f8fafc;
+        --color-text-muted: #94a3b8;
+        --color-border: #334155;
+
+        --toastify-color-dark: var(--color-bg-card);
+        --toastify-text-color-dark: var(--color-text-main);
     }
-  }
+
+    body {
+        @apply font-inter bg-bg-body text-text-main overflow-x-hidden leading-[1.5] transition-colors duration-500;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply font-nunito font-extrabold text-text-main transition-colors duration-500;
+    }
 }
 
-@layer base {
-  body {
-    @apply font-inter bg-primary text-white overflow-x-hidden leading-[1.5];
-  }
-  h1,
-  h2,
-  h3,
-  h4 {
-    @apply font-quicksand font-extrabold;
-  }
+@theme {
+    --font-inter: "Inter", sans-serif;
+    --font-nunito: "Nunito", sans-serif;
+
+    --color-primary: var(--color-primary);
+    --color-accent: var(--color-accent);
+    --color-pink-accent: var(--color-pink-accent);
+    --color-hero-from: var(--color-hero-from);
+    --color-hero-to: var(--color-hero-to);
+    --color-header-bg: var(--color-header-bg);
+    --color-bg-body: var(--color-bg-body);
+    --color-bg-card: var(--color-bg-card);
+    --color-dark-theme: var(--color-dark-theme);
+    --color-text-main: var(--color-text-main);
+    --color-text-muted: var(--color-text-muted);
+    --color-border: var(--color-border);
+
+    --animate-marquee: marquee 40s linear infinite;
+    --animate-marquee-reverse: marquee-reverse 65s linear infinite;
+    --animate-shimmer: shimmer 2s infinite linear;
+
+    @keyframes shimmer {
+        0% {
+            transform: translateX(-150%) skewX(-12deg);
+        }
+        100% {
+            transform: translateX(200%) skewX(-12deg);
+        }
+    }
+
+    @keyframes marquee {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    @keyframes marquee-reverse {
+        0% {
+            transform: translateX(-50%);
+        }
+        100% {
+            transform: translateX(0);
+        }
+    }
 }
 
 @layer utilities {
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 @layer components {
-  .btn {
-    @apply inline-flex items-center justify-center px-9 py-4 rounded-full font-quicksand font-bold text-[18px] cursor-pointer no-underline border-none transition-all duration-200;
-  }
-  .btn-accent {
-    @apply bg-accent text-slate-900 hover:-translate-y-1 hover:scale-105 shadow-[0_10px_20px_rgba(251,191,36,0.4)];
-  }
-  .btn-primary {
-    @apply bg-primary text-white hover:-translate-y-1 hover:scale-105 shadow-[0_10px_20px_rgba(99,102,241,0.4)];
-  }
-  .btn-dark {
-    @apply bg-dark-theme text-white hover:-translate-y-1 hover:scale-105;
-  }
-  .btn-outline {
-    @apply bg-transparent text-white border-2 border-white/40 hover:bg-white/10;
-  }
+    .btn {
+        @apply inline-flex items-center justify-center px-9 py-4 rounded-full font-nunito font-bold text-[18px] cursor-pointer no-underline border-none transition-all duration-200;
+    }
+    .btn-accent {
+        @apply bg-accent text-slate-900 hover:-translate-y-1 hover:scale-105 shadow-[0_10px_20px_rgba(251,191,36,0.4)];
+    }
+    .btn-primary {
+        @apply bg-primary text-white hover:-translate-y-1 hover:scale-105 shadow-[0_10px_20px_rgba(99,102,241,0.4)];
+    }
+    .btn-dark {
+        @apply bg-dark-theme text-white hover:-translate-y-1 hover:scale-105;
+    }
+    .btn-outline {
+        @apply bg-transparent text-white border-2 border-white/40 hover:bg-white/10;
+    }
 
-  .tournaments {
-    @apply bg-bg-body text-dark-theme relative py-[100px] pt-[160px];
-  }
-  .section-header {
-    @apply px-[5%] mb-[60px] flex justify-between items-end;
-  }
-  .section-header h2 {
-    @apply text-[64px] leading-[1] uppercase;
-  }
-  .slider-area {
-    @apply relative w-full overflow-hidden pb-5;
-  }
-  .cards-track {
-    @apply flex gap-8 px-[5%] py-5 w-max cursor-grab active:cursor-grabbing;
-  }
-  .custom-scrollbar {
-    @apply mx-[5%] mt-10 h-3 bg-slate-200 rounded-full relative;
-  }
-  .scroll-thumb {
-    @apply absolute top-0 left-0 h-full w-[150px] bg-primary rounded-full cursor-grab transition-colors active:cursor-grabbing active:bg-indigo-600;
-  }
+    .tournaments {
+        @apply bg-bg-body text-dark-theme relative py-[100px] pt-[160px];
+    }
+    .section-header {
+        @apply px-[5%] mb-[60px] flex justify-between items-end;
+    }
+    .section-header h2 {
+        @apply text-[64px] leading-[1] uppercase;
+    }
+    .slider-area {
+        @apply relative w-full overflow-hidden pb-5;
+    }
+    .cards-track {
+        @apply flex gap-8 px-[5%] py-5 w-max cursor-grab active:cursor-grabbing;
+    }
+    .custom-scrollbar {
+        @apply mx-[5%] mt-10 h-3 bg-slate-200 rounded-full relative;
+    }
+    .scroll-thumb {
+        @apply absolute top-0 left-0 h-full w-[150px] bg-primary rounded-full cursor-grab transition-colors active:cursor-grabbing active:bg-indigo-600;
+    }
 }

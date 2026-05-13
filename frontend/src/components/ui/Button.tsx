@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
 import { motion, type HTMLMotionProps } from "framer-motion";
 import { Loader2 } from "lucide-react";
+import { cn } from "../../utils/cn";
 
 type ButtonVariant = "primary" | "accent" | "outline" | "ghost";
 type ButtonSize = "sm" | "md" | "lg";
@@ -15,13 +16,13 @@ interface ButtonProps extends Omit<HTMLMotionProps<"button">, "ref"> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-indigo-500 text-white shadow-[0_12px_28px_rgba(99,102,241,0.35)] hover:bg-indigo-600 hover:shadow-[0_16px_32px_rgba(99,102,241,0.4)] border-2 border-transparent",
+    "bg-primary text-white shadow-lg shadow-primary/30 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/40 border-2 border-transparent",
   accent:
-    "bg-amber-400 text-slate-900 shadow-[0_12px_28px_rgba(251,191,36,0.3)] hover:bg-amber-500 hover:shadow-[0_16px_32px_rgba(251,191,36,0.4)] border-2 border-transparent",
+    "bg-accent text-slate-900 shadow-lg shadow-accent/30 hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/40 border-2 border-transparent",
   outline:
-    "bg-transparent border-2 border-slate-200 text-slate-900 hover:border-indigo-200 hover:shadow-[0_8px_24px_rgba(99,102,241,0.15)]",
+    "bg-transparent border-2 border-border text-text-main hover:border-primary hover:text-primary hover:shadow-lg hover:shadow-primary/15",
   ghost:
-    "bg-transparent border-2 border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-100",
+    "bg-transparent border-2 border-transparent text-text-muted hover:text-text-main hover:bg-border/50",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -37,7 +38,7 @@ export const Button = ({
   leftIcon,
   rightIcon,
   children,
-  className = "",
+  className,
   disabled,
   ...props
 }: ButtonProps) => {
@@ -49,13 +50,12 @@ export const Button = ({
       whileTap={{ scale: isDisabled ? 1 : 0.98 }}
       transition={{ duration: 0.2 }}
       disabled={isDisabled}
-      className={`
-        relative flex items-center justify-center gap-2.5 font-quicksand font-bold rounded-full transition-colors duration-200
-        disabled:opacity-70 disabled:pointer-events-none outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/20
-        ${variantStyles[variant]}
-        ${sizeStyles[size]}
-        ${className}
-      `}
+      className={cn(
+        "relative flex items-center justify-center gap-2.5 font-nunito font-bold rounded-full transition-all duration-300 outline-none focus-visible:ring-4 focus-visible:ring-primary/20 disabled:opacity-70 disabled:pointer-events-none cursor-pointer",
+        variantStyles[variant],
+        sizeStyles[size],
+        className,
+      )}
       {...props}
     >
       {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}

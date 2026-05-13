@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "tournaments": "Tournaments",
+    "about": "About Us",
+    "support": "Support",
+    "contact": "Contact",
+    "news": "News"
+  },
+  "auth": {
+    "login": "Sign In"
+  },
+  "footer": {
+    "description": "A place where the best ideas are born. Create, learn, win.",
+    "platform_title": "Platform",
+    "info_title": "Information",
+    "all_tournaments": "All Tournaments",
+    "rules": "Rules",
+    "faq": "FAQ",
+    "about": "About Us",
+    "contact": "Contact",
+    "news": "News",
+    "copyright": "© 2026 UGalaxy x Star for Life. All rights reserved."
+  },
+  "profile_dropdown": {
+    "default_user": "User",
+    "my_profile": "My profile",
+    "organizer_panel": "Organizer panel",
+    "jury_panel": "Jury panel",
+    "admin_panel": "Admin panel",
+    "logout": "Log Out"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "new_count": "{{count}} new",
+    "empty": "No new notifications"
+  },
+  "errors": {
+    "404": {
+      "title": "You've gone beyond the system 👾",
+      "description": "The page you are looking for has been removed or only exists in a parallel universe. Let's get back to safe territory.",
+      "back": "Back",
+      "go_home": "Home"
+    },
+    "socket": "Connection Error",
+    "socket_desc": "Notifications are temporarily unavailable"
+  },
+  "success": {
+    "socket_restored": "Connection restored!"
+  },
+  "ui": {
+    "loading": "Loading..."
+  },
+  "language_switcher": {
+    "aria_label": "Choice language"
+  }
+}

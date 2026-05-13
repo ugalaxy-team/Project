@@ -1,0 +1,34 @@
+{
+  "hero": {
+    "bg_text": "CONSTITUTION",
+    "title": "RULES",
+    "description": "To make the platform comfortable and productive for everyone, we ask you to follow a few simple but important rules."
+  },
+  "rules": {
+    "r1": {
+      "title": "Respect Above All",
+      "desc": "We are building a safe environment for everyone. Be polite and respect the opinions of other participants, mentors, and organizers. Discrimination, bullying, or hate speech are not tolerated here."
+    },
+    "r2": {
+      "title": "Fair Play",
+      "desc": "All tournaments and tasks must be completed independently or together with your team. Plagiarism, using someone else's work without permission, or cheating will result in disqualification."
+    },
+    "r3": {
+      "title": "Teamwork & Support",
+      "desc": "UGalaxy x Star for Life is all about collaboration. Help each other, share knowledge, and work as one united mechanism. Together, you can achieve more!"
+    },
+    "r4": {
+      "title": "Internet Safety",
+      "desc": "Protect your personal data. Do not share passwords, addresses, or other confidential information in public chats. If you notice anything suspicious, contact the moderators immediately."
+    },
+    "r5": {
+      "title": "Creativity Without Limits",
+      "desc": "Don’t be afraid to experiment! We value unconventional ideas, bold solutions, and a creative approach to challenges. The main rule — think outside the box!"
+    }
+  },
+  "cta": {
+    "title": "Agree with the rules? Then go for victory! 🚀",
+    "desc": "Choose your first tournament, build your dream team, and show what you’re capable of.",
+    "button": "Go to Tournaments"
+  }
+}

@@ -19,12 +19,13 @@ import { OrganizerPanel } from "@/pages/OrganizerPanel/OrganizerPanel";
 import JuryPanel from "@/pages/JuryPanel/JuryPanel";
 import EvaluateTournamentPage from "@/pages/JuryPanel/EvaluateTournamentPage";
 import { NewsPage } from "@/pages/NewsPage/NewsPage";
+import { RegistrationPage } from "@/pages/RegistrationPage/RegistrationPage";
+
 
 export const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Сторінки з Хедером та Футером */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route
@@ -37,6 +38,16 @@ export const Router = () => {
           />
           <Route path="/tournaments" element={<TournamentsPage />} />
           <Route path="/tournament/:id" element={<TournamentPage />} />
+
+          <Route
+            path="/tournament/:id/register"
+            element={
+              <ProtectedRoute>
+                <RegistrationPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/role-request-form"
             element={
@@ -50,6 +61,27 @@ export const Router = () => {
           <Route path="/support" element={<SupportPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/rules" element={<RulesPage />} />
+<<<<<<< HEAD
+=======
+          <Route path="/jury-panel">
+            <Route
+              index
+              element={
+                <ProtectedRoute>
+                  <JuryPanel />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="evaluate/:id"
+              element={
+                <ProtectedRoute>
+                  <EvaluateTournamentPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+>>>>>>> dev
           <Route path="/organizer-panel" element={<OrganizerPanel />} />
           <Route
             path="/jury-panel"
