@@ -25,8 +25,6 @@ from .task_options import TaskRequirementOptionCreate, TaskRequirementOptionPubl
 from .task import (
     TaskBase,
     TaskCreate,
-    TaskEvaluationCategoryCreate,
-    TaskEvaluationCategoryPublic,
     TaskEvaluationCriterionCreate,
     TaskEvaluationCriterionPublic,
     TaskPublic,

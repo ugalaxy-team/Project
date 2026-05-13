@@ -20,7 +20,6 @@ from app.models import (
     SubmissionUrlOption,
     SubmissionUrl,
     Task,
-    TaskEvaluationCategory,
     TaskEvaluationCriterion,
     TaskRequirementCategory,
     TaskRequirementOption,
@@ -213,10 +212,6 @@ class JuryAssignmentAdmin(BaseModelView, model=JuryAssignment):
     pass
 
 
-class TaskEvaluationCategoryAdmin(BaseModelView, model=TaskEvaluationCategory):
-    pass
-
-
 class TaskEvaluationCriterionAdmin(BaseModelView, model=TaskEvaluationCriterion):
     pass
 
@@ -332,7 +327,6 @@ def setup_admin(app):
     admin.add_view(TournamentStatusOptionAdmin)
     admin.add_view(TaskAdmin)
     admin.add_view(TaskStatusOptionAdmin)
-    admin.add_view(TaskEvaluationCategoryAdmin)
     admin.add_view(TaskEvaluationCriterionAdmin)
     admin.add_view(TaskRequirementCategoryAdmin)
     admin.add_view(TaskRequirementOptionAdmin)

@@ -2,20 +2,12 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.dependencies.session import SessionDep
-from app.models import Task, TaskEvaluationCategory, TaskRequirementOption
+from app.models import Task, TaskRequirementOption
 from .tournaments import get_tournament
 
 
 async def get_task(task_id: int, session: SessionDep) -> Task:
-    statement = (
-        select(Task)
-        .where(Task.id == task_id)
-        .options(
-            selectinload(Task.evaluation_categories).selectinload(
-                TaskEvaluationCategory.criteria
-            )
-        )
-    )
+    statement = select(Task).where(Task.id == task_id).options(selectinload(Task.criteria))
     task = (await session.execute(statement)).scalar()
     if not task:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Task not found!")

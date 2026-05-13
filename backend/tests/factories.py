@@ -25,7 +25,6 @@ from app.models import (
     SubmissionEvaluation,
     Notification,
     RoleRequest,
-    TaskEvaluationCategory,
     TaskEvaluationCriterion,
     CriterionScore,
 )
@@ -146,7 +145,7 @@ class TeamFactory(BaseFactory):
 
     name = Faker("name")
     team_email = Faker("email")
-    contact_info = Faker("phone_number")
+    contact_info = Faker("numerify", text="+38050#######")
 
     tournament = factory.SubFactory(TournamentFactory)
     captain = None
@@ -260,19 +259,11 @@ class SubmissionUrlFactory(BaseFactory):
     value = factory.Sequence(lambda n: f"https://example.com/submission/{n}")
 
 
-class TaskEvaluationCategoryFactory(BaseFactory):
-    class Meta:
-        model = TaskEvaluationCategory
-
-    task = factory.SubFactory(TaskFactory)
-    name = factory.Sequence(lambda n: f"Category {n}")
-
-
 class TaskEvaluationCriterionFactory(BaseFactory):
     class Meta:
         model = TaskEvaluationCriterion
 
-    category = factory.SubFactory(TaskEvaluationCategoryFactory)
+    task = factory.SubFactory(TaskFactory)
     name = factory.Sequence(lambda n: f"Criterion {n}")
     description = None
     weight = 1

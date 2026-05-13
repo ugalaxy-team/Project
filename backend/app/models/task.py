@@ -49,7 +49,7 @@ class Task(Base, PKMixin):
     requirements: Mapped[list["TaskRequirementOption"]] = relationship(
         secondary=task_requirements, lazy="selectin"
     )
-    evaluation_categories: Mapped[list["TaskEvaluationCategory"]] = relationship(
+    criteria: Mapped[list["TaskEvaluationCriterion"]] = relationship(
         back_populates="task", lazy="selectin", cascade="all, delete-orphan"
     )
     jury_assignments: Mapped[list["JuryAssignment"]] = relationship(
@@ -107,36 +107,18 @@ class TaskRequirementCategory(Base, OptionMixin):
         return f"<TaskRequirementCategory(name={self.name}, display_name={self.display_name}, main_id={self.main_id})>"
 
 
-class TaskEvaluationCategory(Base, PKMixin):
-    __tablename__ = "task_evaluation_categories"
-
-    task_id: Mapped[int] = mapped_column(
-        ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False
-    )
-    name: Mapped[str]
-
-    task: Mapped["Task"] = relationship(
-        back_populates="evaluation_categories", lazy="selectin"
-    )
-    criteria: Mapped[list["TaskEvaluationCriterion"]] = relationship(
-        back_populates="category", lazy="selectin", cascade="all, delete-orphan"
-    )
-
-
 class TaskEvaluationCriterion(Base, PKMixin):
     __tablename__ = "task_evaluation_criteria"
 
-    category_id: Mapped[int] = mapped_column(
-        ForeignKey("task_evaluation_categories.id", ondelete="CASCADE"), nullable=False
+    task_id: Mapped[int] = mapped_column(
+        ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False
     )
     name: Mapped[str]
     description: Mapped[str | None] = mapped_column(nullable=True)
     weight: Mapped[int] = mapped_column(default=1)
     max_score: Mapped[int] = mapped_column(default=10)
 
-    category: Mapped["TaskEvaluationCategory"] = relationship(
-        back_populates="criteria", lazy="selectin"
-    )
+    task: Mapped["Task"] = relationship(back_populates="criteria", lazy="selectin")
     criterion_scores: Mapped[list["CriterionScore"]] = relationship(
         back_populates="criterion", lazy="selectin"
     )

@@ -27,7 +27,16 @@ class TaskBase(BaseModel):
         return value.strip()
 
 
+class TaskEvaluationCriterionCreate(BaseModel):
+    name: str
+    description: str | None = None
+    weight: int = 1
+    max_score: int = 10
+
+
 class TaskCreate(TaskBase):
+    criteria: list[TaskEvaluationCriterionCreate] = []
+
     @field_validator("start_time")
     @classmethod
     def start_not_past(cls, value: datetime):
@@ -58,6 +67,18 @@ class TaskUpdate(BaseModel):
     start_time: datetime | None = None
     end_time: datetime | None = None
     requirements: list[str] | None = None
+    criteria: list[TaskEvaluationCriterionCreate] | None = None
+
+
+class TaskEvaluationCriterionPublic(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    task_id: int
+    name: str
+    description: str | None
+    weight: int
+    max_score: int
 
 
 class TaskPublic(TaskBase):
@@ -66,6 +87,7 @@ class TaskPublic(TaskBase):
     id: int
     tournament_id: int = Field(..., gt=0)
     status_id: str = Field(...)
+    criteria: list["TaskEvaluationCriterionPublic"] = []
 
     @field_validator("requirements", mode="before")
     @classmethod
@@ -73,34 +95,3 @@ class TaskPublic(TaskBase):
         if isinstance(value, list) and len(value) > 0 and not isinstance(value[0], str):
             return [req.name for req in value]
         return value
-
-
-class TaskEvaluationCategoryCreate(BaseModel):
-    name: str
-
-
-class TaskEvaluationCategoryPublic(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    task_id: int
-    name: str
-    criteria: list["TaskEvaluationCriterionPublic"] = []
-
-
-class TaskEvaluationCriterionCreate(BaseModel):
-    name: str
-    description: str | None = None
-    weight: int = 1
-    max_score: int = 10
-
-
-class TaskEvaluationCriterionPublic(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    category_id: int
-    name: str
-    description: str | None
-    weight: int
-    max_score: int

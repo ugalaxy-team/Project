@@ -12,7 +12,6 @@ from .role import Role
 from .submission import Submission, SubmissionUrl, SubmissionUrlOption
 from .task import (
     Task,
-    TaskEvaluationCategory,
     TaskEvaluationCriterion,
     TaskRequirementCategory,
     TaskRequirementOption,

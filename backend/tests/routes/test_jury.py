@@ -1,6 +1,6 @@
 from app import app
 from app.dependencies import get_current_user
-from app.models import TaskEvaluationCategory, TaskEvaluationCriterion
+from app.models import TaskEvaluationCriterion
 from tests.factories import (
     JuryAssignmentStatusOptionFactory,
     RoleFactory,
@@ -36,14 +36,13 @@ async def test_generate_assignments_and_submit_evaluation(create, client, db_ses
     tournament.juries.extend([jury1, jury2])
 
     task = await create(TaskFactory, tournament=tournament, min_reviews_per_submission=2)
-    category = TaskEvaluationCategory(task=task, name="Functionality")
     criterion = TaskEvaluationCriterion(
-        category=category,
+        task_id=task.id,
         name="Completeness",
         weight=1,
         max_score=10,
     )
-    db_session.add_all([category, criterion])
+    db_session.add(criterion)
 
     team = await create(TeamFactory, tournament=tournament)
     await create(TeamMemberFactory, team=team, tournament=tournament, email=participant.email)

@@ -4,7 +4,6 @@ from app.models import (
     JuryAssignment,
     Task,
     Submission,
-    TaskEvaluationCategory,
     Team,
     SubmissionEvaluation,
     SubmissionUrl,
@@ -19,10 +18,7 @@ async def get_assignment(assignment_id: int, session: SessionDep) -> JuryAssignm
         .where(JuryAssignment.id == assignment_id)
         .options(
             selectinload(JuryAssignment.status),
-            selectinload(JuryAssignment.task).selectinload(Task.evaluation_categories),
-            selectinload(JuryAssignment.task)
-            .selectinload(Task.evaluation_categories)
-            .selectinload(TaskEvaluationCategory.criteria),
+            selectinload(JuryAssignment.task).selectinload(Task.criteria),
             selectinload(JuryAssignment.submission)
             .selectinload(Submission.team)
             .selectinload(Team.members),

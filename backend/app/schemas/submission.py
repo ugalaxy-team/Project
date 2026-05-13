@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict
+from .team import TeamPublic
 
 
 class SubmissionUrlOptionModel(BaseModel):
@@ -30,6 +31,7 @@ class SubmissionModel(BaseModel):
 
     team_id: int = Field(...)
     task_id: int = Field(...)
+    team: TeamPublic | None = None
     urls: list[SubmissionUrlModel] = Field(default_factory=list)
 
 

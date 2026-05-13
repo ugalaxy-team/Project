@@ -19,7 +19,6 @@ from app.models import (
     SubmissionEvaluation,
     SubmissionUrl,
     Task,
-    TaskEvaluationCategory,
     Team,
 )
 from app.schemas import (
@@ -37,11 +36,7 @@ router = APIRouter(tags=["jury"])
 
 
 def _criterion_map(task: Task) -> dict[int, object]:
-    criteria = {}
-    for category in task.evaluation_categories:
-        for criterion in category.criteria:
-            criteria[criterion.id] = criterion
-    return criteria
+    return {criterion.id: criterion for criterion in task.criteria}
 
 
 def _calculate_evaluation_total(evaluation: SubmissionEvaluation) -> float:
@@ -105,11 +100,7 @@ async def jury_tasks(current_user: CurrentUserDep, session: SessionDep):
             JuryAssignment.jury_id == current_user.id,
             Task.status_id == settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED,
         )
-        .options(
-            selectinload(Task.evaluation_categories).selectinload(
-                TaskEvaluationCategory.criteria
-            )
-        )
+        .options(selectinload(Task.criteria))
         .distinct()
     )
     return (await session.execute(statement)).scalars().unique().all()
@@ -128,9 +119,7 @@ async def jury_task_assignments(
         .where(JuryAssignment.task_id == task_id, JuryAssignment.jury_id == current_user.id)
         .options(
             selectinload(JuryAssignment.status),
-            selectinload(JuryAssignment.task)
-            .selectinload(Task.evaluation_categories)
-            .selectinload(TaskEvaluationCategory.criteria),
+            selectinload(JuryAssignment.task).selectinload(Task.criteria),
             selectinload(JuryAssignment.submission)
             .selectinload(Submission.team)
             .selectinload(Team.members),
@@ -344,9 +333,7 @@ async def get_task_assignments(
         .where(JuryAssignment.task_id == task.id)
         .options(
             selectinload(JuryAssignment.status),
-            selectinload(JuryAssignment.task)
-            .selectinload(Task.evaluation_categories)
-            .selectinload(TaskEvaluationCategory.criteria),
+            selectinload(JuryAssignment.task).selectinload(Task.criteria),
             selectinload(JuryAssignment.submission)
             .selectinload(Submission.team)
             .selectinload(Team.members),
@@ -396,14 +383,15 @@ async def finish_evaluation(
     )
 
     for a in jury_assignmnents:
-        a.status_id = settings.JURY_ASSIGNMENT_STATUS_NAMES.EVALUATED
+        a.status_id = settings.JURY_ASSIGNMENT_STATUS_NAMES.REVIEWED
 
     await session.commit()
+    await session.refresh(task, ["jury_assignments"])
 
     nonevaluated_assignments = [
         a
         for a in task.jury_assignments
-        if a.status != settings.JURY_ASSIGNMENT_STATUS_NAMES.EVALUATED
+        if a.status.name != settings.JURY_ASSIGNMENT_STATUS_NAMES.REVIEWED
     ]
     # If all the submissions were evaluated, mark the task as evaluated
     if len(nonevaluated_assignments) == 0:
