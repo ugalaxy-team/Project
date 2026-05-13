@@ -55,12 +55,6 @@ export interface EvaluationCriterion {
   max_score: number;
 }
 
-export interface EvaluationCategory {
-  id: number;
-  name: string;
-  criteria: EvaluationCriterion[];
-}
-
 export interface JuryTask {
   id: number;
   title: string;
@@ -71,7 +65,7 @@ export interface JuryTask {
   min_reviews_per_submission: number;
   max_score: number;
   is_leaderboard_visible: boolean;
-  evaluation_categories: EvaluationCategory[];
+  criteria: EvaluationCriterion[];
 }
 
 export interface CriterionScore {
