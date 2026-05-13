@@ -96,9 +96,9 @@ exports[`TournamentInfoModal > renders important tournament details and closes 1
                   <span
                     class="text-xs font-black text-[#6D72F1] bg-[#6D72F1]/10 px-4 py-2 rounded-xl whitespace-nowrap border border-[#6D72F1]/10"
                   >
-                    12.05, 13:00
+                    12.05, 10:00
                      — 
-                    12.05, 16:00
+                    12.05, 13:00
                   </span>
                 </div>
                 <p
@@ -199,9 +199,9 @@ exports[`TournamentInfoModal > renders important tournament details and closes 1
                 <p
                   class="text-slate-800 font-black text-sm"
                 >
-                  10.05, 13:00
+                  10.05, 10:00
                    — 
-                  11.05, 13:00
+                  11.05, 10:00
                 </p>
               </div>
               <div
@@ -215,9 +215,9 @@ exports[`TournamentInfoModal > renders important tournament details and closes 1
                 <p
                   class="text-slate-800 font-black text-sm"
                 >
-                  12.05, 13:00
+                  12.05, 10:00
                    — 
-                  13.05, 13:00
+                  13.05, 10:00
                 </p>
               </div>
             </div>

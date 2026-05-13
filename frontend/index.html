@@ -1,19 +1,45 @@
 <!doctype html>
 <html lang="uk">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UGalaxy | Star for Life</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>UGalaxy | Star for Life</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Quicksand:wght@700;800&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@500;600;700;800;900&display=swap"
+            rel="stylesheet"
+        />
+
+        <script>
+            try {
+                if (
+                    localStorage.getItem("theme") === "dark" ||
+                    (!localStorage.getItem("theme") &&
+                        window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches)
+                ) {
+                    document.documentElement.classList.add("dark");
+                }
+            } catch (_) {}
+        </script>
+
+        <style>
+            body {
+                background-color: #f8fafc;
+                color: #0f172a;
+                margin: 0;
+            }
+            html.dark body {
+                background-color: #0f172a;
+                color: #f8fafc;
+            }
+        </style>
+    </head>
+
+    <body class="bg-bg-body text-text-main transition-colors duration-500">
+        <div id="root"></div>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
 </html>

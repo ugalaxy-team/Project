@@ -1,0 +1,25 @@
+{
+  "loading": "Loading profile...",
+  "unnamed": "Unnamed",
+  "role": "Role",
+  "no_roles": "No roles",
+  "edit_profile": "Edit profile",
+  "delete_account": "Delete account",
+  "deleting": "Deleting...",
+  "confirm_delete": "Are you sure you want to permanently delete this account?",
+  "contact_methods": "Contact methods",
+  "missing": "Missing",
+  "tournaments": "My Tournaments",
+  "no_tournaments": "You haven't created any tournaments yet",
+  "tournament_unnamed": "Unnamed Tournament",
+  "errors": {
+    "not_authorized": "User is not authorized"
+  },
+  "modal": {
+    "title": "Edit profile",
+    "full_name": "Full name",
+    "contacts_subtitle": "Additional contacts",
+    "cancel": "Cancel",
+    "save": "Save changes"
+  }
+}

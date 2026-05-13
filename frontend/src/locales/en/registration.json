@@ -1,0 +1,113 @@
+{
+  "brand": "UGalaxy",
+  "breadcrumbs": {
+    "tournaments": "Tournaments",
+    "registration": "Registration"
+  },
+  "nav": {
+    "step_1": "General",
+    "step_2": "Participants",
+    "step_3": "Confirmation"
+  },
+  "buttons": {
+    "back": "Back"
+  },
+  "step_1": {
+    "title": "Your Team",
+    "subtitle": "for tournament participation:",
+    "format": {
+      "label": "Participation Format",
+      "team": "Team",
+      "solo": "Solo"
+    },
+    "team_name": {
+      "label": "Team Name",
+      "label_solo": "Your Gaming Nickname / Name",
+      "placeholder": "For example, Space Cats",
+      "placeholder_solo": "For example, T-Rex Destroyer"
+    },
+    "captain": {
+      "label": "Captain",
+      "info": "Data imported from your Google account. You can update it in settings for automatic autofill in the future.",
+      "badge": "Captain",
+      "full_name_label": "Full Name",
+      "full_name_placeholder": "Andrew Ivanchenko",
+      "if_different": "(if different)"
+    },
+    "additional": {
+      "title": "Additional Information",
+      "optional": "(optional)"
+    },
+    "next": {
+      "confirm": "Next — Confirmation",
+      "members": "Next — Participants"
+    }
+  },
+  "step_2": {
+    "title": "Team Lineup",
+    "subtitle_1": "Add from",
+    "subtitle_2": "to",
+    "subtitle_3": "participants (excluding the captain).",
+    "counter": {
+      "label": "Teammates",
+      "min": "Minimum:",
+      "max": "Maximum:"
+    },
+    "empty_title": "You're alone for now",
+    "empty_state": "Add your first teammate to build the team.",
+    "participant_label": "Teammate",
+    "remove_btn": "Remove",
+    "labels": {
+      "name": "Name",
+      "email": "Email"
+    },
+    "placeholders": {
+      "name": "Nickname or Full Name",
+      "email": "example@gmail.com"
+    },
+    "add_btn": "Add Teammate",
+    "next_btn": "Review Application",
+    "errors": {
+      "min_members": "Add at least {{count}} teammate(s)",
+      "duplicate_email": "Duplicate emails detected: {{emails}}"
+    }
+  },
+  "step_3": {
+    "title": "Confirmation",
+    "subtitle": "Review your information before registration.",
+    "labels": {
+      "player": "Player",
+      "captain": "Captain",
+      "members": "Team Members"
+    },
+    "warning": "Please double-check your information. After submission, the lineup can only be changed through an admin.",
+    "submit_btn": "Confirm"
+  },
+  "success": {
+    "title": "Team Registered!",
+    "title_solo": "You Have Successfully Registered!",
+    "desc": "Your application has been successfully submitted. Wait for confirmation by email or check the tournament status in your dashboard.",
+    "home_btn": "Back to Home"
+  },
+  "ticket": {
+    "label": {
+      "event": "Event",
+      "format": "Format",
+      "player": "Nickname",
+      "team": "Team",
+      "participant": "Participant",
+      "roster": "Roster"
+    },
+    "value": {
+      "solo": "Solo",
+      "team": "Team",
+      "empty": "Not filled",
+      "waiting": "Waiting..."
+    },
+    "badge": {
+      "solo": "Solo",
+      "captain": "Captain",
+      "member": "Member"
+    }
+  }
+}

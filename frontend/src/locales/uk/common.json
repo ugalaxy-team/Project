@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "tournaments": "Турніри",
+    "about": "Про нас",
+    "support": "Підтримати",
+    "contact": "Контакти",
+    "news": "Новини"
+  },
+  "auth": {
+    "login": "Увійти"
+  },
+  "footer": {
+    "description": "Місце, де народжуються найкращі ідеї. Твори, навчайся, перемагай.",
+    "platform_title": "Платформа",
+    "info_title": "Інформація",
+    "all_tournaments": "Всі турніри",
+    "rules": "Правила",
+    "faq": "FAQ",
+    "about": "Про нас",
+    "contact": "Контакти",
+    "news": "Новини",
+    "copyright": "© 2026 UGalaxy x Star for Life. Всі права захищено."
+  },
+  "profile_dropdown": {
+    "default_user": "Користувач",
+    "my_profile": "Мій профіль",
+    "organizer_panel": "Панель організатора",
+    "jury_panel": "Панель журі",
+    "admin_panel": "Адмін-панель",
+    "logout": "Вийти"
+  },
+  "notifications": {
+    "title": "Сповіщення",
+    "new_count_one": "{{count}} нове",
+    "new_count_few": "{{count}} нових",
+    "new_count_many": "{{count}} нових",
+    "empty": "Немає нових сповіщень"
+  },
+  "errors": {
+    "404": {
+      "title": "Упс, пусто!",
+      "description": "Схоже, цієї сторінки не існує. Можливо, вона переїхала або ви відлетіли занадто далеко в космос.",
+      "go_home": "На головну"
+    },
+    "socket": "Помилка з'єднання",
+    "socket_desc": "Сповіщення тимчасово не працюють"
+  },
+  "success": {
+    "socket_restored": "Зв'язок відновлено!"
+  },
+  "ui": {
+    "loading": "Завантаження..."
+  },
+  "language_switcher": { "aria_label": "Вибір мови" }
+}

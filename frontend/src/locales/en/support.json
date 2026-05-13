@@ -1,0 +1,28 @@
+{
+  "hero": {
+    "bg_text": "SUPPORT",
+    "title": "Join the change",
+    "description": "Choose a convenient way for you to support the future of children in Ukraine. Every action matters."
+  },
+  "options": {
+    "donate": {
+      "badge": "Financial support",
+      "title": "Donate",
+      "description": "Your contribution helps provide children with quality IT education and psychological support.",
+      "button": "Make a contribution"
+    },
+    "partnership": {
+      "badge": "For business",
+      "title": "Partnership",
+      "description": "Become a partner of the foundation! Together we will implement large-scale projects and create sustainable changes.",
+      "button": "Become a partner"
+    },
+    "volunteer": {
+      "badge": "Your time",
+      "title": "Volunteering",
+      "description": "Share your knowledge and skills. Your participation can change a child's life.",
+      "button": "Become a volunteer"
+    }
+  },
+  "footer_note": "Every hryvnia, every hour of your time, and every joint initiative brings us closer to our goal. Thank you for being with us! 💙💛"
+}

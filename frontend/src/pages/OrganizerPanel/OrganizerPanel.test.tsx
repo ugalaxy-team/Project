@@ -313,13 +313,14 @@ describe("OrganizerPanel", () => {
 
     await user.click(screen.getByRole("button", { name: /Нове завдання/i }));
     await user.type(
-      screen.getByPlaceholderText("Наприклад: створити веб платформу"),
+      screen.getByPlaceholderText("Наприклад: Розробка смарт-контракту"),
       "Task name",
     );
-    await user.type(screen.getByLabelText("Початок виконання"), "2026-05-11T12:00:00.000Z");
-    await user.type(screen.getByLabelText("Дедлайн"), "2026-05-11T13:00:00.000Z");
-    await user.selectOptions(screen.getByRole("combobox"), "Python");
-    await user.click(screen.getByRole("button", { name: "Створити завдання" }));
+    await user.type(screen.getByLabelText("Старт прийому"), "2026-05-11T12:00:00.000Z");
+    await user.type(screen.getByLabelText("Кінцевий дедлайн"), "2026-05-11T13:00:00.000Z");
+    await user.click(screen.getByRole("button", { name: /Виберіть варіант/i }));
+    await user.click(await screen.findByRole("option", { name: "Python" }));
+    await user.click(screen.getByRole("button", { name: "Зберегти" }));
 
     await waitFor(() => expect(createTask).toHaveBeenCalledWith(1, expect.any(Object)));
   });
@@ -339,7 +340,7 @@ describe("OrganizerPanel", () => {
     const titleInput = screen.getByDisplayValue("Prepare docs");
     await user.clear(titleInput);
     await user.type(titleInput, "Updated task");
-    await user.click(screen.getByRole("button", { name: "Оновити завдання" }));
+    await user.click(screen.getByRole("button", { name: "Зберегти" }));
 
     await waitFor(() => expect(updateTask).toHaveBeenCalledWith(1, 101, expect.any(Object)));
   });

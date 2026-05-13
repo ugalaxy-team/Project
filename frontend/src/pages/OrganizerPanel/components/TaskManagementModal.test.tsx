@@ -30,6 +30,11 @@ const tournament = {
   title: "Test Tournament",
 };
 
+async function pickRequirement(user: ReturnType<typeof userEvent.setup>, name: string) {
+  await user.click(screen.getByRole("button", { name: /Виберіть варіант/i }));
+  await user.click(await screen.findByRole("option", { name }));
+}
+
 describe("TaskManagementModal", () => {
   it("does not render when closed", () => {
     const { container } = render(
@@ -55,13 +60,10 @@ describe("TaskManagementModal", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Створити завдання" }));
+    await user.click(screen.getByRole("button", { name: "Зберегти" }));
 
-    expect(
-      document.querySelector('input[name="title"]'),
-    ).toHaveClass("border-red-400");
-    expect(screen.getAllByText("Обов'язково").length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByRole("combobox")).toHaveClass(/border-red-400/);
+    expect(document.querySelector('input[name="title"]')).toHaveClass("border-red-200");
+    expect(screen.getAllByText("Вкажіть час").length).toBe(2);
   });
 
   it("submits valid task form and closes modal", async () => {
@@ -79,19 +81,19 @@ describe("TaskManagementModal", () => {
     );
 
     await user.type(
-      screen.getByPlaceholderText("Наприклад: створити веб платформу"),
+      screen.getByPlaceholderText("Наприклад: Розробка смарт-контракту"),
       "Build scoring",
     );
     await user.type(
-      screen.getByPlaceholderText("Що саме потрібно зробити?"),
+      document.querySelector('textarea[name="description"]') as HTMLTextAreaElement,
       "Implement rankings",
     );
-    await user.type(screen.getByLabelText("Початок виконання"), "2026-05-11T12:00:00.000Z");
-    await user.type(screen.getByLabelText("Дедлайн"), "2026-05-11T14:00:00.000Z");
+    await user.type(screen.getByLabelText("Старт прийому"), "2026-05-11T12:00:00.000Z");
+    await user.type(screen.getByLabelText("Кінцевий дедлайн"), "2026-05-11T14:00:00.000Z");
 
-    await user.selectOptions(screen.getByRole("combobox"), "Python");
+    await pickRequirement(user, "Python");
 
-    await user.click(screen.getByRole("button", { name: "Створити завдання" }));
+    await user.click(screen.getByRole("button", { name: "Зберегти" }));
 
     await waitFor(() => {
       expect(onSave).toHaveBeenCalledWith(
@@ -128,7 +130,8 @@ describe("TaskManagementModal", () => {
     });
     expect(screen.getByDisplayValue("Already exists")).toBeInTheDocument();
     expect(screen.getAllByText("React").length).toBeGreaterThan(0);
-    expect(screen.getByRole("button", { name: "Оновити завдання" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Оновити таск" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Зберегти" })).toBeInTheDocument();
   });
 
   it("shows tournament title in header details", () => {
@@ -140,9 +143,7 @@ describe("TaskManagementModal", () => {
         onSave={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-    expect(
-      screen.getByText("Для турніру: Test Tournament"),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Турнір:\s*Test Tournament/)).toBeInTheDocument();
   });
 
   it("closes modal from cancel button", async () => {
@@ -172,7 +173,7 @@ describe("TaskManagementModal", () => {
       />,
     );
     const header = screen
-      .getByRole("heading", { name: "Створити завдання" })
+      .getByRole("heading", { name: "Нове завдання" })
       .closest(".flex.justify-between");
     expect(header).toBeTruthy();
     await user.click(within(header as HTMLElement).getAllByRole("button")[0]);
@@ -190,8 +191,9 @@ describe("TaskManagementModal", () => {
       />,
     );
 
-    const button = screen.getByRole("button", { name: "Збереження..." });
-    expect(button).toBeDisabled();
+    const cancelBtn = screen.getByRole("button", { name: "Скасувати" });
+    const [, saveBtn] = within(cancelBtn.parentElement as HTMLElement).getAllByRole("button");
+    expect(saveBtn).toBeDisabled();
   });
 
   it("allows adding and removing requirements", async () => {
@@ -205,20 +207,13 @@ describe("TaskManagementModal", () => {
       />,
     );
 
-    await user.selectOptions(screen.getByRole("combobox"), "Python");
-    expect(screen.getAllByText("Python").length).toBeGreaterThan(1);
+    await pickRequirement(user, "Python");
+    expect(screen.getByText("Python")).toBeInTheDocument();
 
-    const chipRemove = screen
-      .getAllByText("Python")
-      .map((el) => el.closest("span"))
-      .find(
-        (span) =>
-          span?.className.includes("tracking-wider") &&
-          within(span as HTMLElement).queryAllByRole("button").length > 0,
-      );
-    expect(chipRemove).toBeTruthy();
-    await user.click(within(chipRemove as HTMLElement).getByRole("button"));
-    expect(screen.getAllByText("Python").length).toBe(1);
+    const chipRow = screen.getByText("Python").closest("div.flex");
+    expect(chipRow).toBeTruthy();
+    await user.click(within(chipRow as HTMLElement).getByRole("button"));
+    expect(screen.queryByText("Python")).not.toBeInTheDocument();
   });
 
   it("does not submit when title is shorter than 3 chars", async () => {
@@ -234,18 +229,16 @@ describe("TaskManagementModal", () => {
     );
 
     await user.type(
-      screen.getByPlaceholderText("Наприклад: створити веб платформу"),
+      screen.getByPlaceholderText("Наприклад: Розробка смарт-контракту"),
       "ab",
     );
-    await user.type(screen.getByLabelText("Початок виконання"), "2026-05-11T12:00:00.000Z");
-    await user.type(screen.getByLabelText("Дедлайн"), "2026-05-11T14:00:00.000Z");
-    await user.selectOptions(screen.getByRole("combobox"), "Python");
-    await user.click(screen.getByRole("button", { name: "Створити завдання" }));
+    await user.type(screen.getByLabelText("Старт прийому"), "2026-05-11T12:00:00.000Z");
+    await user.type(screen.getByLabelText("Кінцевий дедлайн"), "2026-05-11T14:00:00.000Z");
+    await pickRequirement(user, "Python");
+    await user.click(screen.getByRole("button", { name: "Зберегти" }));
 
     expect(onSave).not.toHaveBeenCalled();
-    expect(document.querySelector('input[name="title"]')).toHaveClass(
-      "border-red-400",
-    );
+    expect(document.querySelector('input[name="title"]')).toHaveClass("border-red-200");
   });
 
   it("resets edited values after successful submit", async () => {
@@ -262,13 +255,13 @@ describe("TaskManagementModal", () => {
     );
 
     await user.type(
-      screen.getByPlaceholderText("Наприклад: створити веб платформу"),
+      screen.getByPlaceholderText("Наприклад: Розробка смарт-контракту"),
       "Build scoring",
     );
-    await user.type(screen.getByLabelText("Початок виконання"), "2026-05-11T12:00:00.000Z");
-    await user.type(screen.getByLabelText("Дедлайн"), "2026-05-11T14:00:00.000Z");
-    await user.selectOptions(screen.getByRole("combobox"), "Python");
-    await user.click(screen.getByRole("button", { name: "Створити завдання" }));
+    await user.type(screen.getByLabelText("Старт прийому"), "2026-05-11T12:00:00.000Z");
+    await user.type(screen.getByLabelText("Кінцевий дедлайн"), "2026-05-11T14:00:00.000Z");
+    await pickRequirement(user, "Python");
+    await user.click(screen.getByRole("button", { name: "Зберегти" }));
 
     await waitFor(() => expect(onSave).toHaveBeenCalled());
     expect(onClose).toHaveBeenCalled();

@@ -1,0 +1,34 @@
+{
+  "hero": {
+    "title_1": "Create.",
+    "title_2": "Act.",
+    "title_3": "Win.",
+    "description": "A platform for your boldest ideas. From coding and design to art and creativity — gather a team, unleash your talent, share your experience, learn, and rise to the top!",
+    "badges": {
+      "express": "Express yourself!",
+      "idea": "Your idea will change the world",
+      "act": "Act now",
+      "pizza": "Pizza, code, victory",
+      "be_yourself": "Be yourself!"
+    },
+    "mascot": {
+      "circular": "★ FIND A TEAM ★ EXPRESS YOURSELF ",
+      "button": "All Tournaments"
+    }
+  },
+  "slider": {
+    "title": "Find Your Tournament",
+    "winnerTitle": "Perfect Match!",
+    "button": {
+      "spinning": "Rolling...",
+      "reset": "Reset Selection",
+      "random": "Random Tournament"
+    }
+  },
+  "cta": {
+    "badge": "New Opportunities",
+    "title": "Want more influence on the platform?",
+    "description": "Apply for a new role and unlock additional features for yourself.",
+    "button": "Get a Role"
+  }
+}
