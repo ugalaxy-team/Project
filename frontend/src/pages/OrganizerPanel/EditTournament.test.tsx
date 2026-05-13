@@ -43,6 +43,12 @@ describe("EditTournamentModal", () => {
     });
   });
 
+  const waitForFormReady = async () => {
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("Old Cup")).toBeInTheDocument();
+    });
+  };
+
   it("prevents save when max people is less than min people", async () => {
     const user = userEvent.setup();
     const onSave = vi.fn().mockResolvedValue(undefined);
@@ -56,6 +62,7 @@ describe("EditTournamentModal", () => {
       />,
     );
 
+    await waitForFormReady();
     await user.click(screen.getByRole("button", { name: "Далі" }));
     const maxPeopleInput = document.querySelector("input[name='max_people_in_team']");
     expect(maxPeopleInput).toBeTruthy();
@@ -82,6 +89,7 @@ describe("EditTournamentModal", () => {
       />,
     );
 
+    await waitForFormReady();
     const titleInput = screen.getByDisplayValue("Old Cup");
     await user.clear(titleInput);
     await user.type(titleInput, "Updated Cup");
@@ -124,6 +132,7 @@ describe("EditTournamentModal", () => {
       />,
     );
 
+    await waitForFormReady();
     await user.click(screen.getByRole("button", { name: "Далі" }));
     await user.click(screen.getByRole("button", { name: "Назад" }));
     expect(screen.getByDisplayValue("Old Cup")).toBeInTheDocument();
@@ -141,6 +150,7 @@ describe("EditTournamentModal", () => {
       />,
     );
 
+    await waitForFormReady();
     await user.click(screen.getByRole("button", { name: "Далі" }));
     await user.click(screen.getByRole("button", { name: /Суддівська команда/i }));
     expect(screen.getByText("Вибір журі")).toBeInTheDocument();
@@ -158,6 +168,7 @@ describe("EditTournamentModal", () => {
         onSave={vi.fn().mockResolvedValue(undefined)}
       />,
     );
+    await waitForFormReady();
     await user.click(screen.getByRole("button", { name: "Скасувати" }));
     expect(onClose).toHaveBeenCalled();
   });

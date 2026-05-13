@@ -117,6 +117,8 @@ const TaskManagementModal = ({
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
     if (!formData.title.trim()) newErrors.title = "Обов'язкове поле";
+    else if (formData.title.trim().length < 3)
+      newErrors.title = "Мінімум 3 символи";
     if (!formData.start_time) newErrors.start_time = "Вкажіть час";
     if (!formData.end_time) newErrors.end_time = "Вкажіть час";
     
@@ -134,6 +136,7 @@ const TaskManagementModal = ({
     e.preventDefault();
     if (!validateForm() || isLoading) return;
     await onSave(formData);
+    onClose();
   };
 
   if (!isOpen) return null;
