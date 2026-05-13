@@ -57,8 +57,8 @@ export const ProfileDropdown = ({
     });
   };
 
-  const isAdmin = hasRole(roleByName?.admin?.name || "admin");
-  const isOrganizer = hasRole(roleByName?.organizer?.name || "organizer");
+  const isAdmin = reduxUser?.is_admin;
+  const isOrganizer = reduxUser?.is_organizer;
   const isJury = reduxUser?.is_jury;
 
   const wrapperClass = isMobile ? "w-full" : "relative";

@@ -67,9 +67,17 @@ class User(Base, PKMixin):
     @property
     def is_admin(self) -> bool:
         return any(role.name == settings.ROLE_NAMES.ADMIN for role in self.roles)
+    
+    @property
+    def is_organizer(self) -> bool:
+        if self.is_admin:
+            return True
+        return any(role.name == settings.ROLE_NAMES.ORGANIZER for role in self.roles)
 
     @hybrid_property
     def is_jury(self) -> bool:
+        if self.is_admin:
+            return True
         if "evaluates_in" in self.__dict__:
             return len(self.evaluates_in) > 0
         return False

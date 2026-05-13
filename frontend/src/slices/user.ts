@@ -19,6 +19,8 @@ export interface ApiUserData {
   telegram?: string;
   github?: string;
   discord?: string;
+  is_admin: boolean;
+  is_organizer: boolean;
   is_jury: boolean;
   evaluates_in: Tournament[];
 }
