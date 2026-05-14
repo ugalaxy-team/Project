@@ -3,12 +3,11 @@ from fastapi.routing import APIRouter
 from sqlalchemy import select
 
 from app.config import settings
-from app.dependencies import SessionDep
-from app.models import Task
+from app.dependencies import SessionDep, TournamentOwnerDep, TaskOwnerDep
+from app.models import Task, Tournament
 from app.schemas import TaskCreate, TaskUpdate, TaskPublic
 from app.utils import TaskStatus, update_tasks_status
 from app.utils import get_requirements, get_task
-from app.dependencies import current_user_dependency
 
 router = APIRouter(prefix="/tournaments/{tournament_id}/tasks", tags=["tasks"])
 
@@ -42,7 +41,6 @@ async def task(tournament_id: int, task_id: int, session: SessionDep):
     "/",
     response_model=TaskPublic,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[current_user_dependency],
 )
 async def create_task(tournament_id: int, task_data: TaskCreate, session: SessionDep):
     task_dict = task_data.model_dump(exclude={"requirements"})
@@ -64,13 +62,13 @@ async def create_task(tournament_id: int, task_data: TaskCreate, session: Sessio
     "/{task_id}/",
     response_model=TaskPublic,
     status_code=status.HTTP_200_OK,
-    dependencies=[current_user_dependency],
 )
 async def update_task(
-    tournament_id: int, task_id: int, task_data: TaskUpdate, session: SessionDep
+    tournament_id: int,
+    task_data: TaskUpdate,
+    session: SessionDep,
+    task: Task = TaskOwnerDep,
 ):
-    task = await get_task(task_id, session)
-
     if task.tournament_id != tournament_id:
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST,
@@ -101,10 +99,7 @@ async def update_task(
 @router.delete(
     "/{task_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[current_user_dependency],
 )
-async def delete_task(task_id: int, session: SessionDep):
-    task = await get_task(task_id, session)
-
+async def delete_task(session: SessionDep, task: Task = TaskOwnerDep):
     await session.delete(task)
     await session.commit()

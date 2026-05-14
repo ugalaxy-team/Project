@@ -7,5 +7,6 @@ from .current_user import (
     get_or_create_user_from_token,
     current_user_dependency,
 )
+from .permissions import TournamentOwnerDep, TaskOwnerDep, TeamOwnerDep
 from .role_request import RoleRequestDep, get_role_request
 from .session import SessionDep, get_session
