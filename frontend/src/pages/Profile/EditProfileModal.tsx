@@ -16,7 +16,6 @@ interface ProfileFormData {
   discord: string;
 }
 
-// Додали currentUser, оскільки ми передаємо його з Profile.tsx
 interface EditProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -37,7 +36,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     discord: currentUser?.discord ?? "",
   });
 
-  // Оновлюємо форму, якщо дані користувача змінилися
   useEffect(() => {
     if (currentUser) {
       setFormData({
@@ -60,8 +58,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         store.dispatch(
           setUser({
             ...currentUser,
-            displayName: variables.full_name, // Firebase поле
-            full_name: variables.full_name, // API поле
+            displayName: variables.full_name,
+            full_name: variables.full_name,
             telegram: variables.telegram,
             github: variables.github,
             discord: variables.discord,
@@ -89,7 +87,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-          {/* Темний фон з блюром */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -98,7 +95,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           />
 
-          {/* Сама картка модалки */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}

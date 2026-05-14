@@ -7,7 +7,6 @@ export const Page404 = () => {
 
   return (
     <main className="min-h-screen w-full flex items-center justify-center bg-bg-body text-text-main relative overflow-hidden font-inter transition-colors duration-500">
-      {/* Масивний статичний фон 404 для глибини */}
       <div className="absolute font-nunito font-extrabold text-[35vw] text-text-main/[0.02] select-none z-0 flex items-center justify-center w-full h-full pointer-events-none overflow-hidden leading-none tracking-tighter">
         404
       </div>
@@ -19,7 +18,6 @@ export const Page404 = () => {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="flex flex-col items-center"
         >
-          {/* Акцентний заголовок Nunito */}
           <h1 className="text-[120px] md:text-[180px] leading-none font-nunito font-extrabold text-primary mb-2 drop-shadow-[0_0_40px_rgba(99,102,241,0.15)] select-none">
             404
           </h1>
@@ -28,7 +26,6 @@ export const Page404 = () => {
             {t("errors.404.title")}
           </h2>
 
-          {/* Основний текст Inter */}
           <p className="text-[16px] md:text-[18px] text-text-muted mb-12 font-medium max-w-lg mx-auto leading-relaxed">
             {t("errors.404.description")}
           </p>

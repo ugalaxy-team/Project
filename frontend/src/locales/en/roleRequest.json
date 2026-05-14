@@ -1,0 +1,44 @@
+{
+  "title": "Become an Organizer",
+  "subtitle": "Fill out the form below to apply. We review each application manually.",
+  "warning": "Important:",
+  "warning_text": "answer honestly and in detail — this increases your chances.",
+  "info_banner": "Currently, you can only apply for the Organizer role",
+  "form": {
+    "fullName": "Full Name *",
+    "contact": "Email / Telegram *",
+    "age": "Your Age *",
+    "experience": "Do you have relevant experience? *",
+    "reason": "Why do you want this role? *",
+    "plans": "What do you plan to do in this role? *",
+    "min_chars": "Min 10 chars",
+    "min_suffix": "min.",
+    "chars_suffix": "chars",
+    "placeholders": {
+      "fullName": "John Doe",
+      "contact": "@username / email",
+      "age": "18",
+      "experience": "Describe your previous experience...",
+      "reason": "Why this specific role?",
+      "plans": "Your plans for development..."
+    }
+  },
+  "form_errors": {
+    "too_short": "Value is too short",
+    "required": "Please enter your age",
+    "too_short_text": "Please provide more details"
+  },
+  "buttons": {
+    "submit": "Submit Application",
+    "submitting": "Sending...",
+    "back_home": "Back Home"
+  },
+  "messages": {
+    "success": "Application sent!",
+    "success_title": "Application Received!",
+    "success_description": "Thank you for your interest. We will carefully review your application and send a response to your notifications soon.",
+    "already_exists": "You have already applied for this role! Please wait for a decision.",
+    "error": "Something went wrong. Please try again later.",
+    "no_user": "User not found or not authorized!"
+  }
+}

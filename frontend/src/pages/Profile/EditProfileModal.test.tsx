@@ -6,12 +6,10 @@ import { store } from "../../store";
 import { updateProfile } from "@/api/requests/updateProfile";
 import { auth } from "@/firebase";
 
-// Мокаємо переклади
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-// Мокаємо іконку закриття, щоб легко її знаходити в тестах
 vi.mock("lucide-react", () => ({
   X: () => <span data-testid="close-icon">X</span>,
   Loader2: () => <span data-testid="loader">Loading...</span>,
@@ -33,7 +31,6 @@ vi.mock("@tanstack/react-query", () => ({
   useMutation: vi.fn(),
 }));
 
-// Мокаємо framer-motion, щоб анімації не затримували рендер у тестах
 vi.mock("framer-motion", async () => {
   const actual = await vi.importActual("framer-motion");
   return {
@@ -84,7 +81,6 @@ describe("EditProfileModal Component", () => {
         currentUser={mockUser}
       />,
     );
-    // Якщо модалка закрита, заголовка на екрані не буде
     expect(screen.queryByText("modal.title")).not.toBeInTheDocument();
   });
 
@@ -176,11 +172,9 @@ describe("EditProfileModal Component", () => {
       />,
     );
 
-    // Клік по іконці X (яку ми замокали)
     fireEvent.click(screen.getByTestId("close-icon"));
     expect(mockOnClose).toHaveBeenCalledTimes(1);
 
-    // Клік по кнопці "Скасувати" (шукаємо за ключем i18n)
     fireEvent.click(screen.getByText("modal.cancel"));
     expect(mockOnClose).toHaveBeenCalledTimes(2);
   });
@@ -194,7 +188,6 @@ describe("EditProfileModal Component", () => {
       />,
     );
 
-    // Знаходимо оверлей за його унікальним класом backdrop-blur-sm
     const overlay = container.querySelector(".backdrop-blur-sm");
     fireEvent.click(overlay!);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -238,8 +231,6 @@ describe("EditProfileModal Component", () => {
       />,
     );
 
-    // Твоя кастомна кнопка Button не міняє текст, а просто стає disabled
-    // і показує іконку (яку ми не перевіряємо, просто перевіряємо стан кнопки)
     const submitBtn = screen.getByText("modal.save").closest("button");
     const cancelBtn = screen.getByText("modal.cancel").closest("button");
 

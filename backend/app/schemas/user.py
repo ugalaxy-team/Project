@@ -47,6 +47,10 @@ class UserMinimalPublic(UserBase):
     github: str | None
     discord: str | None
 
+    is_admin: bool
+    is_organizer: bool
+    is_jury: bool
+
 
 class UserPublic(UserBase):
     id: int
@@ -56,6 +60,8 @@ class UserPublic(UserBase):
     telegram: str | None
     github: str | None
     discord: str | None
+    is_admin: bool
+    is_organizer: bool
     is_jury: bool
     evaluates_in: list["TournamentPublicMinimal"]
 
