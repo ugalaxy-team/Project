@@ -1,15 +1,22 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  AlertTriangle,
+  SearchX,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
 
 import { Hero } from "../../components/Hero";
 import { TournamentCard } from "../../components/TournamentCard";
-import {
-  TOURNAMENTS_DATA,
-  type TournamentStatus,
-} from "../../data/mockTournaments";
+import { getAllTournaments } from "../../api/requests/getAllTournaments";
 import { cn } from "../../utils/cn";
+
+type TournamentStatus = "draft" | "registration" | "running" | "finished";
 
 const PER_PAGE = 15;
 
@@ -27,17 +34,32 @@ export const TournamentsPage = () => {
   const [filter, setFilter] = useState<TournamentStatus | "all">("all");
   const [page, setPage] = useState(1);
 
+  const {
+    data: tournaments,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["tournaments"],
+    queryFn: getAllTournaments,
+  });
+
   const filteredData = useMemo(() => {
-    return TOURNAMENTS_DATA.filter((item) => {
+    if (!tournaments || !Array.isArray(tournaments)) return [];
+
+    return tournaments.filter((item: any) => {
       const matchesSearch = item.title
-        .toLowerCase()
-        .includes(query.toLowerCase());
-      const matchesFilter = filter === "all" || item.status === filter;
+        ? item.title.toLowerCase().includes(query.toLowerCase())
+        : false;
+
+      const itemStatus = item.status_name || item.status?.name;
+      const matchesFilter = filter === "all" || itemStatus === filter;
+
       return matchesSearch && matchesFilter;
     });
-  }, [query, filter]);
+  }, [query, filter, tournaments]);
 
   const totalPages = Math.ceil(filteredData.length / PER_PAGE);
+
   const currentData = useMemo(() => {
     const start = (page - 1) * PER_PAGE;
     return filteredData.slice(start, start + PER_PAGE);
@@ -118,110 +140,141 @@ export const TournamentsPage = () => {
           </div>
         </div>
 
-        <div className="mb-6 text-[15px] font-bold text-text-muted transition-colors duration-300 px-1">
-          {t("results.found")}{" "}
-          <strong className="text-primary">{filteredData.length}</strong>{" "}
-          {filteredData.length === 1
-            ? t("results.tournaments_one")
-            : t("results.tournaments_many")}
-        </div>
-
-        <AnimatePresence mode="wait">
-          {currentData.length > 0 ? (
-            <motion.div
-              key="grid"
-              variants={containerVariants}
-              initial="hidden"
-              animate="show"
-              exit="hidden"
-              className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-            >
-              {currentData.map((tournament) => (
-                <motion.div
-                  key={tournament.id}
-                  variants={itemVariants}
-                  className="h-full"
-                >
-                  <TournamentCard {...tournament} />
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="empty"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-              className="py-24 text-center col-span-full bg-bg-card rounded-3xl border border-border transition-colors duration-300 mx-2 md:mx-0"
-            >
-              <span className="text-[52px] block mb-4 opacity-50">🔍</span>
-              <h3 className="font-nunito text-[24px] text-text-main font-extrabold mb-2 transition-colors duration-300">
-                {t("empty.title")}
-              </h3>
-              <p className="text-[16px] font-semibold text-text-muted transition-colors duration-300 px-4">
-                {t("empty.subtitle")}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {totalPages > 1 && (
-          <div className="mt-14 flex flex-col items-center gap-5">
-            <div className="flex items-center gap-4 sm:gap-6">
-              <button
-                onClick={() => {
-                  setPage((p) => p - 1);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-                disabled={page === 1}
-                className="flex items-center gap-1.5 font-nunito font-extrabold text-[15px] text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted transition-colors duration-300"
-              >
-                <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
-                <span className="hidden sm:block">{t("pagination.prev")}</span>
-              </button>
-
-              <div className="flex gap-2">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (p) => (
-                    <button
-                      key={p}
-                      onClick={() => {
-                        setPage(p);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                      className={cn(
-                        "w-[40px] h-[40px] rounded-xl flex items-center justify-center font-bold text-[15px] transition-all duration-300 border-[1.5px]",
-                        page === p
-                          ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
-                          : "bg-transparent text-text-muted border-transparent hover:bg-bg-card hover:border-border hover:text-text-main hover:shadow-sm",
-                      )}
-                    >
-                      {p}
-                    </button>
-                  ),
-                )}
-              </div>
-
-              <button
-                onClick={() => {
-                  setPage((p) => p + 1);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-                disabled={page === totalPages}
-                className="flex items-center gap-1.5 font-nunito font-extrabold text-[15px] text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted transition-colors duration-300"
-              >
-                <span className="hidden sm:block">{t("pagination.next")}</span>
-                <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
-              </button>
-            </div>
-
-            <div className="font-nunito text-[14px] font-extrabold text-text-muted transition-colors duration-300">
-              {t("pagination.page")}{" "}
-              <strong className="text-primary">{page}</strong>{" "}
-              {t("pagination.of")} {totalPages}
-            </div>
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-20 min-h-[40vh]">
+            <Loader2 className="w-12 h-12 animate-spin text-primary opacity-50 mb-4" />
+            <p className="text-text-muted font-bold animate-pulse">
+              {t("states.loading")}
+            </p>
           </div>
+        ) : isError ? (
+          <div className="py-24 text-center bg-bg-card rounded-3xl border border-red-500/30 transition-colors mx-2 md:mx-0">
+            <AlertTriangle
+              className="w-16 h-16 mx-auto mb-4 text-red-500/50"
+              strokeWidth={1.5}
+            />
+            <h3 className="font-nunito text-[24px] text-red-500 font-extrabold mb-2">
+              {t("states.error_title")}
+            </h3>
+            <p className="text-[16px] font-semibold text-text-muted">
+              {t("states.error_subtitle")}
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="mb-6 text-[15px] font-bold text-text-muted transition-colors duration-300 px-1">
+              {t("results.found")}{" "}
+              <strong className="text-primary">{filteredData.length}</strong>{" "}
+              {filteredData.length === 1
+                ? t("results.tournaments_one")
+                : t("results.tournaments_many")}
+            </div>
+
+            <AnimatePresence mode="wait">
+              {currentData.length > 0 ? (
+                <motion.div
+                  key="grid"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="show"
+                  exit="hidden"
+                  className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+                >
+                  {currentData.map((tournament: any) => (
+                    <motion.div
+                      key={tournament.id}
+                      variants={itemVariants}
+                      className="h-full"
+                    >
+                      <TournamentCard {...tournament} />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                  className="py-24 text-center col-span-full bg-bg-card rounded-3xl border border-border transition-colors duration-300 mx-2 md:mx-0"
+                >
+                  <SearchX
+                    className="w-16 h-16 mx-auto mb-4 text-text-muted/30"
+                    strokeWidth={1.5}
+                  />
+                  <h3 className="font-nunito text-[24px] text-text-main font-extrabold mb-2 transition-colors duration-300">
+                    {t("empty.title")}
+                  </h3>
+                  <p className="text-[16px] font-semibold text-text-muted transition-colors duration-300 px-4">
+                    {t("empty.subtitle")}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {totalPages > 1 && (
+              <div className="mt-14 flex flex-col items-center gap-5">
+                <div className="flex items-center gap-4 sm:gap-6">
+                  <button
+                    onClick={() => {
+                      setPage((p) => p - 1);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    disabled={page === 1}
+                    className="flex items-center gap-1.5 font-nunito font-extrabold text-[15px] text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted transition-colors duration-300"
+                  >
+                    <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
+                    <span className="hidden sm:block">
+                      {t("pagination.prev")}
+                    </span>
+                  </button>
+
+                  <div className="flex gap-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (p) => (
+                        <button
+                          key={p}
+                          onClick={() => {
+                            setPage(p);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          className={cn(
+                            "w-[40px] h-[40px] rounded-xl flex items-center justify-center font-bold text-[15px] transition-all duration-300 border-[1.5px]",
+                            page === p
+                              ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
+                              : "bg-transparent text-text-muted border-transparent hover:bg-bg-card hover:border-border hover:text-text-main hover:shadow-sm",
+                          )}
+                        >
+                          {p}
+                        </button>
+                      ),
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setPage((p) => p + 1);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    disabled={page === totalPages}
+                    className="flex items-center gap-1.5 font-nunito font-extrabold text-[15px] text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted transition-colors duration-300"
+                  >
+                    <span className="hidden sm:block">
+                      {t("pagination.next")}
+                    </span>
+                    <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
+                  </button>
+                </div>
+
+                <div className="font-nunito text-[14px] font-extrabold text-text-muted transition-colors duration-300">
+                  {t("pagination.page")}{" "}
+                  <strong className="text-primary">{page}</strong>{" "}
+                  {t("pagination.of")} {totalPages}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

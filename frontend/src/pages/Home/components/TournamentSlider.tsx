@@ -2,9 +2,10 @@ import { useEffect, useRef, useCallback, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Dices, ArrowLeft, ArrowRight } from "lucide-react";
+import { Dices, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { TournamentCard } from "../../../components/TournamentCard";
-import { TOURNAMENTS_DATA } from "../../../data/mockTournaments";
+import { getAllTournaments } from "../../../api/requests/getAllTournaments";
 import { Button } from "../../../components/ui/Button";
 
 const CORNERS = [
@@ -59,9 +60,23 @@ export const TournamentSlider = () => {
   const DURATION = 5000;
   const GAP = 24;
 
+  const {
+    data: tournaments,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["tournaments"],
+    queryFn: getAllTournaments,
+  });
+
   const activeTournaments = useMemo(() => {
-    return TOURNAMENTS_DATA.filter((t) => t.status === "registration");
-  }, []);
+    if (!tournaments || !Array.isArray(tournaments)) return [];
+
+    return tournaments.filter((tournament: any) => {
+      const status = tournament.status_name || tournament.status?.name;
+      return status === "registration";
+    });
+  }, [tournaments]);
 
   const getScrollAmount = useCallback(() => {
     if (!sliderRef.current) return 0;
@@ -98,7 +113,12 @@ export const TournamentSlider = () => {
       const deltaTime = time - lastTimeRef.current;
       lastTimeRef.current = time;
 
-      if (!isPaused.current && !isSpinning && !winnerId) {
+      if (
+        !isPaused.current &&
+        !isSpinning &&
+        !winnerId &&
+        activeTournaments.length > 0
+      ) {
         progressRef.current += (deltaTime / DURATION) * 100;
         if (progressRef.current >= 100) {
           handleNext();
@@ -113,7 +133,7 @@ export const TournamentSlider = () => {
 
     requestRef.current = requestAnimationFrame(updateAnimation);
     return () => cancelAnimationFrame(requestRef.current);
-  }, [handleNext, isSpinning, winnerId]);
+  }, [handleNext, isSpinning, winnerId, activeTournaments.length]);
 
   const startRoulette = () => {
     if (!sliderRef.current || isSpinning || activeTournaments.length === 0)
@@ -176,7 +196,15 @@ export const TournamentSlider = () => {
     }, 120);
   };
 
-  if (activeTournaments.length === 0) {
+  if (isLoading) {
+    return (
+      <section className="bg-bg-body text-text-main pt-[120px] pb-[60px] md:pt-[10px] md:pb-[100px] w-full flex justify-center items-center min-h-[400px]">
+        <Loader2 className="w-12 h-12 animate-spin text-primary opacity-50" />
+      </section>
+    );
+  }
+
+  if (isError || activeTournaments.length === 0) {
     return null;
   }
 
@@ -243,7 +271,7 @@ export const TournamentSlider = () => {
             ref={sliderRef}
           >
             <div className="flex gap-6 w-max px-2 pt-4 pb-12">
-              {activeTournaments.map((card) => {
+              {activeTournaments.map((card: any) => {
                 const isWinner = winnerId === card.id.toString();
                 const isLoser = winnerId && !isWinner;
 

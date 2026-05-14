@@ -8,7 +8,6 @@ import { store } from "../../store";
 import { deleteUser } from "@/api/requests";
 import { setUser } from "@/slices/user";
 
-// Магія: мокаємо переклади, щоб вони просто повертали свої ключі
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => key,
@@ -62,7 +61,6 @@ vi.mock("./EditProfileModal", () => ({
     ) : null,
 }));
 
-// Оновлені мок-дані: додали масив турнірів!
 const mockUserFull = {
   id: "user-1",
   displayName: "Super Hacker",
@@ -210,7 +208,6 @@ describe("Profile Component", () => {
     } as any);
 
     render(<Profile />);
-    // Шукаємо кнопку за текстом ключа
     const deleteButton = screen.getByText("delete_account").closest("button");
     expect(deleteButton).toBeInTheDocument();
     expect(deleteButton).toBeDisabled();
@@ -251,7 +248,7 @@ describe("Profile Component", () => {
     vi.mocked(useSelector).mockReturnValue(mockUserEmpty);
     render(<Profile />);
     const missingBadges = screen.getAllByText("missing");
-    expect(missingBadges).toHaveLength(3); // Telegram, GitHub, Discord
+    expect(missingBadges).toHaveLength(3);
   });
 
   it("applies specific colors for Telegram chip", () => {
