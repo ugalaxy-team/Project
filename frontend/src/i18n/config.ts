@@ -14,6 +14,7 @@ import ukContact from "../locales/uk/contact.json";
 import ukTournaments from "../locales/uk/tournaments.json";
 import ukRules from "../locales/uk/rules.json";
 import ukProfile from "../locales/uk/profile.json";
+import ukRoleRequest from "../locales/uk/roleRequest.json";
 
 // ENGLISH
 import enCommon from "../locales/en/common.json";
@@ -27,6 +28,7 @@ import enContact from "../locales/en/contact.json";
 import enTournaments from "../locales/en/tournaments.json";
 import enRules from "../locales/en/rules.json";
 import enProfile from "../locales/en/profile.json";
+import enRoleRequest from "../locales/en/roleRequest.json";
 
 const resources = {
   uk: {
@@ -41,6 +43,7 @@ const resources = {
     tournaments: ukTournaments,
     rules: ukRules,
     profile: ukProfile,
+    roleRequest: ukRoleRequest,
   },
   en: {
     common: enCommon,
@@ -54,6 +57,7 @@ const resources = {
     tournaments: enTournaments,
     rules: enRules,
     profile: enProfile,
+    roleRequest: enRoleRequest,
   },
 };
 

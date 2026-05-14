@@ -48,14 +48,6 @@ export const Router = () => {
             }
           />
 
-          <Route
-            path="/role-request-form"
-            element={
-              <ProtectedRoute>
-                <RoleRequestPage />
-              </ProtectedRoute>
-            }
-          />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/support" element={<SupportPage />} />
@@ -99,6 +91,16 @@ export const Router = () => {
           <Route path="/news" element={<NewsPage />} />
           <Route path="*" element={<Page404 />} />
         </Route>
+
+        <Route
+          path="/role-request-form"
+          element={
+            <ProtectedRoute>
+              <RoleRequestPage />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/auth/">
           <Route index element={<AuthPage />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
