@@ -1,3 +1,4 @@
+from .session import SessionDep, get_session
 from .admin_user import AdminUserDep, get_admin_user
 from .current_user import (
     CurrentUserDep,
@@ -8,6 +9,5 @@ from .current_user import (
     current_user_dependency,
 )
 from .role_request import RoleRequestDep, get_role_request
-from .session import SessionDep, get_session
 from .permissions import TournamentOwnerDep, TaskOwnerDep, TeamOwnerDep, task_owner_dependency, team_owner_dependency, tournament_owner_dependency
 from .jury import organizer_or_admin_dependency, assigned_jury_dependency
