@@ -8,9 +8,16 @@ from app.schemas import (
 )
 from app.config import settings
 from app.models import Tournament
-from app.dependencies import SessionDep, CurrentUserDep
+from app.dependencies import (
+    SessionDep,
+    CurrentUserDep,
+    TournamentOwnerDep,
+    get_user,
+)
 from app.utils import get_tournament, tournament_load_options, get_status_by_name
 from app.dependencies import get_user, current_user_dependency
+from app.schemas import SubmissionPublic
+
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 
@@ -27,6 +34,14 @@ async def tournaments(session: SessionDep):
 )
 async def tournament(tournament_id: int, session: SessionDep):
     return await get_tournament(tournament_id, session)
+
+@router.get(
+    "/{tournament_id}/submissions",
+    response_model=list[SubmissionPublic],
+    status_code=status.HTTP_200_OK,
+)
+async def submissions(tournament: Tournament = TournamentOwnerDep):
+    return tournament.submissions
 
 
 @router.post("/", response_model=TournamentPublic, status_code=status.HTTP_201_CREATED)
@@ -70,12 +85,11 @@ async def create_tournament(
     "/{tournament_id}/",
     response_model=TournamentPublic,
     status_code=status.HTTP_200_OK,
-    dependencies=[current_user_dependency],
 )
 async def update_tournament(
-    tournament_id: int,
     tournament_data: TournamentUpdate,
     session: SessionDep,
+    tournament: Tournament = TournamentOwnerDep,
 ):
     update_data = tournament_data.model_dump(exclude_unset=True)
 
@@ -84,7 +98,6 @@ async def update_tournament(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No fields provided for update",
         )
-    tournament = await get_tournament(tournament_id, session)
     await session.refresh(tournament, ["juries"])
 
     juries_ids = update_data.pop("juries", [])
@@ -94,7 +107,7 @@ async def update_tournament(
     if update_data:
         result = await session.execute(
             update(Tournament)
-            .where(Tournament.id == tournament_id)
+            .where(Tournament.id == tournament.id)
             .values(**update_data)
             .returning(Tournament)
         )
@@ -114,10 +127,10 @@ async def update_tournament(
 @router.delete(
     "/{tournament_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[current_user_dependency],
 )
-async def delete_tournament(tournament_id: int, session: SessionDep):
-    tournament = await get_tournament(tournament_id, session)
-
+async def delete_tournament(
+    session: SessionDep,
+    tournament: Tournament = TournamentOwnerDep,
+):
     await session.delete(tournament)
     await session.commit()

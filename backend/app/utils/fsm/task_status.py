@@ -26,10 +26,10 @@ class TaskStatus(StateMachine):
 
     def update_by_time(self):
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
 
-        start = self.task.start_time.replace(tzinfo=timezone.utc)
-        end = self.task.end_time.replace(tzinfo=timezone.utc)
+        start = self.task.start_time
+        end = self.task.end_time
 
         changed = False
         if self.current_state == self.active and now < start:
