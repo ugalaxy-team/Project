@@ -86,13 +86,6 @@ class TaskEvaluationCriterionPublic(BaseModel):
     weight: int
     max_score: int
 
-    @model_validator(mode="after")
-    def check_update_dates(self) -> Self:
-        if self.start_time and self.end_time:
-            if self.end_time <= self.start_time:
-                raise ValueError("end_time must be later than start_time")
-        return self
-
 
 class TaskPublic(TaskBase):
     model_config = ConfigDict(from_attributes=True)

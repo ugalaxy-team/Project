@@ -30,7 +30,7 @@ export interface TaskInfo {
 export interface TeamMember {
   full_name: string;
   email: string;
-  telegram_username?: string;
+  telegram?: string;
   educational_institution?: string;
 }
 

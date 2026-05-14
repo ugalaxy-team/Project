@@ -12,10 +12,12 @@ if TYPE_CHECKING:
 
 
 class TeamMemberBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     full_name: str = Field(..., min_length=3)
     email: EmailStr = Field(..., description="Contact email")
-    telegram_username: str
-    educational_institution: str
+    telegram: str
+    educational_institution: str | None = None
 
 
 class TeamMemberCreate(TeamMemberBase):
@@ -28,7 +30,7 @@ class TeamMemberCreate(TeamMemberBase):
 class TeamMemberUpdate(BaseModel):
     full_name: str | None = Field(None, min_length=3)
     email: EmailStr | None = Field(None, description="Contact email")
-    telegram_username: str | None = None
+    telegram: str | None = None
     educational_institution: str | None = None
 
     @field_validator("email")
@@ -40,8 +42,8 @@ class TeamMemberUpdate(BaseModel):
 class TeamMemberPublic(TeamMemberBase):
     pass
 
-
 class TeamBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     name: str = Field(..., description="Name of the team")
     team_email: EmailStr = Field(..., description="Contact email")
     contact_info: PhoneNumber = Field(..., description="Phone number")
