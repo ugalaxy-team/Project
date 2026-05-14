@@ -1,0 +1,67 @@
+{
+  "panel": {
+    "eyebrow": "Jury workspace",
+    "title": "Jury panel",
+    "description": "Review only the rounds assigned to you. Each task opens its own rubric and submission list so you can move quickly from one decision to the next.",
+    "assignments_label": "Active assignments",
+    "loading_aria": "Loading jury tasks",
+    "loading_hint": "Loading tasks…",
+    "error_title": "Could not load jury tasks",
+    "error_hint": "Please refresh the page or try again in a moment.",
+    "empty_title": "No jury assignments yet",
+    "empty_description": "When an organizer assigns you to a round, it will appear here with a clear path into the rubric.",
+    "rounds_ready_one": "{{count}} round ready to judge",
+    "rounds_ready_other": "{{count}} rounds ready to judge"
+  },
+  "evaluate": {
+    "back": "All assignments",
+    "eyebrow": "Assigned round",
+    "loading_round": "Loading round",
+    "default_description": "Review every assigned submission using the round rubric. Save each evaluation before moving on.",
+    "progress_label": "Review progress",
+    "progress_aria": "{{percent}} percent of assigned submissions reviewed ({{reviewed}} of {{total}})",
+    "finalized_title": "This round has been finalized",
+    "finalized_hint": "Evaluations are read-only. You can still open cards to review scores.",
+    "status_label": "Round status",
+    "status_all_reviewed": "All assigned submissions are reviewed.",
+    "status_partial": "{{reviewed}} of {{total}} submissions reviewed.",
+    "status_hint_all_reviewed": "An organizer can finalize this round, or use the button below if finalization is enabled for jurors.",
+    "status_hint_partial": "Open each card, score against the rubric, and save. Pending items stay highlighted.",
+    "finalize": "Finalize evaluation",
+    "loading_aria": "Loading submissions",
+    "loading_hint": "Loading submissions…",
+    "error_title": "Could not load assigned submissions",
+    "error_hint": "Please check your connection and try again.",
+    "empty_title": "No submissions for this round",
+    "empty_description": "Nothing is assigned to you here yet. Return to the panel and pick another round when it appears.",
+    "back_to_panel": "Back to jury panel",
+    "toast_finalized": "Round finalized successfully",
+    "toast_finalize_failed": "Failed to finalize round"
+  },
+  "task_card": {
+    "task_id": "Task #{{id}}",
+    "no_description": "No description provided for this round.",
+    "reviews_per_submission": "{{count}} reviews / submission",
+    "scale": "Scale 0–{{max}}",
+    "open_round": "Open round"
+  },
+  "submission": {
+    "label": "Submission",
+    "reviewed": "Reviewed",
+    "pending": "Pending",
+    "no_links": "No submission links were attached.",
+    "cta_start": "Start evaluation",
+    "cta_update": "Update evaluation",
+    "cta_view": "View evaluation"
+  },
+  "modal": {
+    "eyebrow": "Evaluation",
+    "close_aria": "Close",
+    "finalized_banner": "This round has been finalized. Evaluations cannot be modified.",
+    "comment": "Comment",
+    "comment_placeholder": "Optional feedback for the submission",
+    "cancel": "Cancel",
+    "save": "Save evaluation",
+    "criterion_meta": "Weight {{weight}} · Max {{max}}"
+  }
+}

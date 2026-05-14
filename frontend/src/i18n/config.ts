@@ -2,7 +2,6 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-// UKRAINIAN
 import ukCommon from "../locales/uk/common.json";
 import ukAuth from "../locales/uk/auth.json";
 import ukRegistration from "../locales/uk/registration.json";
@@ -15,8 +14,8 @@ import ukTournaments from "../locales/uk/tournaments.json";
 import ukRules from "../locales/uk/rules.json";
 import ukProfile from "../locales/uk/profile.json";
 import ukRoleRequest from "../locales/uk/roleRequest.json";
+import ukJury from "../locales/uk/jury.json";
 
-// ENGLISH
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enRegistration from "../locales/en/registration.json";
@@ -29,6 +28,7 @@ import enTournaments from "../locales/en/tournaments.json";
 import enRules from "../locales/en/rules.json";
 import enProfile from "../locales/en/profile.json";
 import enRoleRequest from "../locales/en/roleRequest.json";
+import enJury from "../locales/en/jury.json";
 
 const resources = {
   uk: {
@@ -44,6 +44,7 @@ const resources = {
     rules: ukRules,
     profile: ukProfile,
     roleRequest: ukRoleRequest,
+    jury: ukJury,
   },
   en: {
     common: enCommon,
@@ -58,6 +59,7 @@ const resources = {
     rules: enRules,
     profile: enProfile,
     roleRequest: enRoleRequest,
+    jury: enJury,
   },
 };
 
@@ -79,6 +81,9 @@ i18n
       "contact",
       "tournaments",
       "rules",
+      "profile",
+      "roleRequest",
+      "jury",
     ],
     defaultNS: "common",
     debug: import.meta.env.DEV,
