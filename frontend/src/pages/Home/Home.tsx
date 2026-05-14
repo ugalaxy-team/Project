@@ -85,7 +85,7 @@ export const Home = () => {
         ]}
         mascot={{
           circularText: t("hero.mascot.circular"),
-          lottieSrc: "/star.json",
+          lottieSrc: "/star-hello.json",
           buttonText: t("hero.mascot.button"),
           buttonLink: "/tournaments",
         }}
