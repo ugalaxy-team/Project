@@ -61,8 +61,6 @@ export const Router = () => {
           <Route path="/support" element={<SupportPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/rules" element={<RulesPage />} />
-<<<<<<< HEAD
-=======
           <Route path="/jury-panel">
             <Route
               index
@@ -81,7 +79,6 @@ export const Router = () => {
               }
             />
           </Route>
->>>>>>> dev
           <Route path="/organizer-panel" element={<OrganizerPanel />} />
           <Route
             path="/jury-panel"
