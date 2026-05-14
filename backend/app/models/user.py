@@ -64,15 +64,33 @@ class User(Base, PKMixin):
         lazy="selectin",
     )
 
-    @property
+    @hybrid_property
     def is_admin(self) -> bool:
-        return any(role.name == settings.ROLE_NAMES.ADMIN for role in self.roles)
+        if "roles" in self.__dict__:
+            return any(role.name == settings.ROLE_NAMES.ADMIN for role in self.roles)
+        return False
+
+    @is_admin.expression
+    def is_admin(cls):
+        return (
+            select(user_roles.c.role_name)
+            .where(user_roles.c.user_id == cls.id, user_roles.c.role_name == settings.ROLE_NAMES.ADMIN)
+        ) is not None
     
-    @property
+    @hybrid_property
     def is_organizer(self) -> bool:
         if self.is_admin:
             return True
-        return any(role.name == settings.ROLE_NAMES.ORGANIZER for role in self.roles)
+        if "roles" in self.__dict__:
+            return any(role.name == settings.ROLE_NAMES.ORGANIZER for role in self.roles)
+        return False
+
+    @is_organizer.expression
+    def is_organizer(cls):
+        return (
+            select(user_roles.c.role_name)
+            .where(user_roles.c.user_id == cls.id, user_roles.c.role_name == settings.ROLE_NAMES.ORGANIZER)
+        ) is not None
 
     @hybrid_property
     def is_jury(self) -> bool:
