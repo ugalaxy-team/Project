@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo, type FC } from "react";
 import { useSelector } from "react-redux";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { type RootState } from "../../store";
@@ -12,6 +12,7 @@ import { updateTask } from "@/api/requests/updateTask";
 import { deleteTask } from "@/api/requests/deleteTask";
 import { EditTournamentModal } from "./EditTournamentModal";
 import { CreateTournamentModal } from "./CreateTournamentModal";
+import { auth } from "@/firebase";
 import {
   TournamentsTab,
   TasksTab,
@@ -21,6 +22,103 @@ import {
   type Task,
 } from "./components";
 import type { TaskFormData } from "./components/TaskManagementModal";
+
+const InteractiveGarland: FC = () => {
+  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
+  const [screenWidth, setScreenWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1000);
+  const [time, setTime] = useState(0);
+
+  useEffect(() => {
+    setScreenWidth(window.innerWidth);
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    const handleMove = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
+    let animationFrame: number;
+    const animate = () => {
+      setTime((t) => t + 1);
+      animationFrame = requestAnimationFrame(animate);
+    };
+    animate();
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("mousemove", handleMove);
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMove);
+    };
+  }, []);
+
+  const stars = useMemo(() => {
+    const glowingIndices = new Set([3, 7, 12, 15, 19, 23, 28, 31, 35, 39]);
+    return Array.from({ length: 40 }).map((_, i) => ({
+      id: i,
+      leftPercent: i * 2.5 + 1.25,
+      stringHeight: 25 + Math.sin(i * 1.5) * 15 + Math.random() * 35,
+      size: 10 + (i % 3) * 4 + Math.random() * 4,
+      sensitivity: 0.6 + Math.random() * 0.4,
+      canGlow: glowingIndices.has(i),
+      phase: Math.random() * Math.PI * 2,
+    }));
+  }, []);
+
+  return (
+    <div className="absolute top-0 left-0 w-full h-80 pointer-events-none z-0 overflow-hidden">
+      {stars.map((star) => {
+        const starX = (star.leftPercent / 100) * screenWidth;
+        const starY = star.stringHeight;
+        const dx = mousePos.x - starX;
+        const dy = mousePos.y - starY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const radius = 160;
+        let mouseTilt = 0;
+
+        if (distance < radius) {
+          const force = Math.pow((radius - distance) / radius, 1.5);
+          mouseTilt = -(dx / radius) * force * 50 * star.sensitivity;
+        }
+        const weightFactor = star.stringHeight / 80;
+        const idleSwing = Math.sin(time * (0.04 + weightFactor * 0.03) + star.phase) * (10 + weightFactor * 8);
+        const finalTilt = idleSwing + mouseTilt;
+        const isHovered = distance < 60;
+
+        return (
+          <div
+            key={star.id}
+            className="absolute top-9 flex flex-col items-center"
+            style={{
+              left: `${star.leftPercent}%`,
+              transform: `rotate(${finalTilt}deg)`,
+              transformOrigin: "top center",
+              transition: "transform 0.15s linear",
+            }}
+          >
+            <div
+              className="w-[1px] bg-gradient-to-b from-white/30 via-white/10 to-transparent"
+              style={{ height: `${star.stringHeight}px` }}
+            />
+            <svg
+              width={star.size}
+              height={star.size}
+              viewBox="0 0 24 24"
+              className={`transition-all duration-500 ${
+                star.canGlow && isHovered
+                  ? "drop-shadow-[0_0_16px_rgba(255,255,255,0.9)] fill-white scale-125"
+                  : "drop-shadow-[0_0_6px_rgba(255,255,255,0.3)] fill-white/60 scale-100 opacity-80"
+              }`}
+            >
+              <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" />
+            </svg>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const toLocalNaiveISO = (dateStr: string) => {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  return date.toISOString().split('.')[0].replace('Z', '');
+};
 
 const OrganizerPanel = () => {
   const currentUser = useSelector((s: RootState) => s.user.user);
@@ -49,10 +147,8 @@ const OrganizerPanel = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deleteTournament,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tournaments"] });
-    },
+    mutationFn: (id: number) => deleteTournament(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tournaments"] }),
   });
 
   const updateMutation = useMutation({
@@ -72,194 +168,89 @@ const OrganizerPanel = () => {
   });
 
   const createTaskMutation = useMutation({
-    mutationFn: (data: { tournamentId: number; taskData: TaskFormData }) =>
+    mutationFn: (data: { tournamentId: number; taskData: TaskFormData; user: any }) =>
       createTask(data.tournamentId, {
-        title: data.taskData.title,
-        description: data.taskData.description,
-        start_time: new Date(data.taskData.start_time).toISOString(),
-        end_time: new Date(data.taskData.end_time).toISOString(),
-        requirements: data.taskData.requirements,
-      }),
+        ...data.taskData,
+        start_time: toLocalNaiveISO(data.taskData.start_time),
+        end_time: toLocalNaiveISO(data.taskData.end_time),
+      }, data.user),
     onSuccess: (newTask) => {
       setTasks((prev) => [...prev, newTask]);
       setIsTaskModalOpen(false);
-      setEditingTask(null);
     },
   });
 
   const updateTaskMutation = useMutation({
-    mutationFn: (data: { tournamentId: number; taskId: number; taskData: TaskFormData }) =>
+    mutationFn: (data: { tournamentId: number; taskId: number; taskData: TaskFormData; user: any }) =>
       updateTask(data.tournamentId, data.taskId, {
-        title: data.taskData.title,
-        description: data.taskData.description,
-        start_time: new Date(data.taskData.start_time).toISOString(),
-        end_time: new Date(data.taskData.end_time).toISOString(),
-        requirements: data.taskData.requirements,
-      }),
+        ...data.taskData,
+        start_time: toLocalNaiveISO(data.taskData.start_time),
+        end_time: toLocalNaiveISO(data.taskData.end_time),
+      }, data.user),
     onSuccess: (updatedTask) => {
-      setTasks((prev) =>
-        prev.map((task) => (task.id === updatedTask.id ? updatedTask : task))
-      );
+      setTasks((prev) => prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
       setIsTaskModalOpen(false);
-      setEditingTask(null);
     },
   });
 
   const deleteTaskMutation = useMutation({
-    mutationFn: (data: { tournamentId: number; taskId: number }) =>
-      deleteTask(data.tournamentId, data.taskId),
+    mutationFn: (data: { tournamentId: number; taskId: number; user: any }) =>
+      deleteTask(data.tournamentId, data.taskId, data.user),
     onSuccess: (_, variables) => {
-      setTasks((prev) =>
-        prev.filter((task) => task.id !== variables.taskId)
-      );
+      setTasks((prev) => prev.filter((task) => task.id !== variables.taskId));
     },
   });
 
-  const handleDeleteTournament = async (id: number) => {
-    try {
-      await deleteMutation.mutateAsync(id);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const openInfo = (t: Tournament) => {
-    setSelectedTournament(t);
-    setIsInfoModalOpen(true);
-  };
-
-  const openEdit = (t: Tournament) => {
-    setSelectedTournament(t);
-    setIsEditModalOpen(true);
-  };
-
-  const openTasksTab = (t: Tournament | null) => {
-    setSelectedTournament(t);
-    if (t) {
-      getTasks(t.id)
-        .then((fetchedTasks: Task[]) => setTasks(fetchedTasks))
-        .catch(() => setTasks([]));
-    }
-  };
-
-  const openCreateTask = (t: Tournament) => {
-    setSelectedTournament(t);
-    setIsTaskModalOpen(true);
-  };
-
-  const handleCreateTask = async (formData: TaskFormData) => {
+  const handleSaveTask = async (formData: TaskFormData, firebaseUser: any) => {
     if (!selectedTournament) return;
-    try {
-      await createTaskMutation.mutateAsync({
-        tournamentId: selectedTournament.id,
-        taskData: formData,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const openEditTask = (task: Task) => {
-    setEditingTask(task);
-    setIsTaskModalOpen(true);
-  };
-
-  const handleUpdateTask = async (formData: TaskFormData) => {
-    if (!selectedTournament || !editingTask) return;
-    try {
+    if (editingTask) {
       await updateTaskMutation.mutateAsync({
         tournamentId: selectedTournament.id,
         taskId: editingTask.id,
         taskData: formData,
+        user: firebaseUser
       });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleDeleteTask = async (taskId: number) => {
-    if (!selectedTournament || !confirm("Видалити завдання?")) return;
-    try {
-      await deleteTaskMutation.mutateAsync({
+    } else {
+      await createTaskMutation.mutateAsync({
         tournamentId: selectedTournament.id,
-        taskId: taskId,
+        taskData: formData,
+        user: firebaseUser
       });
-    } catch (error) {
-      console.error(error);
     }
   };
 
-  const handleTaskModalClose = () => {
-    setIsTaskModalOpen(false);
-    setEditingTask(null);
-  };
-
-  const handleSaveTask = editingTask ? handleUpdateTask : handleCreateTask;
-
-  if (!currentUser)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
-        <div className="text-center animate-pulse">
-           <div className="w-16 h-16 border-4 border-[#6366f1] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-           <p className="text-xl font-black text-slate-400 uppercase tracking-widest">Профіль...</p>
-        </div>
-      </div>
-    );
+  if (!currentUser) return <div className="p-20 text-center font-black">Завантаження профілю...</div>;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-32">
-      <section className="bg-gradient-to-br from-[#6366f1] to-[#4f46e5] relative pt-20 pb-40 px-8 overflow-hidden">
-        <div className="max-w-7xl mx-auto relative z-10 text-center">
-          <span className="bg-[#fbbf24] text-slate-900 px-6 py-2.5 rounded-2xl font-black text-xs inline-block mb-8 shadow-xl uppercase tracking-tighter">
-            ⚡ Привіт Організаторе!
-          </span>
-          <h1 className="text-white text-5xl md:text-7xl font-black tracking-tight mb-6 drop-shadow-2xl uppercase italic leading-none">
-            Управління <br className="hidden md:block" /> Подіями
-          </h1>
-        </div>
-        
-        <div className="absolute -bottom-1 left-0 w-full leading-[0]">
-          <svg viewBox="0 0 1440 120" className="h-[60px] md:h-[100px] w-full fill-[#F8FAFC]" preserveAspectRatio="none">
-            <path d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
-          </svg>
-        </div>
+      <section className="bg-gradient-to-br from-[#6366f1] to-[#4f46e5] pt-24 pb-44 px-8 text-center relative overflow-hidden">
+        <InteractiveGarland />
+        <h1 className="text-white text-5xl md:text-7xl font-black uppercase italic relative z-10 drop-shadow-2xl tracking-tighter mt-12">
+          Панель Організатора
+        </h1>
       </section>
 
       <div className="max-w-7xl mx-auto px-8 -mt-24 relative z-20">
-        <div className="flex flex-col md:flex-row justify-center items-center gap-6 mb-12">
-          <button
-            onClick={() => setActiveTab("tournaments")}
-            className={`w-full md:w-auto px-12 py-5 rounded-[2rem] font-black text-sm transition-all shadow-2xl flex items-center justify-center gap-3 tracking-widest uppercase ${
-              activeTab === "tournaments"
-                ? "bg-[#fbbf24] text-slate-900 scale-105 ring-4 ring-[#fbbf24]/20"
-                : "bg-white text-slate-400 hover:text-slate-600 hover:bg-slate-50"
-            }`}
+        <div className="flex gap-4 justify-center mb-10">
+          <button 
+            onClick={() => setActiveTab("tournaments")} 
+            className={`px-8 py-4 rounded-2xl font-black uppercase transition-all shadow-lg hover:scale-105 active:scale-95 ${activeTab === "tournaments" ? "bg-[#fbbf24] text-white" : "bg-white text-slate-400 hover:text-slate-600"}`}
           >
-            <span className="text-xl">🏆</span> Турніри
+            🏆 Турніри
           </button>
-          <button
-            onClick={() => setActiveTab("tasks")}
-            className={`w-full md:w-auto px-12 py-5 rounded-[2rem] font-black text-sm transition-all shadow-2xl flex items-center justify-center gap-3 tracking-widest uppercase ${
-              activeTab === "tasks"
-                ? "bg-[#fbbf24] text-slate-900 scale-105 ring-4 ring-[#fbbf24]/20"
-                : "bg-white text-slate-400 hover:text-slate-600 hover:bg-slate-50"
-            }`}
+          <button 
+            onClick={() => setActiveTab("tasks")} 
+            className={`px-8 py-4 rounded-2xl font-black uppercase transition-all shadow-lg hover:scale-105 active:scale-95 ${activeTab === "tasks" ? "bg-[#fbbf24] text-white" : "bg-white text-slate-400 hover:text-slate-600"}`}
           >
-            <span className="text-xl">📋</span> Завдання
+            📋 Завдання
           </button>
         </div>
 
-        <div className="bg-white rounded-[3rem] p-8 md:p-14 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-slate-100">
+        <div className="bg-white rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100">
           {isLoading ? (
-            <div className="flex flex-col justify-center items-center py-32 gap-6">
-              <div className="relative">
-                <div className="w-20 h-20 border-8 border-slate-100 rounded-full"></div>
-                <div className="w-20 h-20 border-8 border-[#6366f1] border-t-transparent rounded-full animate-spin absolute top-0"></div>
-              </div>
-              <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-sm animate-pulse">Оновлення даних...</p>
-            </div>
+            <div className="py-20 text-center animate-pulse font-bold text-slate-300">ЗАВАНТАЖЕННЯ...</div>
           ) : (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <>
               {activeTab === "tournaments" && (
                 <TournamentsTab
                   tournaments={tournaments}
@@ -267,9 +258,9 @@ const OrganizerPanel = () => {
                   setSearchQuery={setSearchQuery}
                   statusFilter={statusFilter}
                   setStatusFilter={setStatusFilter}
-                  onInfo={openInfo}
-                  onEdit={openEdit}
-                  onDelete={handleDeleteTournament}
+                  onInfo={(t) => { setSelectedTournament(t); setIsInfoModalOpen(true); }}
+                  onEdit={(t) => { setSelectedTournament(t); setIsEditModalOpen(true); }}
+                  onDelete={(id) => confirm("Видалити?") && deleteMutation.mutateAsync(id)}
                   onCreateClick={() => setIsCreateModalOpen(true)}
                 />
               )}
@@ -279,49 +270,33 @@ const OrganizerPanel = () => {
                   tournaments={tournaments}
                   tasks={tasks}
                   selectedTournament={selectedTournament}
-                  onTasksClick={openTasksTab}
-                  onCreateTaskClick={openCreateTask}
-                  onEditTaskClick={openEditTask}
-                  onDeleteTaskClick={handleDeleteTask}
+                  onTasksClick={(t) => {
+                    setSelectedTournament(t);
+                    if (t) getTasks(t.id).then(setTasks).catch(() => setTasks([]));
+                  }}
+                  onCreateTaskClick={(t) => { setSelectedTournament(t); setEditingTask(null); setIsTaskModalOpen(true); }}
+                  onEditTaskClick={(task) => { setEditingTask(task); setIsTaskModalOpen(true); }}
+                  onDeleteTaskClick={(id) => selectedTournament && deleteTaskMutation.mutateAsync({ tournamentId: selectedTournament.id, taskId: id, user: auth.currentUser })}
                   onSwitchTab={() => setActiveTab("tournaments")}
                 />
               )}
-            </div>
+            </>
           )}
         </div>
       </div>
 
-      <TournamentInfoModal
-        isOpen={isInfoModalOpen}
-        tournament={selectedTournament}
-        onClose={() => setIsInfoModalOpen(false)}
-      />
-
       <TaskManagementModal
         isOpen={isTaskModalOpen}
         tournament={selectedTournament}
-        onClose={handleTaskModalClose}
+        onClose={() => { setIsTaskModalOpen(false); setEditingTask(null); }}
         onSave={handleSaveTask}
-        isLoading={editingTask ? updateTaskMutation.isPending : createTaskMutation.isPending}
+        isLoading={createTaskMutation.isPending || updateTaskMutation.isPending}
         editingTask={editingTask}
       />
 
-      <EditTournamentModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        tournament={selectedTournament}
-        onSave={async (id, data) => {
-          await updateMutation.mutateAsync({ id, data });
-        }}
-      />
-      
-      <CreateTournamentModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onCreate={async (data: any) => {
-          await createMutation.mutateAsync(data);
-        }}
-      />
+      <EditTournamentModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} tournament={selectedTournament} onSave={async (id, data) => updateMutation.mutateAsync({ id, data })} />
+      <CreateTournamentModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onCreate={async (data) => createMutation.mutateAsync(data)} />
+      <TournamentInfoModal isOpen={isInfoModalOpen} tournament={selectedTournament} onClose={() => setIsInfoModalOpen(false)} />
     </div>
   );
 };

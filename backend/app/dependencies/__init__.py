@@ -8,5 +8,6 @@ from .current_user import (
     current_user_dependency,
 )
 from .jury import organizer_or_admin_dependency, assigned_jury_dependency
+from .permissions import TournamentOwnerDep, TaskOwnerDep, TeamOwnerDep
 from .role_request import RoleRequestDep, get_role_request
 from .session import SessionDep, get_session
