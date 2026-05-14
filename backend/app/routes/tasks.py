@@ -67,7 +67,7 @@ async def update_task(
     tournament_id: int,
     task_data: TaskUpdate,
     session: SessionDep,
-    task: Task = TaskOwnerDep,
+    task: TaskOwnerDep,
 ):
     if task.tournament_id != tournament_id:
         raise HTTPException(
@@ -100,6 +100,6 @@ async def update_task(
     "/{task_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_task(session: SessionDep, task: Task = TaskOwnerDep):
+async def delete_task(session: SessionDep, task: TaskOwnerDep):
     await session.delete(task)
     await session.commit()

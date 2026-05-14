@@ -39,7 +39,7 @@ async def tournament(tournament_id: int, session: SessionDep):
     response_model=list[SubmissionPublic],
     status_code=status.HTTP_200_OK,
 )
-async def submissions(tournament: Tournament = TournamentOwnerDep):
+async def submissions(tournament: TournamentOwnerDep):
     return tournament.submissions
 
 
@@ -88,7 +88,7 @@ async def create_tournament(
 async def update_tournament(
     tournament_data: TournamentUpdate,
     session: SessionDep,
-    tournament: Tournament = TournamentOwnerDep,
+    tournament: TournamentOwnerDep,
 ):
     update_data = tournament_data.model_dump(exclude_unset=True)
 
@@ -129,7 +129,7 @@ async def update_tournament(
 )
 async def delete_tournament(
     session: SessionDep,
-    tournament: Tournament = TournamentOwnerDep,
+    tournament: TournamentOwnerDep,
 ):
     await session.delete(tournament)
     await session.commit()
