@@ -57,6 +57,10 @@ async def update_tasks_status(session: SessionDep):
     for task in tasks:
         fsm = TaskStatus(task)
         if fsm.update_by_time():
+            if task.start_time and task.start_time.tzinfo:
+                task.start_time = task.start_time.replace(tzinfo=None)
+            if task.end_time and task.end_time.tzinfo:
+                task.end_time = task.end_time.replace(tzinfo=None)
             changed = True
 
     if changed:
