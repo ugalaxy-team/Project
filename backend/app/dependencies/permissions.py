@@ -48,30 +48,35 @@ class OwnershipChecker:
 
         return obj
 
+tournament_owner_dependency = Depends(OwnershipChecker(get_tournament, path_param="tournament_id"))
 
 TournamentOwnerDep = Annotated[
     Tournament,
-    Depends(OwnershipChecker(get_tournament, path_param="tournament_id")),
+    tournament_owner_dependency
 ]
+
+task_owner_dependency = Depends(
+    OwnershipChecker(
+        get_task,
+        path_param="task_id",
+        tournament_id_resolver=lambda t: t.tournament_id,
+    )
+)
 
 TaskOwnerDep = Annotated[
     Task,
-    Depends(
-        OwnershipChecker(
-            get_task,
-            path_param="task_id",
-            tournament_id_resolver=lambda t: t.tournament_id,
-        )
-    ),
+    task_owner_dependency
 ]
+
+team_owner_dependency = Depends(
+    OwnershipChecker(
+        get_team,
+        path_param="team_id",
+        tournament_id_resolver=lambda t: t.tournament_id,
+    )
+),
 
 TeamOwnerDep = Annotated[
     Team,
-    Depends(
-        OwnershipChecker(
-            get_team,
-            path_param="team_id",
-            tournament_id_resolver=lambda t: t.tournament_id,
-        )
-    ),
+    team_owner_dependency
 ]
