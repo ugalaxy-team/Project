@@ -11,7 +11,7 @@ export const deleteTournament = async (tournamentId: number) => {
     }
 
     const token = await user.getIdToken();
-    const response = await apiClient.delete(`/tournaments/${tournamentId}`, {
+    const response = await apiClient.delete(`/tournaments/${tournamentId}/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       }

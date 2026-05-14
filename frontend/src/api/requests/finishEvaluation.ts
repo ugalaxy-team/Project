@@ -10,7 +10,7 @@ export const finishEvaluation = async (
   user: User,
 ) => {
   const resp = await apiClient.post<JuryTask>(
-    `/tournaments/${tournamentId}/tasks/${taskId}/finish-evaluation`,
+    `/tournaments/${tournamentId}/tasks/${taskId}/finish-evaluation/`,
     {},
     { headers: await authHeaders(user) },
   );

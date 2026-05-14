@@ -25,7 +25,7 @@ export const updateTournament = async (
 
     const token = await user.getIdToken();
 
-    const response = await apiClient.patch(`/tournaments/${tournamentId}`,data,{
+    const response = await apiClient.patch(`/tournaments/${tournamentId}/`,data,{
       headers: {
         Authorization: `Bearer ${token}`
       }

@@ -15,12 +15,12 @@ export const saveAssignmentEvaluation = async (
   };
   const resp = hasExistingEvaluation
     ? await apiClient.patch<SubmissionEvaluation>(
-        `/jury/assignments/${assignmentId}/evaluation`,
+        `/jury/assignments/${assignmentId}/evaluation/`,
         data,
         config,
       )
     : await apiClient.post<SubmissionEvaluation>(
-        `/jury/assignments/${assignmentId}/evaluation`,
+        `/jury/assignments/${assignmentId}/evaluation/`,
         data,
         config,
       );

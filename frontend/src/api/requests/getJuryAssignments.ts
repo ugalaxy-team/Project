@@ -9,7 +9,7 @@ export const getJuryAssignments = async (
   user: User,
 ) => {
   const resp = await apiClient.get<JuryAssignment[]>(
-    `/jury/tasks/${taskId}/assignments`,
+    `/jury/tasks/${taskId}/assignments/`,
     {
       headers: await authHeaders(user),
     },

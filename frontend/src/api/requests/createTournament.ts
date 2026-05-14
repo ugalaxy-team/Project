@@ -23,7 +23,7 @@ export const createTournament = async (data: TournamentData) => {
 
     const token = await user.getIdToken();
 
-    const resp = await apiClient.post("/tournaments", data, {
+    const resp = await apiClient.post("/tournaments/", data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
