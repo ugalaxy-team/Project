@@ -1,0 +1,42 @@
+{
+  "hero": {
+    "bg_text": "TOURNAMENTS",
+    "title": "All Tournaments",
+    "description": "Find the event that suits you best. From coding to design — build your team and win."
+  },
+  "search": {
+    "placeholder": "Search tournaments…"
+  },
+  "filters": {
+    "all": "All Events",
+    "draft": "Coming Soon",
+    "registration": "Registration",
+    "running": "In Progress",
+    "finished": "Finished"
+  },
+  "results": {
+    "found": "Found:",
+    "tournaments_zero": "tournaments",
+    "tournaments_one": "tournament",
+    "tournaments_few": "tournaments",
+    "tournaments_many": "tournaments"
+  },
+  "empty": {
+    "title": "Nothing Found",
+    "subtitle": "Try changing the filter or search query"
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
+  },
+  "tournament_card": {
+    "teams_label": "Teams",
+    "until": "Until",
+    "btn_draft": "Coming Soon",
+    "btn_registration": "Apply Now",
+    "btn_running": "Watch",
+    "btn_finished": "View Results"
+  }
+}

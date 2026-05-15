@@ -1,0 +1,422 @@
+/* Базові стилі та змінні дизайн-системи */
+:root {
+  /* Ваша палітра */
+  --primary: #6366f1;
+  --accent: #fbbf24;
+  --background: #f8fafc;
+  --success: #22c55e;
+  --deadline: #f97316;
+
+  /* Допоміжні кольори для тексту та карток */
+  --card-bg: #ffffff;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+}
+
+body {
+  background-color: var(--background);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.profile-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border-color);
+}
+
+/* Верхня частина профілю */
+.profile-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.profile-info-wrapper {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.avatar-container {
+  width: 100px;
+  height: 100px;
+  background-color: #f3f4f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #f9fafb;
+  box-shadow: 0 0 0 1px var(--border-color);
+  color: #9ca3af;
+}
+
+.avatar-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.profile-id {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.role-badge {
+  background-color: var(--primary); /* Використовуємо Primary з палітри */
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.edit-btn {
+  background-color: var(--accent); /* Використовуємо Accent з палітри */
+  color: #111827;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.edit-btn:hover {
+  opacity: 0.9;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 32px 0;
+}
+
+/* Способи зв'язку */
+.section-subtitle {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.contact-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.contact-chip {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid var(--border-color);
+}
+
+.contact-chip .contact-value {
+  text-decoration: none;
+  color: #111827;
+  font-weight: 500;
+}
+
+.contact-label {
+  color: var(--text-muted);
+}
+
+.blue-chip {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+}
+.blue-chip .contact-value {
+  color: #2563eb;
+}
+
+.purple-chip {
+  background-color: #f5f3ff;
+  border-color: #ddd6fe;
+}
+.purple-chip .contact-value {
+  color: #7c3aed;
+}
+
+/* Нижня сітка */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.list-card {
+  padding: 24px;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 24px;
+  color: var(--text-main);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.blue-dot {
+  background-color: var(--primary);
+} /* Синхронізували з Primary */
+.yellow-dot {
+  background-color: var(--accent);
+} /* Синхронізували з Accent */
+
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #f9fafb;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 15px;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.list-item:hover {
+  background-color: #f3f4f6;
+}
+
+.chevron-icon {
+  width: 20px;
+  height: 20px;
+  color: #d1d5db;
+}
+
+.team-item {
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+.robot-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  background-color: #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+}
+
+.robot-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.team-name {
+  font-weight: 500;
+}
+/* --- Стилі для Модалки Редагування --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--text-main);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.close-btn:hover {
+  color: var(--text-main);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.form-input {
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #f9fafb;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  color: var(--text-main);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  background-color: #fff;
+  сolor: var(--text-main);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-secondary {
+  padding: 10px 20px;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-weight: 500;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #4f46e5;
+}
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Додатково: червона кнопка для видалення */
+.delete-btn {
+  background-color: #fee2e2;
+  color: #ef4444;
+  margin-left: 12px;
+}
+.delete-btn:hover {
+  background-color: #fecaca;
+  opacity: 1;
+}
+
+/* Адаптивність для мобільних пристроїв */
+@media (max-width: 768px) {
+  .profile-header-top {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}

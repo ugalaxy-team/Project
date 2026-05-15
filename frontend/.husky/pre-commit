@@ -1,0 +1,8 @@
+cd frontend
+npx lint-staged
+vitest
+
+
+cd ../backend
+python -m pytest
+python -m ruff format

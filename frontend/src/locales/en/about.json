@@ -1,0 +1,32 @@
+{
+  "hero": {
+    "bg_text": "ABOUT US",
+    "title": "Who We Are",
+    "description": "A future where every child from low-income families in Ukraine has equal access to life-changing opportunities through IT education, emotional resilience, and creative development."
+  },
+  "history": {
+    "badge": "Our History",
+    "title": "From a bold vision to real action",
+    "quote": "In 2022, amidst the challenges and hardships facing Ukraine, an initiative was born – Star for Life Ukraine.",
+    "p1": "What began as a vision quickly evolved into action, and by early 2023, we transformed into a fully-fledged charitable foundation. Our roots trace back to the global 'Star for Life' brand, founded in 2005 to empower children worldwide. With a presence across different continents, the initiative has positively impacted the lives of over 500,000 children.",
+    "p2": "Our journey in Ukraine began with an urgent need to support young people affected by ongoing challenges in the region. With over 5 million children in need of support, our mission was clear: to provide them with the tools, education, and opportunities they deserve."
+  },
+  "what_we_do": {
+    "title": "What We Do",
+    "description": "Thousands of children from low-income families in Ukraine lack access to quality education. 'Star for Life Ukraine' is working to change this, ensuring every child has a safe environment for development.",
+    "pillars": {
+      "educational": {
+        "title": "Educational",
+        "description": "Expanding knowledge and skills for the next generation."
+      },
+      "mental": {
+        "title": "Mental",
+        "description": "Fostering resilience, confidence, and psychological well-being."
+      },
+      "humanitarian": {
+        "title": "Humanitarian",
+        "description": "Supporting the children of Ukraine in the most difficult times and providing protection."
+      }
+    }
+  }
+}

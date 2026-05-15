@@ -1,0 +1,375 @@
+{
+  "roles": [
+    {
+      "name": "user",
+      "display_name": "User",
+      "description": "Default platform user."
+    },
+    {
+      "name": "admin",
+      "display_name": "Admin",
+      "description": "Platform administrator."
+    },
+    {
+      "name": "organizer",
+      "display_name": "Organizer",
+      "description": "Tournament organizer."
+    }
+  ],
+  "tournament_statuses": [
+    {
+      "name": "draft",
+      "display_name": "Draft"
+    },
+    {
+      "name": "registration",
+      "display_name": "Registration"
+    },
+    {
+      "name": "running",
+      "display_name": "Running"
+    },
+    {
+      "name": "finished",
+      "display_name": "Finished"
+    }
+  ],
+  "task_statuses": [
+    {
+      "name": "draft",
+      "display_name": "Draft"
+    },
+    {
+      "name": "active",
+      "display_name": "Active"
+    },
+    {
+      "name": "submission_closed",
+      "display_name": "SubmissionClosed"
+    },
+    {
+      "name": "evaluated",
+      "display_name": "Evaluated"
+    }
+  ],
+  "jury_assignment_statuses": [
+    {
+      "name": "assigned",
+      "display_name": "Assigned"
+    },
+    {
+      "name": "submitted",
+      "display_name": "Submitted"
+    },
+    {
+      "name": "reviewed",
+      "display_name": "Reviewed"
+    }
+  ],
+  "categories": [
+    {
+      "name": "Languages",
+      "main_id": null
+    },
+    {
+      "name": "Backend",
+      "main_id": null
+    },
+    {
+      "name": "Frontend",
+      "main_id": null
+    },
+    {
+      "name": "Databases",
+      "main_id": null
+    },
+    {
+      "name": "Infrastructure",
+      "main_id": null
+    },
+    {
+      "name": "Mobile",
+      "main_id": null
+    },
+    {
+      "name": "Design & UI/UX",
+      "main_id": null
+    },
+    {
+      "name": "SQL",
+      "main_id": "Databases"
+    },
+    {
+      "name": "NoSQL",
+      "main_id": "Databases"
+    },
+    {
+      "name": "Vector DB",
+      "main_id": "Databases"
+    },
+    {
+      "name": "Frameworks",
+      "main_id": "Backend"
+    },
+    {
+      "name": "JS Frameworks",
+      "main_id": "Frontend"
+    },
+    {
+      "name": "State Management",
+      "main_id": "Frontend"
+    },
+    {
+      "name": "DevOps",
+      "main_id": "Infrastructure"
+    },
+    {
+      "name": "Cloud",
+      "main_id": "Infrastructure"
+    },
+    {
+      "name": "Monitoring",
+      "main_id": "Infrastructure"
+    }
+  ],
+  "role_request_options": [
+    {
+      "name": "fullName",
+      "display_name": "Full Name"
+    },
+    {
+      "name": "contact",
+      "display_name": "Contact Information"
+    },
+    {
+      "name": "age",
+      "display_name": "Age"
+    },
+    {
+      "name": "experience",
+      "display_name": "Experience"
+    },
+    {
+      "name": "reason",
+      "display_name": "Reason for Request"
+    },
+    {
+      "name": "plans",
+      "display_name": "Future Plans"
+    }
+  ],
+  "requirement_options": [
+    {
+      "name": "Python",
+      "display_name": "Python",
+      "category_id": "Languages"
+    },
+    {
+      "name": "JavaScript",
+      "display_name": "JavaScript",
+      "category_id": "Languages"
+    },
+    {
+      "name": "TypeScript",
+      "display_name": "TypeScript",
+      "category_id": "Languages"
+    },
+    {
+      "name": "Java",
+      "display_name": "Java",
+      "category_id": "Languages"
+    },
+    {
+      "name": "C#",
+      "display_name": "C#",
+      "category_id": "Languages"
+    },
+    {
+      "name": "Go",
+      "display_name": "Go",
+      "category_id": "Languages"
+    },
+    {
+      "name": "Rust",
+      "display_name": "Rust",
+      "category_id": "Languages"
+    },
+    {
+      "name": "FastAPI",
+      "display_name": "FastAPI",
+      "category_id": "Frameworks"
+    },
+    {
+      "name": "Django",
+      "display_name": "Django",
+      "category_id": "Frameworks"
+    },
+    {
+      "name": "Flask",
+      "display_name": "Flask",
+      "category_id": "Frameworks"
+    },
+    {
+      "name": "Express",
+      "display_name": "Express",
+      "category_id": "Frameworks"
+    },
+    {
+      "name": "Spring Boot",
+      "display_name": "Spring Boot",
+      "category_id": "Frameworks"
+    },
+    {
+      "name": "React",
+      "display_name": "React",
+      "category_id": "JS Frameworks"
+    },
+    {
+      "name": "Vue",
+      "display_name": "Vue",
+      "category_id": "JS Frameworks"
+    },
+    {
+      "name": "Angular",
+      "display_name": "Angular",
+      "category_id": "JS Frameworks"
+    },
+    {
+      "name": "Next.js",
+      "display_name": "Next.js",
+      "category_id": "JS Frameworks"
+    },
+    {
+      "name": "Redux",
+      "display_name": "Redux",
+      "category_id": "State Management"
+    },
+    {
+      "name": "Zustand",
+      "display_name": "Zustand",
+      "category_id": "State Management"
+    },
+    {
+      "name": "Recoil",
+      "display_name": "Recoil",
+      "category_id": "State Management"
+    },
+    {
+      "name": "PostgreSQL",
+      "display_name": "PostgreSQL",
+      "category_id": "SQL"
+    },
+    {
+      "name": "MySQL",
+      "display_name": "MySQL",
+      "category_id": "SQL"
+    },
+    {
+      "name": "SQLite",
+      "display_name": "SQLite",
+      "category_id": "SQL"
+    },
+    {
+      "name": "MongoDB",
+      "display_name": "MongoDB",
+      "category_id": "NoSQL"
+    },
+    {
+      "name": "Redis",
+      "display_name": "Redis",
+      "category_id": "NoSQL"
+    },
+    {
+      "name": "Firebase",
+      "display_name": "Firebase",
+      "category_id": "NoSQL"
+    },
+    {
+      "name": "Pinecone",
+      "display_name": "Pinecone",
+      "category_id": "Vector DB"
+    },
+    {
+      "name": "Weaviate",
+      "display_name": "Weaviate",
+      "category_id": "Vector DB"
+    },
+    {
+      "name": "Docker",
+      "display_name": "Docker",
+      "category_id": "DevOps"
+    },
+    {
+      "name": "Kubernetes",
+      "display_name": "Kubernetes",
+      "category_id": "DevOps"
+    },
+    {
+      "name": "GitHub Actions",
+      "display_name": "GitHub Actions",
+      "category_id": "DevOps"
+    },
+    {
+      "name": "AWS",
+      "display_name": "AWS",
+      "category_id": "Cloud"
+    },
+    {
+      "name": "Google Cloud",
+      "display_name": "Google Cloud",
+      "category_id": "Cloud"
+    },
+    {
+      "name": "Azure",
+      "display_name": "Azure",
+      "category_id": "Cloud"
+    },
+    {
+      "name": "Prometheus",
+      "display_name": "Prometheus",
+      "category_id": "Monitoring"
+    },
+    {
+      "name": "Grafana",
+      "display_name": "Grafana",
+      "category_id": "Monitoring"
+    },
+    {
+      "name": "ELK Stack",
+      "display_name": "ELK Stack",
+      "category_id": "Monitoring"
+    }
+  ],
+  "news_categories": [
+    {
+      "name": "updates",
+      "display_name": "Оновлення",
+      "categoryColor": "bg-blue-100 text-blue-700"
+    },
+    {
+      "name": "fanfic",
+      "display_name": "Фанфік",
+      "categoryColor": "bg-purple-100 text-purple-700"
+    },
+    {
+      "name": "volunteering",
+      "display_name": "Волонтерство",
+      "categoryColor": "bg-green-100 text-green-700"
+    },
+    {
+      "name": "tournaments",
+      "display_name": "Турніри",
+      "categoryColor": "bg-purple-100 text-purple-700"
+    },
+    {
+      "name": "community",
+      "display_name": "Спільнота",
+      "categoryColor": "bg-orange-100 text-orange-700"
+    },
+    {
+      "name": "education",
+      "display_name": "Освіта",
+      "categoryColor": "bg-teal-100 text-teal-700"
+    }
+  ]
+}

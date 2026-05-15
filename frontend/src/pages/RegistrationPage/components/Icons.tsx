@@ -1,0 +1,31 @@
+import {
+  Check,
+  ChevronRight,
+  ChevronLeft,
+  ChevronDown,
+  Plus,
+  X,
+  Info,
+  AlertTriangle,
+  Users,
+  User,
+  Home,
+  Send,
+} from "lucide-react";
+
+export const Icon = {
+  Check: Check,
+  ChevronRight: ChevronRight,
+  ChevronLeft: ChevronLeft,
+  ChevronDown: ChevronDown,
+  Plus: Plus,
+  X: X,
+  Info: Info,
+  Warning: AlertTriangle,
+  Team: Users,
+  Solo: User,
+  User: User,
+  Users: Users,
+  Org: Home,
+  Telegram: Send,
+};

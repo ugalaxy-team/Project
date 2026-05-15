@@ -1,0 +1,46 @@
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, String
+
+from .base import Base
+from .mixin import PKMixin, OptionMixin
+
+
+class RoleRequest(Base, PKMixin):
+    __tablename__ = "role_requests"
+
+    role_name: Mapped[str] = mapped_column(ForeignKey("roles.name", ondelete="CASCADE"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+
+    role: Mapped["Role"] = relationship(back_populates="requests", lazy="selectin")
+    user: Mapped["User"] = relationship(back_populates="role_requests", lazy="selectin")
+    info: Mapped[list["RoleRequestInfo"]] = relationship(
+        back_populates="request", lazy="selectin", cascade="all, delete-orphan"
+    )
+
+    def __repr__(self):
+        return f"<RoleRequest(role_name={self.role_name}, user_id={self.user_id})>"
+
+
+class RoleRequestInfoOption(Base, OptionMixin):
+    __tablename__ = "role_request_info_options"
+
+    def __repr__(self):
+        return f"<RoleRequestInfoOption(name={self.name}, display_name={self.display_name})>"
+
+
+class RoleRequestInfo(Base, PKMixin):
+    __tablename__ = "role_request_info"
+    request_id: Mapped[int] = mapped_column(ForeignKey("role_requests.id", ondelete="CASCADE"))
+    option_name: Mapped[str] = mapped_column(
+        ForeignKey("role_request_info_options.name", ondelete="CASCADE")
+    )
+    value: Mapped[str] = mapped_column(String(4096))
+
+    request: Mapped[RoleRequest] = relationship(back_populates="info", lazy="selectin")
+    option: Mapped[RoleRequestInfoOption] = relationship(lazy="selectin")
+
+    def __repr__(self):
+        value_preview = self.value[:20]
+        if len(self.value) > 20:
+            value_preview += "..."
+        return f"<RoleRequestInfo(request_id={self.request_id}, option_name={self.option_name}, value={value_preview})>"

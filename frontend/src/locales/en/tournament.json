@@ -1,0 +1,135 @@
+{
+  "loading": "Loading tournament...",
+  "error_state": {
+    "title": "Oops, something went wrong!",
+    "description": "The tournament got lost in the network or there was an access error. Please try refreshing the page."
+  },
+  "tabs": {
+    "desc": "Description",
+    "task_desc": "Tasks",
+    "teams": "Teams",
+    "calendar": "Calendar",
+    "leaderboard": "Leaderboard",
+    "submissions": "Submissions"
+  },
+  "header": {
+    "tags": {
+      "gamedev": "GameDev & Algorithms"
+    },
+    "stats": {
+      "team_size": "Team Size",
+      "max_teams": "Max Teams",
+      "up_to": "Up to"
+    },
+    "deadlines": {
+      "registration_starts": "Registration starts in",
+      "registration_ends": "Registration ends in",
+      "tournament_starts": "Tournament starts in",
+      "tournament_ends": "Tournament ends in",
+      "finished": "Finished",
+      "tournament": "Tournament",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days",
+      "hours_one": "{{count}} hour",
+      "hours_other": "{{count}} hours"
+    },
+    "buttons": {
+      "apply": "Apply Now"
+    }
+  },
+  "registration_banner": {
+    "title": "Registration is Open!",
+    "subtitle": "Gather your team and show what you are capable of."
+  },
+  "description": {
+    "title": "What needs to be done?"
+  },
+  "teams": {
+    "empty": {
+      "title": "No teams yet",
+      "description": "Teams will appear here after successfully registering for the tournament."
+    },
+    "contact": "Contact",
+    "members": "Members"
+  },
+  "task_desc": {
+    "empty": {
+      "title": "No tasks yet",
+      "description": "Tournament organizers haven't added the stage schedule or tasks yet. Stay tuned for updates!"
+    },
+    "not_started": {
+      "title": "Tournament hasn't started yet",
+      "subtitle": "The stage will begin on:"
+    },
+    "current_task": {
+      "title": "Current Task",
+      "requirements": "What needs to be done:"
+    },
+    "schedule": {
+      "title": "All Stages Schedule ({{count}})",
+      "active_badge": "In Progress",
+      "stage_badge": "Stage"
+    }
+  },
+  "calendar": {
+    "title": "Tournament Path",
+    "subtitle": "Follow the stages and don't miss any deadlines.",
+    "active_badge": "In Progress",
+    "events": {
+      "registration": {
+        "title": "Team Registration",
+        "desc": "Time to gather your team and apply for participation."
+      },
+      "start": {
+        "title": "Tournament Opening",
+        "desc": "Official start and announcement of the main rules."
+      },
+      "end": {
+        "title": "Finals & Awards",
+        "desc": "Determining the winners and presenting the prizes."
+      }
+    }
+  },
+  "leaderboard": {
+    "loading": "Loading leaderboard...",
+    "reviews": "Reviews:",
+    "avg": "Avg.",
+    "columns": {
+      "rank": "Rank",
+      "team": "Team",
+      "score": "Score"
+    },
+    "empty": {
+      "title": "Leaderboard is empty",
+      "desc": "No teams have received scores yet."
+    },
+    "error": {
+      "title": "Loading Error",
+      "desc": "Failed to retrieve leaderboard data. Please try refreshing the page."
+    }
+  },
+  "submissions": {
+    "closed": {
+      "title": "Submissions Closed",
+      "description": "The ability to submit solutions will appear after the corresponding stage starts."
+    },
+    "empty": {
+      "no_task": {
+        "title": "No Task Selected",
+        "description": "Wait for the stage to begin to submit your work."
+      },
+      "not_participant": {
+        "title": "Not a Participant",
+        "description": "Only registered teams can submit solutions."
+      }
+    },
+    "form": {
+      "title": "Submit Work",
+      "subtitle": "Submit a link to your repository or solution resources. Make sure the access is public for the jury to review.",
+      "link_label": "Solution Link (GitHub / Drive)",
+      "submit_button": "Submit Result",
+      "button_sending": "Sending...",
+      "button_success": "Sent!"
+    }
+  }
+}

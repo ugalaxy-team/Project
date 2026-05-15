@@ -1,0 +1,144 @@
+{
+  "hero": {
+    "bg_text": "ТУРНІРИ",
+    "title": "Усі турніри",
+    "description": "Знайди івент, який підходить саме тобі. Від коду до дизайну — збирай команду та перемагай."
+  },
+  "search": {
+    "placeholder": "Пошук турніру…"
+  },
+  "filters": {
+    "all": "Всі події",
+    "draft": "Скоро відкриється",
+    "registration": "Реєстрація",
+    "running": "В процесі",
+    "finished": "Завершено"
+  },
+  "results": {
+    "found": "Знайдено:",
+    "tournaments_one": "{{count}} турнір",
+    "tournaments_few": "{{count}} турніри",
+    "tournaments_many": "{{count}} турнірів"
+  },
+  "empty": {
+    "title": "Нічого не знайдено",
+    "subtitle": "Спробуй змінити фільтр або запит"
+  },
+  "pagination": {
+    "prev": "Назад",
+    "next": "Вперед",
+    "page": "Сторінка",
+    "of": "з"
+  },
+  "tournament_card": {
+    "teams_label": "Команди",
+    "until": "До",
+    "btn_draft": "Скоро відкриється",
+    "btn_registration": "Подати заявку",
+    "btn_running": "Спостерігати",
+    "btn_finished": "Переглянути результати"
+  },
+  "states": {
+    "loading": "Завантаження турнірів...",
+    "error_title": "Помилка завантаження",
+    "error_subtitle": "Не вдалося отримати список турнірів з сервера."
+  },
+  "brand": "UGalaxy",
+  "breadcrumbs": {
+    "tournaments": "Турніри",
+    "registration": "Реєстрація"
+  },
+  "nav": {
+    "step_1": "Основне",
+    "step_2": "Команда",
+    "step_3": "Підтвердження"
+  },
+  "buttons": {
+    "back": "Назад"
+  },
+  "step_1": {
+    "title": "Реєстрація на турнір",
+    "subtitle": "Ви реєструєтесь на івент:",
+    "team_name": {
+      "label": "Назва команди",
+      "placeholder": "Введіть назву вашої команди"
+    },
+    "team_phone": {
+      "label": "Контактний телефон команди",
+      "placeholder": "+385..."
+    },
+    "captain": {
+      "label": "Дані капітана (Це ви)",
+      "badge": "Капітан",
+      "full_name_label": "ПІБ капітана (для сертифікатів)",
+      "full_name_placeholder": "Прізвище, Ім'я, По батькові",
+      "telegram_label": "Telegram капітана",
+      "telegram_placeholder": "@username",
+      "institution_label": "Навчальний заклад капітана",
+      "institution_placeholder": "Наприклад: ЧПФК"
+    },
+    "next": {
+      "members": "Перейти до складу команди"
+    }
+  },
+  "step_2": {
+    "title": "Склад команди",
+    "subtitle_1": "Вам необхідно додати щонайменше",
+    "subtitle_2": "та максимум",
+    "subtitle_3": "додаткових учасників (окрім капітана).",
+    "counter": {
+      "label": "Додано учасників",
+      "min": "мін.",
+      "max": "макс."
+    },
+    "participant_label": "Учасник",
+    "add_btn": "Додати учасника",
+    "next_btn": "Перевірити дані",
+    "labels": {
+      "name": "ПІБ учасника",
+      "email": "Email учасника",
+      "telegram": "Telegram учасника",
+      "institution": "Навчальний заклад учасника"
+    },
+    "placeholders": {
+      "name": "ПІБ",
+      "email": "example@mail.com",
+      "telegram": "@username",
+      "institution": "ЧПФК"
+    },
+    "errors": {
+      "min_members": "Команда має містити ще принаймні {{count}} учасника.",
+      "duplicate_email": "Емейли не можуть дублюватися всередині команди. Знайдено дублікати: {{emails}}"
+    }
+  },
+  "step_3": {
+    "title": "Перевірка даних",
+    "subtitle": "Перевірте правильність заповнення форми перед відправкою.",
+    "validation_summary": "Форма містить помилки заповнення:",
+    "invalid_value": "Некоректне значення",
+    "labels": {
+      "captain": "Капітан команди",
+      "members": "Учасники команди"
+    },
+    "warning": "Будь ласка, переконайтеся, що всі нікнейми, Telegram-теги та пошти вказані вірно. Організатори використовуватимуть їх для зв'язку.",
+    "submit_btn": "Підтвердити реєстрацію",
+    "submitting": "Відправка заявки..."
+  },
+  "success": {
+    "title": "Успішна реєстрація!",
+    "subtitle": "Вашу команду успішно зареєстровано на турнір. Слідкуйте за оновленнями та готуйтеся до старту!",
+    "home_btn": "На головну"
+  },
+  "validation": {
+    "teamNameRequired": "Введіть назву команди",
+    "phoneRequired": "Введіть номер телефону",
+    "invalidPhone": "Недійсний код оператора України або невірний формат (напр. +380671234567)",
+    "nameRequired": "Введіть ПІБ або нікнейм",
+    "telegramRequired": "Введіть Telegram (напр. @username)",
+    "institutionRequired": "Введіть навчальний заклад",
+    "invalidEmail": "Невірний формат email"
+  },
+  "errors": {
+    "server_default": "Не вдалося зареєструвати команду. Перевірте введені дані або спробуйте пізніше."
+  }
+}
