@@ -51,7 +51,7 @@ function EvaluationsModalInner({ assignment, onClose }: { assignment: JuryAssign
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-dark-theme/65 p-4 backdrop-blur-[2px]"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm dark:bg-black/70"
       role="dialog"
       aria-modal="true"
       aria-labelledby="jury-evaluation-title"

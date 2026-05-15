@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronDown, Check, type LucideIcon } from 'lucide-react';
 import { useFloating, offset, flip, shift, autoUpdate, size } from '@floating-ui/react';
@@ -23,6 +24,7 @@ interface CustomSelectProps {
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({ options, value, onChange, label, icon: Icon, disabled }) => {
+  const { t } = useTranslation("modals");
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
@@ -43,7 +45,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, value, onChange, l
 
   return (
     <div className={`relative pt-2 w-full ${disabled ? 'opacity-60' : ''}`}>
-      <span className="absolute top-0 left-3 bg-white px-1 text-[8px] font-black text-slate-400 uppercase z-10 tracking-widest">
+      <span className="absolute top-0 left-3 bg-bg-card px-1 text-[8px] font-black text-text-muted uppercase z-10 tracking-widest">
         {label}
       </span>
 
@@ -51,13 +53,13 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, value, onChange, l
         <div className="relative">
           <Listbox.Button
             ref={refs.setReference}
-            className="group w-full flex items-center justify-between p-3 bg-slate-50 rounded-xl text-xs font-bold text-slate-800 border-none outline-none hover:bg-slate-100 transition-all text-left"
+            className="group w-full flex items-center justify-between p-3 bg-bg-body rounded-xl text-xs font-bold text-text-main border-none outline-none hover:bg-bg-body transition-all text-left"
           >
             <div className="flex items-center gap-2 truncate">
-              {Icon && <Icon size={14} className="text-[#6D72F1] shrink-0" />}
-              <span className="truncate">{value?.label || 'Виберіть варіант'}</span>
+              {Icon && <Icon size={14} className="text-primary shrink-0" />}
+              <span className="truncate">{value?.label || t("custom_select.placeholder")}</span>
             </div>
-            <ChevronDown size={14} className="text-slate-400 transition-transform duration-200 ui-open:rotate-180" />
+            <ChevronDown size={14} className="text-text-muted transition-transform duration-200 ui-open:rotate-180" />
           </Listbox.Button>
 
           <Transition
@@ -69,11 +71,11 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, value, onChange, l
             <Listbox.Options
               ref={refs.setFloating}
               style={floatingStyles}
-              className="z-[220] bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.12)] border border-slate-100 focus:outline-none p-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200"
+              className="z-[220] bg-bg-card rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.12)] border border-border focus:outline-none p-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200"
             >
               {options.map((group) => (
                 <div key={group.category} className="mb-2 last:mb-0">
-                  <div className="px-3 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-wider bg-slate-50/50 rounded-lg mb-1">
+                  <div className="px-3 py-1.5 text-[9px] font-black text-text-muted uppercase tracking-wider bg-bg-body/50 rounded-lg mb-1">
                     {group.category}
                   </div>
                   {group.items.map((option) => (
@@ -82,8 +84,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, value, onChange, l
                       value={option}
                       className={({ active, selected }) => `
                         relative cursor-pointer select-none py-2 px-3 rounded-xl transition-all mb-0.5 last:mb-0
-                        ${active ? 'bg-slate-50 text-[#6D72F1]' : 'text-slate-600'}
-                        ${selected ? 'bg-[#6D72F1]/5 text-[#6D72F1]' : ''}
+                        ${active ? 'bg-bg-body text-primary' : 'text-text-muted'}
+                        ${selected ? 'bg-primary/5 text-primary' : ''}
                       `}
                     >
                       {({ selected }) => (
@@ -92,7 +94,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, value, onChange, l
                             {option.label}
                           </span>
                           {selected && (
-                            <Check size={12} className="text-[#6D72F1]" strokeWidth={3} />
+                            <Check size={12} className="text-primary" strokeWidth={3} />
                           )}
                         </div>
                       )}

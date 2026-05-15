@@ -16,6 +16,7 @@ import ukProfile from "../locales/uk/profile.json";
 import ukRoleRequest from "../locales/uk/roleRequest.json";
 import ukJury from "../locales/uk/jury.json";
 import ukNews from "../locales/uk/news.json";
+import ukModals from "../locales/uk/modals.json";
 
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
@@ -30,6 +31,7 @@ import enRules from "../locales/en/rules.json";
 import enProfile from "../locales/en/profile.json";
 import enRoleRequest from "../locales/en/roleRequest.json";
 import enJury from "../locales/en/jury.json";
+import enModals from "../locales/en/modals.json";
 
 const resources = {
   uk: {
@@ -47,6 +49,7 @@ const resources = {
     roleRequest: ukRoleRequest,
     jury: ukJury,
     news: ukNews,
+    modals: ukModals,
   },
   en: {
     common: enCommon,
@@ -62,6 +65,7 @@ const resources = {
     profile: enProfile,
     roleRequest: enRoleRequest,
     jury: enJury,
+    modals: enModals,
   },
 };
 
@@ -86,6 +90,7 @@ i18n
       "profile",
       "roleRequest",
       "jury",
+      "modals",
     ],
     defaultNS: "common",
     debug: import.meta.env.DEV,

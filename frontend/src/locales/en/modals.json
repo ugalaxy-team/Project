@@ -1,0 +1,119 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next",
+    "confirm": "Confirm",
+    "close": "Close",
+    "close_aria": "Close",
+    "tournament_label": "Tournament:",
+    "selected": "Selected",
+    "experts": "experts",
+    "no_description": "No description provided.",
+    "dash": "—",
+    "people_short": "people",
+    "user_initial": "U"
+  },
+  "fields": {
+    "title": "Title",
+    "description": "Description",
+    "name": "Name",
+    "start": "Start",
+    "deadline": "Deadline",
+    "registration": "Registration",
+    "opening": "Opening",
+    "closing": "Closing",
+    "start_date_time": "Start date & time",
+    "start_date": "Start date"
+  },
+  "date_time_picker": {
+    "pick_date": "Select date",
+    "time": "Time",
+    "weekdays": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    }
+  },
+  "custom_select": {
+    "placeholder": "Select an option"
+  },
+  "looking_for_team": {
+    "title": "Find a team",
+    "heading": "Looking for a team?",
+    "description": "Contact us — we'll help you find like-minded people and join a tournament today!",
+    "contact_cta": "Go to contact page"
+  },
+  "jury_selection": {
+    "title": "Select jury",
+    "empty": "No users found"
+  },
+  "task_management": {
+    "create_title": "New task",
+    "edit_title": "Update task",
+    "tech_stack": "Tech stack",
+    "add_requirement": "Add requirement",
+    "criteria": "Scoring criteria",
+    "criterion_placeholder": "Add criterion…",
+    "save": "Save task",
+    "validation": {
+      "required": "Required field"
+    }
+  },
+  "tournament_info": {
+    "default_status": "Tournament",
+    "about": "About the event",
+    "tasks": "Stages (Tasks)",
+    "active": "Active",
+    "no_tasks": "No tasks yet",
+    "teams": "Participating teams",
+    "teams_total": "Total: {{count}}",
+    "no_teams": "No teams have joined yet",
+    "timing": "Timing",
+    "registration_period": "Registration",
+    "event_period": "Event",
+    "configuration": "Configuration",
+    "max_teams": "Max teams",
+    "team_size": "Team size",
+    "jury": "Jury",
+    "no_jury": "No jury assigned",
+    "close": "Got it, close",
+    "contact_telegram": "TG:",
+    "contact_email": "Email:",
+    "contact_github": "GH:"
+  },
+  "create_tournament": {
+    "title": "New tournament",
+    "success_title": "Ready to launch",
+    "success_description": "Tournament created successfully. Add tasks and configure scoring in the organizer panel.",
+    "success_cta": "Go to dashboard",
+    "title_placeholder": "e.g. Winter Coding Cup 2024",
+    "title_tooltip": "Choose a clear name participants will see",
+    "description_tooltip": "Briefly describe rules and winning conditions",
+    "auto_start_hint": "The tournament will start automatically",
+    "min_team": "Min per team",
+    "max_team": "Max per team",
+    "team_limit": "Team limit",
+    "add_judges": "Add judges",
+    "judges_selected": "Selected: {{count}}",
+    "creating": "Creating…",
+    "create": "Create tournament"
+  },
+  "edit_tournament": {
+    "title": "Edit tournament",
+    "title_label": "Tournament name",
+    "title_tooltip": "Changing the name affects how it appears in all lists",
+    "description_tooltip": "You can update rules or tournament details",
+    "max_teams": "Teams (max)",
+    "min_players": "Players (min)",
+    "max_players": "Players (max)",
+    "jury_team": "Jury team",
+    "jury_count": "Experts assigned: {{count}}",
+    "saving": "Saving…",
+    "save": "Save changes"
+  }
+}
