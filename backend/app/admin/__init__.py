@@ -10,14 +10,17 @@ from sqlalchemy.orm import selectinload
 from app.db import engine, AsyncSessionLocal
 from app.utils import reject_role_request, approve_role_request
 from app.models import (
+    JuryAssignment,
     Notification,
-    RequirementEvaluation,
+    CriterionScore,
     Role,
     RoleRequest,
     Submission,
     SubmissionEvaluation,
     SubmissionUrlOption,
+    SubmissionUrl,
     Task,
+    TaskEvaluationCriterion,
     TaskRequirementCategory,
     TaskRequirementOption,
     TaskStatusOption,
@@ -197,11 +200,23 @@ class SubmissionUrlOptionAdmin(NamePrimaryKeyAdmin, model=SubmissionUrlOption):
     pass
 
 
+class SubmissionUrlAdmin(BaseModelView, model=SubmissionUrl):
+    pass
+
+
 class SubmissionEvaluationAdmin(BaseModelView, model=SubmissionEvaluation):
     pass
 
 
-class RequirementEvaluationAdmin(BaseModelView, model=RequirementEvaluation):
+class JuryAssignmentAdmin(BaseModelView, model=JuryAssignment):
+    pass
+
+
+class TaskEvaluationCriterionAdmin(BaseModelView, model=TaskEvaluationCriterion):
+    pass
+
+
+class CriterionScoreAdmin(BaseModelView, model=CriterionScore):
     pass
 
 
@@ -312,14 +327,17 @@ def setup_admin(app):
     admin.add_view(TournamentStatusOptionAdmin)
     admin.add_view(TaskAdmin)
     admin.add_view(TaskStatusOptionAdmin)
+    admin.add_view(TaskEvaluationCriterionAdmin)
     admin.add_view(TaskRequirementCategoryAdmin)
     admin.add_view(TaskRequirementOptionAdmin)
     admin.add_view(TeamAdmin)
     admin.add_view(TeamMemberAdmin)
     admin.add_view(SubmissionAdmin)
     admin.add_view(SubmissionUrlOptionAdmin)
+    admin.add_view(SubmissionUrlAdmin)
+    admin.add_view(JuryAssignmentAdmin)
     admin.add_view(SubmissionEvaluationAdmin)
-    admin.add_view(RequirementEvaluationAdmin)
+    admin.add_view(CriterionScoreAdmin)
     admin.add_view(NotificationAdmin)
     admin.add_view(NewsAdmin)
     admin.add_view(NewsCategoryAdmin)

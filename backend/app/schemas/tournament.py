@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
-
 from datetime import datetime, timezone
 from pydantic import (
     AfterValidator,
@@ -27,6 +26,7 @@ def make_naive(value: datetime) -> datetime:
 
 
 def drop_time(date: datetime) -> datetime:
+    """Обнуляє час до 00:00:00 для порівняння лише дат."""
     return date.replace(hour=0, minute=0, second=0, microsecond=0)
 
 
@@ -49,13 +49,12 @@ class TournamentCreate(TournamentBase):
     juries: list[int | str] = Field(..., description="Jury ids")
 
     @model_validator(mode="after")
-    def validate_dates(self) -> "TournamentBase":
-
+    def validate_dates(self) -> "TournamentCreate":
         now = drop_time(datetime.now(timezone.utc).replace(tzinfo=None))
 
         if drop_time(self.reg_start) < now:
             raise ValueError("Registration cannot start in the past")
-
+        
         if drop_time(self.reg_end) <= drop_time(self.reg_start):
             raise ValueError(
                 "Registration end time must be later than the registration start time."
@@ -75,8 +74,8 @@ class TournamentUpdate(BaseModel):
     start_date: NaiveDatetime | None = None
     reg_start: NaiveDatetime | None = None
     reg_end: NaiveDatetime | None = None
-    min_people_in_team: int | None = Field(None, gt=0)
-    max_people_in_team: int | None = Field(None, gt=0)
+    min_people_in_team: int | None = Field(None, gt=0)  # Додано, бо dev-валідатор їх використовує
+    max_people_in_team: int | None = Field(None, gt=0)  # Додано, бо dev-валідатор їх використовує
     max_teams: int | None = Field(None, gt=0)
     juries: list[int | str] | None = Field(None, description="Jury ids")
 
@@ -109,7 +108,6 @@ class TournamentUpdate(BaseModel):
 
     @model_validator(mode="after")
     def validate_limits(self) -> "TournamentUpdate":
-
         if self.min_people_in_team and self.max_people_in_team:
             if self.min_people_in_team > self.max_people_in_team:
                 raise ValueError(
@@ -120,11 +118,10 @@ class TournamentUpdate(BaseModel):
 
 class TournamentStatusOptionModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-
     name: StrippedStr = Field(..., min_length=3)
 
 
-class TournamentPublicMinimal(TournamentBase):
+class TournamentPublic(TournamentBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -133,11 +130,15 @@ class TournamentPublicMinimal(TournamentBase):
     status: OptionPublic
     tasks: list[TaskPublic]
     active_task: TaskPublic | None
+    teams: list[TeamPublic]
     juries: list["UserMinimalPublic"]
     status_name: str = Field(validation_alias=AliasPath("status", "display_name"))
 
 
-class TournamentPublic(TournamentPublicMinimal):
+class TournamentPublicMinimal(TournamentBase):
     model_config = ConfigDict(from_attributes=True)
 
-    teams: list[TeamPublic]
+    id: int
+    end_date: datetime | None
+    status: OptionPublic
+    status_name: str = Field(validation_alias=AliasPath("status", "display_name"))

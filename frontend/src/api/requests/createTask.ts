@@ -1,38 +1,32 @@
+import type { User } from "firebase/auth";
 import apiClient from "../client";
-import { getAuth } from "firebase/auth";
+import { authHeaders } from "./auth";
 
-export interface TaskData {
+export interface CriterionCreateData {
+  name: string;
+  description?: string | null;
+  weight?: number;
+  max_score?: number;
+}
+
+export interface TaskCreateData {
   title: string;
-  description?: string;
+  description?: string | null;
   start_time: string;
   end_time: string;
   requirements: string[];
+  criteria?: CriterionCreateData[];
 }
 
-export const createTask = async (tournamentId: number, data: TaskData) => {
-  try {
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (!user) {
-      throw new Error("Користувач не авторизований");
-    }
-
-    const token = await user.getIdToken();
-
-    const resp = await apiClient.post(
-      `/tournaments/${tournamentId}/tasks`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    return resp.data;
-  } catch (e) {
-    console.error(`Error occurred:`, e);
-    throw e;
-  }
+export const createTask = async (
+  tournamentId: number,
+  data: TaskCreateData,
+  user: User,
+) => {
+  const resp = await apiClient.post(
+    `/tournaments/${tournamentId}/tasks/`,
+    data,
+    { headers: await authHeaders(user) },
+  );
+  return resp.data;
 };

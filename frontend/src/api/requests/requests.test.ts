@@ -35,7 +35,7 @@ describe("API request wrappers", () => {
       vi.mocked(apiClient.get).mockResolvedValue({ data: users });
 
       await expect(getAllUsers()).resolves.toEqual(users);
-      expect(apiClient.get).toHaveBeenCalledWith("/users");
+      expect(apiClient.get).toHaveBeenCalledWith("/users/");
     });
 
     it("rethrows and logs when request fails", async () => {
@@ -70,7 +70,7 @@ describe("API request wrappers", () => {
       vi.mocked(apiClient.post).mockResolvedValue({ data: { id: 44 } });
 
       await expect(createTournament(payload)).resolves.toEqual({ id: 44 });
-      expect(apiClient.post).toHaveBeenCalledWith("/tournaments", payload, {
+      expect(apiClient.post).toHaveBeenCalledWith("/tournaments/", payload, {
         headers: { Authorization: "Bearer token-123" },
       });
     });
@@ -100,7 +100,7 @@ describe("API request wrappers", () => {
 
       await expect(updateTask(10, 99, taskPayload)).resolves.toEqual({ ok: true });
       expect(apiClient.patch).toHaveBeenCalledWith(
-        "/tournaments/10/tasks/99",
+        "/tournaments/10/tasks/99/",
         taskPayload,
         {
           headers: { Authorization: "Bearer task-token" },

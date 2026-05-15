@@ -15,7 +15,9 @@ from app.dependencies import (
     get_user,
 )
 from app.utils import get_tournament, tournament_load_options, get_status_by_name
+from app.dependencies import get_user, current_user_dependency
 from app.schemas import SubmissionPublic
+
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 
@@ -32,7 +34,6 @@ async def tournaments(session: SessionDep):
 )
 async def tournament(tournament_id: int, session: SessionDep):
     return await get_tournament(tournament_id, session)
-
 
 @router.get(
     "/{tournament_id}/submissions",

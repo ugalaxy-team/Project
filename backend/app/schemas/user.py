@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict
 from .role import RolePublic
+from .tournament import TournamentPublicMinimal
 
 if TYPE_CHECKING:
     from .notification import NotificationPublic
-    from .tournament import TournamentPublic
 
 
 class UserBase(BaseModel):
@@ -15,17 +15,17 @@ class UserBase(BaseModel):
 
     full_name: str = Field(..., description="Username")
 
+
+class UserCreate(UserBase):
+    firebase_uid: str = Field(..., description="Firebase user id")
+    email: EmailStr = Field(..., description="Email")
+
     @field_validator("full_name")
     @classmethod
     def check_name(cls, value: str):
         if not value.strip():
             raise ValueError("The name cannot be empty")
         return value
-
-
-class UserCreate(UserBase):
-    firebase_uid: str = Field(..., description="Firebase user id")
-    email: EmailStr = Field(..., description="Email")
 
 
 class UserUpdate(UserBase):
@@ -38,6 +38,7 @@ class UserUpdate(UserBase):
 
 class UserMinimalPublic(UserBase):
     """Minimal user schema without circular relationships for use in nested contexts"""
+
     id: int
     email: EmailStr
     firebase_uid: str
@@ -45,6 +46,7 @@ class UserMinimalPublic(UserBase):
     telegram: str | None
     github: str | None
     discord: str | None
+
     is_admin: bool
     is_organizer: bool
     is_jury: bool
@@ -61,7 +63,7 @@ class UserPublic(UserBase):
     is_admin: bool
     is_organizer: bool
     is_jury: bool
-    evaluates_in: list['TournamentPublic']
+    evaluates_in: list["TournamentPublicMinimal"]
 
 
 class UserModel(UserBase):
@@ -76,5 +78,5 @@ class UserModel(UserBase):
 # Return notifications of current user only
 class CurrentUser(UserPublic):
     notifications: list["NotificationPublic"]
-    participates_in: list["TournamentPublic"] = Field(default_factory=list)
-    created_tournaments: list["TournamentPublic"]
+    participates_in: list["TournamentPublicMinimal"] = Field(default_factory=list)
+    created_tournaments: list["TournamentPublicMinimal"]

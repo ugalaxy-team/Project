@@ -44,7 +44,7 @@ async def test_update_tournament_juries(create, client):
     user = await create(UserFactory)
     u1 = await create(UserFactory)
     u2 = await create(UserFactory)
-    t = await create(TournamentFactory)
+    t = await create(TournamentFactory, creator=user)
     app.dependency_overrides[get_current_user] = lambda: user
     resp = await client.patch(
         f"/tournaments/{t.id}/",

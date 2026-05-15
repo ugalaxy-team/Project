@@ -20,10 +20,13 @@ from app.models import (
     Submission,
     SubmissionUrl,
     SubmissionUrlOption,
+    JuryAssignment,
+    JuryAssignmentStatusOption,
     SubmissionEvaluation,
-    RequirementEvaluation,
     Notification,
     RoleRequest,
+    TaskEvaluationCriterion,
+    CriterionScore,
 )
 import datetime
 
@@ -38,9 +41,18 @@ class BaseFactory(SQLAlchemyModelFactory):
 class BaseOptionFactory(BaseFactory):
     class Meta:
         abstract = True
+        sqlalchemy_get_or_create = ('name',)
 
     name = Faker("name")
     display_name = factory.LazyAttribute(lambda f: f.name.upper())
+
+
+class BaseDatetimeFactory(BaseFactory):
+    class Meta:
+        abstract = True
+
+    created_at = factory.Faker("date_time")
+    updated_at = factory.LazyAttribute(lambda o: o.created_at + datetime.timedelta(hours=1))
 
 
 class UserFactory(BaseFactory):
@@ -76,6 +88,7 @@ class RoleFactory(BaseFactory):
 class TournamentStatusOptionFactory(BaseOptionFactory):
     class Meta:
         model = TournamentStatusOption
+        sqlalchemy_get_or_create = ('name',)
 
     name = factory.Iterator(list(settings.TOURNAMENT_STATUS_NAMES.__dict__.values()))
 
@@ -134,7 +147,7 @@ class TeamFactory(BaseFactory):
 
     name = Faker("name")
     team_email = Faker("email")
-    contact_info = Faker("phone_number")
+    contact_info = Faker("numerify", text="+38050#######")
 
     tournament = factory.SubFactory(TournamentFactory)
     captain = None
@@ -173,6 +186,22 @@ class TaskStatusOptionFactory(BaseOptionFactory):
     )
 
 
+class JuryAssignmentStatusOptionFactory(BaseOptionFactory):
+    class Meta:
+        model = JuryAssignmentStatusOption
+
+    name = factory.Iterator(
+        [option["name"] for option in settings.JURY_ASSIGNMENT_STATUS_OPTIONS]
+    )
+    display_name = factory.LazyAttribute(
+        lambda status: next(
+            option["display_name"]
+            for option in settings.JURY_ASSIGNMENT_STATUS_OPTIONS
+            if option["name"] == status.name
+        )
+    )
+
+
 class TaskFactory(BaseFactory):
     class Meta:
         model = Task
@@ -183,6 +212,9 @@ class TaskFactory(BaseFactory):
     end_time = Faker("future_datetime")
     tournament = factory.SubFactory(TournamentFactory)
     status_id = factory.Iterator([option["name"] for option in settings.TASK_STATUS_OPTIONS])
+    min_reviews_per_submission = 2
+    max_score = 10
+    is_leaderboard_visible = True
 
     @classmethod
     def _adjust_kwargs(cls, **kwargs):
@@ -210,6 +242,7 @@ class SubmissionFactory(BaseFactory):
         model = Submission
 
     team = factory.SubFactory(TeamFactory)
+    task = factory.LazyAttribute(lambda obj: TaskFactory.build(tournament=obj.team.tournament))
 
 
 class SubmissionUrlOptionFactory(BaseOptionFactory):
@@ -225,21 +258,54 @@ class SubmissionUrlFactory(BaseFactory):
 
     submission = factory.SubFactory(SubmissionFactory)
     url = factory.SubFactory(SubmissionUrlOptionFactory)
+    value = factory.Sequence(lambda n: f"https://example.com/submission/{n}")
+
+
+class TaskEvaluationCriterionFactory(BaseFactory):
+    class Meta:
+        model = TaskEvaluationCriterion
+
+    task = factory.SubFactory(TaskFactory)
+    name = factory.Sequence(lambda n: f"Criterion {n}")
+    description = None
+    weight = 1
+    max_score = 10
+
+
+class JuryAssignmentFactory(BaseDatetimeFactory):
+    class Meta:
+        model = JuryAssignment
+
+    submission = factory.SubFactory(SubmissionFactory)
+    task = factory.SelfAttribute("submission.task")
+    jury = factory.SubFactory(UserFactory)
+    status = factory.SubFactory(JuryAssignmentStatusOptionFactory)
+
+    @classmethod
+    def _adjust_kwargs(cls, **kwargs):
+        status_id = kwargs.get("status_id")
+        if isinstance(status_id, JuryAssignmentStatusOption):
+            kwargs["status"] = status_id
+            kwargs.pop("status_id")
+        return super()._adjust_kwargs(**kwargs)
 
 
 class SubmissionEvaluationFactory(BaseFactory):
     class Meta:
         model = SubmissionEvaluation
 
-    submission = factory.SubFactory(SubmissionFactory)
-    jury = factory.SubFactory(UserFactory)
+    assignment = factory.SubFactory(JuryAssignmentFactory)
+    submission = factory.SelfAttribute("assignment.submission")
+    jury = factory.SelfAttribute("assignment.jury")
+    comment = None
 
 
-class RequirementEvaluationFactory(BaseFactory):
+class CriterionScoreFactory(BaseFactory):
     class Meta:
-        model = RequirementEvaluation
+        model = CriterionScore
 
     evaluation = factory.SubFactory(SubmissionEvaluationFactory)
+    criterion = factory.SubFactory(TaskEvaluationCriterionFactory)
     score = factory.Faker("pyint", min_value=0, max_value=100)
 
 

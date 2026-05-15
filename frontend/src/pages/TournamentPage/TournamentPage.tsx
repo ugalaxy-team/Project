@@ -22,7 +22,7 @@ export const TournamentPage = () => {
     queryFn: async () => {
       if (!id) throw new Error("ID турніру не знайдено");
       const response = await apiClient.get<TournamentData>(
-        `/tournaments/${id}`,
+        `/tournaments/${id}/`,
       );
       return response.data;
     },

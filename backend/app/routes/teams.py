@@ -57,13 +57,14 @@ async def create_team(tournament_id: int, team_data: TeamCreate, session: Sessio
 
         captain = TeamMember(
             **team_data.captain.model_dump(),
+            tournament_id=tournament_id,
             team_id=new_team.id,
         )
         session.add(captain)
         await session.flush()
 
         members = [
-            TeamMember(**m.model_dump(), team_id=new_team.id) for m in team_data.members
+            TeamMember(**m.model_dump(), tournament_id=tournament_id, team_id=new_team.id) for m in team_data.members
         ]
         session.add_all(members)
         new_team.captain_id = captain.id

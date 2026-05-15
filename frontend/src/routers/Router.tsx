@@ -16,10 +16,11 @@ import { RoleRequestPage } from "@/pages/GetRole/RoleRequestPage";
 import { AuthPage } from "@/pages/Auth/AuthPage";
 import SignOut from "@/pages/Auth/SignOut";
 import { OrganizerPanel } from "@/pages/OrganizerPanel/OrganizerPanel";
-import { NewsPage } from "@/pages/NewsPage/NewsPage";
 import JuryPanel from "@/pages/JuryPanel/JuryPanel";
 import EvaluateTournamentPage from "@/pages/JuryPanel/EvaluateTournamentPage";
+import { NewsPage } from "@/pages/NewsPage/NewsPage";
 import { RegistrationPage } from "@/pages/RegistrationPage/RegistrationPage";
+
 
 export const Router = () => {
   return (
@@ -71,6 +72,22 @@ export const Router = () => {
             />
           </Route>
           <Route path="/organizer-panel" element={<OrganizerPanel />} />
+          <Route
+            path="/jury-panel"
+            element={
+              <ProtectedRoute>
+                <JuryPanel />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/jury-panel/evaluate/:id"
+            element={
+              <ProtectedRoute>
+                <EvaluateTournamentPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/news" element={<NewsPage />} />
           <Route path="*" element={<Page404 />} />
         </Route>

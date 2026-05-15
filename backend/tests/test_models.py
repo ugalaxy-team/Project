@@ -20,7 +20,7 @@ from app.models import (
     SubmissionUrl,
     SubmissionUrlOption,
     SubmissionEvaluation,
-    RequirementEvaluation,
+    CriterionScore,
     Notification,
     RoleRequest,
 )
@@ -41,8 +41,9 @@ from .factories import (
     SubmissionFactory,
     SubmissionUrlFactory,
     SubmissionUrlOptionFactory,
+    TaskEvaluationCriterionFactory,
     SubmissionEvaluationFactory,
-    RequirementEvaluationFactory,
+    CriterionScoreFactory,
     NotificationFactory,
     RoleRequestFactory,
 )
@@ -230,16 +231,16 @@ async def test_tournament_cascade_delete_children(db_session, create):
     submission = await create(SubmissionFactory, team=team)
     url = await create(SubmissionUrlFactory, submission=submission)
     evaluation = await create(SubmissionEvaluationFactory, submission=submission)
-    requirement_evaluation = await create(RequirementEvaluationFactory, evaluation=evaluation)
+    criterion_score = await create(CriterionScoreFactory, evaluation=evaluation)
 
     ids = {
         "task": task.id,
         "team": team.id,
         "member": member.id,
-        "submission": submission.team_id,
-        "url": (url.submission_id, url.url_id),
+        "submission": submission.id,
+        "url": url.id,
         "evaluation": evaluation.id,
-        "requirement_evaluation": requirement_evaluation.id,
+        "criterion_score": criterion_score.id,
     }
 
     await db_session.delete(tournament)
@@ -251,7 +252,7 @@ async def test_tournament_cascade_delete_children(db_session, create):
     assert await db_session.get(Submission, ids["submission"]) is None
     assert await db_session.get(SubmissionUrl, ids["url"]) is None
     assert await db_session.get(SubmissionEvaluation, ids["evaluation"]) is None
-    assert await db_session.get(RequirementEvaluation, ids["requirement_evaluation"]) is None
+    assert await db_session.get(CriterionScore, ids["criterion_score"]) is None
 
 
 # TASK TESTS
@@ -504,8 +505,8 @@ async def test_submission_urls_belong_to_submission(create):
     url1 = await create(SubmissionUrlFactory, submission=submission)
     url2 = await create(SubmissionUrlFactory, submission=submission)
 
-    assert url1.submission_id == submission.team_id
-    assert url2.submission_id == submission.team_id
+    assert url1.submission_id == submission.id
+    assert url2.submission_id == submission.id
 
 
 async def test_submission_url_has_submission(db_session, create):
@@ -539,8 +540,8 @@ async def test_create_submission_evaluation(create):
     assert evaluation.jury is not None
 
 
-async def test_create_requirement_evaluation(create):
-    evaluation = await create(RequirementEvaluationFactory)
+async def test_create_criterion_score(create):
+    evaluation = await create(CriterionScoreFactory)
 
     assert evaluation.evaluation_id is not None
     assert evaluation.evaluation is not None
@@ -550,8 +551,8 @@ async def test_create_requirement_evaluation(create):
 async def test_evaluation_multiple_requirements(create):
     evaluation = await create(SubmissionEvaluationFactory)
 
-    req1 = await create(RequirementEvaluationFactory, evaluation=evaluation)
-    req2 = await create(RequirementEvaluationFactory, evaluation=evaluation)
+    req1 = await create(CriterionScoreFactory, evaluation=evaluation)
+    req2 = await create(CriterionScoreFactory, evaluation=evaluation)
 
     assert req1.evaluation_id == evaluation.id
     assert req2.evaluation_id == evaluation.id
@@ -601,24 +602,24 @@ async def test_evaluation_jury_relationship(db_session, create):
     assert db_eval.jury.id == evaluation.jury.id
 
 
-async def test_requirement_evaluation_option_relationship(db_session, create):
-    option = await create(TaskRequirementOptionFactory)
+async def test_criterion_score_option_relationship(db_session, create):
+    option = await create(TaskEvaluationCriterionFactory)
 
     req_eval = await create(
-        RequirementEvaluationFactory,
-        requirement=[option],
+        CriterionScoreFactory,
+        criterion=option,
     )
 
     stmt = (
-        select(RequirementEvaluation)
-        .where(RequirementEvaluation.id == req_eval.id)
-        .options(selectinload(RequirementEvaluation.requirement))
+        select(CriterionScore)
+        .where(CriterionScore.id == req_eval.id)
+        .options(selectinload(CriterionScore.criterion))
     )
 
     result = await db_session.execute(stmt)
     db_req_eval = result.scalar_one()
 
-    assert db_req_eval.requirement[0].name == option.name
+    assert db_req_eval.criterion.name == option.name
 
 
 # NOTIFICATION TESTS

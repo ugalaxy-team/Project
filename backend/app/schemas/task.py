@@ -9,7 +9,7 @@ from pydantic import (
     model_validator,
     AfterValidator,
 )
-
+from .option import OptionPublic
 
 def make_naive(value: datetime) -> datetime:
     if value.tzinfo is not None:
@@ -33,7 +33,32 @@ class TaskBase(BaseModel):
     requirements: list[str] = Field(...)
 
 
+class TaskEvaluationCriterionCreate(BaseModel):
+    name: str
+    description: str | None = None
+    weight: int = 1
+    max_score: int = 10
+
+
 class TaskCreate(TaskBase):
+    criteria: list[TaskEvaluationCriterionCreate] = []
+
+    @field_validator("start_time")
+    @classmethod
+    def start_not_past(cls, value: datetime):
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+
+        if value < datetime.now(timezone.utc):
+            raise ValueError("Task cannot start in the past")
+        return value
+
+    @field_validator("end_time")
+    @classmethod
+    def end_make_aware(cls, value: datetime):
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+        return value
 
     @model_validator(mode="after")
     def check_time_logic(self) -> Self:
@@ -48,13 +73,18 @@ class TaskUpdate(BaseModel):
     start_time: NaiveDatetime | None = None
     end_time: NaiveDatetime | None = None
     requirements: list[str] | None = None
+    criteria: list[TaskEvaluationCriterionCreate] | None = None
 
-    @model_validator(mode="after")
-    def check_update_dates(self) -> Self:
-        if self.start_time and self.end_time:
-            if self.end_time <= self.start_time:
-                raise ValueError("end_time must be later than start_time")
-        return self
+
+class TaskEvaluationCriterionPublic(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    task_id: int
+    name: str
+    description: str | None
+    weight: int
+    max_score: int
 
 
 class TaskPublic(TaskBase):
@@ -63,6 +93,8 @@ class TaskPublic(TaskBase):
     id: int
     tournament_id: int = Field(..., gt=0)
     status_id: str = Field(...)
+    status: OptionPublic
+    criteria: list["TaskEvaluationCriterionPublic"] = []
 
     @field_validator("requirements", mode="before")
     @classmethod

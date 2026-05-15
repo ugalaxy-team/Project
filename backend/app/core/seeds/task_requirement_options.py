@@ -9,9 +9,7 @@ async def init_task_requirement_options(session: AsyncSession):
     options = settings.REQUIREMENT_OPTIONS
 
     for opt in options:
-        stmt = select(TaskRequirementOption).where(
-            TaskRequirementOption.name == opt["name"]
-        )
+        stmt = select(TaskRequirementOption).where(TaskRequirementOption.name == opt["name"])
         result = await session.execute(stmt)
         existing_option = result.scalar_one_or_none()
 

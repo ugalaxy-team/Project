@@ -1,0 +1,119 @@
+{
+  "common": {
+    "cancel": "Скасувати",
+    "back": "Назад",
+    "next": "Далі",
+    "confirm": "Підтвердити",
+    "close": "Закрити",
+    "close_aria": "Закрити",
+    "tournament_label": "Турнір:",
+    "selected": "Обрано",
+    "experts": "експертів",
+    "no_description": "Опис не вказано.",
+    "dash": "—",
+    "people_short": "чол.",
+    "user_initial": "U"
+  },
+  "fields": {
+    "title": "Назва",
+    "description": "Опис",
+    "name": "Назва",
+    "start": "Старт",
+    "deadline": "Дедлайн",
+    "registration": "Реєстрація",
+    "opening": "Відкриття",
+    "closing": "Закриття",
+    "start_date_time": "Дата та час старту",
+    "start_date": "Дата старту"
+  },
+  "date_time_picker": {
+    "pick_date": "Виберіть дату",
+    "time": "Час",
+    "weekdays": {
+      "mon": "Пн",
+      "tue": "Вв",
+      "wed": "Ср",
+      "thu": "Чт",
+      "fri": "Пт",
+      "sat": "Сб",
+      "sun": "Нд"
+    }
+  },
+  "custom_select": {
+    "placeholder": "Виберіть варіант"
+  },
+  "looking_for_team": {
+    "title": "Пошук команди",
+    "heading": "Шукаєш команду?",
+    "description": "Зв'яжись з нами — ми допоможемо тобі знайти однодумців та приєднатися до турніру вже сьогодні!",
+    "contact_cta": "Перейти на сторінку контактів"
+  },
+  "jury_selection": {
+    "title": "Вибір журі",
+    "empty": "Користувачів не знайдено"
+  },
+  "task_management": {
+    "create_title": "Нове завдання",
+    "edit_title": "Оновити таск",
+    "tech_stack": "Стек технологій",
+    "add_requirement": "Додати вимогу",
+    "criteria": "Критерії оцінювання",
+    "criterion_placeholder": "Додати критерій...",
+    "save": "Зберегти завдання",
+    "validation": {
+      "required": "Обов'язкове поле"
+    }
+  },
+  "tournament_info": {
+    "default_status": "Турнір",
+    "about": "Про івент",
+    "tasks": "Етапи (Таски)",
+    "active": "Активне",
+    "no_tasks": "Таски відсутні",
+    "teams": "Команди-учасники",
+    "teams_total": "Всього: {{count}}",
+    "no_teams": "Команди ще не приєдналися",
+    "timing": "Таймінг",
+    "registration_period": "Реєстрація",
+    "event_period": "Проведення",
+    "configuration": "Конфігурація",
+    "max_teams": "Макс команд",
+    "team_size": "В команді",
+    "jury": "Журі",
+    "no_jury": "Журі не призначено",
+    "close": "Зрозуміло, закрити",
+    "contact_telegram": "TG:",
+    "contact_email": "Email:",
+    "contact_github": "GH:"
+  },
+  "create_tournament": {
+    "title": "Новий турнір",
+    "success_title": "Готово до запуску",
+    "success_description": "Турнір створено успішно. Тепер додайте завдання та налаштуйте бали у панелі керування.",
+    "success_cta": "До керування",
+    "title_placeholder": "Наприклад: Winter Coding Cup 2024",
+    "title_tooltip": "Вкажіть зрозумілу назву, яку бачитимуть учасники",
+    "description_tooltip": "Коротко про правила та умови перемоги",
+    "auto_start_hint": "Турнір розпочнеться автоматично",
+    "min_team": "Мін. у команді",
+    "max_team": "Макс. у команді",
+    "team_limit": "Ліміт команд",
+    "add_judges": "Додати суддів",
+    "judges_selected": "Зараз обрано: {{count}}",
+    "creating": "Створення...",
+    "create": "Створити турнір"
+  },
+  "edit_tournament": {
+    "title": "Редагування",
+    "title_label": "Назва турніру",
+    "title_tooltip": "Зміна назви вплине на відображення в усіх списках",
+    "description_tooltip": "Ви можете оновити правила або деталі турніру",
+    "max_teams": "Команд (Макс)",
+    "min_players": "Гравців (Мін)",
+    "max_players": "Гравців (Макс)",
+    "jury_team": "Суддівська команда",
+    "jury_count": "Залучено фахівців: {{count}}",
+    "saving": "Збереження...",
+    "save": "Зберегти зміни"
+  }
+}

@@ -25,12 +25,6 @@ class OptionConfig(BaseModel):
     display_name: str
 
 
-class RequirementOptionConfig(BaseModel):
-    name: str
-    display_name: str
-    category_id: str
-
-
 class CategoryConfig(BaseModel):
     name: str
     main_id: str | None = None
@@ -44,10 +38,10 @@ class SharedAppConfig(BaseModel):
     roles: list[RoleConfig]
     tournament_statuses: list[OptionConfig]
     task_statuses: list[OptionConfig]
+    jury_assignment_statuses: list[OptionConfig]
     categories: list[CategoryConfig]
     role_request_options: list[OptionConfig]
     news_categories: list[NewsCategoryConfig]
-    requirement_options: list[RequirementOptionConfig]
 
 
 def load_shared_app_config() -> SharedAppConfig:
@@ -128,6 +122,12 @@ class Settings(BaseSettings):
         return [status.model_dump() for status in self.SHARED_APP_CONFIG.task_statuses]
 
     @property
+    def JURY_ASSIGNMENT_STATUS_OPTIONS(self) -> list[dict[str, Any]]:
+        return [
+            status.model_dump() for status in self.SHARED_APP_CONFIG.jury_assignment_statuses
+        ]
+
+    @property
     def NEWS_CATEGORY_OPTIONS(self) -> list[dict[str, Any]]:
         return [
             {
@@ -150,6 +150,10 @@ class Settings(BaseSettings):
         return option_names(self.SHARED_APP_CONFIG.task_statuses)
 
     @property
+    def JURY_ASSIGNMENT_STATUS_NAMES(self) -> SimpleNamespace:
+        return option_names(self.SHARED_APP_CONFIG.jury_assignment_statuses)
+
+    @property
     def TOURNAMENT_CREATOR_ROLES(self) -> list[str]:
         return [self.ROLE_NAMES.ADMIN, self.ROLE_NAMES.ORGANIZER]
 
@@ -160,10 +164,6 @@ class Settings(BaseSettings):
     @property
     def ROLE_REQUEST_INFO_OPTIONS(self) -> list[dict[str, Any]]:
         return [opt.model_dump() for opt in self.SHARED_APP_CONFIG.role_request_options]
-
-    @property
-    def REQUIREMENT_OPTIONS(self) -> list[dict[str, Any]]:
-        return [opt.model_dump() for opt in self.SHARED_APP_CONFIG.requirement_options]
 
     @property
     def TASK_CATEGORIES(self) -> SimpleNamespace:
