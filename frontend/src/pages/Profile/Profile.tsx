@@ -69,6 +69,13 @@ const Profile: FC = () => {
     );
   }
 
+  const isOrganizer =
+    user.roles?.some(
+      (role) =>
+        role.name.toLowerCase() === "organizer" ||
+        role.name.toLowerCase() === "admin"
+    ) ?? false;
+
   const userTournaments =
     user.created_tournaments && user.created_tournaments.length > 0
       ? user.created_tournaments.map(
@@ -109,7 +116,6 @@ const Profile: FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row w-full md:w-auto gap-3">
-              {/* Використовуємо твій компонент Button */}
               <Button
                 variant="outline"
                 size="md"
@@ -122,7 +128,6 @@ const Profile: FC = () => {
                 variant="outline"
                 size="md"
                 isLoading={deleteUserMutation.isPending}
-                // Перевизначаємо кольори для деструктивної дії, зберігаючи анімації
                 className="border-red-500/30 text-red-500 hover:border-red-500 hover:text-red-600 hover:shadow-red-500/15"
                 onClick={() => {
                   if (confirm(t("confirm_delete"))) deleteUserMutation.mutate();
@@ -156,14 +161,16 @@ const Profile: FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 mb-10">
-          <ListCard
-            title={t("tournaments")}
-            dotColor="bg-primary"
-            items={userTournaments}
-            emptyMessage={t("no_tournaments")}
-          />
-        </div>
+        {isOrganizer && (
+          <div className="grid grid-cols-1 mb-10">
+            <ListCard
+              title={t("tournaments")}
+              dotColor="bg-primary"
+              items={userTournaments}
+              emptyMessage={t("no_tournaments")}
+            />
+          </div>
+        )}
       </div>
 
       <EditProfileModal
