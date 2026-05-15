@@ -13,8 +13,8 @@ import {
   addDays,
   setHours,
   setMinutes,
-  parseISO,
 } from "date-fns";
+import { naiveDateTimeToDate } from "@/utils/naiveDateTime";
 import { uk, enGB } from "date-fns/locale";
 import { Popover, Transition } from "@headlessui/react";
 import {
@@ -55,7 +55,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     t("date_time_picker.weekdays.sat"),
     t("date_time_picker.weekdays.sun"),
   ];
-  const dateValue = value ? parseISO(value) : new Date();
+  const dateValue = value ? (naiveDateTimeToDate(value) ?? new Date()) : new Date();
   const [currentMonth, setCurrentMonth] = useState(new Date(dateValue));
 
   const { refs, floatingStyles } = useFloating({

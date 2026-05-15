@@ -24,12 +24,7 @@ import {
   type Task,
 } from "./components";
 import type { TaskFormData } from "./components/TaskManagementModal";
-
-const toLocalNaiveISO = (dateStr: string) => {
-  if (!dateStr) return "";
-  const date = new Date(dateStr);
-  return date.toISOString().split('.')[0].replace('Z', '');
-};
+import { toNaiveApiDateTime } from "@/utils/naiveDateTime";
 
 const OrganizerPanel = () => {
   const currentUser = useSelector((s: RootState) => s.user.user);
@@ -82,8 +77,8 @@ const OrganizerPanel = () => {
     mutationFn: (data: { tournamentId: number; taskData: TaskFormData; user: any }) =>
       createTask(data.tournamentId, {
         ...data.taskData,
-        start_time: toLocalNaiveISO(data.taskData.start_time),
-        end_time: toLocalNaiveISO(data.taskData.end_time),
+        start_time: toNaiveApiDateTime(data.taskData.start_time),
+        end_time: toNaiveApiDateTime(data.taskData.end_time),
       }, data.user),
     onSuccess: (newTask) => {
       setTasks((prev) => [...prev, newTask]);
@@ -95,8 +90,8 @@ const OrganizerPanel = () => {
     mutationFn: (data: { tournamentId: number; taskId: number; taskData: TaskFormData; user: any }) =>
       updateTask(data.tournamentId, data.taskId, {
         ...data.taskData,
-        start_time: toLocalNaiveISO(data.taskData.start_time),
-        end_time: toLocalNaiveISO(data.taskData.end_time),
+        start_time: toNaiveApiDateTime(data.taskData.start_time),
+        end_time: toNaiveApiDateTime(data.taskData.end_time),
       }, data.user),
     onSuccess: (updatedTask) => {
       setTasks((prev) => prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)));

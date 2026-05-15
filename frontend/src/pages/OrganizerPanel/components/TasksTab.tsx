@@ -1,4 +1,5 @@
 import { type Tournament, type Task } from "./types";
+import { formatNaiveDateTime } from "@/utils/naiveDateTime";
 import { 
   Plus, 
   ChevronRight, 
@@ -146,12 +147,12 @@ const TasksTab = ({
                       <div className="flex flex-wrap gap-4 items-center">
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-xl text-xs font-bold text-slate-600">
                           <Calendar size={14} className="text-indigo-500" />
-                          {new Date(task.start_time).toLocaleString("uk-UA", { day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                          {formatNaiveDateTime(task.start_time, "uk-UA", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" })}
                         </div>
                         {task.end_time && (
                           <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50 rounded-xl text-xs font-bold text-red-600 border border-red-100">
                             <Clock size={14} />
-                            До {new Date(task.end_time).toLocaleString("uk-UA", { day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                            До {formatNaiveDateTime(task.end_time, "uk-UA", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" })}
                           </div>
                         )}
                       </div>

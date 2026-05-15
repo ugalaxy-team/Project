@@ -6,6 +6,7 @@ import CustomSelect from "@/components/ui/CustomSelect";
 import { X, Plus, Loader2, Target } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { auth } from "@/firebase";
+import { toPickerDateTimeValue } from "@/utils/naiveDateTime";
 
 const REQUIREMENT_OPTIONS = appConfig.requirement_options;
 
@@ -30,19 +31,14 @@ const TaskManagementModal = ({
   const [newCriterion, setNewCriterion] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const formatForInput = (dateStr: string) => {
-    if (!dateStr) return "";
-    return dateStr.includes('Z') ? dateStr.split('.')[0].slice(0, 16) : dateStr.slice(0, 16);
-  };
-
   useEffect(() => {
     if (isOpen) {
       if (editingTask) {
         setFormData({
           title: editingTask.title || "",
           description: editingTask.description || "",
-          start_time: formatForInput(editingTask.start_time),
-          end_time: formatForInput(editingTask.end_time),
+          start_time: toPickerDateTimeValue(editingTask.start_time),
+          end_time: toPickerDateTimeValue(editingTask.end_time),
           requirements: editingTask.requirements || [],
           criteria: Array.isArray(editingTask.criteria) 
             ? editingTask.criteria.map((c: any) => typeof c === 'string' ? c : c.name) 
@@ -77,8 +73,6 @@ const TaskManagementModal = ({
     try {
       const payload = {
         ...formData,
-        start_time: formData.start_time.includes(':') ? `${formData.start_time}:00` : formData.start_time,
-        end_time: formData.end_time.includes(':') ? `${formData.end_time}:00` : formData.end_time,
         criteria: formData.criteria.map(c => ({ name: c, description: "" }))
       };
 
