@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { tournamentStatusByName } from "@/config/appConfig";
 import { type NormalizedTournament } from "../pages/TournamentsPage/TournamentsPage";
@@ -15,7 +16,7 @@ const STATUS_CFG = {
     icon: Clock,
     btnTextKey: "tournament_card.btn_draft",
     btnClass:
-      "bg-slate-100 text-slate-500 border border-slate-200 cursor-default",
+      "bg-slate-100 text-slate-500 border border-slate-200 cursor-not-allowed",
   },
   registration: {
     label: tournamentStatusByName.registration.display_name,
@@ -63,6 +64,7 @@ const TAG_COLORS: Record<string, string> = {
 };
 
 export const TournamentCard = ({
+  id,
   status,
   title,
   tags = [],
@@ -72,6 +74,7 @@ export const TournamentCard = ({
   deadline,
 }: NormalizedTournament) => {
   const { t } = useTranslation("tournaments");
+  const navigate = useNavigate();
 
   const safeStatus = (
     STATUS_CFG[status as keyof typeof STATUS_CFG] ? status : "draft"
@@ -184,12 +187,12 @@ export const TournamentCard = ({
           </div>
 
           <button
-            disabled={status === "draft" || status === "finished"}
+            disabled={status === "draft"}
+            onClick={() => navigate(`/tournament/${id}`)}
             className={cn(
               "w-full py-3.5 rounded-xl font-nunito text-[16px] font-extrabold transition-all duration-300",
               cfg.btnClass,
-              (status === "draft" || status === "finished") &&
-                "opacity-70 cursor-not-allowed",
+              status === "draft" && "opacity-70 cursor-not-allowed",
             )}
           >
             {t(cfg.btnTextKey)}

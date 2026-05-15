@@ -37,7 +37,6 @@ const PER_PAGE = 15;
 
 const FILTER_IDS: { id: TournamentStatus | "all"; dotColor?: string }[] = [
   { id: "all" },
-  { id: "draft", dotColor: "bg-amber-500" },
   { id: "registration", dotColor: "bg-green-500" },
   { id: "running", dotColor: "bg-pink-accent" },
   { id: "finished", dotColor: "bg-text-muted" },
@@ -60,7 +59,7 @@ const normalizeTournament = (item: any): NormalizedTournament => {
 
   return {
     id: item.id,
-    title: item.title || "Турнір без назви",
+    title: item.title || "",
     desc: item.description || "",
     status: safeStatus,
     teams: teamsCount,
@@ -89,6 +88,8 @@ export const TournamentsPage = () => {
     if (!tournaments || !Array.isArray(tournaments)) return [];
 
     return tournaments.map(normalizeTournament).filter((item) => {
+      if (item.status === "draft") return false;
+
       const matchesSearch = item.title
         .toLowerCase()
         .includes(query.toLowerCase());
@@ -184,7 +185,7 @@ export const TournamentsPage = () => {
           <div className="flex flex-col items-center justify-center py-20 min-h-[40vh] bg-bg-card border border-border rounded-3xl shadow-sm transition-colors duration-300">
             <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
             <p className="text-text-muted font-bold animate-pulse tracking-wide uppercase text-sm">
-              {t("states.loading", "Завантаження...")}
+              {t("states.loading")}
             </p>
           </div>
         ) : isError ? (
@@ -194,23 +195,19 @@ export const TournamentsPage = () => {
               strokeWidth={1.5}
             />
             <h3 className="font-nunito text-[24px] text-red-500 font-extrabold mb-2">
-              {t("states.error_title", "Помилка завантаження")}
+              {t("states.error_title")}
             </h3>
             <p className="text-[16px] font-semibold text-text-muted">
-              {t(
-                "states.error_subtitle",
-                "Не вдалося отримати турніри. Спробуйте пізніше.",
-              )}
+              {t("states.error_subtitle")}
             </p>
           </div>
         ) : (
           <>
             <div className="mb-6 text-[15px] font-bold text-text-muted transition-colors duration-300 px-1">
               {t("results.found")}{" "}
-              <strong className="text-primary">{filteredData.length}</strong>{" "}
-              {filteredData.length === 1
-                ? t("results.tournaments_one")
-                : t("results.tournaments_many")}
+              <span className="text-primary font-black">
+                {t("results.tournaments", { count: filteredData.length })}
+              </span>
             </div>
 
             <AnimatePresence mode="wait">
@@ -247,13 +244,10 @@ export const TournamentsPage = () => {
                     strokeWidth={1.5}
                   />
                   <h3 className="font-nunito text-[24px] text-text-main font-extrabold mb-2 transition-colors duration-300">
-                    {t("empty.title", "Нічого не знайдено")}
+                    {t("empty.title")}
                   </h3>
                   <p className="text-[16px] font-semibold text-text-muted transition-colors duration-300 px-4">
-                    {t(
-                      "empty.subtitle",
-                      "Спробуйте змінити фільтри або пошуковий запит",
-                    )}
+                    {t("empty.subtitle")}
                   </p>
                 </motion.div>
               )}

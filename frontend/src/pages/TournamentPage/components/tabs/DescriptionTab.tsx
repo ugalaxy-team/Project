@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { TaskInfo } from "../../types";
 
 interface DescriptionTabProps {
@@ -6,18 +7,16 @@ interface DescriptionTabProps {
   activeTask?: TaskInfo | null;
 }
 
-
-export const DescriptionTab = ({
-  description,
-}: DescriptionTabProps) => {
+export const DescriptionTab = ({ description }: DescriptionTabProps) => {
+  const { t } = useTranslation("tournament");
 
   return (
-    <div className="animate-[fadeIn_0.5s_ease_forwards] flex flex-col gap-12">
+    <div className="animate-[fadeIn_0.5s_ease_forwards] flex flex-col gap-8 md:gap-12">
       <section>
-        <h2 className="text-[28px] md:text-[32px] text-dark-theme font-quicksand font-black mb-6 border-b border-slate-100 pb-4">
-          Що потрібно зробити?
+        <h2 className="text-[24px] md:text-[32px] text-text-main font-quicksand font-black mb-4 md:mb-6 border-b border-border pb-4 transition-colors duration-300">
+          {t("description.title")}
         </h2>
-        <p className="text-[17px] md:text-[18px] text-slate-600 leading-[1.8] whitespace-pre-wrap font-medium">
+        <p className="text-[16px] md:text-[18px] text-text-muted leading-[1.8] whitespace-pre-wrap font-medium transition-colors duration-300">
           {description}
         </p>
       </section>

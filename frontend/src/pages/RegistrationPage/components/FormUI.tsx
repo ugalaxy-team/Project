@@ -84,7 +84,7 @@ export const BtnBack = ({
       transition={{ duration: 0.2 }}
       className="py-[15px] px-[22px] bg-transparent border-2 border-border rounded-full font-nunito text-[15px] font-bold text-text-muted flex items-center gap-1.5 transition-all duration-300 hover:border-primary hover:text-primary hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/10 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
     >
-      <Icon.ChevronLeft size={18} strokeWidth={2.5} /> {t("buttons.back")}
+      <Icon.ChevronLeft size={18} strokeWidth={2.5} /> {t("pagination.prev")}
     </motion.button>
   );
 };

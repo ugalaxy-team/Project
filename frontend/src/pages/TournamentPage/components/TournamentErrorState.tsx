@@ -1,44 +1,30 @@
-import { AlertIcon } from "../icons";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
-interface TournamentErrorStateProps {
-  error: Error | null;
-  onRetry: () => void;
-}
-
-export const TournamentErrorState = ({
-  error,
-  onRetry,
-}: TournamentErrorStateProps) => {
-  const errorMessage =
-    (error as any)?.response?.data?.detail?.[0]?.msg ||
-    (error as any)?.response?.data?.message ||
-    (error as Error)?.message ||
-    "Не вдалося завантажити інформацію про турнір.";
+export const TournamentErrorState = () => {
+  const { t } = useTranslation("tournament");
 
   return (
-    <div className="min-h-[70vh] bg-bg-body flex items-center justify-center p-5">
-      <div className="max-w-md w-full bg-white border border-red-100 rounded-[32px] p-8 md:p-10 flex flex-col items-center text-center shadow-[0_20px_50px_-10px_rgba(239,68,68,0.15)] animate-[fadeIn_0.4s_ease_forwards]">
-        <div className="text-red-500 bg-red-50 p-5 rounded-full mb-6 shadow-inner">
-          <AlertIcon />
-        </div>
-        <h2 className="text-2xl md:text-3xl font-quicksand font-black text-slate-800 mb-4">
-          Ой, халепа!
-        </h2>
-        <p className="text-slate-600 text-[17px] mb-3 font-medium leading-relaxed">
-          Проблемки. Турнір трохи загубився в мережі або щось пішло не так.
-          Але не хвилюйтесь, ми вже намагаємося його знайти!
-        </p>
-        <div className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 mb-8 w-full">
-          <p className="text-sm text-red-400 font-mono truncate">
-            {errorMessage}
-          </p>
-        </div>
-        <button
-          onClick={onRetry}
-          className="w-full sm:w-auto px-8 py-3.5 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-300 font-bold shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] hover:-translate-y-1"
+    <div className="min-h-[70vh] w-full flex items-center justify-center bg-bg-body text-text-main relative overflow-hidden font-inter transition-colors duration-500">
+      <div className="absolute font-nunito font-extrabold text-[20vw] md:text-[25vw] text-text-main/[0.02] select-none z-0 flex items-center justify-center w-full h-full pointer-events-none overflow-hidden leading-none tracking-tighter">
+        ERROR
+      </div>
+
+      <div className="relative z-10 text-center flex flex-col items-center px-4 w-full max-w-2xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex flex-col items-center w-full"
         >
-          Спробувати знову
-        </button>
+          <h2 className="text-3xl md:text-5xl font-nunito font-extrabold text-text-main mb-5 tracking-tight uppercase">
+            {t("error_state.title")}
+          </h2>
+
+          <p className="text-[16px] md:text-[18px] text-text-muted font-medium max-w-lg mx-auto leading-relaxed">
+            {t("error_state.description")}
+          </p>
+        </motion.div>
       </div>
     </div>
   );

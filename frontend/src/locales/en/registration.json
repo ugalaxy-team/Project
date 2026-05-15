@@ -1,4 +1,47 @@
 {
+  "hero": {
+    "bg_text": "TOURNAMENTS",
+    "title": "All Tournaments",
+    "description": "Find the perfect event for you. From coding to design — gather your team and win."
+  },
+  "search": {
+    "placeholder": "Search tournament…"
+  },
+  "filters": {
+    "all": "All Events",
+    "draft": "Opening Soon",
+    "registration": "Registration",
+    "running": "In Progress",
+    "finished": "Finished"
+  },
+  "results": {
+    "found": "Found:",
+    "tournaments_one": "{{count}} tournament",
+    "tournaments_other": "{{count}} tournaments"
+  },
+  "empty": {
+    "title": "Nothing Found",
+    "subtitle": "Try changing the filter or your search query"
+  },
+  "pagination": {
+    "prev": "Back",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
+  },
+  "tournament_card": {
+    "teams_label": "Teams",
+    "until": "Until",
+    "btn_draft": "Opening Soon",
+    "btn_registration": "Apply Now",
+    "btn_running": "Spectate",
+    "btn_finished": "View Results"
+  },
+  "states": {
+    "loading": "Loading tournaments...",
+    "error_title": "Loading Error",
+    "error_subtitle": "Failed to fetch tournaments list from the server."
+  },
   "brand": "UGalaxy",
   "breadcrumbs": {
     "tournaments": "Tournaments",
@@ -6,108 +49,95 @@
   },
   "nav": {
     "step_1": "General",
-    "step_2": "Participants",
+    "step_2": "Team",
     "step_3": "Confirmation"
   },
   "buttons": {
     "back": "Back"
   },
   "step_1": {
-    "title": "Your Team",
-    "subtitle": "for tournament participation:",
-    "format": {
-      "label": "Participation Format",
-      "team": "Team",
-      "solo": "Solo"
-    },
+    "title": "Tournament Registration",
+    "subtitle": "You are registering for the event:",
     "team_name": {
       "label": "Team Name",
-      "label_solo": "Your Gaming Nickname / Name",
-      "placeholder": "For example, Space Cats",
-      "placeholder_solo": "For example, T-Rex Destroyer"
+      "placeholder": "Enter your team name"
+    },
+    "team_phone": {
+      "label": "Team Contact Phone",
+      "placeholder": "+385..."
     },
     "captain": {
-      "label": "Captain",
-      "info": "Data imported from your Google account. You can update it in settings for automatic autofill in the future.",
+      "label": "Captain Details (You)",
       "badge": "Captain",
-      "full_name_label": "Full Name",
-      "full_name_placeholder": "Andrew Ivanchenko",
-      "if_different": "(if different)"
-    },
-    "additional": {
-      "title": "Additional Information",
-      "optional": "(optional)"
+      "full_name_label": "Captain's Full Name (for certificates)",
+      "full_name_placeholder": "Last Name, First Name",
+      "telegram_label": "Captain's Telegram",
+      "telegram_placeholder": "@username",
+      "institution_label": "Captain's Educational Institution",
+      "institution_placeholder": "e.g., ChPFC"
     },
     "next": {
-      "confirm": "Next — Confirmation",
-      "members": "Next — Participants"
+      "members": "Proceed to Team Roster"
     }
   },
   "step_2": {
-    "title": "Team Lineup",
-    "subtitle_1": "Add from",
-    "subtitle_2": "to",
-    "subtitle_3": "participants (excluding the captain).",
+    "title": "Team Roster",
+    "subtitle_1": "You need to add at least",
+    "subtitle_2": "and at most",
+    "subtitle_3": "additional members (excluding the captain).",
     "counter": {
-      "label": "Teammates",
-      "min": "Minimum:",
-      "max": "Maximum:"
+      "label": "Members Added",
+      "min": "min.",
+      "max": "max."
     },
-    "empty_title": "You're alone for now",
-    "empty_state": "Add your first teammate to build the team.",
-    "participant_label": "Teammate",
-    "remove_btn": "Remove",
+    "participant_label": "Member",
+    "add_btn": "Add Member",
+    "next_btn": "Review Data",
     "labels": {
-      "name": "Name",
-      "email": "Email"
+      "name": "Member Full Name",
+      "email": "Member Email",
+      "telegram": "Member Telegram",
+      "institution": "Member Educational Institution"
     },
     "placeholders": {
-      "name": "Nickname or Full Name",
-      "email": "example@gmail.com"
+      "name": "Full Name",
+      "email": "example@mail.com",
+      "telegram": "@username",
+      "institution": "ChPFC"
     },
-    "add_btn": "Add Teammate",
-    "next_btn": "Review Application",
     "errors": {
-      "min_members": "Add at least {{count}} teammate(s)",
-      "duplicate_email": "Duplicate emails detected: {{emails}}"
+      "min_members": "The team must contain at least {{count}} more member(s).",
+      "duplicate_email": "Emails must be unique inside the team. Found duplicates: {{emails}}"
     }
   },
   "step_3": {
-    "title": "Confirmation",
-    "subtitle": "Review your information before registration.",
+    "title": "Review Data",
+    "subtitle": "Please double-check all information before submitting the form.",
+    "validation_summary": "The form contains validation errors:",
+    "invalid_value": "Invalid value",
     "labels": {
-      "player": "Player",
-      "captain": "Captain",
+      "captain": "Team Captain",
       "members": "Team Members"
     },
-    "warning": "Please double-check your information. After submission, the lineup can only be changed through an admin.",
-    "submit_btn": "Confirm"
+    "warning": "Please make sure all nicknames, Telegram tags, and emails are correct. Organizers will use them to contact you.",
+    "submit_btn": "Confirm Registration",
+    "submitting": "Submitting application..."
   },
   "success": {
-    "title": "Team Registered!",
-    "title_solo": "You Have Successfully Registered!",
-    "desc": "Your application has been successfully submitted. Wait for confirmation by email or check the tournament status in your dashboard.",
-    "home_btn": "Back to Home"
+    "title": "Registration Successful!",
+    "subtitle": "Your team has been successfully registered for the tournament. Stay tuned for updates and get ready to start!",
+    "home_btn": "Go Home"
   },
-  "ticket": {
-    "label": {
-      "event": "Event",
-      "format": "Format",
-      "player": "Nickname",
-      "team": "Team",
-      "participant": "Participant",
-      "roster": "Roster"
-    },
-    "value": {
-      "solo": "Solo",
-      "team": "Team",
-      "empty": "Not filled",
-      "waiting": "Waiting..."
-    },
-    "badge": {
-      "solo": "Solo",
-      "captain": "Captain",
-      "member": "Member"
-    }
+  "validation": {
+    "teamNameRequired": "Team name is required",
+    "phoneRequired": "Phone number is required",
+    "invalidPhone": "Invalid Ukrainian operator code or phone format (e.g., +380671234567)",
+    "nameRequired": "Full name or nickname is required",
+    "telegramRequired": "Telegram tag is required (e.g., @username)",
+    "institutionRequired": "Educational institution is required",
+    "invalidEmail": "Invalid email format"
+  },
+  "errors": {
+    "server_default": "Failed to register the team. Please check your data or try again later."
   }
 }

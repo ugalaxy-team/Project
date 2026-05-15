@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { UserIcon, MailIcon } from "../../icons";
 import type { Team } from "../../types";
 
@@ -6,36 +7,38 @@ interface TeamsTabProps {
 }
 
 export const TeamsTab = ({ teams }: TeamsTabProps) => {
+  const { t } = useTranslation("tournament");
+
   if (!teams || teams.length === 0) {
     return (
-      <div className="animate-[fadeIn_0.4s_ease_forwards] flex flex-col items-center justify-center text-center py-16">
-        <div className="w-[100px] h-[100px] bg-slate-50/80 rounded-full flex justify-center items-center text-slate-300 mb-8 shadow-inner">
-          <UserIcon />
+      <div className="py-20 text-center flex flex-col items-center animate-[fadeIn_0.5s_ease_forwards]">
+        <div className="w-16 h-16 bg-bg-card rounded-2xl flex items-center justify-center border border-border mb-6 shadow-sm transition-colors duration-300 [&>svg]:w-10 [&>svg]:h-10">
+          <UserIcon className="text-text-muted/60" />
         </div>
-        <h2 className="text-[28px] md:text-[32px] mb-4 text-dark-theme font-quicksand font-bold">
-          Команд ще немає
-        </h2>
-        <p className="max-w-[420px] text-slate-500 text-[17px] leading-relaxed">
-          Команди початимуть приєднуватися по мірі входження вас у турнір
+        <h3 className="text-[22px] md:text-[26px] font-bold text-text-main mb-2 transition-colors duration-300">
+          {t("teams.empty.title")}
+        </h3>
+        <p className="text-text-muted text-[15px] md:text-[17px] max-w-[420px] transition-colors duration-300">
+          {t("teams.empty.description")}
         </p>
       </div>
     );
   }
 
   return (
-    <div className="animate-[fadeIn_0.5s_ease_forwards] flex flex-col gap-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="animate-[fadeIn_0.5s_ease_forwards] flex flex-col gap-6 md:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
         {teams.map((team) => (
           <div
             key={team.name}
-            className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-2xl p-6 border border-slate-200 hover:border-primary/50 hover:shadow-lg transition-all duration-300 hover:scale-105"
+            className="bg-bg-body rounded-2xl p-5 md:p-6 border border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
           >
             <div className="mb-4">
-              <h3 className="text-[20px] font-bold text-dark-theme font-quicksand mb-2 line-clamp-2">
+              <h3 className="text-[18px] md:text-[20px] font-bold text-text-main font-quicksand mb-2 line-clamp-2 transition-colors duration-300">
                 {team.name}
               </h3>
-              <p className="text-[14px] text-slate-500 mb-3 flex items-center gap-2">
-                <MailIcon />
+              <p className="text-[13px] md:text-[14px] text-text-muted mb-3 flex items-center gap-2 transition-colors duration-300">
+                <MailIcon className="w-4 h-4 shrink-0" />
                 <a
                   href={`mailto:${team.team_email}`}
                   className="hover:text-primary transition-colors break-all"
@@ -46,29 +49,32 @@ export const TeamsTab = ({ teams }: TeamsTabProps) => {
             </div>
 
             <div className="mb-4">
-              <p className="text-[13px] text-slate-600 mb-2 font-semibold">
-                Контакт: {team.contact_info}
+              <p className="text-[13px] text-text-muted mb-2 font-semibold transition-colors duration-300">
+                {t("teams.contact")}:{" "}
+                <span className="text-text-main font-normal">
+                  {team.contact_info}
+                </span>
               </p>
             </div>
 
-            <div className="pt-4 border-t border-slate-200">
-              <p className="text-[13px] font-semibold text-slate-600 mb-3">
-                Учасники ({team.members.length}):
+            <div className="pt-4 border-t border-border transition-colors duration-300">
+              <p className="text-[13px] font-semibold text-text-muted mb-3 transition-colors duration-300">
+                {t("teams.members")} ({team.members.length}):
               </p>
-              <div className="space-y-2 max-h-[200px] overflow-y-auto">
+              <div className="space-y-2 max-h-[200px] overflow-y-auto no-scrollbar pr-2">
                 {team.members.map((member) => (
                   <div
                     key={member.email}
-                    className="bg-white rounded-lg p-3 text-[13px]"
+                    className="bg-bg-card border border-border rounded-lg p-3 text-[13px] transition-colors duration-300"
                   >
-                    <p className="font-medium text-dark-theme line-clamp-1">
+                    <p className="font-medium text-text-main line-clamp-1 transition-colors duration-300">
                       {member.full_name}
                     </p>
-                    <p className="text-slate-500 line-clamp-1">
+                    <p className="text-text-muted line-clamp-1 transition-colors duration-300">
                       {member.email}
                     </p>
                     {member.educational_institution && (
-                      <p className="text-slate-400 text-[12px] line-clamp-1">
+                      <p className="text-text-muted/70 text-[12px] line-clamp-1 mt-1 transition-colors duration-300">
                         {member.educational_institution}
                       </p>
                     )}
