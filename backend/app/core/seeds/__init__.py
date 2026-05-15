@@ -4,6 +4,7 @@ from .roles import init_roles
 from .status import init_task_statuses, init_tournament_statuses
 from .role_requests import init_role_request_options
 from .task_requirement_options import init_task_requirement_options
+from .superuser import init_superuser
 
 
 async def init_static_data(session):
@@ -14,3 +15,5 @@ async def init_static_data(session):
     await init_categories(session)
     await init_role_request_options(session)
     await init_task_requirement_options(session)
+    await init_superuser(session)
+    await session.commit()
