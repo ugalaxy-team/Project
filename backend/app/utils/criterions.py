@@ -1,8 +1,10 @@
 from sqlalchemy import select, or_
-from app.models import CriterionScore, TaskEvaluationCriterion
+from app.models import CriterionScore, TaskEvaluationCriterion, Task
 from app.dependencies import SessionDep
 from fastapi import HTTPException, status
 
+def get_criterion_map(task: Task) -> dict[int, TaskEvaluationCriterion]:
+    return {criterion.id: criterion for criterion in task.criteria}
 
 async def get_criterion_score(criterion_id: int, session: SessionDep) -> CriterionScore:
     statement = select(CriterionScore).where(CriterionScore.criterion_id == criterion_id)

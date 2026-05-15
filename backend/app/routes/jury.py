@@ -31,64 +31,10 @@ from app.schemas import (
     SubmissionEvaluationPublic,
     TaskPublic,
 )
-from app.utils import get_task_by_tournament, get_tournament, get_assignment, get_criterion_score
+from app.utils import get_task_by_tournament, get_tournament, get_assignment, get_criterion_score, get_criterion_map,\
+get_task_leaderboard
 
 router = APIRouter(tags=["jury"])
-
-
-def _criterion_map(task: Task) -> dict[int, object]:
-    return {criterion.id: criterion for criterion in task.criteria}
-
-
-def _calculate_evaluation_total(evaluation: SubmissionEvaluation) -> float:
-    weighted = 0.0
-    total_weight = 0
-    for item in evaluation.criterion_scores:
-        weight = item.criterion.weight
-        total_weight += weight
-        weighted += (item.score / item.criterion.max_score) * weight * 100
-    if total_weight == 0:
-        return 0.0
-    return round(weighted / total_weight, 2)
-
-
-async def _task_leaderboard(
-    task_id: int, session: SessionDep
-) -> list[EvaluationLeaderboardEntry]:
-    statement = (
-        select(Submission)
-        .where(Submission.task_id == task_id)
-        .options(
-            selectinload(Submission.team),
-            selectinload(Submission.evaluations)
-            .selectinload(SubmissionEvaluation.criterion_scores)
-            .selectinload(CriterionScore.criterion),
-        )
-    )
-    submissions = (await session.execute(statement)).scalars().unique().all()
-    leaderboard = []
-    for submission in submissions:
-        totals = [
-            _calculate_evaluation_total(evaluation) for evaluation in submission.evaluations
-        ]
-        if totals:
-            average_score = round(sum(totals) / len(totals), 2)
-            total_score = round(sum(totals), 2)
-        else:
-            average_score = 0.0
-            total_score = 0.0
-        leaderboard.append(
-            EvaluationLeaderboardEntry(
-                submission_id=submission.team_id,
-                team_id=submission.team_id,
-                team_name=submission.team.name,
-                average_score=average_score,
-                total_score=total_score,
-                submitted_reviews=len(totals),
-            )
-        )
-    return sorted(leaderboard, key=lambda item: (-item.average_score, item.team_name.lower()))
-
 
 @router.get(
     "/jury/tasks/", response_model=list[TaskPublic], dependencies=[current_user_dependency]
@@ -171,7 +117,7 @@ async def create_evaluation(
     if assignment.evaluation is not None:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Evaluation already exists")
 
-    criteria = _criterion_map(assignment.task)
+    criteria = get_criterion_map(assignment.task)
     evaluation = SubmissionEvaluation(
         assignment_id=assignment.id,
         submission_id=assignment.submission_id,
@@ -204,7 +150,6 @@ async def create_evaluation(
 async def update_evaluation(
     assignment_id: int,
     update_data: SubmissionEvaluationUpdate,
-    current_user: CurrentUserDep,
     session: SessionDep,
 ):
     payload = update_data.model_dump(exclude_unset=True)
@@ -212,7 +157,7 @@ async def update_evaluation(
     if assignment.evaluation is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Evaluation not found")
 
-    criterions = _criterion_map(assignment.task)
+    criterions = get_criterion_map(assignment.task)
     for item in payload.pop("criterion_scores", []):
         criterion = await get_criterion_score(item["criterion_id"], session)
         if item["score"] > criterions[item["criterion_id"]].max_score:
@@ -302,7 +247,7 @@ async def generate_jury_assignments(
         for jury in selected:
             assignment = JuryAssignment(
                 task_id=task.id,
-                submission_id=submission.team_id,
+                submission_id=submission.id,
                 jury_id=jury.id,
                 status_id=settings.JURY_ASSIGNMENT_STATUS_NAMES.ASSIGNED,
             )
@@ -401,10 +346,7 @@ async def finish_evaluation(
     await session.refresh(task)
     return task
 
-
-# All the leaderboard functionality is poor quality
-# TODO?: refactor leaderboard functionality if we have enough time
-
+# Leaderboard routes
 
 @router.get(
     "/tournaments/{tournament_id}/tasks/{task_id}/leaderboard/",
@@ -418,7 +360,7 @@ async def task_leaderboard(tournament_id: int, task_id: int, session: SessionDep
         or tournament.status_id != settings.TOURNAMENT_STATUS_NAMES.FINISHED
     ):
         raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Leaderboard is hidden")
-    return await _task_leaderboard(task.id, session)
+    return await get_task_leaderboard(task.id, session)
 
 
 @router.get(
@@ -431,13 +373,13 @@ async def tournament_leaderboard(tournament_id: int, session: SessionDep):
     for task in tournament.tasks:
         if task.status_id != settings.TASK_STATUS_NAMES.EVALUATED:
             continue
-        for entry in await _task_leaderboard(task.id, session):
+        for entry in await get_task_leaderboard(task.id, session):
             existing = team_scores.get(entry.team_id)
             if existing is None:
                 team_scores[entry.team_id] = entry.model_copy()
                 continue
             existing.total_score = round(existing.total_score + entry.average_score, 2)
-            existing.submitted_reviews += entry.submitted_reviews
+            
             existing.average_score = round(
                 existing.total_score
                 / max(1, len([t for t in tournament.tasks if t.status_id == "evaluated"])),
