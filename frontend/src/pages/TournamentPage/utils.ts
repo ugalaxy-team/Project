@@ -1,3 +1,4 @@
+import type { TFunction } from "i18next";
 import { type TournamentData } from "./types";
 import {
   draftStatus,
@@ -6,31 +7,42 @@ import {
   finishedStatus,
 } from "./config";
 
-export const getTimeLeftInfo = (targetDate: Date): string => {
+export const getTimeLeftInfo = (targetDate: Date, t: TFunction): string => {
   const now = new Date();
   const diffMs = targetDate.getTime() - now.getTime();
 
-  if (diffMs <= 0) return "0 годин";
+  if (diffMs <= 0) return "00:00";
 
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffDays > 0) return `${diffDays} днів`;
-  return `${diffHours} годин`;
+  if (diffDays > 0) return t("header.deadlines.days", { count: diffDays });
+
+  if (diffHours > 0) return t("header.deadlines.hours", { count: diffHours });
+
+  const mins = diffMinutes % 60;
+  const secs = diffSeconds % 60;
+
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
 export interface DeadlineInfo {
   currentStatus: string;
-  deadlineValue: string;
-  deadlineLabel: string;
+  deadlineValue: string | null;
+  deadlineLabel: string | null;
 }
 
-export const getDeadlineInfo = (tournament: TournamentData | null): DeadlineInfo => {
+export const getDeadlineInfo = (
+  tournament: TournamentData | null,
+  t: TFunction,
+): DeadlineInfo => {
   if (!tournament) {
     return {
       currentStatus: draftStatus.name,
       deadlineValue: "...",
-      deadlineLabel: "Завантаження",
+      deadlineLabel: t("loading"),
     };
   }
 
@@ -41,13 +53,17 @@ export const getDeadlineInfo = (tournament: TournamentData | null): DeadlineInfo
   const eventEnd = tournament.end_date
     ? new Date(tournament.end_date)
     : new Date(eventStart.getTime() + 48 * 60 * 60 * 1000);
-  const statusName = tournament.status?.name;
+
+  const statusName =
+    (tournament as any).status?.name ||
+    (tournament as any).status_name ||
+    (tournament as any).status;
 
   if (now < regStart) {
     return {
       currentStatus: draftStatus.name,
-      deadlineValue: getTimeLeftInfo(regStart),
-      deadlineLabel: "До початку реєстрації",
+      deadlineValue: getTimeLeftInfo(regStart, t),
+      deadlineLabel: t("header.deadlines.registration_starts"),
     };
   }
 
@@ -57,8 +73,8 @@ export const getDeadlineInfo = (tournament: TournamentData | null): DeadlineInfo
   ) {
     return {
       currentStatus: registrationStatus.name,
-      deadlineValue: getTimeLeftInfo(regEnd),
-      deadlineLabel: "До кінця реєстрації",
+      deadlineValue: getTimeLeftInfo(regEnd, t),
+      deadlineLabel: t("header.deadlines.registration_ends"),
     };
   }
 
@@ -68,8 +84,8 @@ export const getDeadlineInfo = (tournament: TournamentData | null): DeadlineInfo
   ) {
     return {
       currentStatus: draftStatus.name,
-      deadlineValue: getTimeLeftInfo(eventStart),
-      deadlineLabel: "До старту турніру",
+      deadlineValue: getTimeLeftInfo(eventStart, t),
+      deadlineLabel: t("header.deadlines.tournament_starts"),
     };
   }
 
@@ -79,14 +95,14 @@ export const getDeadlineInfo = (tournament: TournamentData | null): DeadlineInfo
   ) {
     return {
       currentStatus: runningStatus.name,
-      deadlineValue: getTimeLeftInfo(eventEnd),
-      deadlineLabel: "До завершення турніру",
+      deadlineValue: getTimeLeftInfo(eventEnd, t),
+      deadlineLabel: t("header.deadlines.tournament_ends"),
     };
   }
 
   return {
     currentStatus: finishedStatus.name,
-    deadlineValue: "Завершено",
-    deadlineLabel: "Турнір",
+    deadlineValue: t("header.deadlines.finished"),
+    deadlineLabel: t("header.deadlines.tournament"),
   };
 };

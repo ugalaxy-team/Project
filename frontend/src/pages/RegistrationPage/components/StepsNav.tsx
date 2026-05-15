@@ -5,10 +5,9 @@ import { StepCircle } from "./FormUI";
 
 interface StepsNavProps {
   step: number;
-  isSolo: boolean;
 }
 
-export const StepsNav: React.FC<StepsNavProps> = ({ step, isSolo }) => {
+export const StepsNav: React.FC<StepsNavProps> = ({ step }) => {
   const { t } = useTranslation("registration");
 
   const stepState = (n: number): "active" | "done" | "idle" =>
@@ -16,22 +15,8 @@ export const StepsNav: React.FC<StepsNavProps> = ({ step, isSolo }) => {
 
   const steps = [
     { id: 1, label: t("nav.step_1"), actualStep: 1, visualNum: 1 },
-    ...(!isSolo
-      ? [
-          {
-            id: 2,
-            label: t("nav.step_2"),
-            actualStep: 2,
-            visualNum: 2,
-          },
-        ]
-      : []),
-    {
-      id: 3,
-      label: t("nav.step_3"),
-      actualStep: 3,
-      visualNum: isSolo ? 2 : 3,
-    },
+    { id: 2, label: t("nav.step_2"), actualStep: 2, visualNum: 2 },
+    { id: 3, label: t("nav.step_3"), actualStep: 3, visualNum: 3 },
   ];
 
   return (

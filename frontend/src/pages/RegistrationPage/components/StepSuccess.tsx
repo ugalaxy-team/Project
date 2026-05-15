@@ -1,10 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { useFormContext } from "react-hook-form";
 import { Icon } from "./Icons";
 import { BtnNext } from "./FormUI";
-import type { RegFormData } from "../types";
 
 interface StepSuccessProps {
   onHome: () => void;
@@ -12,9 +10,6 @@ interface StepSuccessProps {
 
 export const StepSuccess: React.FC<StepSuccessProps> = ({ onHome }) => {
   const { t } = useTranslation("registration");
-  const { watch } = useFormContext<RegFormData>();
-
-  const isSolo = watch("format") === "solo";
 
   return (
     <motion.div
@@ -27,11 +22,11 @@ export const StepSuccess: React.FC<StepSuccessProps> = ({ onHome }) => {
       </div>
 
       <h1 className="font-nunito font-extrabold text-[30px] sm:text-[36px] text-text-main tracking-[-0.02em] mb-4 transition-colors leading-tight">
-        {isSolo ? t("success.title_solo") : t("success.title")}
+        {t("success.title")}
       </h1>
 
       <p className="text-[16px] text-text-muted max-w-[440px] mx-auto mb-12 leading-relaxed font-medium transition-colors">
-        {t("success.desc")}
+        {t("success.subtitle")}
       </p>
 
       <div className="w-full flex justify-center">

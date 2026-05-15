@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import { useFormContext } from "react-hook-form";
-import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Icon } from "./Icons";
 import { FieldInput, BtnNext } from "./FormUI";
@@ -22,21 +21,8 @@ export const StepGeneral: React.FC<StepGeneralProps> = ({
   const { t } = useTranslation("registration");
   const {
     register,
-    watch,
-    setValue,
     formState: { errors },
   } = useFormContext<RegFormData>();
-  const [optOpen, setOptOpen] = useState(false);
-
-  const format = watch("format");
-  const isSolo = format === "solo";
-
-  const isMixedFormat = cfg.minMembers === 1 && cfg.maxMembers > 1;
-
-  const handleNextClick = () => {
-    if (errors.customFields && !optOpen) setOptOpen(true);
-    onNext();
-  };
 
   return (
     <div>
@@ -52,74 +38,38 @@ export const StepGeneral: React.FC<StepGeneralProps> = ({
         </div>
       </div>
 
-      {isMixedFormat && (
-        <div className="mb-7">
-          <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-text-muted font-nunito mb-3.5 transition-colors">
-            {t("step_1.format.label")}
-          </div>
-
-          <div className="flex items-center bg-primary/5 border border-primary/10 p-1.5 rounded-[20px] transition-colors duration-300">
-            {(["team", "solo"] as const).map((f) => {
-              const isActive = format === f;
-
-              return (
-                <button
-                  key={f}
-                  type="button"
-                  onClick={() => setValue("format", f)}
-                  className={`relative flex-1 flex items-center justify-center h-[42px] rounded-xl text-[14px] font-bold tracking-wide transition-colors duration-300 select-none border-0 bg-transparent cursor-pointer z-10 ${
-                    isActive
-                      ? "text-text-main"
-                      : "text-text-muted hover:text-text-main"
-                  }`}
-                >
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeFormatBg"
-                      className="absolute inset-0 bg-bg-card rounded-xl shadow-sm border border-black/5 dark:border-white/5"
-                      transition={{
-                        type: "spring",
-                        stiffness: 420,
-                        damping: 32,
-                      }}
-                    />
-                  )}
-                  <span className="relative z-20 flex items-center gap-2 pt-[2px]">
-                    {f === "team" ? (
-                      <Icon.Team size={18} />
-                    ) : (
-                      <Icon.Solo size={18} />
-                    )}
-                    {f === "team"
-                      ? t("step_1.format.team")
-                      : t("step_1.format.solo")}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
       <div className="mb-7">
         <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-text-muted font-nunito mb-3.5 transition-colors">
-          {isSolo
-            ? t("step_1.team_name.label_solo")
-            : t("step_1.team_name.label")}
+          {t("step_1.team_name.label")}
         </div>
         <div>
           <FieldInput
             {...register("teamName")}
-            placeholder={
-              isSolo
-                ? t("step_1.team_name.placeholder_solo")
-                : t("step_1.team_name.placeholder")
-            }
+            placeholder={t("step_1.team_name.placeholder")}
             hasError={!!errors.teamName}
           />
           {errors.teamName && (
             <p className="text-[12px] text-red-500 mt-2 pl-3 font-medium">
-              {errors.teamName.message as string}
+              {errors.teamName.message}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="mb-7">
+        <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-text-muted font-nunito mb-3.5 transition-colors">
+          {t("step_1.team_phone.label")} <span className="text-primary">*</span>
+        </div>
+        <div>
+          <FieldInput
+            {...register("teamPhone")}
+            placeholder={t("step_1.team_phone.placeholder")}
+            type="tel"
+            hasError={!!errors.teamPhone}
+          />
+          {errors.teamPhone && (
+            <p className="text-[12px] text-red-500 mt-2 pl-3 font-medium">
+              {errors.teamPhone.message}
             </p>
           )}
         </div>
@@ -129,18 +79,9 @@ export const StepGeneral: React.FC<StepGeneralProps> = ({
         {t("step_1.captain.label")}
       </div>
 
-      <div className="bg-primary/5 border border-primary/10 rounded-2xl px-5 py-4 flex gap-3 items-start text-[13px] text-text-main leading-relaxed mb-5 transition-colors">
-        <span className="shrink-0 mt-[1px] text-primary">
-          <Icon.Info size={16} />
-        </span>
-        <span className="opacity-80 font-medium">
-          {t("step_1.captain.info")}
-        </span>
-      </div>
-
       <div className="bg-bg-card border-2 border-primary/20 rounded-[20px] p-5 flex items-center gap-4 mb-6 transition-colors shadow-sm">
         <div className="w-[48px] h-[48px] bg-primary rounded-full flex items-center justify-center font-nunito font-extrabold text-xl text-white shrink-0">
-          {captainDisplayName[0]?.toUpperCase() ?? "А"}
+          {captainDisplayName[0]?.toUpperCase() ?? "U"}
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-nunito font-bold text-[16px] text-text-main transition-colors mb-0.5">
@@ -155,99 +96,65 @@ export const StepGeneral: React.FC<StepGeneralProps> = ({
         </div>
       </div>
 
-      <div className="mb-5">
-        <label className="block font-nunito text-sm font-bold text-text-main mb-2.5 transition-colors">
-          {t("step_1.captain.full_name_label")}{" "}
-          <span className="text-text-muted font-semibold text-xs ml-1">
-            {t("step_1.captain.if_different")}
-          </span>
-        </label>
-        <FieldInput
-          {...register("captainFullName")}
-          placeholder={t("step_1.captain.full_name_placeholder")}
-        />
+      <div className="space-y-5">
+        <div>
+          <label className="block font-nunito text-sm font-bold text-text-main mb-2.5 transition-colors">
+            {t("step_1.captain.full_name_label")}
+          </label>
+          <FieldInput
+            {...register("captainFullName")}
+            placeholder={t("step_1.captain.full_name_placeholder")}
+            hasError={!!errors.captainFullName}
+          />
+          {errors.captainFullName && (
+            <p className="text-[12px] text-red-500 mt-2 pl-3 font-medium">
+              {errors.captainFullName.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block font-nunito text-sm font-bold text-text-main mb-2.5 transition-colors">
+            {t("step_1.captain.telegram_label")}{" "}
+            <span className="text-primary">*</span>
+          </label>
+          <div className="relative">
+            <Icon.Telegram className="absolute left-5 top-1/2 -translate-y-1/2 text-text-muted w-5 h-5" />
+            <FieldInput
+              {...register("captainTelegram")}
+              placeholder={t("step_1.captain.telegram_placeholder")}
+              className="pl-12"
+              hasError={!!errors.captainTelegram}
+            />
+          </div>
+          {errors.captainTelegram && (
+            <p className="text-[12px] text-red-500 mt-2 pl-3 font-medium">
+              {errors.captainTelegram.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block font-nunito text-sm font-bold text-text-main mb-2.5 transition-colors">
+            {t("step_1.captain.institution_label")}{" "}
+            <span className="text-primary">*</span>
+          </label>
+          <FieldInput
+            {...register("captainInstitution")}
+            placeholder={t("step_1.captain.institution_placeholder")}
+            hasError={!!errors.captainInstitution}
+          />
+          {errors.captainInstitution && (
+            <p className="text-[12px] text-red-500 mt-2 pl-3 font-medium">
+              {errors.captainInstitution.message}
+            </p>
+          )}
+        </div>
       </div>
 
-      {cfg.customFields && cfg.customFields.length > 0 && (
-        <div
-          className={`bg-bg-card border-2 rounded-[20px] overflow-hidden mt-3 transition-all duration-300 ${
-            optOpen ? "border-primary/30 shadow-sm" : "border-border"
-          }`}
-        >
-          <button
-            type="button"
-            onClick={() => setOptOpen(!optOpen)}
-            className="w-full px-5 py-[18px] flex items-center justify-between group cursor-pointer border-none bg-transparent outline-none"
-          >
-            <span
-              className={`font-nunito text-sm font-bold flex items-center gap-2.5 transition-colors ${
-                optOpen
-                  ? "text-primary"
-                  : "text-text-muted group-hover:text-text-main"
-              }`}
-            >
-              <Icon.Info size={16} /> {t("step_1.additional.title")}
-            </span>
-            <motion.span
-              animate={{ rotate: optOpen ? 180 : 0 }}
-              className={`transition-colors ${optOpen ? "text-primary" : "text-text-muted"}`}
-            >
-              <Icon.ChevronDown size={18} />
-            </motion.span>
-          </button>
-
-          <AnimatePresence>
-            {optOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="px-5 pb-6 pt-1 space-y-5">
-                  {cfg.customFields.map((field) => {
-                    const fieldError =
-                      errors.customFields?.[
-                        field.id as keyof typeof errors.customFields
-                      ];
-
-                    return (
-                      <div key={field.id}>
-                        <label className="block font-nunito text-sm font-bold text-text-main mb-2.5 transition-colors">
-                          {field.label}{" "}
-                          {field.required ? (
-                            <span className="text-primary">*</span>
-                          ) : (
-                            <span className="text-text-muted text-xs ml-1">
-                              {t("step_1.additional.optional")}
-                            </span>
-                          )}
-                        </label>
-                        <FieldInput
-                          {...register(`customFields.${field.id}` as any)}
-                          placeholder={field.placeholder || ""}
-                          hasError={!!fieldError}
-                        />
-                        {fieldError && (
-                          <p className="text-[12px] text-red-500 mt-2 pl-3 font-medium">
-                            {fieldError.message as string}
-                          </p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      )}
-
       <div className="flex mt-10">
-        <BtnNext onClick={handleNextClick}>
-          <span>
-            {isSolo ? t("step_1.next.confirm") : t("step_1.next.members")}
-          </span>
+        <BtnNext onClick={onNext}>
+          <span>{t("step_1.next.members")}</span>
           <Icon.ChevronRight size={18} strokeWidth={2.5} />
         </BtnNext>
       </div>

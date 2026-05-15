@@ -1,17 +1,14 @@
 import { tournamentStatuses } from "@/config/appConfig";
-import {
-  DraftIcon,
-  RegistrationIcon,
-  ActiveIcon,
-  FinishedIcon,
-} from "./icons";
-import type { TabConfig, StatusConfig } from "./types";
+import { DraftIcon, RegistrationIcon, ActiveIcon, FinishedIcon } from "./icons";
+import type { TabConfig, StatusConfig, TabId } from "./types";
 
-export const TABS: TabConfig[] = [
-  { id: "desc", label: "Опис турінра" },
-  { id: "task_desc", label: "Опис завдання"},
+export const TABS: { id: TabId; label: string }[] = [
+  { id: "desc", label: "Опис" },
+  { id: "task_desc", label: "Завдання" },
   { id: "teams", label: "Команди" },
   { id: "calendar", label: "Календар" },
+  { id: "leaderboard", label: "Рейтинг" },
+  { id: "submissions", label: "Здача робіт" },
 ];
 
 const [draftStatus, registrationStatus, runningStatus, finishedStatus] =
@@ -43,9 +40,4 @@ export const STATUS_CONFIG: Record<string, StatusConfig> = {
   },
 };
 
-export {
-  draftStatus,
-  registrationStatus,
-  runningStatus,
-  finishedStatus,
-};
+export { draftStatus, registrationStatus, runningStatus, finishedStatus };

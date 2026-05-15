@@ -5,7 +5,7 @@ import * as z from "zod";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "react-toastify"; // Змінено на react-toastify для сумісності з App.tsx
+import { toast } from "react-toastify";
 import { Info, AlertTriangle, Check, CheckCircle2 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Player } from "@lottiefiles/react-lottie-player";
@@ -58,7 +58,7 @@ export const RoleRequestPage = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false); // Стан для екрану успіху
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const ORGANIZER_ROLE = roleByName.organizer;
 
@@ -87,7 +87,7 @@ export const RoleRequestPage = () => {
     mutationFn: ({ role, currentUser, userId, info }: MutationParams) =>
       requestRole(role, currentUser, userId, info),
     onSuccess: () => {
-      setIsSubmitted(true); // Показуємо екран успіху замість редіректу
+      setIsSubmitted(true);
       toast.success(t("messages.success"), { toastId: "role-submit" });
     },
     onError: (error: any) => {
@@ -198,7 +198,6 @@ export const RoleRequestPage = () => {
         >
           <AnimatePresence mode="wait">
             {isSubmitted ? (
-              /* ЕКРАН УСПІХУ (Success State) */
               <motion.div
                 key="success"
                 initial={{ opacity: 0, scale: 0.95 }}

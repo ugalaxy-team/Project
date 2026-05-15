@@ -16,6 +16,7 @@ import ukProfile from "../locales/uk/profile.json";
 import ukRoleRequest from "../locales/uk/roleRequest.json";
 import ukJury from "../locales/uk/jury.json";
 import ukNews from "../locales/uk/news.json";
+import ukTournament from "../locales/uk/tournament.json";
 
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
@@ -30,6 +31,8 @@ import enRules from "../locales/en/rules.json";
 import enProfile from "../locales/en/profile.json";
 import enRoleRequest from "../locales/en/roleRequest.json";
 import enJury from "../locales/en/jury.json";
+import enNews from "../locales/en/news.json";
+import enTournament from "../locales/en/tournament.json";
 
 const resources = {
   uk: {
@@ -47,6 +50,7 @@ const resources = {
     roleRequest: ukRoleRequest,
     jury: ukJury,
     news: ukNews,
+    tournament: ukTournament,
   },
   en: {
     common: enCommon,
@@ -62,6 +66,8 @@ const resources = {
     profile: enProfile,
     roleRequest: enRoleRequest,
     jury: enJury,
+    news: enNews,
+    tournament: enTournament,
   },
 };
 

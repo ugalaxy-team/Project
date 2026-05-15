@@ -5,4 +5,4 @@ export { TournamentHeader } from "./TournamentHeader";
 export { TabNavigation } from "./TabNavigation";
 export { TabContent } from "./TabContent";
 export { TournamentMainContent } from "./TournamentMainContent";
-export { LookingForTeamModal } from "./LookingForTeamModal";
+export { RegistrationBanner } from "./RegistrationBanner";

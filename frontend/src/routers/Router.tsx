@@ -21,7 +21,6 @@ import EvaluateTournamentPage from "@/pages/JuryPanel/EvaluateTournamentPage";
 import { NewsPage } from "@/pages/NewsPage/NewsPage";
 import { RegistrationPage } from "@/pages/RegistrationPage/RegistrationPage";
 
-
 export const Router = () => {
   return (
     <BrowserRouter>
@@ -39,20 +38,14 @@ export const Router = () => {
           <Route path="/tournaments" element={<TournamentsPage />} />
           <Route path="/tournament/:id" element={<TournamentPage />} />
 
-          <Route
-            path="/tournament/:id/register"
-            element={
-              <ProtectedRoute>
-                <RegistrationPage />
-              </ProtectedRoute>
-            }
-          />
-
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/support" element={<SupportPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/rules" element={<RulesPage />} />
+
+          <Route path="/organizer-panel" element={<OrganizerPanel />} />
+
           <Route path="/jury-panel">
             <Route
               index
@@ -71,26 +64,19 @@ export const Router = () => {
               }
             />
           </Route>
-          <Route path="/organizer-panel" element={<OrganizerPanel />} />
-          <Route
-            path="/jury-panel"
-            element={
-              <ProtectedRoute>
-                <JuryPanel />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/jury-panel/evaluate/:id"
-            element={
-              <ProtectedRoute>
-                <EvaluateTournamentPage />
-              </ProtectedRoute>
-            }
-          />
+
           <Route path="/news" element={<NewsPage />} />
           <Route path="*" element={<Page404 />} />
         </Route>
+
+        <Route
+          path="/tournament/:id/register"
+          element={
+            <ProtectedRoute>
+              <RegistrationPage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/role-request-form"

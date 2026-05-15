@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { io, Socket } from "socket.io-client";
 import { onIdTokenChanged } from "firebase/auth";
@@ -12,16 +12,11 @@ import { Router } from "./routers/Router";
 import { setUser, clearUser } from "./slices/user";
 import { getProfile } from "./api/requests/getProfile";
 
-const COOLDOWN_TIME = 3 * 60 * 1000;
-
 export const App = () => {
   const { t } = useTranslation("common");
   const dispatch = useDispatch();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [toastTheme, setToastTheme] = useState<"colored" | "dark">("colored");
-
-  const lastErrorTime = useRef(0);
-  const wasError = useRef(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -83,39 +78,6 @@ export const App = () => {
             reconnectionDelay: 5000,
           });
 
-          currentSocket.on("connect_error", () => {
-            const now = Date.now();
-            if (
-              now - lastErrorTime.current > COOLDOWN_TIME ||
-              !wasError.current
-            ) {
-              toast.error(
-                <div>
-                  <div className="font-bold mb-1">{t("errors.socket")}</div>
-                  <div className="text-[13px] opacity-90 leading-tight">
-                    {t("errors.socket_desc")}{" "}
-                  </div>
-                </div>,
-                { toastId: "socket-error" },
-              );
-              lastErrorTime.current = now;
-              wasError.current = true;
-            }
-          });
-
-          currentSocket.on("connect", () => {
-            toast.dismiss("socket-error");
-            if (wasError.current) {
-              toast.success(t("success.socket_restored"), {
-                toastId: "socket-success",
-              });
-              {
-              }
-              wasError.current = false;
-              lastErrorTime.current = 0;
-            }
-          });
-
           setSocket(currentSocket);
 
           if (window.location.pathname.startsWith("/auth")) {
@@ -134,7 +96,7 @@ export const App = () => {
       unsubscribeAuth();
       if (currentSocket) currentSocket.disconnect();
     };
-  }, [t, dispatch]);
+  }, [dispatch]);
 
   useNotificationsSocket(socket);
 

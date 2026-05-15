@@ -1,0 +1,10 @@
+{
+  "hero": {
+    "bg_text": "NEWS",
+    "title": "Events Journal",
+    "description": "The most important updates from the world of UGalaxy. Tournament announcements, volunteer stories, and platform updates."
+  },
+  "loading": "Loading news...",
+  "empty": "No news yet",
+  "read_more": "Read more"
+}
