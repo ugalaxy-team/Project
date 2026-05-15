@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { tournamentStatusByName } from "@/config/appConfig";
-import { type Tournament } from "../data/mockTournaments";
+import { type NormalizedTournament } from "../pages/TournamentsPage/TournamentsPage";
 import { cn } from "../utils/cn";
 import { Clock, UserPlus, Zap, Award, Calendar } from "lucide-react";
 
@@ -65,23 +65,37 @@ const TAG_COLORS: Record<string, string> = {
 export const TournamentCard = ({
   status,
   title,
-  tags,
+  tags = [],
   desc,
   teams,
   max,
   deadline,
-}: Tournament) => {
+}: NormalizedTournament) => {
   const { t } = useTranslation("tournaments");
 
-  const cfg = STATUS_CFG[status as keyof typeof STATUS_CFG];
-  const pct = Math.min(100, Math.round((teams / max) * 100));
-  const isFull = teams >= max;
-  const gradId = `grad-${title.replace(/\s+/g, "-")}`;
+  const safeStatus = (
+    STATUS_CFG[status as keyof typeof STATUS_CFG] ? status : "draft"
+  ) as keyof typeof STATUS_CFG;
+  const cfg = STATUS_CFG[safeStatus];
+
+  const pct = max > 0 ? Math.min(100, Math.round((teams / max) * 100)) : 0;
+  const isFull = teams >= max && max > 0;
+  const gradId = `grad-${title?.replace(/\s+/g, "-") || Math.random()}`;
 
   const StatusIcon = cfg.icon;
 
+  const formattedDeadline = deadline
+    ? new Date(deadline).toLocaleString("uk-UA", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "";
+
   return (
-    <div className="h-full bg-bg-card rounded-[28px] border-[1.5px] border-border shadow-sm flex flex-col overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(0,0,0,0.08)]">
+    <div className="h-full bg-bg-card rounded-[28px] border-[1.5px] border-border shadow-sm flex flex-col overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg">
       <div className="p-7 flex flex-col h-full">
         <div className="flex items-start gap-3.5 mb-3.5">
           <div className="shrink-0 w-11 h-11 flex items-center justify-center relative drop-shadow-md transition-transform duration-300">
@@ -97,33 +111,34 @@ export const TournamentCard = ({
                 d="M12 2l2.4 2.3 3.3-.4.8 3.2 2.9 1.7-1.8 2.8 1.8 2.8-2.9 1.7-.8 3.2-3.3-.4L12 22l-2.4-2.3-3.3.4-.8-3.2-2.9-1.7 1.8-2.8-1.8-2.8 2.9-1.7.8-3.2 3.3.4L12 2z"
               />
             </svg>
-
             <StatusIcon
               className="relative z-10 w-5 h-5 text-white"
               strokeWidth={2.5}
             />
           </div>
-          <h3 className="font-nunito text-[22px] font-extrabold leading-[1.2] flex-1 text-text-main line-clamp-2 min-h-[53px] transition-colors duration-300">
+          <h3 className="font-nunito text-[22px] font-extrabold leading-[1.2] flex-1 text-text-main line-clamp-2 transition-colors duration-300">
             {title}
           </h3>
         </div>
 
-        <div className="flex flex-wrap gap-1.5 mb-3.5 h-[28px]">
-          {tags.map((tag, i) => (
-            <span
-              key={i}
-              className={cn(
-                "px-3.5 py-1.5 rounded-full text-[12px] font-extrabold transition-colors duration-300",
-                TAG_COLORS[tag.type],
-              )}
-            >
-              {tag.label}
-            </span>
-          ))}
-        </div>
+        {tags && tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3.5">
+            {tags.map((tag, i) => (
+              <span
+                key={i}
+                className={cn(
+                  "px-3.5 py-1.5 rounded-full text-[12px] font-extrabold transition-colors duration-300",
+                  TAG_COLORS[tag.type] || TAG_COLORS.light,
+                )}
+              >
+                {tag.label}
+              </span>
+            ))}
+          </div>
+        )}
 
         <p
-          className="text-[15px] text-text-muted leading-relaxed font-semibold mb-6 line-clamp-3 min-h-[68px] transition-colors duration-300"
+          className="text-[15px] text-text-muted leading-relaxed font-semibold mb-6 line-clamp-3 transition-colors duration-300"
           title={desc}
         >
           {desc}
@@ -140,7 +155,7 @@ export const TournamentCard = ({
                 <span className="text-[13px] text-text-muted">/ {max}</span>
               </span>
             </div>
-            <div className="h-1.5 bg-border rounded-full overflow-hidden shadow-inner transition-colors duration-300">
+            <div className="h-1.5 bg-bg-body rounded-full overflow-hidden shadow-inner transition-colors duration-300">
               <div
                 className={cn(
                   "h-full rounded-full transition-all duration-500",
@@ -154,7 +169,7 @@ export const TournamentCard = ({
           <div className="flex justify-between items-center pt-4 border-t-[1.5px] border-border mb-5 transition-colors duration-300">
             <div className="flex items-center gap-1.5 text-[14px] font-bold text-text-muted">
               <Calendar className="w-4 h-4 opacity-65" strokeWidth={2.5} />
-              {t("tournament_card.until")} {deadline}
+              {t("tournament_card.until")} {formattedDeadline}
             </div>
             <span
               className={cn(

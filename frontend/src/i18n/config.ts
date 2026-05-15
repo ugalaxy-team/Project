@@ -15,6 +15,7 @@ import ukRules from "../locales/uk/rules.json";
 import ukProfile from "../locales/uk/profile.json";
 import ukRoleRequest from "../locales/uk/roleRequest.json";
 import ukJury from "../locales/uk/jury.json";
+import ukNews from "../locales/uk/news.json";
 
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
@@ -45,6 +46,7 @@ const resources = {
     profile: ukProfile,
     roleRequest: ukRoleRequest,
     jury: ukJury,
+    news: ukNews,
   },
   en: {
     common: enCommon,
