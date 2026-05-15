@@ -16,7 +16,22 @@ import { TournamentCard } from "../../components/TournamentCard";
 import { getAllTournaments } from "../../api/requests/getAllTournaments";
 import { cn } from "../../utils/cn";
 
-type TournamentStatus = "draft" | "registration" | "running" | "finished";
+export type TournamentStatus =
+  | "draft"
+  | "registration"
+  | "running"
+  | "finished";
+
+export interface NormalizedTournament {
+  id: number;
+  title: string;
+  desc: string;
+  status: TournamentStatus;
+  teams: number;
+  max: number;
+  deadline: string;
+  tags: any[];
+}
 
 const PER_PAGE = 15;
 
@@ -27,6 +42,33 @@ const FILTER_IDS: { id: TournamentStatus | "all"; dotColor?: string }[] = [
   { id: "running", dotColor: "bg-pink-accent" },
   { id: "finished", dotColor: "bg-text-muted" },
 ];
+
+const normalizeTournament = (item: any): NormalizedTournament => {
+  const rawStatus = item.status?.name || item.status_name || "draft";
+  const validStatuses: TournamentStatus[] = [
+    "draft",
+    "registration",
+    "running",
+    "finished",
+  ];
+
+  const safeStatus = validStatuses.includes(rawStatus as TournamentStatus)
+    ? (rawStatus as TournamentStatus)
+    : "draft";
+
+  const teamsCount = Array.isArray(item.teams) ? item.teams.length : 0;
+
+  return {
+    id: item.id,
+    title: item.title || "Турнір без назви",
+    desc: item.description || "",
+    status: safeStatus,
+    teams: teamsCount,
+    max: item.max_teams || 0,
+    deadline: item.reg_end || "",
+    tags: Array.isArray(item.tags) ? item.tags : [],
+  };
+};
 
 export const TournamentsPage = () => {
   const { t } = useTranslation("tournaments");
@@ -46,19 +88,17 @@ export const TournamentsPage = () => {
   const filteredData = useMemo(() => {
     if (!tournaments || !Array.isArray(tournaments)) return [];
 
-    return tournaments.filter((item: any) => {
+    return tournaments.map(normalizeTournament).filter((item) => {
       const matchesSearch = item.title
-        ? item.title.toLowerCase().includes(query.toLowerCase())
-        : false;
-
-      const itemStatus = item.status_name || item.status?.name;
-      const matchesFilter = filter === "all" || itemStatus === filter;
+        .toLowerCase()
+        .includes(query.toLowerCase());
+      const matchesFilter = filter === "all" || item.status === filter;
 
       return matchesSearch && matchesFilter;
     });
   }, [query, filter, tournaments]);
 
-  const totalPages = Math.ceil(filteredData.length / PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / PER_PAGE));
 
   const currentData = useMemo(() => {
     const start = (page - 1) * PER_PAGE;
@@ -99,7 +139,7 @@ export const TournamentsPage = () => {
 
       <div className="flex-grow w-full max-w-[1320px] mx-auto px-4 md:px-6 -mt-[50px] md:-mt-[70px] mb-20 relative z-30">
         <div className="mb-7 relative z-40">
-          <div className="bg-bg-card border-[1.5px] border-border rounded-2xl p-3 sm:p-4 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 shadow-[0_4px_24px_rgba(0,0,0,0.03)] transition-colors duration-300">
+          <div className="bg-bg-card border border-border rounded-2xl p-3 sm:p-4 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 shadow-sm transition-colors duration-300">
             <div className="relative shrink-0 w-full md:w-auto">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted pointer-events-none transition-colors duration-300" />
               <input
@@ -107,7 +147,7 @@ export const TournamentsPage = () => {
                 value={query}
                 onChange={handleSearch}
                 placeholder={t("search.placeholder")}
-                className="w-full md:w-[260px] pl-[44px] pr-4 py-3 bg-bg-body border-[1.5px] border-border rounded-xl text-[15px] text-text-main font-bold outline-none focus:border-primary focus:bg-bg-card transition-all placeholder:text-text-muted/60 placeholder:font-semibold"
+                className="w-full md:w-[260px] pl-[44px] pr-4 py-3 bg-bg-body border border-border rounded-xl text-[15px] text-text-main font-bold outline-none focus:border-primary focus:bg-bg-body transition-all placeholder:text-text-muted/60"
               />
             </div>
 
@@ -117,10 +157,10 @@ export const TournamentsPage = () => {
                   key={option.id}
                   onClick={() => handleFilterChange(option.id)}
                   className={cn(
-                    "px-4 py-2.5 rounded-xl text-[14px] font-bold transition-all duration-300 flex items-center justify-center gap-2 grow sm:grow-0",
+                    "px-4 py-2.5 rounded-xl text-[14px] font-bold transition-all duration-300 flex items-center justify-center gap-2 grow sm:grow-0 border",
                     filter === option.id
-                      ? "bg-primary text-white shadow-md shadow-primary/20"
-                      : "bg-bg-body text-text-muted hover:bg-bg-card hover:text-text-main border-[1px] border-border",
+                      ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
+                      : "bg-bg-card text-text-muted hover:bg-bg-body hover:text-text-main border-border",
                   )}
                 >
                   {option.dotColor && (
@@ -141,23 +181,26 @@ export const TournamentsPage = () => {
         </div>
 
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 min-h-[40vh]">
-            <Loader2 className="w-12 h-12 animate-spin text-primary opacity-50 mb-4" />
-            <p className="text-text-muted font-bold animate-pulse">
-              {t("states.loading")}
+          <div className="flex flex-col items-center justify-center py-20 min-h-[40vh] bg-bg-card border border-border rounded-3xl shadow-sm transition-colors duration-300">
+            <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
+            <p className="text-text-muted font-bold animate-pulse tracking-wide uppercase text-sm">
+              {t("states.loading", "Завантаження...")}
             </p>
           </div>
         ) : isError ? (
-          <div className="py-24 text-center bg-bg-card rounded-3xl border border-red-500/30 transition-colors mx-2 md:mx-0">
+          <div className="py-24 text-center bg-bg-card rounded-3xl border border-red-500/30 shadow-sm transition-colors mx-2 md:mx-0">
             <AlertTriangle
-              className="w-16 h-16 mx-auto mb-4 text-red-500/50"
+              className="w-16 h-16 mx-auto mb-4 text-red-500/80"
               strokeWidth={1.5}
             />
             <h3 className="font-nunito text-[24px] text-red-500 font-extrabold mb-2">
-              {t("states.error_title")}
+              {t("states.error_title", "Помилка завантаження")}
             </h3>
             <p className="text-[16px] font-semibold text-text-muted">
-              {t("states.error_subtitle")}
+              {t(
+                "states.error_subtitle",
+                "Не вдалося отримати турніри. Спробуйте пізніше.",
+              )}
             </p>
           </div>
         ) : (
@@ -180,7 +223,7 @@ export const TournamentsPage = () => {
                   exit="hidden"
                   className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
                 >
-                  {currentData.map((tournament: any) => (
+                  {currentData.map((tournament) => (
                     <motion.div
                       key={tournament.id}
                       variants={itemVariants}
@@ -197,17 +240,20 @@ export const TournamentsPage = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
-                  className="py-24 text-center col-span-full bg-bg-card rounded-3xl border border-border transition-colors duration-300 mx-2 md:mx-0"
+                  className="py-24 text-center col-span-full bg-bg-card rounded-3xl border border-border shadow-sm transition-colors duration-300 mx-2 md:mx-0"
                 >
                   <SearchX
-                    className="w-16 h-16 mx-auto mb-4 text-text-muted/30"
+                    className="w-16 h-16 mx-auto mb-4 text-text-muted/50"
                     strokeWidth={1.5}
                   />
                   <h3 className="font-nunito text-[24px] text-text-main font-extrabold mb-2 transition-colors duration-300">
-                    {t("empty.title")}
+                    {t("empty.title", "Нічого не знайдено")}
                   </h3>
                   <p className="text-[16px] font-semibold text-text-muted transition-colors duration-300 px-4">
-                    {t("empty.subtitle")}
+                    {t(
+                      "empty.subtitle",
+                      "Спробуйте змінити фільтри або пошуковий запит",
+                    )}
                   </p>
                 </motion.div>
               )}
@@ -218,7 +264,7 @@ export const TournamentsPage = () => {
                 <div className="flex items-center gap-4 sm:gap-6">
                   <button
                     onClick={() => {
-                      setPage((p) => p - 1);
+                      setPage((p) => Math.max(1, p - 1));
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
                     disabled={page === 1}
@@ -243,7 +289,7 @@ export const TournamentsPage = () => {
                             "w-[40px] h-[40px] rounded-xl flex items-center justify-center font-bold text-[15px] transition-all duration-300 border-[1.5px]",
                             page === p
                               ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
-                              : "bg-transparent text-text-muted border-transparent hover:bg-bg-card hover:border-border hover:text-text-main hover:shadow-sm",
+                              : "bg-bg-body text-text-muted border-transparent hover:bg-bg-card hover:border-border hover:text-text-main hover:shadow-sm",
                           )}
                         >
                           {p}
@@ -254,7 +300,7 @@ export const TournamentsPage = () => {
 
                   <button
                     onClick={() => {
-                      setPage((p) => p + 1);
+                      setPage((p) => Math.min(totalPages, p + 1));
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
                     disabled={page === totalPages}
