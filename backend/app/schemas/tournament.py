@@ -55,11 +55,15 @@ class TournamentCreate(TournamentBase):
         if drop_time(self.reg_start) < now:
             raise ValueError("Registration cannot start in the past")
         
-        if self.reg_end <= self.reg_start:
-            raise ValueError("Registration end must be later than start")
+        if drop_time(self.reg_end) <= drop_time(self.reg_start):
+            raise ValueError(
+                "Registration end time must be later than the registration start time."
+            )
 
         if self.start_date <= self.reg_end:
-            raise ValueError("Tournament must start after registration ends")
+            raise ValueError(
+                "Tournament must start at least 24 hours after the registration ends."
+            )
 
         return self
 
@@ -70,6 +74,8 @@ class TournamentUpdate(BaseModel):
     start_date: NaiveDatetime | None = None
     reg_start: NaiveDatetime | None = None
     reg_end: NaiveDatetime | None = None
+    min_people_in_team: int | None = Field(None, gt=0)  # Додано, бо dev-валідатор їх використовує
+    max_people_in_team: int | None = Field(None, gt=0)  # Додано, бо dev-валідатор їх використовує
     max_teams: int | None = Field(None, gt=0)
     juries: list[int | str] | None = Field(None, description="Jury ids")
 
@@ -78,22 +84,35 @@ class TournamentUpdate(BaseModel):
         now = drop_time(datetime.now(timezone.utc).replace(tzinfo=None))
 
         if self.reg_start is not None and drop_time(self.reg_start) < now:
-            raise ValueError("Registration start cannot be in the past")
+            raise ValueError("Registration start time cannot be in the past")
 
         if self.reg_end is not None and drop_time(self.reg_end) < now:
-            raise ValueError("Registration end cannot be in the past")
+            raise ValueError("Registration end time cannot be in the past")
 
         if self.start_date is not None and drop_time(self.start_date) < now:
-            raise ValueError("Tournament start cannot be in the past")
+            raise ValueError("Tournament start time cannot be in the past")
 
         if self.reg_start and self.reg_end:
             if self.reg_end <= self.reg_start:
-                raise ValueError("Registration end must be later than start")
+                raise ValueError(
+                    "Registration end time must be later than the start time"
+                )
 
         if self.start_date and self.reg_end:
             if self.start_date <= self.reg_end:
-                raise ValueError("Tournament must start after registration ends")
+                raise ValueError(
+                    "Tournament must start at least 24 hours after the registration ends"
+                )
 
+        return self
+
+    @model_validator(mode="after")
+    def validate_limits(self) -> "TournamentUpdate":
+        if self.min_people_in_team and self.max_people_in_team:
+            if self.min_people_in_team > self.max_people_in_team:
+                raise ValueError(
+                    "Minimum people in team cannot be greater than maximum people"
+                )
         return self
 
 
