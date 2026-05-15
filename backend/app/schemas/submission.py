@@ -29,6 +29,7 @@ class SubmissionCreate(BaseModel):
 class SubmissionModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int = Field(...)
     team_id: int = Field(...)
     task_id: int = Field(...)
     team: TeamPublic | None = None

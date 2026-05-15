@@ -1,4 +1,3 @@
-from datetime import datetime
 
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -25,7 +24,7 @@ class JuryAssignment(Base, PKMixin, DatetimeMixin):
 
     task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id", ondelete="CASCADE"))
     submission_id: Mapped[int] = mapped_column(
-        ForeignKey("submissions.team_id", ondelete="CASCADE"), nullable=False
+        ForeignKey("submissions.id", ondelete="CASCADE"), nullable=False
     )
     jury_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     status_id: Mapped[str] = mapped_column(
@@ -64,7 +63,7 @@ class SubmissionEvaluation(Base, PKMixin, DatetimeMixin):
         ForeignKey("jury_assignments.id", ondelete="CASCADE"), nullable=False
     )
     submission_id: Mapped[int] = mapped_column(
-        ForeignKey("submissions.team_id", ondelete="CASCADE"), nullable=False
+        ForeignKey("submissions.id", ondelete="CASCADE"), nullable=False
     )
     jury_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), nullable=False

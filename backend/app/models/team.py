@@ -29,7 +29,7 @@ class Team(Base, PKMixin):
         "TeamMember", foreign_keys="Team.captain_id", post_update=True
     )
 
-    submission: Mapped["Submission"] = relationship(
+    submissions: Mapped[list["Submission"]] = relationship(
         back_populates="team", cascade="all, delete-orphan"
     )
 
