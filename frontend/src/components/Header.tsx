@@ -144,7 +144,7 @@ export const Header = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden absolute top-full left-0 w-full bg-header-bg backdrop-blur-xl border-t border-white/10 shadow-2xl overflow-hidden origin-top"
+            className="lg:hidden absolute top-full left-0 w-full bg-header-bg backdrop-blur-xl border-t border-white/10 shadow-2xl origin-top"
           >
             <div className="flex flex-col px-6 py-8 gap-6">
               {NAV_ITEMS.map(({ path, key }) => (
@@ -172,7 +172,7 @@ export const Header = () => {
                 </div>
 
                 {user?.uid ? (
-                  <div onClick={() => setIsMobileMenuOpen(false)}>
+                  <div>
                     <ProfileDropdown
                       userRoles={user?.roles || []}
                       isMobile={true}
