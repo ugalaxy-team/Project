@@ -34,12 +34,17 @@ class NewsCategoryConfig(OptionConfig):
     categoryColor: str
 
 
+class RequirementOptionConfig(OptionConfig):
+    category_id: str
+
+
 class SharedAppConfig(BaseModel):
     roles: list[RoleConfig]
     tournament_statuses: list[OptionConfig]
     task_statuses: list[OptionConfig]
     jury_assignment_statuses: list[OptionConfig]
     categories: list[CategoryConfig]
+    requirement_options: list[RequirementOptionConfig] = []
     role_request_options: list[OptionConfig]
     news_categories: list[NewsCategoryConfig]
 
@@ -112,6 +117,12 @@ class Settings(BaseSettings):
     @property
     def ROLE_OPTIONS(self) -> list[dict[str, Any]]:
         return [role.model_dump() for role in self.SHARED_APP_CONFIG.roles]
+
+    @property
+    def REQUIREMENT_OPTIONS(self) -> list[dict[str, Any]]:
+        return [
+            opt.model_dump() for opt in self.SHARED_APP_CONFIG.requirement_options
+        ]
 
     @property
     def TOURNAMENT_STATUS_OPTIONS(self) -> list[dict[str, Any]]:
