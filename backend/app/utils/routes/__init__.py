@@ -10,3 +10,4 @@ from .role_requests import (
     reject_role_request_with_notification,
 )
 from .leaderboard import calculate_evaluation_total, get_task_leaderboard, calculate_evaluation_average
+from .jury import finish_evaluation

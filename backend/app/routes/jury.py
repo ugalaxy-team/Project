@@ -11,7 +11,10 @@ from app.dependencies import (
     current_user_dependency,
     organizer_or_admin_dependency,
     assigned_jury_dependency,
-    task_with_closed_submissions_status_dependency
+    closed_submission_task_dependency,
+    get_organizer_or_admin,
+    get_non_finished_tournament,
+    non_finished_tournament_dependency
 )
 from app.models import (
     JuryAssignment,
@@ -30,9 +33,10 @@ from app.schemas import (
     SubmissionEvaluationUpdate,
     SubmissionEvaluationPublic,
     TaskPublic,
+    TournamentPublic
 )
 from app.utils import get_task_by_tournament, get_tournament, get_assignment, get_criterion_score, get_criterion_map,\
-get_task_leaderboard, calculate_evaluation_average
+get_task_leaderboard, calculate_evaluation_average, finish_evaluation
 
 router = APIRouter(tags=["jury"])
 
@@ -56,7 +60,7 @@ async def jury_tasks(current_user: CurrentUserDep, session: SessionDep):
 @router.get(
     "/jury/tasks/{task_id}/assignments/",
     response_model=list[JuryAssignmentPublic],
-    dependencies=[task_with_closed_submissions_status_dependency],
+    dependencies=[closed_submission_task_dependency],
 )
 async def jury_task_assignments(
     task_id: int, current_user: CurrentUserDep, session: SessionDep
@@ -187,7 +191,7 @@ async def update_evaluation(
 @router.post(
     "/tournaments/{tournament_id}/tasks/{task_id}/assignments/generate/",
     response_model=list[JuryAssignmentPublic],
-    dependencies=[current_user_dependency, organizer_or_admin_dependency, task_with_closed_submissions_status_dependency],
+    dependencies=[current_user_dependency, organizer_or_admin_dependency, closed_submission_task_dependency],
 )
 async def generate_jury_assignments(
     tournament_id: int,
@@ -271,7 +275,7 @@ async def generate_jury_assignments(
 @router.get(
     "/tournaments/{tournament_id}/tasks/{task_id}/assignments/",
     response_model=list[JuryAssignmentPublic],
-    dependencies=[current_user_dependency, organizer_or_admin_dependency, task_with_closed_submissions_status_dependency],
+    dependencies=[current_user_dependency, organizer_or_admin_dependency, closed_submission_task_dependency],
 )
 async def get_task_assignments(
     tournament_id: int,
@@ -305,46 +309,68 @@ async def get_task_assignments(
 @router.post(
     "/tournaments/{tournament_id}/tasks/{task_id}/finish-evaluation/",
     response_model=TaskPublic,
-    dependencies=[organizer_or_admin_dependency, task_with_closed_submissions_status_dependency],
+    dependencies=[closed_submission_task_dependency],
 )
-async def finish_evaluation(
+async def finish_task_evaluation(
     tournament_id: int,
     task_id: int,
     current_user: CurrentUserDep,
     session: SessionDep,
 ):
+    # Works for both jury who has some assignments and admin/organizer
     task = await get_task_by_tournament(tournament_id, task_id, session)
-
-    jury_assignmnents = (
-        (
-            await session.execute(
-                select(JuryAssignment).where(
-                    JuryAssignment.task_id == task.id,
-                    JuryAssignment.jury_id == current_user.id,
+    await get_non_finished_tournament(task.tournament.id, session)
+    jury_assignmnents = []
+    try: 
+        await get_organizer_or_admin(tournament_id, current_user, session)
+        jury_assignmnents = (
+            (
+                await session.execute(
+                    select(JuryAssignment).where(
+                        JuryAssignment.task_id == task.id,
+                    )
                 )
             )
+            .scalars()
+            .all()
         )
-        .scalars()
-        .all()
-    )
+    except HTTPException as e:
+        if e.status_code == status.HTTP_403_FORBIDDEN:
+            jury_assignmnents = (
+                (
+                    await session.execute(
+                        select(JuryAssignment).where(
+                            JuryAssignment.task_id == task.id,
+                            JuryAssignment.jury_id == current_user.id,
+                        )
+                    )
+                )
+                .scalars()
+                .all()
+            )
 
-    for a in jury_assignmnents:
-        a.status_id = settings.JURY_ASSIGNMENT_STATUS_NAMES.REVIEWED
+    return await finish_evaluation(task, jury_assignmnents, session)
 
+
+
+@router.post(
+    "/tournaments/{tournament_id}/finish-evaluation/",
+    response_model=TournamentPublic,
+    dependencies=[organizer_or_admin_dependency, current_user_dependency, non_finished_tournament_dependency],
+)
+async def finish_tournament_evaluation(
+    tournament_id: int,
+    session: SessionDep,
+):
+    tournament = await get_tournament(tournament_id, session)
+
+    for t in tournament.tasks:
+        await finish_evaluation(t, t.jury_assignments, session)
+
+    tournament.status_id = settings.TOURNAMENT_STATUS_NAMES.FINISHED
     await session.commit()
-    await session.refresh(task, ["jury_assignments"])
-
-    nonevaluated_assignments = [
-        a
-        for a in task.jury_assignments
-        if a.status.name != settings.JURY_ASSIGNMENT_STATUS_NAMES.REVIEWED
-    ]
-    # If all the submissions were evaluated, mark the task as evaluated
-    if len(nonevaluated_assignments) == 0:
-        task.status_id = settings.TASK_STATUS_NAMES.EVALUATED
-    await session.commit()
-    await session.refresh(task)
-    return task
+    await session.refresh(tournament, ["status"])
+    return tournament
 
 # Leaderboard routes
 

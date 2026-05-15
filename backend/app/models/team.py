@@ -24,6 +24,7 @@ class Team(Base, PKMixin):
         back_populates="team",
         foreign_keys="TeamMember.team_id",
         cascade="all, delete-orphan",
+        lazy="selectin",
     )
     captain: Mapped["TeamMember"] = relationship(
         "TeamMember", foreign_keys="Team.captain_id", post_update=True
