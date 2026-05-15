@@ -1,20 +1,19 @@
 from fastapi import status, HTTPException
 from fastapi.routing import APIRouter
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-from sqlalchemy.exc import IntegrityError
 
 from app.dependencies import SessionDep
-from app.models import Submission, SubmissionUrl, SubmissionUrlOption, Team
-from app.schemas import SubmissionModel, SubmissionUrlOptionModel, SubmissionUrlModel
+from app.models import Submission, SubmissionUrl
+from app.schemas import SubmissionModel
 
 router = APIRouter(prefix="/submissions", tags=["submissions"])
 
 
-async def get_submission(team_id: int, session: SessionDep) -> Submission:
+async def get_submission(submission_id: int, session: SessionDep) -> Submission:
     statement = (
         select(Submission)
-        .where(Submission.team_id == team_id)
+        .where(Submission.id == submission_id)
         .options(selectinload(Submission.urls).selectinload(SubmissionUrl.url))
     )
     result = await session.execute(statement)
@@ -35,9 +34,9 @@ async def submissions(session: SessionDep):
     return users.scalars().all()
 
 
-@router.get("/{team_id}/", response_model=SubmissionModel, status_code=status.HTTP_200_OK)
-async def submission(team_id: int, session: SessionDep):
-    return await get_submission(team_id, session)
+@router.get("/{submission_id}/", response_model=SubmissionModel, status_code=status.HTTP_200_OK)
+async def submission(submission_id: int, session: SessionDep):
+    return await get_submission(submission_id, session)
 
 
 # Not ready yet
@@ -69,15 +68,15 @@ async def submission(team_id: int, session: SessionDep):
 
 
 # @router.patch(
-#     "/{team_id}/", response_model=SubmissionModel, status_code=status.HTTP_200_OK
+#     "/{submission_id}/", response_model=SubmissionModel, status_code=status.HTTP_200_OK
 # )
 # async def update_submission():
 #     pass
 
 
-@router.delete("/{team_id}/", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_submission(team_id: int, session: SessionDep):
-    submission = await get_submission(team_id, session)
+@router.delete("/{submission_id}/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_submission(submission_id: int, session: SessionDep):
+    submission = await get_submission(submission_id, session)
 
     await session.delete(submission)
     await session.commit()
