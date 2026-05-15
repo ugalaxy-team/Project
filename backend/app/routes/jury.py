@@ -32,7 +32,7 @@ from app.schemas import (
     TaskPublic,
 )
 from app.utils import get_task_by_tournament, get_tournament, get_assignment, get_criterion_score, get_criterion_map,\
-get_task_leaderboard
+get_task_leaderboard, calculate_evaluation_average
 
 router = APIRouter(tags=["jury"])
 
@@ -380,11 +380,8 @@ async def tournament_leaderboard(tournament_id: int, session: SessionDep):
                 continue
             existing.total_score = round(existing.total_score + entry.average_score, 2)
             
-            existing.average_score = round(
-                existing.total_score
-                / max(1, len([t for t in tournament.tasks if t.status_id == "evaluated"])),
-                2,
-            )
+            existing.average_score = calculate_evaluation_average([t for t in tournament.tasks if t.status_id == "evaluated"])
+            
     return sorted(
         team_scores.values(), key=lambda item: (-item.total_score, item.team_name.lower())
     )

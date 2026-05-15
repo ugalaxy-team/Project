@@ -20,6 +20,9 @@ def calculate_evaluation_total(evaluation: SubmissionEvaluation) -> float:
         total_score += (item.score / item.criterion.max_score) * item.criterion.weight
     return round(total_score, 2)
 
+def calculate_evaluation_average(totals: list[float]) -> float:
+    return round(sum(totals) / len(totals), 2)
+
 
 async def get_task_leaderboard(
     task_id: int, session: SessionDep
@@ -41,7 +44,7 @@ async def get_task_leaderboard(
             calculate_evaluation_total(evaluation) for evaluation in submission.evaluations
         ]
         if totals:
-            average_score = round(sum(totals) / len(totals), 2)
+            average_score = calculate_evaluation_average(totals)
             total_score = round(sum(totals), 2)
         else:
             average_score = 0.0
