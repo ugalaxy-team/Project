@@ -41,6 +41,7 @@ class BaseFactory(SQLAlchemyModelFactory):
 class BaseOptionFactory(BaseFactory):
     class Meta:
         abstract = True
+        sqlalchemy_get_or_create = ('name',)
 
     name = Faker("name")
     display_name = factory.LazyAttribute(lambda f: f.name.upper())
@@ -87,6 +88,7 @@ class RoleFactory(BaseFactory):
 class TournamentStatusOptionFactory(BaseOptionFactory):
     class Meta:
         model = TournamentStatusOption
+        sqlalchemy_get_or_create = ('name',)
 
     name = factory.Iterator(list(settings.TOURNAMENT_STATUS_NAMES.__dict__.values()))
 
@@ -277,9 +279,7 @@ class JuryAssignmentFactory(BaseDatetimeFactory):
     submission = factory.SubFactory(SubmissionFactory)
     task = factory.SelfAttribute("submission.task")
     jury = factory.SubFactory(UserFactory)
-    status_id = factory.Iterator(
-        [option["name"] for option in settings.JURY_ASSIGNMENT_STATUS_OPTIONS]
-    )
+    status = factory.SubFactory(JuryAssignmentStatusOptionFactory)
 
     @classmethod
     def _adjust_kwargs(cls, **kwargs):

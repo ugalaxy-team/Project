@@ -11,6 +11,7 @@ from app.dependencies import (
     current_user_dependency,
     organizer_or_admin_dependency,
     assigned_jury_dependency,
+    task_with_closed_submissions_status_dependency
 )
 from app.models import (
     JuryAssignment,
@@ -30,7 +31,7 @@ from app.schemas import (
     SubmissionEvaluationPublic,
     TaskPublic,
 )
-from app.utils import get_task_by_tournament, get_tournament, get_assignment, get_criterion
+from app.utils import get_task_by_tournament, get_tournament, get_assignment, get_criterion_score
 
 router = APIRouter(tags=["jury"])
 
@@ -90,7 +91,7 @@ async def _task_leaderboard(
 
 
 @router.get(
-    "/jury/tasks", response_model=list[TaskPublic], dependencies=[current_user_dependency]
+    "/jury/tasks/", response_model=list[TaskPublic], dependencies=[current_user_dependency]
 )
 async def jury_tasks(current_user: CurrentUserDep, session: SessionDep):
     statement = (
@@ -107,16 +108,21 @@ async def jury_tasks(current_user: CurrentUserDep, session: SessionDep):
 
 
 @router.get(
-    "/jury/tasks/{task_id}/assignments",
+    "/jury/tasks/{task_id}/assignments/",
     response_model=list[JuryAssignmentPublic],
-    dependencies=[current_user_dependency],
+    dependencies=[task_with_closed_submissions_status_dependency],
 )
 async def jury_task_assignments(
     task_id: int, current_user: CurrentUserDep, session: SessionDep
 ):
     statement = (
         select(JuryAssignment)
-        .where(JuryAssignment.task_id == task_id, JuryAssignment.jury_id == current_user.id)
+        .join(JuryAssignment.task)
+        .where(
+            JuryAssignment.task_id == task_id, 
+            JuryAssignment.jury_id == current_user.id,
+            Task.status_id == settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED
+        )
         .options(
             selectinload(JuryAssignment.status),
             selectinload(JuryAssignment.task).selectinload(Task.criteria),
@@ -138,17 +144,19 @@ async def jury_task_assignments(
 
 
 @router.get(
-    "/jury/assignments/{assignment_id}",
+    "/jury/assignments/{assignment_id}/",
     response_model=JuryAssignmentPublic,
     dependencies=[current_user_dependency, assigned_jury_dependency],
 )
 async def jury_assignment_detail(assignment_id: int, session: SessionDep):
     assignment = await get_assignment(assignment_id, session)
+    if assignment.task.status_id != settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED:
+        raise HTTPException(status.HTTP_400_NOT_FOUND, detail="Task of this assignment still accepts submissions")
     return assignment
 
 
 @router.post(
-    "/jury/assignments/{assignment_id}/evaluation",
+    "/jury/assignments/{assignment_id}/evaluation/",
     response_model=SubmissionEvaluationPublic,
     status_code=status.HTTP_201_CREATED,
     dependencies=[current_user_dependency, assigned_jury_dependency],
@@ -189,7 +197,7 @@ async def create_evaluation(
 
 
 @router.patch(
-    "/jury/assignments/{assignment_id}/evaluation",
+    "/jury/assignments/{assignment_id}/evaluation/",
     response_model=SubmissionEvaluationPublic,
     dependencies=[current_user_dependency, assigned_jury_dependency],
 )
@@ -205,9 +213,8 @@ async def update_evaluation(
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Evaluation not found")
 
     criterions = _criterion_map(assignment.task)
-
-    for item in payload.pop("criterion_scores"):
-        criterion = await get_criterion(item["criterion_id"], session)
+    for item in payload.pop("criterion_scores", []):
+        criterion = await get_criterion_score(item["criterion_id"], session)
         if item["score"] > criterions[item["criterion_id"]].max_score:
             raise HTTPException(
                 status.HTTP_400_BAD_REQUEST,
@@ -215,7 +222,7 @@ async def update_evaluation(
             )
         criterion.score = item["score"]
 
-    if update_data:
+    if payload:
         result = await session.execute(
             update(SubmissionEvaluation)
             .where(SubmissionEvaluation.id == assignment.evaluation.id)
@@ -233,9 +240,9 @@ async def update_evaluation(
 
 
 @router.post(
-    "/tournaments/{tournament_id}/tasks/{task_id}/jury-assignments/generate",
+    "/tournaments/{tournament_id}/tasks/{task_id}/assignments/generate/",
     response_model=list[JuryAssignmentPublic],
-    dependencies=[current_user_dependency, organizer_or_admin_dependency],
+    dependencies=[current_user_dependency, organizer_or_admin_dependency, task_with_closed_submissions_status_dependency],
 )
 async def generate_jury_assignments(
     tournament_id: int,
@@ -291,7 +298,7 @@ async def generate_jury_assignments(
             juries,
             key=lambda jury: (jury_loads[jury.id], random.random()),
         )
-        selected = available[: task.min_reviews_per_submission]
+        selected = available[:task.min_reviews_per_submission]
         for jury in selected:
             assignment = JuryAssignment(
                 task_id=task.id,
@@ -317,14 +324,13 @@ async def generate_jury_assignments(
 
 
 @router.get(
-    "/tournaments/{tournament_id}/tasks/{task_id}/jury-assignments",
+    "/tournaments/{tournament_id}/tasks/{task_id}/assignments/",
     response_model=list[JuryAssignmentPublic],
-    dependencies=[current_user_dependency, organizer_or_admin_dependency],
+    dependencies=[current_user_dependency, organizer_or_admin_dependency, task_with_closed_submissions_status_dependency],
 )
 async def get_task_assignments(
     tournament_id: int,
     task_id: int,
-    current_user: CurrentUserDep,
     session: SessionDep,
 ):
     task = await get_task_by_tournament(tournament_id, task_id, session)
@@ -352,9 +358,9 @@ async def get_task_assignments(
 
 
 @router.post(
-    "/tournaments/{tournament_id}/tasks/{task_id}/finish-evaluation",
+    "/tournaments/{tournament_id}/tasks/{task_id}/finish-evaluation/",
     response_model=TaskPublic,
-    dependencies=[organizer_or_admin_dependency],
+    dependencies=[organizer_or_admin_dependency, task_with_closed_submissions_status_dependency],
 )
 async def finish_evaluation(
     tournament_id: int,
@@ -363,11 +369,6 @@ async def finish_evaluation(
     session: SessionDep,
 ):
     task = await get_task_by_tournament(tournament_id, task_id, session)
-    if task.status_id != settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED:
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST,
-            detail="The submissions are still open to be received!",
-        )
 
     jury_assignmnents = (
         (
@@ -406,7 +407,7 @@ async def finish_evaluation(
 
 
 @router.get(
-    "/tournaments/{tournament_id}/tasks/{task_id}/leaderboard",
+    "/tournaments/{tournament_id}/tasks/{task_id}/leaderboard/",
     response_model=list[EvaluationLeaderboardEntry],
 )
 async def task_leaderboard(tournament_id: int, task_id: int, session: SessionDep):
@@ -421,7 +422,7 @@ async def task_leaderboard(tournament_id: int, task_id: int, session: SessionDep
 
 
 @router.get(
-    "/tournaments/{tournament_id}/leaderboard",
+    "/tournaments/{tournament_id}/leaderboard/",
     response_model=list[EvaluationLeaderboardEntry],
 )
 async def tournament_leaderboard(tournament_id: int, session: SessionDep):
