@@ -4,11 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import TournamentCard from "./components/TournamentCard";
-import { JuryPanelShell } from "./components/JuryPanelShell";
+import { Hero } from "@/components/Hero";
+import { Stars } from "@/components/Stars"
 
 const JuryPanel = () => {
   const { t } = useTranslation("jury");
   const user = auth.currentUser;
+
   const { data: tasks = [], isLoading, error } = useQuery({
     queryKey: ["jury-tasks"],
     queryFn: async () => {
@@ -18,63 +20,73 @@ const JuryPanel = () => {
     enabled: !!user,
   });
 
+  const heroTitle = t("panel.title");
+  const heroDescription = t("panel.description");
+
   return (
-    <JuryPanelShell
-      eyebrow={t("panel.eyebrow")}
-      title={t("panel.title")}
-      description={t("panel.description")}
-    >
-      {!isLoading && !error && tasks.length > 0 ? (
-        <div className="mb-8 flex flex-col gap-1 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wide text-text-muted">{t("panel.assignments_label")}</p>
-            <p className="mt-1 text-2xl font-black tabular-nums text-text-main">{tasks.length}</p>
-            <p className="text-sm text-text-muted">{t("panel.rounds_ready", { count: tasks.length })}</p>
+    <div className="relative min-h-screen pb-32">
+      <div className="relative z-20">
+        <div className="relative top-5"><Stars/></div>
+        <Hero
+          bgText="JURY"
+          title={heroTitle}
+          description={heroDescription}
+        />
+      </div>
+
+      <main className="container mx-auto px-5 pb-20 -mt-10 relative z-40">
+        {isLoading && (
+          <div
+            className="rounded-3xl border border-border bg-bg-body/80 p-8 md:p-12 shadow-xl backdrop-blur-md"
+            role="status"
+            aria-busy="true"
+          >
+            <div className="flex animate-pulse flex-col gap-6">
+              <div className="h-12 w-1/3 rounded-xl bg-border" />
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-64 rounded-2xl bg-border/50" />
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      ) : null}
+        )}
 
-      {isLoading && (
-        <div
-          className="rounded-2xl border border-border bg-bg-body/80 p-8 md:p-10"
-          role="status"
-          aria-busy="true"
-          aria-label={t("panel.loading_aria")}
-        >
-          <div className="flex animate-pulse flex-col gap-4">
-            <div className="h-4 w-40 rounded-full bg-border" />
-            <div className="h-10 w-2/3 max-w-md rounded-xl bg-border" />
-            <div className="h-3 w-full max-w-lg rounded-full bg-border/70" />
+        {error && (
+          <div
+            className="rounded-3xl border border-red-200 bg-red-50 p-8 text-red-800 dark:border-red-900/30 dark:bg-red-950/20 dark:text-red-200 md:p-12"
+            role="alert"
+          >
+            <h2 className="text-2xl font-black uppercase tracking-tight">
+              {t("panel.error_title")}
+            </h2>
+            <p className="mt-3 text-lg opacity-80">{t("panel.error_hint")}</p>
           </div>
-          <p className="mt-6 text-sm font-semibold text-text-muted">{t("panel.loading_hint")}</p>
-        </div>
-      )}
+        )}
 
-      {error && (
-        <div
-          className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200 md:p-8"
-          role="alert"
-        >
-          <p className="font-bold">{t("panel.error_title")}</p>
-          <p className="mt-2 text-sm opacity-90">{t("panel.error_hint")}</p>
-        </div>
-      )}
+        {!isLoading && !error && tasks.length === 0 && (
+          <div className="rounded-3xl border-2 border-dashed border-border bg-bg-body/50 px-6 py-20 text-center md:px-10">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-border/30 text-4xl">
+              ☕
+            </div>
+            <h2 className="text-2xl font-black text-text-main uppercase">
+              {t("panel.empty_title")}
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-text-muted text-lg">
+              {t("panel.empty_description")}
+            </p>
+          </div>
+        )}
 
-      {!isLoading && !error && tasks.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border bg-bg-body/50 px-6 py-12 text-center md:px-10 md:py-16">
-          <p className="text-lg font-bold text-text-main">{t("panel.empty_title")}</p>
-          <p className="mx-auto mt-2 max-w-md text-sm text-text-muted">{t("panel.empty_description")}</p>
-        </div>
-      ) : null}
-
-      {!isLoading && !error && tasks.length > 0 ? (
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {tasks.map((task) => (
-            <TournamentCard key={task.id} task={task} />
-          ))}
-        </div>
-      ) : null}
-    </JuryPanelShell>
+        {!isLoading && !error && tasks.length > 0 && (
+          <div id="tasks" className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {tasks.map((task) => (
+              <TournamentCard key={task.id} task={task} />
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
   );
 };
 
