@@ -106,6 +106,7 @@ async def test_jury_assignment_draft(create, client, db_session):
     
     app.dependency_overrides.pop(get_current_user)
 
+@pytest.mark.slow
 async def test_update_evaluation(create, client, db_session):
     jury = await create(UserFactory)
     t = await create(TaskFactory)
@@ -158,6 +159,7 @@ async def test_generate_assignments_no_submissions(create, client, db_session):
 
     app.dependency_overrides.pop(get_current_user)
 
+@pytest.mark.slow
 async def test_generate_assignments_already_generated(create, client, db_session):
     organizer = await create(RoleFactory, name=settings.ROLE_NAMES.ORGANIZER)
     creator = await create(UserFactory, roles=[organizer])
@@ -198,6 +200,7 @@ async def test_generate_assignments_no_juries(create, client, db_session):
 
 # Integration 
 
+@pytest.mark.slow
 async def test_generate_assignments_and_submit_evaluation(create, client, db_session):
     admin_role = await create(RoleFactory, name=settings.ROLE_NAMES.ADMIN)
     organizer = await create(UserFactory, roles=[admin_role])
