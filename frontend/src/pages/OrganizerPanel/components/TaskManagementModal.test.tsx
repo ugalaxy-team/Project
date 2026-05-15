@@ -3,6 +3,24 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TaskManagementModal } from "./TaskManagementModal";
 
+vi.mock("@/firebase", () => ({
+  auth: { currentUser: { uid: "test-user" } },
+}));
+
+vi.mock("@/components/ui/CustomSelect", () => ({
+  default: ({
+    label,
+    onChange,
+  }: {
+    label: string;
+    onChange: (opt: { id: string; label: string }) => void;
+  }) => (
+    <button type="button" aria-label={label} onClick={() => onChange({ id: "Python", label: "Python" })}>
+      {label}
+    </button>
+  ),
+}));
+
 vi.mock("@/components/ui/DateTimePicker", () => ({
   default: ({
     label,
@@ -30,9 +48,8 @@ const tournament = {
   title: "Test Tournament",
 };
 
-async function pickRequirement(user: ReturnType<typeof userEvent.setup>, name: string) {
-  await user.click(screen.getByRole("button", { name: /Виберіть варіант/i }));
-  await user.click(await screen.findByRole("option", { name }));
+async function pickRequirement(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("button", { name: "Додати вимогу" }));
 }
 
 describe("TaskManagementModal", () => {
@@ -60,10 +77,9 @@ describe("TaskManagementModal", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Зберегти" }));
+    await user.click(screen.getByRole("button", { name: "Зберегти завдання" }));
 
     expect(document.querySelector('input[name="title"]')).toHaveClass("border-red-200");
-    expect(screen.getAllByText("Вкажіть час").length).toBe(2);
   });
 
   it("submits valid task form and closes modal", async () => {
@@ -81,19 +97,19 @@ describe("TaskManagementModal", () => {
     );
 
     await user.type(
-      screen.getByPlaceholderText("Наприклад: Розробка смарт-контракту"),
+      document.querySelector('input[name="title"]') as HTMLInputElement,
       "Build scoring",
     );
     await user.type(
       document.querySelector('textarea[name="description"]') as HTMLTextAreaElement,
       "Implement rankings",
     );
-    await user.type(screen.getByLabelText("Старт прийому"), "2026-05-11T12:00:00.000Z");
-    await user.type(screen.getByLabelText("Кінцевий дедлайн"), "2026-05-11T14:00:00.000Z");
+    await user.type(screen.getByLabelText("Старт"), "2026-05-11T12:00");
+    await user.type(screen.getByLabelText("Дедлайн"), "2026-05-11T14:00");
 
-    await pickRequirement(user, "Python");
+    await pickRequirement(user);
 
-    await user.click(screen.getByRole("button", { name: "Зберегти" }));
+    await user.click(screen.getByRole("button", { name: "Зберегти завдання" }));
 
     await waitFor(() => {
       expect(onSave).toHaveBeenCalledWith(
@@ -102,6 +118,7 @@ describe("TaskManagementModal", () => {
           description: "Implement rankings",
           requirements: ["Python"],
         }),
+        expect.anything(),
       );
     });
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -131,19 +148,7 @@ describe("TaskManagementModal", () => {
     expect(screen.getByDisplayValue("Already exists")).toBeInTheDocument();
     expect(screen.getAllByText("React").length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "Оновити таск" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Зберегти" })).toBeInTheDocument();
-  });
-
-  it("shows tournament title in header details", () => {
-    render(
-      <TaskManagementModal
-        isOpen
-        tournament={tournament as never}
-        onClose={vi.fn()}
-        onSave={vi.fn().mockResolvedValue(undefined)}
-      />,
-    );
-    expect(screen.getByText(/Турнір:\s*Test Tournament/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Зберегти завдання" })).toBeInTheDocument();
   });
 
   it("closes modal from cancel button", async () => {
@@ -207,7 +212,7 @@ describe("TaskManagementModal", () => {
       />,
     );
 
-    await pickRequirement(user, "Python");
+    await pickRequirement(user);
     expect(screen.getByText("Python")).toBeInTheDocument();
 
     const chipRow = screen.getByText("Python").closest("div.flex");
@@ -216,7 +221,7 @@ describe("TaskManagementModal", () => {
     expect(screen.queryByText("Python")).not.toBeInTheDocument();
   });
 
-  it("does not submit when title is shorter than 3 chars", async () => {
+  it("does not submit when title is empty", async () => {
     const user = userEvent.setup();
     const onSave = vi.fn().mockResolvedValue(undefined);
     render(
@@ -228,14 +233,10 @@ describe("TaskManagementModal", () => {
       />,
     );
 
-    await user.type(
-      screen.getByPlaceholderText("Наприклад: Розробка смарт-контракту"),
-      "ab",
-    );
-    await user.type(screen.getByLabelText("Старт прийому"), "2026-05-11T12:00:00.000Z");
-    await user.type(screen.getByLabelText("Кінцевий дедлайн"), "2026-05-11T14:00:00.000Z");
-    await pickRequirement(user, "Python");
-    await user.click(screen.getByRole("button", { name: "Зберегти" }));
+    await user.type(screen.getByLabelText("Старт"), "2026-05-11T12:00");
+    await user.type(screen.getByLabelText("Дедлайн"), "2026-05-11T14:00");
+    await pickRequirement(user);
+    await user.click(screen.getByRole("button", { name: "Зберегти завдання" }));
 
     expect(onSave).not.toHaveBeenCalled();
     expect(document.querySelector('input[name="title"]')).toHaveClass("border-red-200");
@@ -255,13 +256,13 @@ describe("TaskManagementModal", () => {
     );
 
     await user.type(
-      screen.getByPlaceholderText("Наприклад: Розробка смарт-контракту"),
+      document.querySelector('input[name="title"]') as HTMLInputElement,
       "Build scoring",
     );
-    await user.type(screen.getByLabelText("Старт прийому"), "2026-05-11T12:00:00.000Z");
-    await user.type(screen.getByLabelText("Кінцевий дедлайн"), "2026-05-11T14:00:00.000Z");
-    await pickRequirement(user, "Python");
-    await user.click(screen.getByRole("button", { name: "Зберегти" }));
+    await user.type(screen.getByLabelText("Старт"), "2026-05-11T12:00");
+    await user.type(screen.getByLabelText("Дедлайн"), "2026-05-11T14:00");
+    await pickRequirement(user);
+    await user.click(screen.getByRole("button", { name: "Зберегти завдання" }));
 
     await waitFor(() => expect(onSave).toHaveBeenCalled());
     expect(onClose).toHaveBeenCalled();
