@@ -7,7 +7,8 @@ import {
   Calendar, 
   Clock, 
   Trash2, 
-  Pencil, 
+  Pencil,
+  Users,
   ClipboardList, 
   LayoutGrid,
   Trophy
@@ -21,6 +22,7 @@ interface TasksTabProps {
   onCreateTaskClick: (tournament: Tournament) => void;
   onEditTaskClick: (task: Task) => void;
   onDeleteTaskClick: (taskId: number) => void;
+  onGenerateAssignmentsClick?: (taskId: number) => void;
   onSwitchTab: () => void;
 }
 
@@ -32,6 +34,7 @@ const TasksTab = ({
   onCreateTaskClick,
   onEditTaskClick,
   onDeleteTaskClick,
+  onGenerateAssignmentsClick,
   onSwitchTab,
 }: TasksTabProps) => {
   if (tournaments.length === 0) {
@@ -172,6 +175,13 @@ const TasksTab = ({
                     </div>
 
                     <div className="flex flex-row md:flex-col gap-2 self-center">
+                      <button
+                        onClick={() => onGenerateAssignmentsClick?.(task.id)}
+                        title="Згенерувати розподіл журі"
+                        className="p-3 bg-white border border-slate-200 hover:border-emerald-400 hover:text-emerald-600 text-slate-400 rounded-xl transition-all shadow-sm active:scale-90"
+                      >
+                        <Users size={18} />
+                      </button>
                       <button
                         onClick={() => onEditTaskClick(task)}
                         className="p-3 bg-white border border-slate-200 hover:border-indigo-400 hover:text-indigo-600 text-slate-400 rounded-xl transition-all shadow-sm active:scale-90"

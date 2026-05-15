@@ -10,6 +10,7 @@ import { getTasks } from "@/api/requests/getTasks";
 import { createTask } from "@/api/requests/createTask";
 import { updateTask } from "@/api/requests/updateTask";
 import { deleteTask } from "@/api/requests/deleteTask";
+import { generateJuryAssignments } from "@/api/requests/generateJuryAssignments";
 import { EditTournamentModal } from "./EditTournamentModal";
 import { CreateTournamentModal } from "./CreateTournamentModal";
 import { auth } from "@/firebase";
@@ -184,6 +185,16 @@ const OrganizerPanel = () => {
                     onCreateTaskClick={(t) => { setSelectedTournament(t); setEditingTask(null); setIsTaskModalOpen(true); }}
                     onEditTaskClick={(task) => { setEditingTask(task); setIsTaskModalOpen(true); }}
                     onDeleteTaskClick={(id) => selectedTournament && deleteTaskMutation.mutateAsync({ tournamentId: selectedTournament.id, taskId: id, user: auth.currentUser })}
+                    onGenerateAssignmentsClick={async (taskId) => {
+                      if (!selectedTournament || !auth.currentUser) return;
+                      if (!confirm("Згенерувати розподіл журі для цього завдання?")) return;
+                      try {
+                        await generateJuryAssignments(selectedTournament.id, taskId, auth.currentUser);
+                        alert("Розподіл журі згенеровано");
+                      } catch {
+                        alert("Не вдалося згенерувати розподіл");
+                      }
+                    }}
                     onSwitchTab={() => setActiveTab("tournaments")}
                   />
                 )}
