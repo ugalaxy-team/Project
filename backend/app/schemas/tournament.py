@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
-
 from datetime import datetime, timezone
 from pydantic import (
     AfterValidator,
@@ -27,6 +26,7 @@ def make_naive(value: datetime) -> datetime:
 
 
 def drop_time(date: datetime) -> datetime:
+    """Обнуляє час до 00:00:00 для порівняння лише дат."""
     return date.replace(hour=0, minute=0, second=0, microsecond=0)
 
 
@@ -49,14 +49,13 @@ class TournamentCreate(TournamentBase):
     juries: list[int | str] = Field(..., description="Jury ids")
 
     @model_validator(mode="after")
-    def validate_dates(self) -> "TournamentBase":
-
+    def validate_dates(self) -> "TournamentCreate":
         now = drop_time(datetime.now(timezone.utc).replace(tzinfo=None))
 
         if drop_time(self.reg_start) < now:
             raise ValueError("Registration cannot start in the past")
-
-        if drop_time(self.reg_end) <= drop_time(self.reg_start):
+        
+        if self.reg_end <= self.reg_start:
             raise ValueError("Registration end must be later than start")
 
         if self.start_date <= self.reg_end:
@@ -100,8 +99,8 @@ class TournamentUpdate(BaseModel):
 
 class TournamentStatusOptionModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-
     name: StrippedStr = Field(..., min_length=3)
+
 
 class TournamentPublic(TournamentBase):
     model_config = ConfigDict(from_attributes=True)
@@ -115,6 +114,7 @@ class TournamentPublic(TournamentBase):
     teams: list[TeamPublic]
     juries: list["UserMinimalPublic"]
     status_name: str = Field(validation_alias=AliasPath("status", "display_name"))
+
 
 class TournamentPublicMinimal(TournamentBase):
     model_config = ConfigDict(from_attributes=True)

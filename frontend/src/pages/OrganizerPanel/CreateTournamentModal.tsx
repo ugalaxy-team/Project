@@ -71,21 +71,43 @@ export const CreateTournamentModal = ({ isOpen, onClose, onCreate }: any) => {
 
   const canGoNext = () => {
     if (currentStep === 1) {
+      const isDateRangeValid = formData.reg_start && formData.reg_end && 
+                               new Date(formData.reg_end) > new Date(formData.reg_start);
+      const isStartAfterReg = formData.start_date && formData.reg_end && 
+                               new Date(formData.start_date) >= new Date(formData.reg_end);
+
       return (
         formData.title.trim().length >= 3 &&
         formData.description.trim().length >= 10 &&
-        formData.reg_start !== "" &&
-        formData.reg_end !== "" &&
-        formData.start_date !== ""
+        isDateRangeValid &&
+        isStartAfterReg
       );
     }
     return formData.max_teams > 0 && formData.max_people_in_team >= formData.min_people_in_team;
   };
 
+  const formatToLocalISO = (dateStr: string) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}:00`;
+  };
+
   const handleCreate = async () => {
     setIsSubmitting(true);
+    const submissionData = {
+      ...formData,
+      reg_start: formatToLocalISO(formData.reg_start),
+      reg_end: formatToLocalISO(formData.reg_end),
+      start_date: formatToLocalISO(formData.start_date),
+    };
+
     try {
-      await onCreate(formData);
+      await onCreate(submissionData);
       setIsSuccess(true);
     } catch (e) {
       console.error(e);

@@ -110,6 +110,18 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
     return () => { document.body.style.overflow = "unset"; };
   }, [isOpen, tournament]);
 
+  const formatToLocalISO = (dateStr: string) => {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return null;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}:00`;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     const numberFields = ["max_teams", "min_people_in_team", "max_people_in_team"];
@@ -137,9 +149,9 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
       const dataToSubmit: UpdateTournamentData = {
         title: formData.title,
         description: formData.description,
-        start_date: formData.start_date || null,
-        reg_start: formData.reg_start || null,
-        reg_end: formData.reg_end || null,
+        start_date: formatToLocalISO(formData.start_date),
+        reg_start: formatToLocalISO(formData.reg_start),
+        reg_end: formatToLocalISO(formData.reg_end),
         max_teams: formData.max_teams,
         min_people_in_team: formData.min_people_in_team,
         max_people_in_team: formData.max_people_in_team,
