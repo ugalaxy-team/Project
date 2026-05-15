@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import TournamentCard from "./components/TournamentCard";
+import { juryTasksQueryKey } from "./juryQueryKeys";
 import { Hero } from "@/components/Hero";
 import { Stars } from "@/components/Stars"
 
@@ -12,7 +13,7 @@ const JuryPanel = () => {
   const user = auth.currentUser;
 
   const { data: tasks = [], isLoading, error } = useQuery({
-    queryKey: ["jury-tasks"],
+    queryKey: juryTasksQueryKey,
     queryFn: async () => {
       if (!user) throw new Error("User is not authenticated");
       return getJuryTasks(user);

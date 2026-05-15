@@ -24,8 +24,8 @@ const SubmissionCard = ({ assignment, onOpen }: SubmissionCardProps) => {
           : "border-amber-500/30 ring-2 ring-amber-400/25 dark:border-amber-500/35",
       )}
     >
-      <div className="flex flex-1 flex-col p-6">
-        <div className="mb-4 flex items-start justify-between gap-4">
+      <div className="flex flex-1 flex-col gap-4 p-6">
+        <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="text-xs font-bold uppercase tracking-wide text-text-muted">{t("submission.label")}</p>
             <h2 className="mt-1 truncate text-xl font-black tracking-tight text-text-main md:text-2xl">
@@ -45,7 +45,7 @@ const SubmissionCard = ({ assignment, onOpen }: SubmissionCardProps) => {
           </span>
         </div>
 
-        <div className="space-y-2 text-sm text-text-muted">
+        <div className="space-y-2.5 text-sm text-text-muted">
           {assignment.submission.urls.length > 0 ? (
             assignment.submission.urls.map((item) => (
               <p
@@ -63,7 +63,7 @@ const SubmissionCard = ({ assignment, onOpen }: SubmissionCardProps) => {
         </div>
       </div>
 
-      <div className="mt-auto flex items-center justify-end gap-3 border-t border-border bg-bg-body/40 px-6 py-4 dark:bg-bg-body/20">
+      <div className="mt-auto flex items-center justify-end gap-3 border-t border-border bg-bg-body/40 px-6 py-5 dark:bg-bg-body/20">
         <button
           type="button"
           onClick={() => onOpen(assignment)}
