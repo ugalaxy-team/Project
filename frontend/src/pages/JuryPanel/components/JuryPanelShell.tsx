@@ -1,11 +1,15 @@
 import type { ReactNode } from "react";
 import { cn } from "@/utils/cn";
 
+import { formatStatusLabel } from "../formatStatusLabel";
+
 export interface JuryPanelShellProps {
   eyebrow: string;
   title: ReactNode;
   description?: ReactNode;
   headerLeading?: ReactNode;
+  /** Task status label shown beside the title (e.g. Submission Closed). */
+  headerBadge?: string;
   children: ReactNode;
 }
 
@@ -14,6 +18,7 @@ export function JuryPanelShell({
   title,
   description,
   headerLeading,
+  headerBadge,
   children,
 }: JuryPanelShellProps) {
   return (
@@ -31,13 +36,20 @@ export function JuryPanelShell({
         <div className="relative z-10 mx-auto max-w-6xl">
           {headerLeading ? <div className="mb-6">{headerLeading}</div> : null}
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-100/90">{eyebrow}</p>
-          <div className="mt-3 flex flex-wrap items-end gap-4">
-            <div className="min-w-0 flex-1">
+          <div className="mt-3 flex flex-wrap items-end gap-x-4 gap-y-3">
+            <div className="min-w-0 flex-1 basis-[min(100%,16rem)]">
               <div className="h-1 w-14 shrink-0 rounded-full bg-accent shadow-[0_0_20px_rgba(251,191,36,0.45)]" />
-              <h1 className="mt-4 text-3xl font-black tracking-tight !text-white sm:text-4xl md:text-5xl">
+              <h1 className="mt-4 break-words text-3xl font-black tracking-tight !text-white sm:text-4xl md:text-5xl">
                 {title}
               </h1>
             </div>
+            {headerBadge ? (
+              <span className="max-w-full shrink-0 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-center text-xs font-bold uppercase tracking-wide text-white/95 backdrop-blur-sm sm:max-w-[14rem] sm:text-left">
+                <span className="line-clamp-2 break-words sm:line-clamp-none">
+                  {formatStatusLabel(headerBadge)}
+                </span>
+              </span>
+            ) : null}
           </div>
           {description ? (
             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-indigo-100/95 md:text-base">{description}</p>

@@ -237,8 +237,8 @@ async def test_tournament_cascade_delete_children(db_session, create):
         "task": task.id,
         "team": team.id,
         "member": member.id,
-        "submission": submission.team_id,
-        "url": (url.submission_id, url.url_id),
+        "submission": submission.id,
+        "url": url.id,
         "evaluation": evaluation.id,
         "criterion_score": criterion_score.id,
     }
@@ -505,8 +505,8 @@ async def test_submission_urls_belong_to_submission(create):
     url1 = await create(SubmissionUrlFactory, submission=submission)
     url2 = await create(SubmissionUrlFactory, submission=submission)
 
-    assert url1.submission_id == submission.team_id
-    assert url2.submission_id == submission.team_id
+    assert url1.submission_id == submission.id
+    assert url2.submission_id == submission.id
 
 
 async def test_submission_url_has_submission(db_session, create):

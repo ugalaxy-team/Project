@@ -131,7 +131,8 @@ it("restores body overflow when modal closes", () => {
     expect(overlay).not.toBeNull();
     
     expect(overlay).toHaveClass("inset-0");
-    expect(overlay).toHaveClass("z-[200]");
+    expect(overlay).toHaveAttribute("data-modal-overlay");
+    expect(overlay).toHaveStyle({ zIndex: 200 });
     expect(overlay).toHaveClass("flex");
     expect(overlay).toHaveClass("items-center");
     expect(overlay).toHaveClass("justify-center");
@@ -142,8 +143,7 @@ it("restores body overflow when modal closes", () => {
     render(<LookingForTeamModal isOpen={true} onClose={onClose} />);
 
     
-    const modalContent = document.body.querySelector(".bg-white");
-    
+    const modalContent = document.body.querySelector(".bg-bg-card");
     
     expect(modalContent).not.toBeNull();
     
@@ -157,7 +157,7 @@ it("header section has correct background color", () => {
     render(<LookingForTeamModal isOpen={true} onClose={onClose} />);
 
     
-    const header = document.body.querySelector(".bg-\\[\\#6D72F1\\]");
+    const header = document.body.querySelector(".from-primary");
     
     expect(header).toBeInTheDocument();
   });
@@ -167,7 +167,7 @@ it("header section has correct background color", () => {
     render(<LookingForTeamModal isOpen={true} onClose={onClose} />);
 
     
-    const content = document.body.querySelector(".bg-\\[\\#FBFBFF\\]");
+    const content = document.body.querySelector(".bg-bg-body.p-10");
     
     
     expect(content).not.toBeNull();
@@ -245,9 +245,10 @@ it("header section has correct background color", () => {
     render(<LookingForTeamModal isOpen={true} onClose={onClose} />);
 
     
-    const fixedDiv = document.body.querySelector(".z-\\[200\\]");
+    const overlay = document.body.querySelector("[data-modal-overlay]");
     
-    expect(fixedDiv).toBeInTheDocument();
+    expect(overlay).toBeInTheDocument();
+    expect(overlay).toHaveStyle({ zIndex: 200 });
   });
 
   it("does not pass through clicks to background elements", async () => {
@@ -264,7 +265,8 @@ it("header section has correct background color", () => {
     const overlay = document.body.querySelector(".fixed.inset-0");
     
     expect(overlay).toBeInTheDocument();
-    expect(overlay).toHaveClass("z-[200]"); 
+    expect(overlay).toHaveAttribute("data-modal-overlay");
+    expect(overlay).toHaveStyle({ zIndex: 200 }); 
   });
 
   it("display changes from none to flex when opening", () => {
@@ -298,7 +300,7 @@ it("header section has correct background color", () => {
     );
 
     
-    const modalContent = document.body.querySelector(".animate-in");
+    const modalContent = document.body.querySelector(".rounded-\\[2\\.5rem\\]");
     
     expect(modalContent).toBeInTheDocument();
   });

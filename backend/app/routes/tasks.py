@@ -1,11 +1,10 @@
 from fastapi import status, HTTPException
 from fastapi.routing import APIRouter
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
 from app.config import settings
-from app.dependencies import SessionDep, TournamentOwnerDep, TaskOwnerDep, current_user_dependency
-from app.models import Task, TaskEvaluationCriterion, Submission, SubmissionUrl, Team, Tournament
+from app.dependencies import SessionDep, TaskOwnerDep
+from app.models import Task, TaskEvaluationCriterion, Submission, SubmissionUrl
 from app.schemas import TaskCreate, TaskUpdate, TaskPublic, SubmissionCreate, SubmissionModel
 from app.utils import TaskStatus, update_tasks_status, get_requirements, get_task, get_team
 
@@ -162,12 +161,16 @@ async def create_submission(
     await get_team(submission_data.team_id, tournament_id, session)
 
     new_submission = Submission(team_id=submission_data.team_id, task_id=task_id)
-
-    await session.refresh(new_submission, ["urls"])
-    for item in submission_data.urls:
-        new_submission.urls.append(SubmissionUrl(url_id=item.url_id, value=item.value))
-
     session.add(new_submission)
+    await session.flush()
+
+    for item in submission_data.urls:
+        session.add(SubmissionUrl(
+            submission_id=new_submission.id,
+            url_id=item.url_id,
+            value=item.value,
+        ))
+
     await session.commit()
     await session.refresh(new_submission, ["urls", "team"])
 

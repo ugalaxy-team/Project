@@ -75,7 +75,6 @@ class EvaluationLeaderboardEntry(BaseModel):
     team_name: str
     average_score: float
     total_score: float
-    submitted_reviews: int
 
 
 class FinishEvaluationResponse(BaseModel):

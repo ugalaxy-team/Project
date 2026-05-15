@@ -9,7 +9,7 @@ from pydantic import (
     model_validator,
     AfterValidator,
 )
-
+from .option import OptionPublic
 
 def make_naive(value: datetime) -> datetime:
     if value.tzinfo is not None:
@@ -93,6 +93,7 @@ class TaskPublic(TaskBase):
     id: int
     tournament_id: int = Field(..., gt=0)
     status_id: str = Field(...)
+    status: OptionPublic
     criteria: list["TaskEvaluationCriterionPublic"] = []
 
     @field_validator("requirements", mode="before")

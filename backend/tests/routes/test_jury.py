@@ -106,6 +106,7 @@ async def test_jury_assignment_draft(create, client, db_session):
     
     app.dependency_overrides.pop(get_current_user)
 
+@pytest.mark.slow
 async def test_update_evaluation(create, client, db_session):
     jury = await create(UserFactory)
     t = await create(TaskFactory)
@@ -143,7 +144,6 @@ async def test_generate_assignments_no_submissions(create, client, db_session):
     organizer = await create(RoleFactory, name=settings.ROLE_NAMES.ORGANIZER)
     creator = await create(UserFactory, roles=[organizer])
     tournament = await create(TournamentFactory, creator=creator)
-    await db_session.refresh(tournament, ['juries'])
     closed = await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED)
     task = await create(TaskFactory, tournament=tournament, status=closed)
     captain = await create(TeamMemberFactory, tournament=tournament)
@@ -158,11 +158,11 @@ async def test_generate_assignments_no_submissions(create, client, db_session):
 
     app.dependency_overrides.pop(get_current_user)
 
+@pytest.mark.slow
 async def test_generate_assignments_already_generated(create, client, db_session):
     organizer = await create(RoleFactory, name=settings.ROLE_NAMES.ORGANIZER)
     creator = await create(UserFactory, roles=[organizer])
     tournament = await create(TournamentFactory, creator=creator)
-    await db_session.refresh(tournament, ['juries'])
     closed = await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED)
     task = await create(TaskFactory, tournament=tournament, status=closed, min_reviews_per_submission=0)
     captain = await create(TeamMemberFactory, tournament=tournament)
@@ -182,7 +182,6 @@ async def test_generate_assignments_no_juries(create, client, db_session):
     organizer = await create(RoleFactory, name=settings.ROLE_NAMES.ORGANIZER)
     creator = await create(UserFactory, roles=[organizer])
     tournament = await create(TournamentFactory, creator=creator, juries=[])
-    await db_session.refresh(tournament, ['juries'])
     closed = await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED)
     task = await create(TaskFactory, tournament=tournament, status=closed)
     captain = await create(TeamMemberFactory, tournament=tournament)
@@ -196,8 +195,105 @@ async def test_generate_assignments_no_juries(create, client, db_session):
 
     app.dependency_overrides.pop(get_current_user)
 
+@pytest.mark.slow
+async def test_finish_task_evaluation_jury(create, client, db_session):
+    jury = await create(UserFactory)
+    tournament = await create(TournamentFactory, juries=[jury])
+    await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.EVALUATED)
+    await create(JuryAssignmentStatusOptionFactory, name=settings.JURY_ASSIGNMENT_STATUS_NAMES.REVIEWED)
+    closed = await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED)
+    task = await create(TaskFactory, tournament=tournament, status=closed)
+    captain = await create(TeamMemberFactory, tournament=tournament)
+    team = await create(TeamFactory, captain=captain, tournament=tournament)
+    submission = await create(SubmissionFactory, task=task, team=team)
+    await create(JuryAssignmentFactory, jury=jury, task=task, submission=submission)
+    app.dependency_overrides[get_current_user] = lambda: jury
+
+    resp = await client.post(f'/tournaments/{tournament.id}/tasks/{task.id}/finish-evaluation/')
+    assert resp.status_code == 200
+    assert resp.json()['status_id'] == settings.TASK_STATUS_NAMES.EVALUATED
+
+    app.dependency_overrides.pop(get_current_user)
+
+@pytest.mark.slow
+async def test_finish_task_evaluation_organizer(create, client, db_session):
+    organizer = await create(RoleFactory, name=settings.ROLE_NAMES.ORGANIZER)
+    creator = await create(UserFactory, roles=[organizer])
+    tournament = await create(TournamentFactory, creator=creator, juries=[])
+    await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.EVALUATED)
+    await create(JuryAssignmentStatusOptionFactory, name=settings.JURY_ASSIGNMENT_STATUS_NAMES.REVIEWED)
+    closed = await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED)
+    task = await create(TaskFactory, tournament=tournament, status=closed)
+    captain = await create(TeamMemberFactory, tournament=tournament)
+    team = await create(TeamFactory, captain=captain, tournament=tournament)
+    submission = await create(SubmissionFactory, task=task, team=team)
+    await create(JuryAssignmentFactory, task=task, submission=submission)
+    app.dependency_overrides[get_current_user] = lambda: creator
+
+    resp = await client.post(f'/tournaments/{tournament.id}/tasks/{task.id}/finish-evaluation/')
+    assert resp.status_code == 200
+    assert resp.json()['status_id'] == settings.TASK_STATUS_NAMES.EVALUATED
+
+    app.dependency_overrides.pop(get_current_user)
+
+@pytest.mark.slow
+async def test_finish_tournament_evaluation_jury(create, client, db_session):
+    organizer = await create(RoleFactory, name=settings.ROLE_NAMES.ORGANIZER)
+    creator = await create(UserFactory, roles=[organizer])
+    jury = await create(UserFactory)
+    await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.EVALUATED)
+    await create(JuryAssignmentStatusOptionFactory, name=settings.JURY_ASSIGNMENT_STATUS_NAMES.REVIEWED)
+    assigned = await create(JuryAssignmentStatusOptionFactory, name=settings.JURY_ASSIGNMENT_STATUS_NAMES.ASSIGNED)
+    closed = await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED)
+    tournament_statuses = {}
+    for opt_name in [o["name"] for o in settings.TOURNAMENT_STATUS_OPTIONS]:
+        tournament_statuses[opt_name] = await create(TournamentStatusOptionFactory, name=opt_name)
+    tournament = await create(TournamentFactory, creator=creator, juries=[], status=tournament_statuses["draft"])
+    task = await create(TaskFactory, tournament=tournament, status=closed)
+    team = await create(TeamFactory, tournament=tournament, captain=None)
+    captain = await create(TeamMemberFactory, tournament=tournament, team=team)
+    team.captain = captain
+    await db_session.flush()
+    submission = await create(SubmissionFactory, task=task, team=team)
+    await create(JuryAssignmentFactory, jury=jury, task=task, submission=submission, status=assigned)
+    app.dependency_overrides[get_current_user] = lambda: jury
+
+    resp = await client.post(f'/tournaments/{tournament.id}/finish-evaluation/')
+    assert resp.status_code == 403
+
+    app.dependency_overrides.pop(get_current_user)
+
+@pytest.mark.slow
+async def test_finish_tournament_evaluation_organizer(create, client, db_session):
+    organizer = await create(RoleFactory, name=settings.ROLE_NAMES.ORGANIZER)
+    creator = await create(UserFactory, roles=[organizer])
+    await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.EVALUATED)
+    await create(JuryAssignmentStatusOptionFactory, name=settings.JURY_ASSIGNMENT_STATUS_NAMES.REVIEWED)
+    assigned = await create(JuryAssignmentStatusOptionFactory, name=settings.JURY_ASSIGNMENT_STATUS_NAMES.ASSIGNED)
+    closed = await create(TaskStatusOptionFactory, name=settings.TASK_STATUS_NAMES.SUBMISSION_CLOSED)
+    tournament_statuses = {}
+    for opt_name in [o["name"] for o in settings.TOURNAMENT_STATUS_OPTIONS]:
+        tournament_statuses[opt_name] = await create(TournamentStatusOptionFactory, name=opt_name)
+    tournament = await create(TournamentFactory, creator=creator, juries=[], status=tournament_statuses["draft"])
+    task = await create(TaskFactory, tournament=tournament, status=closed)
+    team = await create(TeamFactory, tournament=tournament, captain=None)
+    captain = await create(TeamMemberFactory, tournament=tournament, team=team)
+    team.captain = captain
+    await db_session.flush()
+    submission = await create(SubmissionFactory, task=task, team=team)
+    await create(JuryAssignmentFactory, task=task, submission=submission, status=assigned)
+    app.dependency_overrides[get_current_user] = lambda: creator
+
+    resp = await client.post(f'/tournaments/{tournament.id}/finish-evaluation/')
+    assert resp.status_code == 200
+    assert resp.json()['status']['name'] == settings.TOURNAMENT_STATUS_NAMES.FINISHED
+
+    app.dependency_overrides.pop(get_current_user)
+
+
 # Integration 
 
+@pytest.mark.slow
 async def test_generate_assignments_and_submit_evaluation(create, client, db_session):
     admin_role = await create(RoleFactory, name=settings.ROLE_NAMES.ADMIN)
     organizer = await create(UserFactory, roles=[admin_role])

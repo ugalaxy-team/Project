@@ -251,7 +251,7 @@ pip install -r ../requirements.txt
 pytest
 ```
 
-There is **no** dedicated `pytest` coverage script in `requirements.txt`; add tools such as `pytest-cov` locally if you need coverage reports.
+If you don't wish to run tests marked as slow, then use the following command `pytest -m 'not slow'`
 
 ---
 
