@@ -10,4 +10,5 @@ from .current_user import (
 )
 from .role_request import RoleRequestDep, get_role_request
 from .permissions import TournamentOwnerDep, TaskOwnerDep, TeamOwnerDep, task_owner_dependency, team_owner_dependency, tournament_owner_dependency
-from .jury import organizer_or_admin_dependency, assigned_jury_dependency
+from .jury import organizer_or_admin_dependency, assigned_jury_dependency, task_with_closed_submissions_status_dependency,\
+get_assigned_jury, get_organizer_or_admin, get_task_with_closed_submissions_status
