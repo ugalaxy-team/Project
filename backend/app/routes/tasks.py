@@ -4,17 +4,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.config import settings
-
-from app.dependencies import SessionDep
-from app.models import Task, TaskEvaluationCriterion, Submission, SubmissionUrl, Team
+from app.dependencies import SessionDep, TournamentOwnerDep, TaskOwnerDep, current_user_dependency
+from app.models import Task, TaskEvaluationCriterion, Submission, SubmissionUrl, Team, Tournament
 from app.schemas import TaskCreate, TaskUpdate, TaskPublic, SubmissionCreate, SubmissionModel
 from app.utils import TaskStatus, update_tasks_status, get_requirements, get_task, get_team
-from app.dependencies import current_user_dependency
-from app.dependencies import SessionDep, TournamentOwnerDep, TaskOwnerDep
-from app.models import Task, Tournament
-from app.schemas import TaskCreate, TaskUpdate, TaskPublic
-from app.utils import TaskStatus, update_tasks_status
-from app.utils import get_requirements, get_task
 
 router = APIRouter(prefix="/tournaments/{tournament_id}/tasks", tags=["tasks"])
 
@@ -51,16 +44,25 @@ async def task(tournament_id: int, task_id: int, session: SessionDep):
 )
 async def create_task(tournament_id: int, task_data: TaskCreate, session: SessionDep):
     task_dict = task_data.model_dump(exclude={"requirements", "criteria"})
+    
+    if task_dict.get("start_time"):
+        task_dict["start_time"] = task_dict["start_time"].replace(tzinfo=None)
+    if task_dict.get("end_time"):
+        task_dict["end_time"] = task_dict["end_time"].replace(tzinfo=None)
+
     new_task = Task(
         **task_dict,
         tournament_id=tournament_id,
         status_id=settings.TASK_STATUS_NAMES.DRAFT,
     )
+    
     requirements = await get_requirements(task_data.requirements, session)
     new_task.requirements = requirements
 
     session.add(new_task)
     await session.flush()
+    
+    await session.refresh(new_task, ["criteria"])
 
     for crit_data in task_data.criteria:
         new_task.criteria.append(
@@ -105,6 +107,11 @@ async def update_task(
             detail="No fields provided for update",
         )
 
+    if update_data.get("start_time"):
+        update_data["start_time"] = update_data["start_time"].replace(tzinfo=None)
+    if update_data.get("end_time"):
+        update_data["end_time"] = update_data["end_time"].replace(tzinfo=None)
+
     for key, value in update_data.items():
         setattr(task, key, value)
 
@@ -112,8 +119,10 @@ async def update_task(
         task.requirements = await get_requirements(task_data.requirements, session)
 
     if task_data.criteria is not None:
-        for crit in task.criteria:
+        await session.refresh(task, ["criteria"])
+        for crit in list(task.criteria):
             await session.delete(crit)
+        
         for crit_data in task_data.criteria:
             task.criteria.append(
                 TaskEvaluationCriterion(
@@ -154,6 +163,7 @@ async def create_submission(
 
     new_submission = Submission(team_id=submission_data.team_id, task_id=task_id)
 
+    await session.refresh(new_submission, ["urls"])
     for item in submission_data.urls:
         new_submission.urls.append(SubmissionUrl(url_id=item.url_id, value=item.value))
 
