@@ -60,6 +60,7 @@ export interface JuryTask {
   title: string;
   description?: string | null;
   status_id: string;
+  status: TaskStatusOption;
   start_time: string;
   end_time: string;
   min_reviews_per_submission: number;

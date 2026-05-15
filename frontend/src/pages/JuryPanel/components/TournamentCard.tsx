@@ -24,7 +24,7 @@ const TournamentCard = ({ task }: TournamentCardProps) => {
       />
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary ring-1 ring-primary/20 dark:bg-primary/20 dark:text-indigo-100">
-          {task.status_id}
+          {task.status.display_name}
         </span>
         <span className="text-xs font-semibold tabular-nums text-text-muted">{t("task_card.task_id", { id: task.id })}</span>
       </div>
