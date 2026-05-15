@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { type Tournament } from "./types";
+import { formatNaiveDateTime } from "@/utils/naiveDateTime";
 
 interface TournamentInfoModalProps {
   isOpen: boolean;
@@ -15,18 +16,14 @@ const TournamentInfoModal = ({
   const { t, i18n } = useTranslation("modals");
   const formatShortDate = (dateStr?: string) => {
     if (!dateStr) return t("common.dash");
-    try {
-      const date = new Date(dateStr);
-      return date.toLocaleString(i18n.language === "en" ? "en-GB" : "uk-UA", {
-        day: "2-digit",
-        month: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: "UTC",
-      });
-    } catch {
-      return dateStr;
-    }
+    const locale = i18n.language === "en" ? "en-GB" : "uk-UA";
+    const formatted = formatNaiveDateTime(dateStr, locale, {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return formatted || dateStr;
   };
 
   if (!isOpen || !tournament) return null;

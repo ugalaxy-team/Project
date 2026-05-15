@@ -5,6 +5,7 @@ import { getAllUsers } from "@/api/requests/getAllUsers";
 import { JurySelectionModal } from "./components/JurySelectionModal";
 import { type User } from "./components/types";
 import DateTimePicker from "@/components/ui/DateTimePicker";
+import { toNaiveApiDateTime, toPickerDateTimeValue } from "@/utils/naiveDateTime";
 
 interface Tournament {
   id: number;
@@ -98,9 +99,9 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
         setFormData({
           title: tournament.title || "",
           description: tournament.description || "",
-          start_date: tournament.start_date || "",
-          reg_start: tournament.reg_start || "",
-          reg_end: tournament.reg_end || "",
+          start_date: toPickerDateTimeValue(tournament.start_date || ""),
+          reg_start: toPickerDateTimeValue(tournament.reg_start || ""),
+          reg_end: toPickerDateTimeValue(tournament.reg_end || ""),
           max_teams: tournament.max_teams || 2,
           min_people_in_team: tournament.min_people_in_team || 1,
           max_people_in_team: tournament.max_people_in_team || 5,
@@ -111,18 +112,6 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
     }
     return () => { document.body.style.overflow = "unset"; };
   }, [isOpen, tournament]);
-
-  const formatToLocalISO = (dateStr: string) => {
-    if (!dateStr) return null;
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return null;
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}T${hours}:${minutes}:00`;
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -151,9 +140,9 @@ export const EditTournamentModal: React.FC<EditTournamentModalProps> = ({
       const dataToSubmit: UpdateTournamentData = {
         title: formData.title,
         description: formData.description,
-        start_date: formatToLocalISO(formData.start_date),
-        reg_start: formatToLocalISO(formData.reg_start),
-        reg_end: formatToLocalISO(formData.reg_end),
+        start_date: formData.start_date ? toNaiveApiDateTime(formData.start_date) : null,
+        reg_start: formData.reg_start ? toNaiveApiDateTime(formData.reg_start) : null,
+        reg_end: formData.reg_end ? toNaiveApiDateTime(formData.reg_end) : null,
         max_teams: formData.max_teams,
         min_people_in_team: formData.min_people_in_team,
         max_people_in_team: formData.max_people_in_team,
