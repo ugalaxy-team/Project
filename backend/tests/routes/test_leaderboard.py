@@ -1,11 +1,5 @@
 import pytest
-from app import app
-from app.dependencies import get_current_user
-from app.models import TaskEvaluationCriterion
 from tests.factories import (
-    JuryAssignmentStatusOptionFactory,
-    RoleFactory,
-    SubmissionUrlOptionFactory,
     TaskFactory,
     TaskStatusOptionFactory,
     TeamFactory,
@@ -14,14 +8,13 @@ from tests.factories import (
     TournamentStatusOptionFactory,
     UserFactory,
     JuryAssignmentFactory,
-    JuryAssignmentStatusOptionFactory,
     SubmissionFactory,
     SubmissionEvaluationFactory,
     TaskEvaluationCriterionFactory,
     CriterionScoreFactory
 )
 from app.config import settings
-from app.utils import calculate_evaluation_total
+from app.utils import calculate_evaluation_total, calculate_evaluation_average
 
 @pytest.mark.slow
 async def test_task_leaderboard(create, client, db_session):
@@ -39,13 +32,19 @@ async def test_task_leaderboard(create, client, db_session):
     e1 = await create(SubmissionEvaluationFactory, jury=j1, assignment=a1, submission=s1)
     e2 = await create(SubmissionEvaluationFactory, jury=j2, assignment=a2, submission=s1)
     await db_session.refresh(e1, ['criterion_scores'])
-    await create(CriterionScoreFactory, score=7, evaluation=e1)
-    await create(CriterionScoreFactory, score=52, evaluation=e1)
-    e1_calculated = calculate_evaluation_total(e1)
+    await db_session.refresh(e2, ['criterion_scores'])
+    c1 = await create(TaskEvaluationCriterionFactory, task=task)
+    c2 = await create(TaskEvaluationCriterionFactory, task=task)
+    await create(CriterionScoreFactory, score=7, evaluation=e1, criterion=c1)
+    await create(CriterionScoreFactory, score=52, evaluation=e2, criterion=c2)
+    totals = [calculate_evaluation_total(e1), calculate_evaluation_total(e2)]
+    total_calculated = sum(totals)
+    avg_calculated = calculate_evaluation_average(totals)
+
 
     resp = await client.get(f'/tournaments/{tournament.id}/tasks/{task.id}/leaderboard/')
     assert resp.status_code == 200
     total_scores = [e['total_score'] for e in resp.json()]
     average_scores = [e['average_score'] for e in resp.json()]
-    assert e1_calculated in total_scores
-    assert e1_calculated in average_scores
+    assert total_calculated in total_scores
+    assert avg_calculated in average_scores
